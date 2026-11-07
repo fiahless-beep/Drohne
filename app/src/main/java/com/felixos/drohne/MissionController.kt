@@ -59,6 +59,7 @@ object MissionController {
                 })
                 if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
                     if (currentMission?.light == true) DroneManager.setBottomLight("auto")
+                    DroneManager.landingHelper()
                     onFinished?.invoke()
                 }
             }

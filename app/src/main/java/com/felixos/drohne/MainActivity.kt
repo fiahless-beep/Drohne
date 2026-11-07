@@ -366,11 +366,12 @@ class MainActivity : AppCompatActivity() {
         }
         AlertDialog.Builder(this).setTitle("Plan „${m.name}“ übernehmen?")
             .setMessage(text)
-            .setPositiveButton("Übernehmen") { _, _ ->
+            .setPositiveButton("Übernehmen + auf Drohne") { _, _ ->
                 if (MissionController.prepare(m)) {
                     mission = m
                     missionText = text
-                    DroneManager.log("Plan übernommen, jetzt „Hochladen“")
+                    DroneManager.log("Plan übernommen, lade auf die Drohne …")
+                    MissionController.upload { }
                 }
             }
             .setNegativeButton("Verwerfen", null).show()

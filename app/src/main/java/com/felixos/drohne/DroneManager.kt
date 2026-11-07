@@ -43,6 +43,8 @@ data class DroneState(
     val rcConnected: Boolean = false,
     val airLinkConnected: Boolean = false,
     val productType: String? = null,
+    val landingConfirmationNeeded: Boolean = false,
+    val landing: Boolean = false,
 )
 
 /**
@@ -223,21 +225,9 @@ object DroneManager {
         watch(FlightControllerKey.KeyIsFlying) { s, v -> s.copy(flying = v == true) }
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
         // Landebestätigung: DJI hält kurz über dem Boden an und wartet auf ein Ja. Das gibt die App selbst.
-        try {
-            KeyManager.getInstance().listen(KeyTools.createKey(FlightControllerKey.KeyIsLandingConfirmationNeeded), holder) { _, v ->
-                if (v == true) {
-                    log("Drohne wartet auf Landebestätigung → bestätige Landung")
-                    safe("Landebestätigung") {
-                        KeyManager.getInstance().performAction(
-                            KeyTools.createKey(FlightControllerKey.KeyConfirmLanding),
-                            object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
-                                override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) { log("Landung bestätigt") }
-                                override fun onFailure(error: IDJIError) { log("Landebestätigung fehlgeschlagen: ${error.description()}") }
-                            })
-                    }
-                }
-            }
-        } catch (t: Throwable) { log("Landebestätigung nicht verfügbar: ${t.message}") }
+        watch(FlightControllerKey.KeyIsLandingConfirmationNeeded) { s, v -> s.copy(landingConfirmationNeeded = v == true) }
+        watch(FlightControllerKey.KeyIsInLandingMode) { s, v -> s.copy(landing = v == true) }
+        addStateListener { s -> if (s.landingConfirmationNeeded && !confirmSent) { confirmSent = true; confirmLanding("Drohne wartet auf Landebestätigung") } else if (!s.landingConfirmationNeeded) confirmSent = false }
         startPolling()
         log("Telemetrie läuft")
     }
@@ -252,6 +242,60 @@ object DroneManager {
                 }
                 override fun onFailure(error: IDJIError) { log("Koppeln fehlgeschlagen: ${error.description()}") }
             })
+    }
+
+    private var confirmSent = false
+
+    /** Landung bestätigen (Drohne hängt ~0,5 m über dem Boden und wartet). */
+    fun confirmLanding(reason: String) = safe("Landebestätigung") {
+        log("$reason → bestätige Landung")
+        KeyManager.getInstance().performAction(
+            KeyTools.createKey(FlightControllerKey.KeyConfirmLanding),
+            object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
+                override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) { log("Landung bestätigt") }
+                override fun onFailure(error: IDJIError) { log("Landebestätigung fehlgeschlagen: ${error.description()}") }
+            })
+    }
+
+    /** Landung auslösen (falls die Drohne nach der Mission nur schwebt). */
+    fun startLanding() = safe("Landen") {
+        KeyManager.getInstance().performAction(
+            KeyTools.createKey(FlightControllerKey.KeyStartAutoLanding),
+            object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
+                override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) { log("Landung eingeleitet") }
+                override fun onFailure(error: IDJIError) { log("Landen fehlgeschlagen: ${error.description()}") }
+            })
+    }
+
+    /**
+     * Landehelfer nach einer Mission: Schwebt die Drohne nach dem Heimflug tief und bewegt sich 8 s nicht,
+     * bestätigt die App die Landung bzw. leitet sie ein. Endet, sobald die Drohne am Boden ist (max. 5 min).
+     */
+    fun landingHelper() {
+        var stableSince = 0L
+        var lastAlt = Double.NaN
+        var tries = 0
+        val tick = object : Runnable {
+            override fun run() {
+                val s = state
+                if (!s.flying && !s.motorsOn) { log("Landehelfer: Drohne ist am Boden"); return }
+                if (tries++ > 150) { log("Landehelfer: aufgegeben (5 min)"); return }
+                val alt = s.location?.altitude ?: Double.NaN
+                val now = System.currentTimeMillis()
+                if (s.landingConfirmationNeeded) {
+                    confirmLanding("Landehelfer")
+                } else if (!alt.isNaN() && alt < 8.0 && !lastAlt.isNaN() && kotlin.math.abs(alt - lastAlt) < 0.4) {
+                    if (stableSince == 0L) stableSince = now
+                    if (now - stableSince > 8_000) {
+                        log(String.format(Locale.GERMANY, "Landehelfer: schwebt seit 8 s auf %.1f m", alt))
+                        confirmLanding("Landehelfer"); startLanding(); stableSince = now
+                    }
+                } else stableSince = 0L
+                lastAlt = alt
+                main.postDelayed(this, 2000)
+            }
+        }
+        main.postDelayed(tick, 2000)
     }
 
     /** Landelampe unten: "an", "aus" oder "auto" (Standard: nur beim Landen). */
