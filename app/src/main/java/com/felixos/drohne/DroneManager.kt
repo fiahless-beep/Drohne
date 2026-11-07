@@ -9,6 +9,9 @@ import dji.sdk.keyvalue.key.DJIKey
 import dji.sdk.keyvalue.key.DJIKeyInfo
 import dji.sdk.keyvalue.key.FlightControllerKey
 import dji.sdk.keyvalue.key.KeyTools
+import dji.sdk.keyvalue.key.AirLinkKey
+import dji.sdk.keyvalue.key.ProductKey
+import dji.sdk.keyvalue.key.RemoteControllerKey
 import dji.sdk.keyvalue.value.common.LocationCoordinate2D
 import dji.sdk.keyvalue.value.common.LocationCoordinate3D
 import dji.v5.common.error.IDJIError
@@ -35,6 +38,9 @@ data class DroneState(
     val headingDeg: Double? = null,
     val flying: Boolean = false,
     val motorsOn: Boolean = false,
+    val rcConnected: Boolean = false,
+    val airLinkConnected: Boolean = false,
+    val productType: String? = null,
 )
 
 /**
@@ -138,6 +144,9 @@ object DroneManager {
     }
 
     private fun startTelemetry() {
+        watch(RemoteControllerKey.KeyConnection) { s, v -> s.copy(rcConnected = v == true) }
+        watch(AirLinkKey.KeyConnection) { s, v -> s.copy(airLinkConnected = v == true) }
+        watch(ProductKey.KeyProductType) { s, v -> s.copy(productType = v?.name) }
         watch(FlightControllerKey.KeyConnection) { s, v -> s.copy(connected = v == true) }
         watch(BatteryKey.KeyChargeRemainingInPercent) { s, v -> s.copy(batteryPercent = v) }
         watch(FlightControllerKey.KeyGPSSatelliteCount) { s, v -> s.copy(satellites = v) }

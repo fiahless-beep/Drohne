@@ -121,7 +121,8 @@ class MainActivity : AppCompatActivity() {
                 s.registerError != null -> "FEHLER: ${s.registerError}"
                 else -> "startet …"
             })
-            appendLine("Drohne:  " + if (s.connected) "verbunden" else "nicht verbunden")
+            appendLine("Contr.:  " + (if (s.rcConnected) "verbunden" else "nicht verbunden") + "  Funk: " + (if (s.airLinkConnected) "ok" else "kein Signal"))
+            appendLine("Drohne:  " + (if (s.connected) "verbunden" else "nicht verbunden") + (s.productType?.let { " ($it)" } ?: ""))
             appendLine("Akku:    " + (s.batteryPercent?.let { "$it %" } ?: "–"))
             appendLine("GPS:     " + (s.satellites?.let { "$it Satelliten" } ?: "–"))
             if (loc?.latitude != null && loc.latitude != 0.0) {
