@@ -34,7 +34,7 @@
             android:orientation="horizontal">
             <Button android:id="@+id/btnPlan" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Testflug" />
             <Button android:id="@+id/btnLoad" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Plan laden" />
-            <Button android:id="@+id/btnUpload" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Hochladen" />
+            <Button android:id="@+id/btnUpload" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Auf Drohne" />
         </LinearLayout>
 
         <LinearLayout
