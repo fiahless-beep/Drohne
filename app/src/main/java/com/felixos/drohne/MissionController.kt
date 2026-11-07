@@ -66,8 +66,9 @@ object MissionController {
 
     fun upload(onDone: (Boolean) -> Unit) {
         val f = currentKmz ?: return DroneManager.log("Erst Mission planen").also { onDone(false) }
+        if (!DroneManager.requireSdk("Hochladen")) return onDone(false)
         DroneManager.log("Lade Mission auf die Drohne …")
-        WaypointMissionManager.getInstance().pushKMZFileToAircraft(f.absolutePath,
+        DroneManager.safe("Hochladen") { WaypointMissionManager.getInstance().pushKMZFileToAircraft(f.absolutePath,
             object : CommonCallbacks.CompletionCallbackWithProgress<Double> {
                 private var last = -1
                 override fun onProgressUpdate(p: Double?) {
@@ -76,7 +77,7 @@ object MissionController {
                 }
                 override fun onSuccess() { uploaded = true; DroneManager.log("Mission ist auf der Drohne"); onDone(true) }
                 override fun onFailure(error: IDJIError) { DroneManager.log("Upload fehlgeschlagen: ${error.description()}"); onDone(false) }
-            })
+            }) }
     }
 
     private val missionId get() = currentKmz?.nameWithoutExtension ?: ""
@@ -84,13 +85,15 @@ object MissionController {
     fun start() {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
-        val ids = WaypointMissionManager.getInstance().getAvailableWaylineIDs(f.absolutePath)
-        WaypointMissionManager.getInstance().startMission(missionId, ids, cb("Start"))
+        DroneManager.safe("Start") {
+            val ids = WaypointMissionManager.getInstance().getAvailableWaylineIDs(f.absolutePath)
+            WaypointMissionManager.getInstance().startMission(missionId, ids, cb("Start"))
+        }
     }
 
-    fun pause() = WaypointMissionManager.getInstance().pauseMission(cb("Pause"))
-    fun resume() = WaypointMissionManager.getInstance().resumeMission(cb("Weiter"))
-    fun stop() = WaypointMissionManager.getInstance().stopMission(missionId, cb("Abbruch"))
+    fun pause() = DroneManager.safe("Pause") { WaypointMissionManager.getInstance().pauseMission(cb("Pause")) }
+    fun resume() = DroneManager.safe("Weiter") { WaypointMissionManager.getInstance().resumeMission(cb("Weiter")) }
+    fun stop() = DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(missionId, cb("Abbruch")) }
 
     private fun cb(what: String) = object : CommonCallbacks.CompletionCallback {
         override fun onSuccess() { DroneManager.log("$what: ok") }

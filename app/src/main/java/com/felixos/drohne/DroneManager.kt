@@ -79,11 +79,36 @@ object DroneManager {
         main.post { stateListeners.forEach { it(s) } }
     }
 
+    /** true, sobald SDKManager.init aufgerufen wurde (nur einmal pro App-Start). */
+    @Volatile var initStarted = false
+        private set
+    /** true, sobald das SDK fertig initialisiert ist. Vorher dürfen keine SDK-Funktionen aufgerufen werden. */
+    @Volatile var sdkReady = false
+        private set
+
+    /** Prüft vor einer Drohnen-Aktion, ob das SDK bereit ist; sonst Hinweis im Protokoll. */
+    fun requireSdk(what: String): Boolean {
+        if (sdkReady) return true
+        log("$what geht noch nicht: DJI-SDK ist noch nicht gestartet")
+        return false
+    }
+
+    /** Führt eine SDK-Aktion aus, ohne dass ein Fehler die App beendet. */
+    fun safe(what: String, block: () -> Unit) {
+        if (!requireSdk(what)) return
+        try { block() } catch (t: Throwable) {
+            log("$what fehlgeschlagen: ${t.javaClass.simpleName}: ${t.message}")
+        }
+    }
+
     fun init(context: Context) {
+        if (initStarted) return
+        initStarted = true
         log("SDK wird gestartet …")
         SDKManager.getInstance().init(context, object : SDKManagerCallback {
             override fun onInitProcess(event: DJISDKInitEvent?, totalProcess: Int) {
                 if (event == DJISDKInitEvent.INITIALIZE_COMPLETE) {
+                    sdkReady = true
                     log("SDK bereit, registriere App bei DJI …")
                     SDKManager.getInstance().registerApp()
                 }
@@ -159,7 +184,7 @@ object DroneManager {
     }
 
     /** Rückkehr zum Startpunkt auslösen (Notfallknopf). */
-    fun goHome() {
+    fun goHome() = safe("Rückkehr") {
         KeyManager.getInstance().performAction(
             KeyTools.createKey(FlightControllerKey.KeyStartGoHome),
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {

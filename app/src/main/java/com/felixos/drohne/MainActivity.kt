@@ -92,28 +92,56 @@ class MainActivity : AppCompatActivity() {
                 cm.setPrimaryClip(android.content.ClipData.newPlainText("Absturz", report))
                 android.widget.Toast.makeText(this, "Kopiert – bitte an Claude schicken", android.widget.Toast.LENGTH_LONG).show()
             }
-            .setNegativeButton("Schließen", null).show()
+            .setNegativeButton("Schließen", null)
+            .setOnDismissListener { startSdkIfNeeded() }
+            .show()
+    }
+
+    /** Nach einem Absturzbericht wurde das SDK beim Start ausgelassen: jetzt nachholen. */
+    private fun startSdkIfNeeded() {
+        if (DroneManager.initStarted) return
+        try { DroneManager.init(applicationContext) } catch (t: Throwable) {
+            CrashLog.write(this, "Fehler beim Start des DJI SDK", t)
+            DroneManager.log("SDK-Start fehlgeschlagen: ${t.javaClass.simpleName}: ${t.message}")
+        }
+    }
+
+    private var videoSurface: SurfaceHolder? = null
+    private var videoSize = 0 to 0
+    private var videoAttached = false
+
+    /** Live-Bild anhängen, sobald SDK und Bildfläche bereit sind (wird bei jedem Status-Update erneut versucht). */
+    private fun attachVideo() {
+        val h = videoSurface ?: return
+        if (videoAttached || !DroneManager.state.registered) return
+        try {
+            MediaDataCenter.getInstance().cameraStreamManager.putCameraStreamSurface(
+                ComponentIndexType.LEFT_OR_MAIN, h.surface, videoSize.first, videoSize.second,
+                ICameraStreamManager.ScaleType.CENTER_INSIDE)
+            videoAttached = true
+            DroneManager.log("Live-Bild verbunden")
+        } catch (t: Throwable) {
+            DroneManager.log("Live-Bild noch nicht bereit: ${t.message}")
+        }
     }
 
     private fun setupVideo(view: SurfaceView) {
         view.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder) {}
             override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-                try {
-                    MediaDataCenter.getInstance().cameraStreamManager.putCameraStreamSurface(
-                        ComponentIndexType.LEFT_OR_MAIN, holder.surface, width, height,
-                        ICameraStreamManager.ScaleType.CENTER_INSIDE)
-                } catch (t: Throwable) {
-                    DroneManager.log("Live-Bild noch nicht bereit: ${t.message}")
-                }
+                videoSurface = holder; videoSize = width to height; videoAttached = false
+                attachVideo()
             }
             override fun surfaceDestroyed(holder: SurfaceHolder) {
+                videoSurface = null; videoAttached = false
+                if (!DroneManager.sdkReady) return
                 try { MediaDataCenter.getInstance().cameraStreamManager.removeCameraStreamSurface(holder.surface) } catch (_: Throwable) {}
             }
         })
     }
 
     private fun render(s: DroneState) {
+        attachVideo()
         val loc = s.location
         status.text = buildString {
             appendLine("SDK:     " + when {
