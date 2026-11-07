@@ -192,12 +192,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun planSquare() {
-        val loc = DroneManager.state.location
-        if (loc?.latitude == null || loc.latitude == 0.0) {
-            DroneManager.log("Keine Drohnenposition: GPS abwarten")
-            return
+        val s = DroneManager.state
+        val loc = s.location
+        val home = s.home
+        // Drohnenposition; falls die gerade fehlt, den gesetzten Startpunkt nehmen.
+        val here = when {
+            loc?.latitude != null && loc.latitude != 0.0 -> LatLon(loc.latitude, loc.longitude)
+            home?.latitude != null && home.latitude != 0.0 -> LatLon(home.latitude, home.longitude).also {
+                DroneManager.log("Drohnenposition fehlt gerade, nehme Startpunkt (Home)")
+            }
+            else -> { DroneManager.log("Keine Drohnenposition: GPS abwarten"); return }
         }
-        val here = LatLon(loc.latitude, loc.longitude)
         val options = arrayOf("Stufe 1: Schwebetest (10 m hoch, 5 m vor, 1 Foto)", "Stufe 2: Testquadrat (30 × 30 m, 30 m hoch, 4 Fotos)")
         AlertDialog.Builder(this).setTitle("Testflug wählen").setItems(options) { _, which ->
             if (which == 0) useMission(Missions.hoverTest(here), "Schwebetest: steigt auf 10 m, fliegt 5 m nach Norden, 1 Foto, kommt zurück und landet.")

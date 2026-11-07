@@ -176,7 +176,7 @@ object DroneManager {
         polls += {
             try {
                 val v = KeyManager.getInstance().getValue(key)
-                update { apply(it, v) }
+                if (v != null) update { apply(it, v) }  // null = kein Wert, nicht „Wert weg“
             } catch (t: Throwable) {
                 if (pollErrors.add(name)) log("Abfrage $name: ${t.javaClass.simpleName} ${t.message}")
             }
