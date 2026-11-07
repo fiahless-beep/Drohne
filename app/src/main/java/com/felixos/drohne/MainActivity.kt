@@ -66,6 +66,13 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnStart).setOnClickListener { confirmStart() }
         findViewById<Button>(R.id.btnPause).setOnClickListener { MissionController.pause() }
         findViewById<Button>(R.id.btnResume).setOnClickListener { MissionController.resume() }
+        // Langes Drücken auf das Statusfeld kopiert das ganze Protokoll (zum Schicken an Claude).
+        status.setOnLongClickListener {
+            val cm = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            cm.setPrimaryClip(android.content.ClipData.newPlainText("Protokoll", status.text.toString() + "\n\n" + log.text))
+            android.widget.Toast.makeText(this, "Protokoll kopiert", android.widget.Toast.LENGTH_SHORT).show()
+            true
+        }
         findViewById<Button>(R.id.btnPair).setOnClickListener { DroneManager.requestPairing() }
         findViewById<Button>(R.id.btnHome).setOnClickListener {
             MissionController.stop()
@@ -110,11 +117,16 @@ class MainActivity : AppCompatActivity() {
     private var videoSurface: SurfaceHolder? = null
     private var videoSize = 0 to 0
     private var videoAttached = false
+    private var videoForConnected = false
 
     /** Live-Bild anhängen, sobald SDK und Bildfläche bereit sind (wird bei jedem Status-Update erneut versucht). */
     private fun attachVideo() {
         val h = videoSurface ?: return
-        if (videoAttached || !DroneManager.state.registered) return
+        val connected = DroneManager.state.connected
+        // Bei (Wieder-)Verbindung der Drohne Bildfläche neu anmelden, vorher liefert die Kamera nichts.
+        if (connected != videoForConnected) { videoAttached = false; videoForConnected = connected }
+        if (videoAttached || !DroneManager.state.registered || !connected) return
+        try { MediaDataCenter.getInstance().cameraStreamManager.removeCameraStreamSurface(h.surface) } catch (_: Throwable) {}
         try {
             MediaDataCenter.getInstance().cameraStreamManager.putCameraStreamSurface(
                 ComponentIndexType.LEFT_OR_MAIN, h.surface, videoSize.first, videoSize.second,
