@@ -1,19 +1,31 @@
 {
-  "name": "kreisverkehr-poco-do-bispo",
-  "beschreibung": "Vom Start am Südende der Doca do Poço do Bispo ca. 350 m nach Norden zum Kreisverkehr Praça 25 de Abril, einmal rum (70 m Radius, 40 m hoch, 12 Punkte im Kurvenflug, 4 Fotos, Kamera auf die Mitte), zurück über den Start. Weitester Punkt ca. 420 m.",
-  "speed": 6,
+  "name": "capitao-leitao-86-front",
+  "beschreibung": "Rua Capitão Leitão 86: Vorderfront (Ostseite, zur Straße) aus drei Höhen, Kamera auf die Fassadenmitte. Punkte über der Straße bzw. östlich davon, 15–25 m hoch. Gegenüber steht ein Bürogebäude, deshalb nicht tiefer als 15 m.",
+  "speed": 3,
   "rcLost": "continue",
   "ziel": {
-    "lat": 38.743,
-    "lon": -9.0998,
-    "h": 0
+    "lat": 38.738269,
+    "lon": -9.10542,
+    "h": 4
   },
-  "kreis": {
-    "radius": 70,
-    "h": 40,
-    "punkte": 12,
-    "start": 180,
-    "uhrzeigersinn": true,
-    "fotos": 4
-  }
+  "relativ": [
+    {
+      "richtung": 90,
+      "abstand": 15,
+      "h": 15,
+      "hover": 2
+    },
+    {
+      "richtung": 90,
+      "abstand": 25,
+      "h": 20,
+      "hover": 2
+    },
+    {
+      "richtung": 90,
+      "abstand": 30,
+      "h": 28,
+      "hover": 2
+    }
+  ]
 }
