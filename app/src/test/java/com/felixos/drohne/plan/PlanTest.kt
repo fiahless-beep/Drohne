@@ -65,3 +65,13 @@ class ZielPlanTest {
         assertTrue(m.waypoints[0].gimbalPitchDeg < -20 && m.waypoints[0].gimbalPitchDeg > -40)
     }
 }
+
+class RelativPlanTest {
+    @Test fun fassadenfoto() {
+        val (m, _) = PlanJson.parse("""{"name":"fassade","ziel":{"lat":38.74,"lon":-9.1,"h":10},"relativ":[{"richtung":200,"abstand":30,"h":12},{"richtung":200,"abstand":45,"h":20}]}""")
+        assertEquals(2, m.waypoints.size)
+        assertEquals(30.0, Geo.distance(m.waypoints[0].pos, LatLon(38.74, -9.1)), 0.5)
+        assertEquals(20.0, m.waypoints[0].headingDeg!!, 1.0)
+        assertTrue(m.waypoints[0].gimbalPitchDeg > -10 && m.waypoints[0].gimbalPitchDeg < 0)
+    }
+}

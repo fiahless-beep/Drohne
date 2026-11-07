@@ -25,3 +25,5 @@ Nach dem Flug lädt die App Fotos + `protokoll.txt` nach `fluege/<datum>_<name>/
 - Grenzen: max. 200 Punkte, 1–15 m/s, Höhe 2–120 m, Punkte max. 1000 m vom Startpunkt, Akku-Reserve wird in der App geprüft.
 
 Startpunkt (Home) ist dort, wo die Drohne steht; Höhen sind relativ dazu. Hindernisse (Bäume, Leitungen) kennt der Plan nicht: Flughöhe über dem höchsten Hindernis im Umkreis wählen.
+
+- `relativ` (optional, mit `ziel`, ersetzt `waypoints`): Punkte als `richtung` (Grad, vom Ziel aus gesehen: 180 = die Drohne steht südlich vom Ziel und schaut nach Norden) und `abstand` (m), `h` Flughöhe. Kamera und Nase zeigen aufs Ziel. Für Fassadenfotos: `ziel.h` = halbe Gebäudehöhe, `abstand` ≈ 1,5× Gebäudebreite, `h` ≈ Gebäudehöhe.

@@ -14,6 +14,7 @@ import org.json.JSONObject
  *   "licht": true,                    // optional: Landelampe unten während der Mission an (kleine LED, hilft nur aus wenigen Metern)
  *   "ziel": {"lat": 39.05, "lon": -8.17, "h": 8},   // optional: Gebäude/Platz; Kamera zeigt darauf (h = Zielhöhe über Boden)
  *   "kreis": {"radius": 30, "h": 40, "punkte": 8, "fotos": 4, "start": 180, "uhrzeigersinn": true}, // optional: Kreisflug ums Ziel, ersetzt waypoints; fotos = Anzahl Fotos (an weniger Punkten = flüssiger)
+ *   "relativ": [ {"richtung": 200, "abstand": 30, "h": 15} ],   // optional, mit ziel: Punkte als Richtung (vom Ziel aus gesehen) und Abstand; Kamera aufs Ziel
  *   "waypoints": [ {"lat": 39.05, "lon": -8.17, "h": 40, "pitch": -45, "photo": true, "hover": 0, "yaw": 90}, ... ]
  * }
  * Mit "ziel": Wegpunkte ohne "yaw" blicken zum Ziel, ohne "pitch" neigt die Kamera aufs Ziel.
@@ -33,6 +34,22 @@ object PlanJson {
             val m = Missions.orbit(target, kreis.getDouble("radius"), kreis.getDouble("h"), kreis.optInt("punkte", 8),
                 kreis.optDouble("start", 0.0), targetH, speed, name, kreis.optBoolean("uhrzeigersinn", true), kreis.optInt("fotos", kreis.optInt("punkte", 8)))
             return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false)) to o.optString("beschreibung", "")
+        }
+        // "relativ": Punkte als Richtung/Abstand vom Ziel (z. B. Fassadenfoto: richtung = von wo aus man schaut).
+        val rel = o.optJSONArray("relativ")
+        if (rel != null && !o.has("waypoints")) {
+            requireNotNull(target) { "relativ braucht ziel" }
+            val wps = (0 until rel.length()).map { i ->
+                val w = rel.getJSONObject(i)
+                val pos = Geo.offset(target, w.getDouble("abstand"), w.getDouble("richtung"))
+                val h = w.getDouble("h")
+                Waypoint(pos, h,
+                    gimbalPitchDeg = if (w.has("pitch")) w.getDouble("pitch") else Missions.pitchTo(w.getDouble("abstand"), h - targetH),
+                    takePhoto = w.optBoolean("photo", true), hoverSec = w.optInt("hover", 0),
+                    headingDeg = if (w.has("yaw")) w.getDouble("yaw") else Geo.bearing(pos, target))
+            }
+            val wps2 = if (wps.size == 1) wps + wps.first().copy(pos = Geo.offset(wps.first().pos, 3.0, 0.0), takePhoto = false) else wps
+            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false)) to o.optString("beschreibung", "")
         }
         val arr: JSONArray = o.getJSONArray("waypoints")
         val wps = (0 until arr.length()).map { i ->
