@@ -21,6 +21,7 @@ object MissionController {
     private lateinit var dir: File
     private var wpmzReady = false
     var currentKmz: File? = null
+    var currentMission: Mission? = null
         private set
     var uploaded = false
         private set
@@ -43,6 +44,7 @@ object MissionController {
                 last = state
                 DroneManager.log("Mission: $state")
                 if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
+                    if (currentMission?.light == true) DroneManager.setBottomLight("auto")
                     onFinished?.invoke()
                 }
             }
@@ -119,7 +121,7 @@ object MissionController {
     /** Schreibt die Variante als Datei und gibt DJIs Fehlerliste zurück (leer = in Ordnung). */
     private fun check(v: Variant, fileName: String): List<Any> {
         val f = Wpml.writeKmz(v.m, File(dir, fileName), options = v.o)
-        if (fileName != "probe.kmz") currentKmz = f
+        if (fileName != "probe.kmz") { currentKmz = f; currentMission = v.m }
         if (!wpmzReady) return emptyList()
         return try {
             WPMZManager.getInstance().checkValidation(f.absolutePath)?.value ?: emptyList()
@@ -148,6 +150,7 @@ object MissionController {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
         FlightReport.startFlight(missionId)
+        if (currentMission?.light == true) DroneManager.setBottomLight("an")
         DroneManager.safe("Start") {
             val ids = WaypointMissionManager.getInstance().getAvailableWaylineIDs(f.absolutePath)
             WaypointMissionManager.getInstance().startMission(missionId, ids, cb("Start"))

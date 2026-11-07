@@ -37,3 +37,31 @@ class PlanTest {
         assertTrue(e.maxDistanceFromHomeM < 6)
     }
 }
+
+class ZielPlanTest {
+    private val ziel = LatLon(38.5170, -9.0130)
+
+    @Test fun kreisBlicktAufsZiel() {
+        val (m, _) = PlanJson.parse("""{"name":"haus","ziel":{"lat":38.517,"lon":-9.013,"h":6},"kreis":{"radius":30,"h":40,"punkte":8,"start":180}}""")
+        assertEquals(9, m.waypoints.size)
+        assertEquals(m.waypoints.first().pos.lat, m.waypoints.last().pos.lat, 1e-9)
+        m.waypoints.forEach { w ->
+            assertEquals(30.0, Geo.distance(w.pos, ziel), 0.5)
+            assertEquals(Geo.bearing(w.pos, ziel), w.headingDeg!!, 1.0)
+            assertEquals(-48.6, w.gimbalPitchDeg, 1.0)
+        }
+        assertEquals(180.0, Geo.bearing(ziel, m.waypoints.first().pos), 1.0)
+        val kmz = Wpml.writeKmz(m, File.createTempFile("kreis", ".kmz"))
+        assertTrue(kmz.length() > 0)
+        assertTrue(Wpml.waylinesWpml(m).contains("smoothTransition"))
+    }
+
+    @Test fun wegpunkteMitZielBekommenRichtung() {
+        val (m, _) = PlanJson.parse("""{"ziel":{"lat":38.517,"lon":-9.013},"waypoints":[
+            {"lat":38.5175,"lon":-9.013,"h":30},{"lat":38.517,"lon":-9.0125,"h":30,"yaw":45,"pitch":-20}]}""")
+        assertEquals(180.0, m.waypoints[0].headingDeg!!, 1.0)
+        assertEquals(45.0, m.waypoints[1].headingDeg!!, 0.01)
+        assertEquals(-20.0, m.waypoints[1].gimbalPitchDeg, 0.01)
+        assertTrue(m.waypoints[0].gimbalPitchDeg < -20 && m.waypoints[0].gimbalPitchDeg > -40)
+    }
+}

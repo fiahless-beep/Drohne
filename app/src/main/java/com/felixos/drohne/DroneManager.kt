@@ -7,7 +7,9 @@ import android.util.Log
 import dji.sdk.keyvalue.key.BatteryKey
 import dji.sdk.keyvalue.key.DJIKey
 import dji.sdk.keyvalue.key.DJIKeyInfo
+import dji.sdk.keyvalue.key.FlightAssistantKey
 import dji.sdk.keyvalue.key.FlightControllerKey
+import dji.sdk.keyvalue.value.flightassistant.AuxiliaryLightMode
 import dji.sdk.keyvalue.key.KeyTools
 import dji.sdk.keyvalue.key.AirLinkKey
 import dji.sdk.keyvalue.key.ProductKey
@@ -248,6 +250,17 @@ object DroneManager {
                     log("Fernbedienung ist im Kopplungsmodus: jetzt Einschaltknopf der Drohne ca. 4 s halten, bis sie piept")
                 }
                 override fun onFailure(error: IDJIError) { log("Koppeln fehlgeschlagen: ${error.description()}") }
+            })
+    }
+
+    /** Landelampe unten: "an", "aus" oder "auto" (Standard: nur beim Landen). */
+    fun setBottomLight(mode: String) = safe("Licht") {
+        val m = when (mode) { "an" -> AuxiliaryLightMode.ON; "aus" -> AuxiliaryLightMode.OFF; else -> AuxiliaryLightMode.AUTO }
+        KeyManager.getInstance().setValue(
+            KeyTools.createKey(FlightAssistantKey.KeyBottomAuxiliaryLightMode), m,
+            object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
+                override fun onSuccess() { log("Landelampe: $mode") }
+                override fun onFailure(error: IDJIError) { log("Landelampe $mode fehlgeschlagen: ${error.description()}") }
             })
     }
 

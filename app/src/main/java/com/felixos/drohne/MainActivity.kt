@@ -121,12 +121,14 @@ class MainActivity : AppCompatActivity() {
 
     /** Mehr-Menü: Fotos holen, Token, Koppeln. */
     private fun showMore() {
-        val items = arrayOf("Fotos holen und hochladen", "GitHub-Token eintragen", "Fernbedienung neu koppeln")
+        val items = arrayOf("Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which) {
                 0 -> FlightReport.collectAndUpload(applicationContext)
                 1 -> askToken()
-                2 -> AlertDialog.Builder(this).setTitle("Neu koppeln?")
+                2 -> DroneManager.setBottomLight("an")
+                3 -> DroneManager.setBottomLight("auto")
+                4 -> AlertDialog.Builder(this).setTitle("Neu koppeln?")
                     .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
                     .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
                     .setNegativeButton("Abbrechen", null).show()
@@ -309,6 +311,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             appendLine(String.format(Locale.GERMANY, "Mission ca. %.1f min (ohne An-/Rückflug)", m.durationSec / 60))
         }
+        m.target?.let { appendLine("Kamera zeigt aufs Ziel (${String.format(Locale.US, "%.5f, %.5f", it.lat, it.lon)})") }
+        if (m.light) appendLine("Landelampe an")
         append("Funkabriss: " + if (m.rcLost == com.felixos.drohne.plan.RcLost.CONTINUE) "zu Ende fliegen, dann heim" else "sofort heim")
     }
 

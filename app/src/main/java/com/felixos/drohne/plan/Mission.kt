@@ -7,6 +7,8 @@ data class Waypoint(
     val gimbalPitchDeg: Double = -90.0,
     val takePhoto: Boolean = true,
     val hoverSec: Int = 0,
+    /** Blickrichtung der Drohne in Grad (0 = Nord, 90 = Ost); null = in Flugrichtung. */
+    val headingDeg: Double? = null,
 )
 
 /** Was tut die Drohne, wenn das Funksignal zum Controller abreißt? */
@@ -27,6 +29,10 @@ data class Mission(
     /** DJI-Gerätekennung im WPML. Mini 4 Pro = 68 laut DJI-Doku; am Gerät mit checkValidation prüfen. */
     val droneEnum: Int = 68,
     val droneSubEnum: Int = 0,
+    /** Zielpunkt (Gebäude, Platz), auf den die Kamera zeigt; nur zur Beschreibung, die Wegpunkte tragen Blickrichtung und Neigung schon. */
+    val target: LatLon? = null,
+    /** Landelampe (LED unten) während der Mission einschalten, z. B. zum Ausleuchten beim Schweben. */
+    val light: Boolean = false,
 ) {
     init {
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }
@@ -43,6 +49,30 @@ data class Mission(
 }
 
 object Missions {
+    /** Blickrichtung von [from] zum Ziel [to] in Grad. */
+    fun bearingTo(from: LatLon, to: LatLon): Double = Geo.bearing(from, to)
+
+    /** Kameraneigung, damit ein Ziel in [distM] Entfernung und [heightM] Tiefe mittig im Bild liegt. */
+    fun pitchTo(distM: Double, heightM: Double): Double =
+        (-Math.toDegrees(Math.atan2(heightM, distM))).coerceIn(-90.0, 0.0)
+
+    /**
+     * Kreisflug um ein Ziel: [points] Wegpunkte im Abstand [radiusM], Höhe [heightM], Kamera aufs Ziel.
+     * [startBearingDeg] = Richtung vom Ziel zum ersten Punkt (z. B. Sonne im Rücken: Sonnenrichtung wählen).
+     */
+    fun orbit(target: LatLon, radiusM: Double, heightM: Double, points: Int = 8, startBearingDeg: Double = 0.0,
+              targetHeightM: Double = 0.0, speedMs: Double = 4.0, name: String = "kreisflug", clockwise: Boolean = true): Mission {
+        require(points in 3..36) { "3–36 Punkte" }
+        require(radiusM in 5.0..200.0) { "Radius 5–200 m" }
+        val pitch = pitchTo(radiusM, heightM - targetHeightM)
+        val wps = (0..points).map { i ->
+            val b = startBearingDeg + (if (clockwise) 1 else -1) * 360.0 * (i % points) / points
+            val p = Geo.offset(target, radiusM, b)
+            Waypoint(p, heightM, gimbalPitchDeg = pitch, takePhoto = i < points, headingDeg = (b + 180) % 360)
+        }
+        return Mission(name = name, waypoints = wps, speedMs = speedMs, target = target)
+    }
+
     /** Kleinster Testflug: 10 m hoch, 5 m nach Norden, 1 Foto, zurück. Für den ersten Flug. */
     fun hoverTest(center: LatLon): Mission {
         val a = Waypoint(center, 10.0, gimbalPitchDeg = 0.0, takePhoto = false, hoverSec = 3)

@@ -50,14 +50,19 @@ object Wpml {
       </wpml:payloadInfo>""" else ""}
     </wpml:missionConfig>"""
 
-    private fun heading() = """
+    /** WPML will -180..180. */
+    private fun yaw(deg: Double): Int { var d = Math.round(deg).toInt() % 360; if (d > 180) d -= 360; if (d < -180) d += 360; return d }
+
+    private fun heading(w: Waypoint) = """
         <wpml:waypointHeadingParam>
-          <wpml:waypointHeadingMode>followWayline</wpml:waypointHeadingMode>
-          <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
+          <wpml:waypointHeadingMode>${if (w.headingDeg != null) "smoothTransition" else "followWayline"}</wpml:waypointHeadingMode>
+          <wpml:waypointHeadingAngle>${w.headingDeg?.let { yaw(it) } ?: 0}</wpml:waypointHeadingAngle>
           <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
-          <wpml:waypointHeadingAngleEnable>0</wpml:waypointHeadingAngleEnable>
+          <wpml:waypointHeadingAngleEnable>${if (w.headingDeg != null) 1 else 0}</wpml:waypointHeadingAngleEnable>
           <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
-        </wpml:waypointHeadingParam>
+        </wpml:waypointHeadingParam>"""
+
+    private fun turn() = """
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndStopWithDiscontinuityCurvature</wpml:waypointTurnMode>
           <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
@@ -104,8 +109,8 @@ object Wpml {
         <Point><coordinates>${f(w.pos.lon)},${f(w.pos.lat)}</coordinates></Point>
         <wpml:index>$i</wpml:index>
         ${if (execution) "<wpml:executeHeight>${f(w.heightM, 1)}</wpml:executeHeight>"
-          else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>1</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>1</wpml:useGlobalTurnParam>"}
-        <wpml:waypointSpeed>${f(m.speedMs, 1)}</wpml:waypointSpeed>${if (execution) heading() else ""}${if (opt.noActions) "" else actions(i, w, i)}
+          else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>${if (w.headingDeg != null) 0 else 1}</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>1</wpml:useGlobalTurnParam>"}
+        <wpml:waypointSpeed>${f(m.speedMs, 1)}</wpml:waypointSpeed>${if (execution || w.headingDeg != null) heading(w) else ""}${if (execution) turn() else ""}${if (opt.noActions) "" else actions(i, w, i)}
       </Placemark>"""
 
     fun templateKml(m: Mission, nowMs: Long): String = """<?xml version="1.0" encoding="UTF-8"?>
