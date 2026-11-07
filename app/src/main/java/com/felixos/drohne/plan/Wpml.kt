@@ -13,8 +13,8 @@ import java.util.zip.ZipOutputStream
  */
 /** Stellschrauben für die Datei-Erzeugung, um DJIs Prüfer-Meldungen einzugrenzen. */
 data class WpmlOptions(
-    /** Immer wpml:executeRCLostAction=goBack mitschreiben, auch bei goContinue. */
-    val alwaysRcLostAction: Boolean = false,
+    /** Immer wpml:executeRCLostAction=goBack mitschreiben, auch bei goContinue (Mini 4 Pro verlangt das, Test 7.11.). */
+    val alwaysRcLostAction: Boolean = true,
     /** Keine Aktionen (Gimbal/Foto/Hover) an den Wegpunkten. */
     val noActions: Boolean = false,
     /** WPML-Namensraum-Version, z. B. "1.0.6" oder "1.0.0". */

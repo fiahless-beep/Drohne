@@ -70,7 +70,7 @@ object MissionController {
         })
         val singles = listOf(
             Variant("Funkverlust=Heimflug", m.copy(rcLost = RcLost.GO_HOME), WpmlOptions()),
-            Variant("goContinue+Heimflugaktion", m, WpmlOptions(alwaysRcLostAction = true)),
+            Variant("ohne Heimflugaktion", m, WpmlOptions(alwaysRcLostAction = false)),
             Variant("ohne Aktionen", m, WpmlOptions(noActions = true)),
             Variant("Punkte 5 m weiter weg", shifted, WpmlOptions()),
             Variant("Gerät 77 (M3E)", m, WpmlOptions(droneEnum = 77)),
