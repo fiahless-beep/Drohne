@@ -151,21 +151,31 @@ class MainActivity : AppCompatActivity() {
     /** Mehr-Menü: Fotos holen, Token, Koppeln. */
     private fun showMore() {
         val swap = FollowController.swapAxes(this)
-        val items = arrayOf("Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
+        val items = arrayOf("Plan auf Karte zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
             "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which) {
-                0 -> FlightReport.collectAndUpload(applicationContext)
-                1 -> askToken()
-                2 -> DroneManager.setBottomLight("an")
-                3 -> DroneManager.setBottomLight("auto")
-                4 -> AlertDialog.Builder(this).setTitle("Neu koppeln?")
+                0 -> showOnMap()
+                1 -> FlightReport.collectAndUpload(applicationContext)
+                2 -> askToken()
+                3 -> DroneManager.setBottomLight("an")
+                4 -> DroneManager.setBottomLight("auto")
+                5 -> AlertDialog.Builder(this).setTitle("Neu koppeln?")
                     .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
                     .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
                     .setNegativeButton("Abbrechen", null).show()
-                5 -> { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }
+                6 -> { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }
             }
         }.show()
+    }
+
+    /** Wegpunkte des aktuellen Plans in Google Maps öffnen (als Fußweg-Route, zeigt die Lage auf dem Satellitenbild). */
+    private fun showOnMap() {
+        val m = mission ?: return DroneManager.log("Kein Plan: erst Testflug oder Plan laden")
+        val pts = m.waypoints.take(10).joinToString("/") { String.format(Locale.US, "%.6f,%.6f", it.pos.lat, it.pos.lon) }
+        val url = "https://www.google.com/maps/dir/$pts/data=!4m2!4m1!3e2"
+        try { startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))) }
+        catch (t: Throwable) { DroneManager.log("Karte: $url") }
     }
 
     private fun askToken() {
