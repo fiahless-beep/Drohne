@@ -47,6 +47,10 @@ data class DroneState(
     val landing: Boolean = false,
     /** Hinderniserkennung: null = unbekannt, "aktiv", "aus", oder "blind: vorn, hinten, …" (Sensoren sehen nichts, z. B. im Dunkeln). */
     val sensors: String? = null,
+    /** DJI-Höhenlimit in m (Einstellung/Zone); fliegt die Mission höher, kappt die Drohne stillschweigend. */
+    val heightLimitM: Int? = null,
+    /** Windwarnung der Drohne: 0 = keine, 1 = mäßig, 2 = stark. */
+    val windWarning: Int? = null,
 ) {
     val sensorsOk: Boolean get() = sensors == "aktiv"
 }
@@ -229,6 +233,12 @@ object DroneManager {
         watch(FlightControllerKey.KeyIsFlying) { s, v -> s.copy(flying = v == true) }
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
         // Landebestätigung: DJI hält kurz über dem Boden an und wartet auf ein Ja. Das gibt die App selbst.
+        watch(FlightControllerKey.KeyHeightLimit) { s, v -> s.copy(heightLimitM = v) }
+        watch(FlightControllerKey.KeyWindWarning) { s, v ->
+            val lvl = when (v) { dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_1 -> 1; dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_2 -> 2; dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_0 -> 0; else -> null }
+            if (lvl != null && lvl != s.windWarning && (lvl > 0 || s.windWarning != null)) log(when (lvl) { 0 -> "Wind: keine Warnung mehr"; 1 -> "WIND: mäßige Windwarnung, nahe Gebäuden nicht fliegen"; else -> "WIND: STARKER WIND, sofort zurück und landen" })
+            s.copy(windWarning = lvl ?: s.windWarning)
+        }
         watch(FlightControllerKey.KeyIsLandingConfirmationNeeded) { s, v -> s.copy(landingConfirmationNeeded = v == true) }
         watch(FlightControllerKey.KeyIsInLandingMode) { s, v -> s.copy(landing = v == true) }
         addStateListener { s -> if (s.landingConfirmationNeeded && !confirmSent) { confirmSent = true; confirmLanding("Drohne wartet auf Landebestätigung") } else if (!s.landingConfirmationNeeded) confirmSent = false }

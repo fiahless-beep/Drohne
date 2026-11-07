@@ -9,6 +9,8 @@ data class Waypoint(
     val hoverSec: Int = 0,
     /** Blickrichtung der Drohne in Grad (0 = Nord, 90 = Ost); null = in Flugrichtung. */
     val headingDeg: Double? = null,
+    /** Geschwindigkeit ab diesem Punkt bis zum nächsten in m/s; null = Missionsgeschwindigkeit. */
+    val speedMs: Double? = null,
 )
 
 /** Was tut die Drohne, wenn das Funksignal zum Controller abreißt? */

@@ -95,6 +95,23 @@ object MissionController {
      */
     /** Sichere Transithöhe: Anflug und Rückweg nie unter dieser Höhe (Absturz 7.11.: 12 m gegen Gebäude). */
     const val TRANSIT_HEIGHT_M = 30.0
+    /** Tempo-Regeln (Felix 8.11.): unter Transithöhe max. 4 m/s, im Transit max. 5 m/s; nahe Gebäuden gedrosselt bis 1,5 m/s am 8-m-Abstand. */
+    const val LOW_SPEED_MAX = 4.0
+    const val TRANSIT_SPEED_MAX = 5.0
+    const val NEAR_SPEED_MIN = 1.5
+    const val NEAR_DIST_M = 30.0
+    /** Heimflughöhe für diesen Plan (Transit bzw. höchstes Gebäude + Abstand). */
+    var rthHeightM = TRANSIT_HEIGHT_M
+
+    private fun speedFor(w: com.felixos.drohne.plan.Waypoint, next: com.felixos.drohne.plan.Waypoint?, m: Mission): Double {
+        val cap = minOf(m.speedMs, if (w.heightM < TRANSIT_HEIGHT_M - 0.5 || (next != null && next.heightM < TRANSIT_HEIGHT_M - 0.5)) LOW_SPEED_MAX else TRANSIT_SPEED_MAX)
+        if (m.obstacles.isEmpty()) return cap
+        val pts = listOfNotNull(w, next) + (next?.let { listOf(w.copy(pos = LatLon((w.pos.lat + it.pos.lat) / 2, (w.pos.lon + it.pos.lon) / 2), heightM = minOf(w.heightM, it.heightM))) } ?: emptyList())
+        val d = pts.mapNotNull { com.felixos.drohne.plan.Obstacles.nearestRelevant(it.pos, it.heightM, m.obstacles) }.minOrNull() ?: return cap
+        if (d >= NEAR_DIST_M) return cap
+        val t = ((d - com.felixos.drohne.plan.Obstacles.MARGIN_M) / (NEAR_DIST_M - com.felixos.drohne.plan.Obstacles.MARGIN_M)).coerceIn(0.0, 1.0)
+        return (NEAR_SPEED_MIN + t * (cap - NEAR_SPEED_MIN)).coerceAtMost(cap)
+    }
 
     fun prepare(m0: Mission): Boolean {
         uploaded = false
@@ -105,7 +122,7 @@ object MissionController {
         // Deshalb: erster Punkt = senkrecht über dem Startpunkt auf Transithöhe (unabhängig von takeOffSecurityHeight),
         // dann über den ersten Missionspunkt, dort absteigen; am Ende wieder hoch und über den Startpunkt (Heimflug = nur Abstieg).
         val transit = maxOf(TRANSIT_HEIGHT_M, m0.waypoints.maxOf { it.heightM })
-        val m = if (m0.waypoints.size <= 196) {
+        val m1 = if (m0.waypoints.size <= 196) {
             val first = m0.waypoints.first(); val last = m0.waypoints.last()
             // Übereinanderliegende Punkte 1,5 m versetzen (DJI mag keine Punkte ohne waagerechten Abstand).
             fun beside(p: LatLon, towards: LatLon) = Geo.offset(p, 1.5, Geo.bearing(p, towards))
@@ -121,7 +138,13 @@ object MissionController {
             else DroneManager.log("Transithöhe ${transit.toInt()} m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel")
             m0.copy(waypoints = pre + m0.waypoints + post, takeOffSecurityHeightM = transit)
         } else m0
-        conflicts = com.felixos.drohne.plan.Obstacles.check(m, home)
+        // Tempo je Abschnitt
+        val wps = m1.waypoints.mapIndexed { i, w -> w.copy(speedMs = speedFor(w, m1.waypoints.getOrNull(i + 1), m1)) }
+        val m = m1.copy(waypoints = wps, speedMs = minOf(m1.speedMs, TRANSIT_SPEED_MAX))
+        val slow = wps.filter { (it.speedMs ?: 99.0) < LOW_SPEED_MAX - 0.1 }
+        DroneManager.log("Tempo: max ${m.speedMs} m/s" + if (slow.isNotEmpty()) ", ${slow.size} Abschnitte nahe Gebäuden gedrosselt (min ${String.format(java.util.Locale.GERMANY, "%.1f", slow.minOf { it.speedMs!! })} m/s)" else "")
+        rthHeightM = maxOf(transit, (m.obstacles.maxOfOrNull { it.heightM } ?: 0.0) + com.felixos.drohne.plan.Obstacles.CLEARANCE_M).coerceIn(20.0, 120.0)
+        conflicts = com.felixos.drohne.plan.Obstacles.check(m, home) + (home?.let { com.felixos.drohne.plan.Obstacles.checkReturn(m, it, rthHeightM) } ?: emptyList())
         if (conflicts.isNotEmpty()) {
             DroneManager.log("GEBÄUDE-WÄCHTER: ${conflicts.size} Konflikt(e): " + conflicts.joinToString("; "))
         } else if (m.obstacles.isNotEmpty()) DroneManager.log("Gebäude-Wächter: Strecke frei (${m.obstacles.size} Gebäude geprüft)")
@@ -213,7 +236,7 @@ object MissionController {
             DroneManager.log("Karte: https://www.google.com/maps/dir/$pts/data=!4m2!4m1!3e2")
         }
         if (currentMission?.light == true) DroneManager.setBottomLight("an")
-        currentMission?.let { m -> DroneManager.setGoHomeHeight(m.waypoints.maxOf { it.heightM }.toInt().coerceIn(20, 120)) }
+        DroneManager.setGoHomeHeight(rthHeightM.toInt().coerceIn(20, 120))
         DroneManager.safe("Start") {
             val ids = WaypointMissionManager.getInstance().getAvailableWaylineIDs(f.absolutePath)
             WaypointMissionManager.getInstance().startMission(missionId, ids, cb("Start"))

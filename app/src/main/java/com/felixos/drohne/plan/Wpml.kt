@@ -118,8 +118,8 @@ object Wpml {
         <Point><coordinates>${f(w.pos.lon)},${f(w.pos.lat)}</coordinates></Point>
         <wpml:index>$i</wpml:index>
         ${if (execution) "<wpml:executeHeight>${f(w.heightM, 1)}</wpml:executeHeight>"
-          else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>${if (w.headingDeg != null) 0 else 1}</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>${if (passes(w)) 0 else 1}</wpml:useGlobalTurnParam>" + (if (passes(w)) turn(w) else "")}
-        <wpml:waypointSpeed>${f(m.speedMs, 1)}</wpml:waypointSpeed>${if (execution || w.headingDeg != null) heading(w) else ""}${if (execution) turn(w) else ""}${if (opt.noActions) "" else actions(i, w, i)}
+          else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>${if (w.speedMs != null) 0 else 1}</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>${if (w.headingDeg != null) 0 else 1}</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>${if (passes(w)) 0 else 1}</wpml:useGlobalTurnParam>" + (if (passes(w)) turn(w) else "")}
+        <wpml:waypointSpeed>${f(w.speedMs ?: m.speedMs, 1)}</wpml:waypointSpeed>${if (execution || w.headingDeg != null) heading(w) else ""}${if (execution) turn(w) else ""}${if (opt.noActions) "" else actions(i, w, i)}
       </Placemark>"""
 
     fun templateKml(m: Mission, nowMs: Long): String = """<?xml version="1.0" encoding="UTF-8"?>

@@ -17,9 +17,27 @@ object Obstacles {
     const val MARGIN_M = 8.0   // Kartenkoordinaten und GPS sind je einige Meter ungenau
     const val CLEARANCE_M = 8.0
 
-    data class Conflict(val from: Int, val to: Int, val obstacle: Obstacle, val heightM: Double) {
-        override fun toString() = "Strecke ${from + 1}→${to + 1} auf ${heightM.toInt()} m trifft „${obstacle.name}“ (${obstacle.heightM.toInt()} m hoch)"
+    data class Conflict(val from: Int, val to: Int, val obstacle: Obstacle, val heightM: Double, val toHome: Boolean = false) {
+        override fun toString() = if (toHome) "Heimflug von Punkt ${from + 1} auf ${heightM.toInt()} m trifft „${obstacle.name}“ (${obstacle.heightM.toInt()} m hoch)"
+            else "Strecke ${from + 1}→${to + 1} auf ${heightM.toInt()} m trifft „${obstacle.name}“ (${obstacle.heightM.toInt()} m hoch)"
     }
+
+    /** Heimflug-Linien: von jedem Punkt gerade zum Startpunkt auf Heimflughöhe [rthHeightM] (so fliegt DJI bei Akku knapp oder Funkverlust). */
+    fun checkReturn(m: Mission, home: LatLon, rthHeightM: Double, obstacles: List<Obstacle> = m.obstacles): List<Conflict> {
+        if (obstacles.isEmpty()) return emptyList()
+        val out = mutableListOf<Conflict>()
+        m.waypoints.forEachIndexed { i, w ->
+            for (o in obstacles) {
+                if (rthHeightM >= o.heightM + CLEARANCE_M) continue
+                if (segmentNear(w.pos, home, o.polygon, MARGIN_M)) { out += Conflict(i, -1, o, rthHeightM, toHome = true); break }
+            }
+        }
+        return out
+    }
+
+    /** Waagerechter Abstand vom Punkt zum nächsten Gebäude, das auf dieser Höhe im Weg sein kann (Höhe + Sicherheitsabstand über der Flughöhe); null = keins relevant. */
+    fun nearestRelevant(p: LatLon, heightM: Double, obstacles: List<Obstacle>): Double? =
+        obstacles.filter { heightM < it.heightM + CLEARANCE_M }.minOfOrNull { if (inside(p, it.polygon)) 0.0 else distanceToPolygon(p, it.polygon) }
 
     /** Alle Konflikte der Mission inkl. Start (Steigflug am Startpunkt, dann gerade zum ersten Punkt). */
     fun check(m: Mission, home: LatLon?, obstacles: List<Obstacle> = m.obstacles): List<Conflict> {

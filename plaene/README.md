@@ -35,5 +35,7 @@ Stufen in der App (jede für sich reicht, um diesen Absturz zu verhindern):
 2. **Gebäudedaten Pflicht**: Punkte unter 30 m nur, wenn der Plan `hindernisse` (Umrisse + Höhen aus den Kartendaten) enthält oder ausdrücklich `"umgebung": "frei"` sagt (nichts über 2 m im Umkreis von 50 m). Der Gebäude-Wächter prüft jede Strecke inkl. Start: 8 m waagerechter Abstand und 8 m über Dachhöhe.
 3. **Geplanter Start** `"start": {lat, lon}`: die Prüfung gilt für diesen Startpunkt; steht die Drohne mehr als 50 m weg, verweigert die App den Start.
 4. **Nachts/ohne Sensoren**: Punkte unter 25 m nur bei Tageslicht (Sonne über −3°) und wenn die Hinderniserkennung „aktiv“ meldet. Gilt auch für „Folgen“.
-5. **Hinderniswächter im Livebild**: hält Mission oder Folgen an, wenn eine Fläche schnell näher kommt (Standard an; reiner Abstieg wird ausgeblendet). Abschalten unter Mehr ….
+5. **Tempo** (Felix 8.11.): unter 30 m höchstens 4 m/s, im Transit 5 m/s, egal was `speed` sagt. Nahe bekannten Gebäuden drosselt die App je Abschnitt: 30 m Abstand = volles Tempo, 8 m Abstand = 1,5 m/s.
+6. **Heimflug**: Heimflughöhe = Transithöhe bzw. höchstes Gebäude + 8 m; der Wächter prüft von jedem Punkt die gerade Linie zum Start (so fliegt DJI bei Akku knapp oder Funkverlust). Liegt das DJI-Höhenlimit unter der Flughöhe oder meldet die Drohne Wind, verweigert die App den Start.
+7. **Hinderniswächter im Livebild**: hält Mission oder Folgen an, wenn eine Fläche schnell näher kommt (Standard an; reiner Abstieg wird ausgeblendet). Abschalten unter Mehr ….
 Für den Planer (Claude): Startpunkt und Gebäude immer aus den Kartendaten holen, Linie Start→erster Punkt prüfen, in engen Straßen keine Punkte unter Dachhöhe der Nachbarn, nachts nie unter 25 m, Testflüge nur bei Tageslicht.

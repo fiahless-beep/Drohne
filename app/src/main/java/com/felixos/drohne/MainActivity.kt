@@ -326,6 +326,15 @@ class MainActivity : AppCompatActivity() {
         }
         if ((s.satellites ?: 0) < minSatellites) add("Zu wenig GPS (mind. $minSatellites Satelliten)")
         MissionController.conflicts.forEach { add("Gebäude-Wächter: $it") }
+        if (m != null) {
+            val top = maxOf(m.waypoints.maxOf { it.heightM }, MissionController.rthHeightM)
+            s.heightLimitM?.let { if (it < top - 0.5) add("DJI-Höhenlimit $it m liegt unter der Flughöhe ${top.toInt()} m: die Drohne würde tiefer fliegen als geplant. Limit in DJI Fly anheben.") }
+            if (s.heightLimitM == null) add("DJI-Höhenlimit noch nicht gelesen (kurz warten)")
+            when (s.windWarning) {
+                2 -> add("Starke Windwarnung der Drohne: kein Start")
+                1 -> if (m.waypoints.any { it.heightM < MissionController.TRANSIT_HEIGHT_M }) add("Windwarnung der Drohne: Punkte unter ${MissionController.TRANSIT_HEIGHT_M.toInt()} m heute nicht")
+            }
+        }
         // Absturz 7.11.: tiefe Punkte nur bei Tageslicht und mit arbeitenden Sensoren.
         if (m != null) {
             val low = m.waypoints.filter { it.heightM < MIN_LOW_HEIGHT_M }
