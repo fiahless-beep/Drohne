@@ -314,7 +314,7 @@ object DroneManager {
         KeyManager.getInstance().performAction(
             KeyTools.createKey(FlightControllerKey.KeyStartGoHome),
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
-                override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) { log("Rückkehr zum Startpunkt ausgelöst") }
+                override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) { log("Rückkehr zum Startpunkt ausgelöst"); landingHelper() }
                 override fun onFailure(error: IDJIError) { log("Rückkehr fehlgeschlagen: ${error.description()}") }
             })
     }
