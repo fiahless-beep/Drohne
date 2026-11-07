@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="horizontal">
+
+    <SurfaceView
+        android:id="@+id/video"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:background="#1B1F24"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:fontFamily="monospace" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+            <Button android:id="@+id/btnPlan" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Testquadrat" />
+            <Button android:id="@+id/btnUpload" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Hochladen" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button android:id="@+id/btnStart" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Start" />
+            <Button android:id="@+id/btnPause" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Pause" />
+            <Button android:id="@+id/btnResume" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Weiter" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnHome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#C62828"
+            android:text="Abbrechen + Heimflug"
+            android:textColor="#FFFFFF" />
+
+        <ScrollView
+            android:id="@+id/logScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#B0BEC5"
+                android:textSize="11sp"
+                android:fontFamily="monospace" />
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>
