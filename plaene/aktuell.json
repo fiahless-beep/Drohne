@@ -1,33 +1,8 @@
 {
-  "name": "capitao-leitao-86",
-  "beschreibung": "Rua Capitão Leitão 86 (rosa Haus, 2 Geschosse): Foto 1 Fassade aus 12 m Höhe, 7 m Abstand (über der Straße, unter Dachhöhe gegenüber). Foto 2 Fassade aus 32 m Höhe, 30 m Abstand (über dem Gewerbekomplex gegenüber, deshalb hoch). Foto 3 Einfahrtstor nördlich vom Haus, 10 m hoch, 7 m Abstand, über der Straße.",
-  "speed": 2,
+  "name": "kreis-poco-do-bispo-30m",
+  "beschreibung": "Sicherer Testplan (Tageslicht): Kreis um den Kreisverkehr am Hafenbecken Poço do Bispo, 30 m hoch, Radius 20 m, 6 Fotos auf die Mitte. Start aus der Nähe (max. 200 m). Nichts in der Nähe ist höher als 15 m.",
+  "speed": 3,
   "rcLost": "continue",
-  "ziel": {
-    "lat": 38.7381246,
-    "lon": -9.1054578,
-    "h": 4
-  },
-  "waypoints": [
-    {
-      "lat": 38.738118,
-      "lon": -9.105378,
-      "h": 12,
-      "hover": 2
-    },
-    {
-      "lat": 38.738096,
-      "lon": -9.105114,
-      "h": 32,
-      "hover": 2
-    },
-    {
-      "lat": 38.738193,
-      "lon": -9.10538,
-      "h": 10,
-      "yaw": 276,
-      "pitch": -50,
-      "hover": 2
-    }
-  ]
+  "ziel": { "lat": 38.74002, "lon": -9.09930, "h": 0 },
+  "kreis": { "radius": 20, "h": 30, "punkte": 12, "fotos": 6, "start": 180, "uhrzeigersinn": true }
 }
