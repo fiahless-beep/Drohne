@@ -169,6 +169,12 @@ object MissionController {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
         FlightReport.startFlight(missionId)
+        currentMission?.let { m ->
+            val h = DroneManager.state.home
+            if (h?.latitude != null && h.latitude != 0.0) DroneManager.log(String.format(java.util.Locale.US, "Startpunkt: %.6f, %.6f", h.latitude, h.longitude))
+            val pts = m.waypoints.take(10).joinToString("/") { String.format(java.util.Locale.US, "%.6f,%.6f", it.pos.lat, it.pos.lon) }
+            DroneManager.log("Karte: https://www.google.com/maps/dir/$pts/data=!4m2!4m1!3e2")
+        }
         if (currentMission?.light == true) DroneManager.setBottomLight("an")
         DroneManager.safe("Start") {
             val ids = WaypointMissionManager.getInstance().getAvailableWaylineIDs(f.absolutePath)
