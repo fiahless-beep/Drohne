@@ -1,8 +1,18 @@
 {
-  "name": "beispiel-kreisflug",
-  "beschreibung": "BEISPIEL, nicht fliegen: Kreisflug 30 m um ein Haus bei Azeitão, 40 m hoch, 8 Fotos, Kamera aufs Haus. Echte Pläne erstellt Claude für den jeweiligen Ort.",
-  "speed": 4,
+  "name": "stufe12-kreis",
+  "beschreibung": "Stufe 12, erster Cloud-Plan: Kreis mit 20 m Radius um einen Punkt 20 m nördlich von Felix, 25 m hoch, 6 Fotos, Kamera auf den Punkt. Weitester Punkt ca. 40 m vom Start.",
+  "speed": 3,
   "rcLost": "continue",
-  "ziel": { "lat": 38.5170, "lon": -9.0130, "h": 6 },
-  "kreis": { "radius": 30, "h": 40, "punkte": 8, "start": 200, "uhrzeigersinn": true }
+  "ziel": {
+    "lat": 38.74002,
+    "lon": -9.0993,
+    "h": 0
+  },
+  "kreis": {
+    "radius": 20,
+    "h": 25,
+    "punkte": 6,
+    "start": 180,
+    "uhrzeigersinn": true
+  }
 }
