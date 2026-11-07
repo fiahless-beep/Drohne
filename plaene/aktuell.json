@@ -1,17 +1,17 @@
 {
-  "name": "stufe12-kreis",
-  "beschreibung": "Stufe 12, erster Cloud-Plan: Kreis mit 20 m Radius um einen Punkt 20 m nördlich von Felix, 25 m hoch, 6 Fotos, Kamera auf den Punkt. Weitester Punkt ca. 40 m vom Start.",
-  "speed": 3,
+  "name": "kreisverkehr-poco-do-bispo",
+  "beschreibung": "Vom Start am Südende der Doca do Poço do Bispo ca. 350 m nach Norden zum Kreisverkehr Praça 25 de Abril, einmal rum (70 m Radius, 40 m hoch, 8 Fotos, Kamera auf die Mitte), zurück zum Start. Weitester Punkt ca. 420 m.",
+  "speed": 5,
   "rcLost": "continue",
   "ziel": {
-    "lat": 38.74002,
-    "lon": -9.0993,
+    "lat": 38.743,
+    "lon": -9.0998,
     "h": 0
   },
   "kreis": {
-    "radius": 20,
-    "h": 25,
-    "punkte": 6,
+    "radius": 70,
+    "h": 40,
+    "punkte": 8,
     "start": 180,
     "uhrzeigersinn": true
   }
