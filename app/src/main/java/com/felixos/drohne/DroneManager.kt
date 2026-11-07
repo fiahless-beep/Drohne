@@ -128,6 +128,8 @@ object DroneManager {
 
             override fun onProductConnect(productId: Int) {
                 log("Drohne/Controller verbunden (Produkt $productId)")
+                main.postDelayed({ logSnapshot("3 s nach Verbinden") }, 3000)
+                main.postDelayed({ logSnapshot("10 s nach Verbinden") }, 10000)
             }
 
             override fun onProductDisconnect(productId: Int) {
@@ -159,13 +161,45 @@ object DroneManager {
 
     private val holder = Any()
 
+    /** Alle beobachteten Werte, damit sie zusätzlich regelmäßig abgefragt werden können. */
+    private val polls = CopyOnWriteArrayList<() -> Unit>()
+    private val pollErrors = HashSet<String>()
+    private var polling = false
+
     private fun <T> watch(info: DJIKeyInfo<T>, apply: (DroneState, T?) -> DroneState) {
         val key: DJIKey<T> = KeyTools.createKey(info)
-        KeyManager.getInstance().listen(key, holder) { _, new -> update { apply(it, new) } }
+        val name = info.toString().substringAfterLast('.')
         try {
-            val v = KeyManager.getInstance().getValue(key)
-            if (v != null) update { apply(it, v) }
-        } catch (_: Throwable) {}
+            KeyManager.getInstance().listen(key, holder) { _, new -> update { apply(it, new) } }
+        } catch (t: Throwable) { log("Beobachten von $name fehlgeschlagen: ${t.message}") }
+        // Rückfall: Wert auch direkt abfragen (falls Meldungen ausbleiben).
+        polls += {
+            try {
+                val v = KeyManager.getInstance().getValue(key)
+                update { apply(it, v) }
+            } catch (t: Throwable) {
+                if (pollErrors.add(name)) log("Abfrage $name: ${t.javaClass.simpleName} ${t.message}")
+            }
+        }
+        polls[polls.size - 1]()
+    }
+
+    private fun startPolling() {
+        if (polling) return
+        polling = true
+        val tick = object : Runnable {
+            override fun run() {
+                Thread { polls.forEach { it() } }.start()
+                main.postDelayed(this, 2000)
+            }
+        }
+        main.postDelayed(tick, 2000)
+    }
+
+    /** Einmalige Momentaufnahme ins Protokoll, um Verbindungsprobleme einzugrenzen. */
+    fun logSnapshot(reason: String) {
+        val s = state
+        log("[$reason] Contr=${s.rcConnected} Funk=${s.airLinkConnected} Drohne=${s.connected} Typ=${s.productType} Akku=${s.batteryPercent}")
     }
 
     private fun startTelemetry() {
@@ -185,6 +219,7 @@ object DroneManager {
         watch(FlightControllerKey.KeyCompassHeading) { s, v -> s.copy(headingDeg = v) }
         watch(FlightControllerKey.KeyIsFlying) { s, v -> s.copy(flying = v == true) }
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
+        startPolling()
         log("Telemetrie läuft")
     }
 
