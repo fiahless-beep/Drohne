@@ -64,6 +64,7 @@ object DroneManager {
     fun removeStateListener(l: (DroneState) -> Unit) { stateListeners -= l }
     fun addLogListener(l: (String) -> Unit) { logListeners += l; synchronized(logLines) { logLines.forEach(l) } }
     fun removeLogListener(l: (String) -> Unit) { logListeners -= l }
+    fun logText(): String = synchronized(logLines) { logLines.joinToString("\n") }
 
     fun log(msg: String) {
         val line = SimpleDateFormat("HH:mm:ss", Locale.GERMANY).format(Date()) + "  " + msg

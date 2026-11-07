@@ -34,13 +34,17 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var status: TextView
     private lateinit var log: TextView
-    private lateinit var logScroll: ScrollView
+    private lateinit var missionCard: TextView
+    private lateinit var overlay: TextView
+    private lateinit var videoHint: TextView
+    private val logLines = ArrayDeque<String>()
 
     private val stateListener: (DroneState) -> Unit = { render(it) }
     private val logListener: (String) -> Unit = { line ->
-        log.append(line + "\n")
-        logScroll.post { logScroll.fullScroll(ScrollView.FOCUS_DOWN) }
+        logLines.addLast(line); while (logLines.size > 6) logLines.removeFirst()
+        log.text = logLines.joinToString("\n")
     }
+    private val missionListener: (String) -> Unit = { text -> runOnUiThread { missionCard.text = text } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +52,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         status = findViewById(R.id.status)
         log = findViewById(R.id.log)
-        logScroll = findViewById(R.id.logScroll)
+        missionCard = findViewById(R.id.missionText)
+        overlay = findViewById(R.id.overlay)
+        videoHint = findViewById(R.id.videoHint)
+        MissionController.onStateText = missionListener
 
         ActivityCompat.requestPermissions(this, arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -96,7 +103,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         DroneManager.addStateListener(stateListener)
-        log.text = ""  // Beim Wiederanmelden liefert der Manager die ganze Historie neu
+        logLines.clear(); log.text = ""  // Beim Wiederanmelden liefert der Manager die ganze Historie neu
         DroneManager.addLogListener(logListener)
     }
 
@@ -178,7 +185,7 @@ class MainActivity : AppCompatActivity() {
 
     /** Ganzes Protokoll groß anzeigen, mit Kopieren-Knopf. */
     private fun showLog() {
-        val text = status.text.toString() + "\n\n" + log.text
+        val text = status.text.toString() + "\n\n" + DroneManager.logText()
         AlertDialog.Builder(this).setTitle("Protokoll")
             .setMessage(text.takeLast(6000))
             .setPositiveButton("Kopieren") { _, _ ->
@@ -253,23 +260,31 @@ class MainActivity : AppCompatActivity() {
     private fun render(s: DroneState) {
         attachVideo()
         val loc = s.location
+        val green = 0xFF2E7D32.toInt(); val red = 0xFFC62828.toInt(); val amber = 0xFFF9A825.toInt(); val grey = 0xFF37474F.toInt()
+        fun chip(id: Int, text: String, color: Int) = findViewById<TextView>(id).apply { this.text = text; backgroundTintList = android.content.res.ColorStateList.valueOf(color) }
+        chip(R.id.chipLink, "Drohne\n" + when { s.connected -> "verbunden"; s.rcConnected -> "Contr. ok"; else -> "getrennt" },
+            when { s.connected -> green; s.rcConnected -> amber; else -> red })
+        val b = s.batteryPercent
+        chip(R.id.chipBattery, "Akku\n" + (b?.let { "$it %" } ?: "–"), when { b == null -> grey; b < 25 -> red; b < 40 -> amber; else -> green })
+        val sat = s.satellites
+        val homeOk = s.home?.latitude != null && s.home.latitude != 0.0
+        chip(R.id.chipGps, "GPS\n" + (sat?.let { "$it Sat." } ?: "–") + if (homeOk) " ⌂" else "",
+            when { sat == null -> grey; sat < minSatellites -> amber; !homeOk -> amber; else -> green })
+        val mode = when { FollowController.active -> "folgt"; s.flying -> "fliegt"; s.motorsOn -> "Motoren an"; s.connected -> "am Boden"; else -> "–" }
+        chip(R.id.chipMode, "Status\n$mode", when { FollowController.active || s.flying -> amber; s.connected -> green; else -> grey })
         status.text = buildString {
-            appendLine("SDK:     " + when {
-                s.registered -> "registriert (App ${BuildConfig.VERSION_NAME})"
-                s.registerError != null -> "FEHLER: ${s.registerError}"
-                else -> "startet …"
+            append(when {
+                s.registered -> "App ${BuildConfig.VERSION_NAME} · SDK ok"
+                s.registerError != null -> "SDK-FEHLER: ${s.registerError}"
+                else -> "SDK startet …"
             })
-            appendLine("Contr.:  " + (if (s.rcConnected) "verbunden" else "nicht verbunden") + "  Funk: " + (if (s.airLinkConnected) "ok" else "kein Signal"))
-            appendLine("Drohne:  " + (if (s.connected) "verbunden" else "nicht verbunden") + (s.productType?.let { " ($it)" } ?: ""))
-            appendLine("Akku:    " + (s.batteryPercent?.let { "$it %" } ?: "–"))
-            appendLine("GPS:     " + (s.satellites?.let { "$it Satelliten" } ?: "–"))
-            if (loc?.latitude != null && loc.latitude != 0.0) {
-                appendLine(String.format(Locale.US, "Pos:     %.6f, %.6f", loc.latitude, loc.longitude))
-                appendLine(String.format(Locale.US, "Höhe:    %.1f m", loc.altitude ?: 0.0))
-            }
-            appendLine("Home:    " + if (s.home?.latitude != null && s.home.latitude != 0.0) "gesetzt" else "–")
-            append("Status:  " + when { s.flying -> "fliegt"; s.motorsOn -> "Motoren an"; else -> "am Boden" })
+            append(" · Funk " + (if (s.airLinkConnected) "ok" else "–"))
+            s.productType?.let { append(" · $it") }
         }
+        overlay.text = if (loc?.latitude != null && loc.latitude != 0.0)
+            String.format(Locale.US, "%.1f m · %.5f, %.5f", loc.altitude ?: 0.0, loc.latitude, loc.longitude) else ""
+        videoHint.visibility = if (s.connected && videoAttached) android.view.View.GONE else android.view.View.VISIBLE
+        videoHint.text = if (s.connected) "Livebild kommt …" else "Kein Livebild – Drohne nicht verbunden"
     }
 
     private fun preflightProblems(s: DroneState): List<String> = buildList {

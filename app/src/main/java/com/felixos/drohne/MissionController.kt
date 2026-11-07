@@ -27,6 +27,10 @@ object MissionController {
         private set
     /** Wird einmal aufgerufen, wenn die Mission abgeflogen ist (vor dem Heimflug). */
     var onFinished: (() -> Unit)? = null
+    /** Kurztext für die Missions-Kachel in der Oberfläche. */
+    var onStateText: ((String) -> Unit)? = null
+    private var stateText = ""
+    private fun show(text: String) { stateText = text; onStateText?.invoke(text) }
 
     fun init(context: Context) {
         dir = File(context.getExternalFilesDir(null), "missions").apply { mkdirs() }
@@ -43,6 +47,16 @@ object MissionController {
                 if (state == last) return
                 last = state
                 DroneManager.log("Mission: $state")
+                val m = currentMission
+                val name = m?.name ?: missionId
+                show(when (state) {
+                    WaypointMissionExecuteState.EXECUTING -> "▶ $name läuft"
+                    WaypointMissionExecuteState.RECOVERING -> "$name: setzt fort"
+                    WaypointMissionExecuteState.RETURN_TO_START_POINT -> "$name: Heimflug"
+                    WaypointMissionExecuteState.FINISHED -> "✓ $name fertig – Fotos kommen nach der Landung"
+                    WaypointMissionExecuteState.INTERRUPTED -> "⚠ $name unterbrochen"
+                    else -> "$name: $state"
+                })
                 if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
                     if (currentMission?.light == true) DroneManager.setBottomLight("auto")
                     onFinished?.invoke()
@@ -51,7 +65,11 @@ object MissionController {
         })
         mgr.addWaylineExecutingInfoListener(object : WaylineExecutingInfoListener {
             override fun onWaylineExecutingInfoUpdate(info: WaylineExecutingInfo?) {
-                info?.let { DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}") }
+                info?.let {
+                    DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}")
+                    val n = currentMission?.waypoints?.size
+                    show("▶ ${currentMission?.name ?: missionId}: Wegpunkt ${it.currentWaypointIndex + 1}" + (n?.let { c -> " von $c" } ?: ""))
+                }
             }
             override fun onWaylineExecutingInterruptReasonUpdate(error: IDJIError?) {
                 error?.let { DroneManager.log("Mission unterbrochen: ${it.description()}") }
@@ -121,7 +139,7 @@ object MissionController {
     /** Schreibt die Variante als Datei und gibt DJIs Fehlerliste zurück (leer = in Ordnung). */
     private fun check(v: Variant, fileName: String): List<Any> {
         val f = Wpml.writeKmz(v.m, File(dir, fileName), options = v.o)
-        if (fileName != "probe.kmz") { currentKmz = f; currentMission = v.m }
+        if (fileName != "probe.kmz") { currentKmz = f; currentMission = v.m; show("${v.m.name}: geplant (${v.m.waypoints.size} Punkte, ${v.m.lengthM.toInt()} m) → „Auf Drohne“") }
         if (!wpmzReady) return emptyList()
         return try {
             WPMZManager.getInstance().checkValidation(f.absolutePath)?.value ?: emptyList()
@@ -139,7 +157,7 @@ object MissionController {
                     val pct = ((p ?: 0.0) * if ((p ?: 0.0) <= 1.0) 100 else 1).toInt()
                     if (pct / 25 != last) { last = pct / 25; DroneManager.log("Upload $pct %") }
                 }
-                override fun onSuccess() { uploaded = true; DroneManager.log("Mission ist auf der Drohne"); onDone(true) }
+                override fun onSuccess() { uploaded = true; DroneManager.log("Mission ist auf der Drohne"); show("${currentMission?.name ?: missionId}: auf der Drohne → „Start“"); onDone(true) }
                 override fun onFailure(error: IDJIError) { DroneManager.log("Upload fehlgeschlagen: ${error.description()}"); onDone(false) }
             }) }
     }
