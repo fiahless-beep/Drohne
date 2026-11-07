@@ -170,6 +170,11 @@ object DroneManager {
 
     private fun startTelemetry() {
         watch(RemoteControllerKey.KeyConnection) { s, v -> s.copy(rcConnected = v == true) }
+        try {
+            KeyManager.getInstance().listen(KeyTools.createKey(RemoteControllerKey.KeyPairingStatus), this) { _, v ->
+                log("Kopplung: $v")
+            }
+        } catch (t: Throwable) { log("Kopplungsstatus nicht lesbar: ${t.message}") }
         watch(AirLinkKey.KeyConnection) { s, v -> s.copy(airLinkConnected = v == true) }
         watch(ProductKey.KeyProductType) { s, v -> s.copy(productType = v?.name) }
         watch(FlightControllerKey.KeyConnection) { s, v -> s.copy(connected = v == true) }
@@ -181,6 +186,18 @@ object DroneManager {
         watch(FlightControllerKey.KeyIsFlying) { s, v -> s.copy(flying = v == true) }
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
         log("Telemetrie läuft")
+    }
+
+    /** Fernbedienung in den Kopplungsmodus schalten (danach Einschaltknopf der Drohne ~4 s halten). */
+    fun requestPairing() = safe("Koppeln") {
+        KeyManager.getInstance().performAction(
+            KeyTools.createKey(RemoteControllerKey.KeyRequestPairing),
+            object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
+                override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) {
+                    log("Fernbedienung ist im Kopplungsmodus: jetzt Einschaltknopf der Drohne ca. 4 s halten, bis sie piept")
+                }
+                override fun onFailure(error: IDJIError) { log("Koppeln fehlgeschlagen: ${error.description()}") }
+            })
     }
 
     /** Rückkehr zum Startpunkt auslösen (Notfallknopf). */

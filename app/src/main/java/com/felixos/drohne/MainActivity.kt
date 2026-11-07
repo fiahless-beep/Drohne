@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnStart).setOnClickListener { confirmStart() }
         findViewById<Button>(R.id.btnPause).setOnClickListener { MissionController.pause() }
         findViewById<Button>(R.id.btnResume).setOnClickListener { MissionController.resume() }
+        findViewById<Button>(R.id.btnPair).setOnClickListener { DroneManager.requestPairing() }
         findViewById<Button>(R.id.btnHome).setOnClickListener {
             MissionController.stop()
             DroneManager.goHome()

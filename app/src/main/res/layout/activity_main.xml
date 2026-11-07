@@ -47,6 +47,12 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/btnPair"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mit Drohne koppeln" />
+
+        <Button
             android:id="@+id/btnHome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
