@@ -27,3 +27,8 @@ Nach dem Flug lädt die App Fotos + `protokoll.txt` nach `fluege/<datum>_<name>/
 Startpunkt (Home) ist dort, wo die Drohne steht; Höhen sind relativ dazu. Hindernisse (Bäume, Leitungen) kennt der Plan nicht: Flughöhe über dem höchsten Hindernis im Umkreis wählen.
 
 - `relativ` (optional, mit `ziel`, ersetzt `waypoints`): Punkte als `richtung` (Grad, vom Ziel aus gesehen: 180 = die Drohne steht südlich vom Ziel und schaut nach Norden) und `abstand` (m), `h` Flughöhe. Kamera und Nase zeigen aufs Ziel. Für Fassadenfotos: `ziel.h` = halbe Gebäudehöhe, `abstand` ≈ 1,5× Gebäudebreite, `h` ≈ Gebäudehöhe.
+
+## Sicherheitsregeln (seit dem Absturz 7.11.2026)
+- Die App legt den Anflug und den Rückweg automatisch auf eine Transithöhe von mindestens 30 m (oder die höchste Missionshöhe): erst über dem ersten Punkt absteigen, nach dem letzten Punkt wieder hoch, dann über den Startpunkt. Die Drohne steigt beim Start nur auf die Höhe des ersten Punkts und fliegt dann gerade; ohne Transithöhe fliegt sie in jedes Gebäude auf der Linie.
+- Punkte unter 25 m sind nur bei Tageslicht und mit arbeitender Hinderniserkennung erlaubt (die Sensoren sind Kameras, nachts blind). Die App verweigert sonst den Start.
+- Beim Planen immer den Startpunkt berücksichtigen und die Linie zum ersten Punkt gegen Gebäudeumrisse prüfen. In engen Straßen keine Punkte unter Dachhöhe der Nachbarn.

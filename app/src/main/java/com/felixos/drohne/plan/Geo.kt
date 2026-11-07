@@ -32,6 +32,21 @@ object Geo {
         return ((atan2(y, x) * 180 / PI) + 360) % 360
     }
 
+    /** Sonnenhöhe über dem Horizont in Grad (NOAA-Näherung, ±1°). Unter etwa -6° ist es dunkel. */
+    fun sunElevationDeg(p: LatLon, timeMs: Long): Double {
+        val days = timeMs / 86_400_000.0 - 10957.5 // Tage seit J2000 (1.1.2000 12:00 UTC)
+        val g = Math.toRadians((357.529 + 0.98560028 * days) % 360)
+        val q = (280.459 + 0.98564736 * days) % 360
+        val l = Math.toRadians((q + 1.915 * sin(g) + 0.020 * sin(2 * g)) % 360)
+        val e = Math.toRadians(23.439 - 0.00000036 * days)
+        val ra = Math.toDegrees(atan2(cos(e) * sin(l), cos(l)))
+        val dec = asin(sin(e) * sin(l))
+        val gmst = (18.697374558 + 24.06570982441908 * days) % 24
+        val ha = Math.toRadians(((gmst * 15 + p.lon - ra) % 360 + 540) % 360 - 180)
+        val lat = Math.toRadians(p.lat)
+        return Math.toDegrees(asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(ha)))
+    }
+
     /** Entfernung in Metern (Haversine). */
     fun distance(a: LatLon, b: LatLon): Double {
         val dLa = (b.lat - a.lat) * PI / 180

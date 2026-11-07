@@ -45,7 +45,11 @@ data class DroneState(
     val productType: String? = null,
     val landingConfirmationNeeded: Boolean = false,
     val landing: Boolean = false,
-)
+    /** Hinderniserkennung: null = unbekannt, "aktiv", "aus", oder "blind: vorn, hinten, …" (Sensoren sehen nichts, z. B. im Dunkeln). */
+    val sensors: String? = null,
+) {
+    val sensorsOk: Boolean get() = sensors == "aktiv"
+}
 
 /**
  * Verbindet die App mit dem DJI Mobile SDK v5: Initialisierung, Registrierung (App-Key),
@@ -228,6 +232,23 @@ object DroneManager {
         watch(FlightControllerKey.KeyIsLandingConfirmationNeeded) { s, v -> s.copy(landingConfirmationNeeded = v == true) }
         watch(FlightControllerKey.KeyIsInLandingMode) { s, v -> s.copy(landing = v == true) }
         addStateListener { s -> if (s.landingConfirmationNeeded && !confirmSent) { confirmSent = true; confirmLanding("Drohne wartet auf Landebestätigung") } else if (!s.landingConfirmationNeeded) confirmSent = false }
+        try {
+            dji.v5.manager.aircraft.perception.PerceptionManager.getInstance().addPerceptionInformationListener { info ->
+                val blind = buildList {
+                    if (info.forwardObstacleAvoidanceWorking == false) add("vorn")
+                    if (info.backwardObstacleAvoidanceWorking == false) add("hinten")
+                    if (info.leftSideObstacleAvoidanceWorking == false) add("links")
+                    if (info.rightSideObstacleAvoidanceWorking == false) add("rechts")
+                    if (info.downwardObstacleAvoidanceWorking == false) add("unten")
+                }
+                val text = when {
+                    !info.isOverallObstacleAvoidanceEnabled || info.obstacleAvoidanceType == dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.CLOSE -> "aus"
+                    blind.isNotEmpty() -> "blind: " + blind.joinToString(", ")
+                    else -> "aktiv"
+                }
+                if (text != state.sensors) { log("Hinderniserkennung: $text (${info.obstacleAvoidanceType})"); update { it.copy(sensors = text) } }
+            }
+        } catch (t: Throwable) { log("Hinderniserkennung nicht abfragbar: ${t.message}") }
         startPolling()
         log("Telemetrie läuft")
     }

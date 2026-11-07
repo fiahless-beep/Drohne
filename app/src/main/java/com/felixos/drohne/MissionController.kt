@@ -87,20 +87,31 @@ object MissionController {
      * Meldet der Prüfer Fehler, werden einzelne Abwandlungen durchprobiert und protokolliert,
      * damit die Ursache sichtbar wird; die erste fehlerfreie Variante wird übernommen.
      */
+    /** Sichere Transithöhe: Anflug und Rückweg nie unter dieser Höhe (Absturz 7.11.: 12 m gegen Gebäude). */
+    const val TRANSIT_HEIGHT_M = 30.0
+
     fun prepare(m0: Mission): Boolean {
         uploaded = false
-        // Letzter Punkt direkt über dem Startpunkt (Höhe des letzten Punkts): der Heimflug wird dann nur noch ein Abstieg.
         val h = DroneManager.state.home
-        val m = if (h?.latitude != null && h.latitude != 0.0 && m0.waypoints.size < 200 &&
-            Geo.distance(m0.waypoints.last().pos, LatLon(h.latitude, h.longitude)) > 10.0) {
-            m0.copy(waypoints = m0.waypoints + m0.waypoints.last().copy(pos = LatLon(h.latitude, h.longitude), takePhoto = false, hoverSec = 0, headingDeg = null))
+        val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
+        val far = home != null && m0.waypoints.any { Geo.distance(it.pos, home) > 25.0 }
+        val m = if (far && m0.waypoints.size <= 196) {
+            // Anflug hoch: erst über den ersten Punkt steigen, dort absteigen; am Ende wieder hoch, dann über den Startpunkt (Heimflug = nur Abstieg).
+            val transit = maxOf(TRANSIT_HEIGHT_M, m0.waypoints.maxOf { it.heightM })
+            val first = m0.waypoints.first(); val last = m0.waypoints.last()
+            val pre = if (first.heightM < transit - 1) listOf(first.copy(heightM = transit, takePhoto = false, hoverSec = 0)) else emptyList()
+            val post = buildList {
+                if (last.heightM < transit - 1) add(last.copy(heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
+                add(last.copy(pos = home!!, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
+            }
+            DroneManager.log("Transithöhe ${transit.toInt()} m: Anflug und Rückweg oben, Abstieg erst über dem Ziel")
+            m0.copy(waypoints = pre + m0.waypoints + post, takeOffSecurityHeightM = transit)
         } else m0
         val base = Variant("Standard", m, WpmlOptions())
         var errs = check(base, "${m.name}.kmz")
         DroneManager.log("KMZ erstellt: ${m.waypoints.size} Punkte, ${m.lengthM.toInt()} m, ca. ${(m.durationSec / 60).toInt() + 1} min")
         if (errs.isEmpty()) { DroneManager.log("DJI-Prüfung: in Ordnung"); return true }
         DroneManager.log("DJI-Prüfung meldet: $errs – probiere Abwandlungen …")
-        val home = m.waypoints.first().pos
         val shifted = m.copy(waypoints = m.waypoints.mapIndexed { i, w ->
             w.copy(pos = Geo.offset(w.pos, 5.0 * (i + 1), 0.0))
         })

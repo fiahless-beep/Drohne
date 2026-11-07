@@ -289,13 +289,15 @@ class MainActivity : AppCompatActivity() {
                 else -> "SDK startet …"
             })
             append(" · Funk " + (if (s.airLinkConnected) "ok" else "–"))
-            s.productType?.let { append(" · $it") }
+            s.sensors?.let { append(" · Sensoren $it") }
         }
         overlay.text = if (loc?.latitude != null && loc.latitude != 0.0)
             String.format(Locale.US, "%.1f m · %.5f, %.5f", loc.altitude ?: 0.0, loc.latitude, loc.longitude) else ""
         videoHint.visibility = if (s.connected && videoAttached) android.view.View.GONE else android.view.View.VISIBLE
         videoHint.text = if (s.connected) "Livebild kommt …" else "Kein Livebild – Drohne nicht verbunden"
     }
+
+    private val MIN_LOW_HEIGHT_M = 25.0
 
     private fun preflightProblems(s: DroneState): List<String> = buildList {
         if (!s.registered) add("SDK nicht registriert (App-Key fehlt?)")
@@ -310,6 +312,14 @@ class MainActivity : AppCompatActivity() {
             if (est.maxDistanceFromHomeM > 1000) add("Ein Punkt ist ${est.maxDistanceFromHomeM.toInt()} m vom Startpunkt entfernt (max. 1000 m)")
         }
         if ((s.satellites ?: 0) < minSatellites) add("Zu wenig GPS (mind. $minSatellites Satelliten)")
+        // Absturz 7.11.: tiefe Punkte nur bei Tageslicht und mit arbeitenden Sensoren.
+        if (m != null) {
+            val low = m.waypoints.filter { it.heightM < MIN_LOW_HEIGHT_M }
+            val pos = s.location?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) } ?: home?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
+            val sun = pos?.let { com.felixos.drohne.plan.Geo.sunElevationDeg(it, System.currentTimeMillis()) }
+            if (low.isNotEmpty() && sun != null && sun < -3) add("${low.size} Punkte unter ${MIN_LOW_HEIGHT_M.toInt()} m, aber es ist dunkel: die Hinderniserkennung ist nachts blind. Nur bei Tageslicht.")
+            if (low.isNotEmpty() && !s.sensorsOk) add("${low.size} Punkte unter ${MIN_LOW_HEIGHT_M.toInt()} m, Hinderniserkennung ${s.sensors ?: "unbekannt"}. Erst wenn sie „aktiv“ meldet.")
+        }
         if (s.home?.latitude == null || s.home.latitude == 0.0) add("Startpunkt (Home) noch nicht gesetzt")
     }
 
