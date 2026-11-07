@@ -85,7 +85,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         findViewById<Button>(R.id.btnPair).setOnClickListener { showMore() }
+        findViewById<Button>(R.id.btnFollow).setOnClickListener { askFollow() }
         findViewById<Button>(R.id.btnHome).setOnClickListener {
+            FollowController.stop()
             MissionController.stop()
             DroneManager.goHome()
         }
@@ -119,9 +121,31 @@ class MainActivity : AppCompatActivity() {
         h.postDelayed(r, 5000)
     }
 
+    /** Folgen: Drohne hält Abstand und Höhe zum Handy. */
+    private fun askFollow() {
+        if (FollowController.active) {
+            FollowController.stop(); return
+        }
+        val layout = android.widget.LinearLayout(this).apply { orientation = android.widget.LinearLayout.VERTICAL; setPadding(40, 20, 40, 0) }
+        val h = android.widget.EditText(this).apply { hint = "Höhe m"; setText("20"); inputType = android.text.InputType.TYPE_CLASS_NUMBER }
+        val d = android.widget.EditText(this).apply { hint = "Abstand m"; setText("10"); inputType = android.text.InputType.TYPE_CLASS_NUMBER }
+        layout.addView(h); layout.addView(d)
+        AlertDialog.Builder(this).setTitle("Folgen (Handy = Ziel)")
+            .setMessage("Die Drohne folgt dem GPS des Handys: hält Abstand und Höhe, Kamera aufs Handy. Steht sie am Boden, startet sie selbst. Beenden: „Folgen“ erneut, Abbrechen oder Heimflug. Die Sticks greifen jederzeit ein. Max. 3 m/s, erster Test langsam gehen.")
+            .setView(layout)
+            .setPositiveButton("Folgen") { _, _ ->
+                val hm = (h.text.toString().toDoubleOrNull() ?: 20.0).coerceIn(5.0, 60.0)
+                val dm = (d.text.toString().toDoubleOrNull() ?: 10.0).coerceIn(5.0, 50.0)
+                FollowController.start(applicationContext, FollowController.Settings(hm, dm))
+            }
+            .setNegativeButton("Abbrechen", null).show()
+    }
+
     /** Mehr-Menü: Fotos holen, Token, Koppeln. */
     private fun showMore() {
-        val items = arrayOf("Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln")
+        val swap = FollowController.swapAxes(this)
+        val items = arrayOf("Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
+            "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which) {
                 0 -> FlightReport.collectAndUpload(applicationContext)
@@ -132,6 +156,7 @@ class MainActivity : AppCompatActivity() {
                     .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
                     .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
                     .setNegativeButton("Abbrechen", null).show()
+                5 -> { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }
             }
         }.show()
     }
