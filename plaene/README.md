@@ -22,6 +22,6 @@ Nach dem Flug lädt die App Fotos + `protokoll.txt` nach `fluege/<datum>_<name>/
 - `waypoints` (alternativ): Liste `{lat, lon, h, pitch, photo, hover, yaw}`. Mit `ziel` werden `yaw` (Blickrichtung) und `pitch` (Kameraneigung) automatisch aufs Ziel gerechnet, wenn sie fehlen.
 - `rcLost`: `continue` = Mission zu Ende fliegen, dann heim (Standard); `goHome` = sofort heim.
 - `licht`: Landelampe unten während der Mission an (kleine LED, hilft nur aus wenigen Metern).
-- Grenzen: max. 200 Punkte, 1–15 m/s, Höhe 2–120 m, Punkte max. 500 m vom Startpunkt, Akku-Reserve wird in der App geprüft.
+- Grenzen: max. 200 Punkte, 1–15 m/s, Höhe 2–120 m, Punkte max. 1000 m vom Startpunkt, Akku-Reserve wird in der App geprüft.
 
 Startpunkt (Home) ist dort, wo die Drohne steht; Höhen sind relativ dazu. Hindernisse (Bäume, Leitungen) kennt der Plan nicht: Flughöhe über dem höchsten Hindernis im Umkreis wählen.
