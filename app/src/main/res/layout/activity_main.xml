@@ -46,11 +46,10 @@
             <Button android:id="@+id/btnResume" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Weiter" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnPair"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mit Drohne koppeln" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/btnLog" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Protokoll" />
+            <Button android:id="@+id/btnPair" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Koppeln" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnHome"

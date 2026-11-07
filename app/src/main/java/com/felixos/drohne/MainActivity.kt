@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
             android.widget.Toast.makeText(this, "Protokoll kopiert", android.widget.Toast.LENGTH_SHORT).show()
             true
         }
+        findViewById<Button>(R.id.btnLog).setOnClickListener { showLog() }
         findViewById<Button>(R.id.btnPair).setOnClickListener { DroneManager.requestPairing() }
         findViewById<Button>(R.id.btnHome).setOnClickListener {
             MissionController.stop()
@@ -90,6 +91,19 @@ class MainActivity : AppCompatActivity() {
         DroneManager.removeStateListener(stateListener)
         DroneManager.removeLogListener(logListener)
         super.onStop()
+    }
+
+    /** Ganzes Protokoll groß anzeigen, mit Kopieren-Knopf. */
+    private fun showLog() {
+        val text = status.text.toString() + "\n\n" + log.text
+        AlertDialog.Builder(this).setTitle("Protokoll")
+            .setMessage(text.takeLast(6000))
+            .setPositiveButton("Kopieren") { _, _ ->
+                val cm = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                cm.setPrimaryClip(android.content.ClipData.newPlainText("Protokoll", text))
+                android.widget.Toast.makeText(this, "Kopiert – an Claude schicken", android.widget.Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Schließen", null).show()
     }
 
     private fun showCrash(report: String) {
