@@ -19,11 +19,21 @@ jobs:
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v4
       # Gleicher Signierschlüssel für jede Version, damit Updates sich drüber installieren lassen.
+      # Der Schlüssel liegt nur im Actions-Cache (nicht im öffentlichen Repo).
       - name: Signierschlüssel aus Cache
+        id: signing
         uses: actions/cache@v4
         with:
-          path: ~/.android/debug.keystore
-          key: drohne-signing-v1
+          path: keystore/drohne.keystore
+          key: drohne-signing-v2
+      - name: Signierschlüssel einmalig erzeugen
+        if: steps.signing.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p keystore
+          keytool -genkeypair -keystore keystore/drohne.keystore -storepass drohne-app -keypass drohne-app \
+            -alias drohne -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Felix Drohne"
+      - name: Signatur-Fingerabdruck
+        run: keytool -list -keystore keystore/drohne.keystore -storepass drohne-app | grep -i sha
       - name: Tests
         run: ./gradlew :app:testDebugUnitTest
       - name: APK bauen
