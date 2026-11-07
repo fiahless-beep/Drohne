@@ -1,0 +1,48 @@
+{
+  "name": "beispiel-rundflug",
+  "beschreibung": "BEISPIEL, nicht fliegen: Rundflug 20 m um einen Punkt bei Azeitão, Kamera schräg. Echte Pläne erstellt Claude für den jeweiligen Ort.",
+  "speed": 4,
+  "rcLost": "continue",
+  "waypoints": [
+    {
+      "lat": 38.5171799,
+      "lon": -9.013,
+      "h": 25,
+      "pitch": -30,
+      "photo": true,
+      "hover": 0
+    },
+    {
+      "lat": 38.517,
+      "lon": -9.0127701,
+      "h": 25,
+      "pitch": -30,
+      "photo": true,
+      "hover": 0
+    },
+    {
+      "lat": 38.5168201,
+      "lon": -9.013,
+      "h": 25,
+      "pitch": -30,
+      "photo": true,
+      "hover": 0
+    },
+    {
+      "lat": 38.517,
+      "lon": -9.0132299,
+      "h": 25,
+      "pitch": -30,
+      "photo": true,
+      "hover": 0
+    },
+    {
+      "lat": 38.5171799,
+      "lon": -9.013,
+      "h": 25,
+      "pitch": -30,
+      "photo": false,
+      "hover": 0
+    }
+  ]
+}

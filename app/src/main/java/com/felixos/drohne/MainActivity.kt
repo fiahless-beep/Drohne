@@ -11,8 +11,11 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.felixos.drohne.plan.Budget
 import com.felixos.drohne.plan.LatLon
+import com.felixos.drohne.plan.Mission
 import com.felixos.drohne.plan.Missions
+import com.felixos.drohne.plan.PlanJson
 import dji.sdk.keyvalue.value.common.ComponentIndexType
 import dji.v5.manager.datacenter.MediaDataCenter
 import dji.v5.manager.interfaces.ICameraStreamManager
@@ -20,9 +23,14 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    /** Mindestwerte vor dem Start. Felix: sicher mit 15–20 % zurück. */
-    private val minBatteryForStart = 60
+    /** Mindestwerte vor dem Start. Felix: sicher mit 15–20 % zurück (siehe Budget). */
     private val minSatellites = 10
+
+    /** Vom Cloud-Planer erzeugter Plan (öffentliches Repo, daher ohne Login lesbar). */
+    private val planUrl = "https://raw.githubusercontent.com/fiahless-beep/Drohne/main/plaene/aktuell.json"
+
+    private var mission: Mission? = null
+    private var missionText: String = ""
 
     private lateinit var status: TextView
     private lateinit var log: TextView
@@ -53,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         setupVideo(findViewById(R.id.video))
 
         findViewById<Button>(R.id.btnPlan).setOnClickListener { planSquare() }
+        findViewById<Button>(R.id.btnLoad).setOnClickListener { loadPlan() }
         findViewById<Button>(R.id.btnUpload).setOnClickListener { MissionController.upload { } }
         findViewById<Button>(R.id.btnStart).setOnClickListener { confirmStart() }
         findViewById<Button>(R.id.btnPause).setOnClickListener { MissionController.pause() }
@@ -127,7 +136,15 @@ class MainActivity : AppCompatActivity() {
     private fun preflightProblems(s: DroneState): List<String> = buildList {
         if (!s.registered) add("SDK nicht registriert (App-Key fehlt?)")
         if (!s.connected) add("Drohne nicht verbunden")
-        if ((s.batteryPercent ?: 0) < minBatteryForStart) add("Akku unter $minBatteryForStart %")
+        val m = mission
+        if (m == null || !MissionController.uploaded) add("Keine Mission auf der Drohne (planen/laden, dann hochladen)")
+        val home = s.home
+        if (m != null && home?.latitude != null && home.latitude != 0.0) {
+            val est = Budget.estimate(m, LatLon(home.latitude, home.longitude))
+            val have = s.batteryPercent ?: 0
+            if (have < est.neededPercent) add("Akku $have %, Mission braucht ca. ${est.neededPercent} % (inkl. ${Budget.RESERVE_PERCENT} % Reserve)")
+            if (est.maxDistanceFromHomeM > 500) add("Ein Punkt ist ${est.maxDistanceFromHomeM.toInt()} m vom Startpunkt entfernt (max. 500 m)")
+        }
         if ((s.satellites ?: 0) < minSatellites) add("Zu wenig GPS (mind. $minSatellites Satelliten)")
         if (s.home?.latitude == null || s.home.latitude == 0.0) add("Startpunkt (Home) noch nicht gesetzt")
     }
@@ -138,8 +155,64 @@ class MainActivity : AppCompatActivity() {
             DroneManager.log("Keine Drohnenposition: GPS abwarten")
             return
         }
-        val m = Missions.testSquare(LatLon(loc.latitude, loc.longitude), sideM = 30.0, heightM = 30.0)
-        MissionController.prepare(m)
+        val here = LatLon(loc.latitude, loc.longitude)
+        val options = arrayOf("Stufe 1: Schwebetest (10 m hoch, 5 m vor, 1 Foto)", "Stufe 2: Testquadrat (30 × 30 m, 30 m hoch, 4 Fotos)")
+        AlertDialog.Builder(this).setTitle("Testflug wählen").setItems(options) { _, which ->
+            if (which == 0) useMission(Missions.hoverTest(here), "Schwebetest: steigt auf 10 m, fliegt 5 m nach Norden, 1 Foto, kommt zurück und landet.")
+            else useMission(Missions.testSquare(here, sideM = 30.0, heightM = 30.0), "Testquadrat 30 × 30 m in 30 m Höhe um die aktuelle Position")
+        }.show()
+    }
+
+    private fun loadPlan() {
+        DroneManager.log("Lade Flugplan aus der Cloud …")
+        Thread {
+            try {
+                val url = java.net.URL(planUrl + "?t=" + System.currentTimeMillis())
+                val conn = (url.openConnection() as java.net.HttpURLConnection).apply {
+                    connectTimeout = 10_000; readTimeout = 10_000; useCaches = false
+                }
+                val text = conn.inputStream.bufferedReader().use { it.readText() }
+                val (m, beschreibung) = PlanJson.parse(text)
+                runOnUiThread { useMission(m, beschreibung) }
+            } catch (t: Throwable) {
+                DroneManager.log("Plan laden fehlgeschlagen: ${t.javaClass.simpleName}: ${t.message}")
+            }
+        }.start()
+    }
+
+    private fun summary(m: Mission, beschreibung: String): String = buildString {
+        if (beschreibung.isNotBlank()) appendLine(beschreibung).appendLine()
+        appendLine("${m.waypoints.size} Wegpunkte, ${m.waypoints.count { it.takePhoto }} Fotos")
+        appendLine("Strecke ${m.lengthM.toInt()} m, Höhe ${m.waypoints.minOf { it.heightM }.toInt()}–${m.waypoints.maxOf { it.heightM }.toInt()} m, ${m.speedMs} m/s")
+        val home = DroneManager.state.home ?: DroneManager.state.location?.let { dji.sdk.keyvalue.value.common.LocationCoordinate2D(it.latitude, it.longitude) }
+        if (home?.latitude != null && home.latitude != 0.0) {
+            val e = Budget.estimate(m, LatLon(home.latitude, home.longitude))
+            appendLine(String.format(Locale.GERMANY, "Flugzeit ca. %.1f min, Akku nötig ca. %d %%", e.totalMin, e.neededPercent))
+            appendLine("Weitester Punkt ${e.maxDistanceFromHomeM.toInt()} m vom Start")
+        } else {
+            appendLine(String.format(Locale.GERMANY, "Mission ca. %.1f min (ohne An-/Rückflug)", m.durationSec / 60))
+        }
+        append("Funkabriss: " + if (m.rcLost == com.felixos.drohne.plan.RcLost.CONTINUE) "zu Ende fliegen, dann heim" else "sofort heim")
+    }
+
+    private fun useMission(m: Mission, beschreibung: String) {
+        val text = summary(m, beschreibung)
+        if (m.name.startsWith("beispiel")) {
+            AlertDialog.Builder(this).setTitle("Beispielplan (nur Ansicht)").setMessage(text)
+                .setPositiveButton("OK", null).show()
+            DroneManager.log("Plan laden funktioniert (Beispiel, wird nicht geflogen)")
+            return
+        }
+        AlertDialog.Builder(this).setTitle("Plan „${m.name}“ übernehmen?")
+            .setMessage(text)
+            .setPositiveButton("Übernehmen") { _, _ ->
+                if (MissionController.prepare(m)) {
+                    mission = m
+                    missionText = text
+                    DroneManager.log("Plan übernommen, jetzt „Hochladen“")
+                }
+            }
+            .setNegativeButton("Verwerfen", null).show()
     }
 
     private fun confirmStart() {
@@ -150,7 +223,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         AlertDialog.Builder(this).setTitle("Mission starten?")
-            .setMessage("Testquadrat 30 × 30 m in 30 m Höhe, 4 Fotos, danach Rückkehr zum Startpunkt.\nUmgebung frei? Daumen an den Sticks.")
+            .setMessage(missionText + "\n\nUmgebung frei? Daumen an den Sticks.")
             .setPositiveButton("Start") { _, _ -> MissionController.start() }
             .setNegativeButton("Abbrechen", null).show()
     }

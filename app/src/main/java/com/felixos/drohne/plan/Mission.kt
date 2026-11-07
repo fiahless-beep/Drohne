@@ -43,6 +43,13 @@ data class Mission(
 }
 
 object Missions {
+    /** Kleinster Testflug: 10 m hoch, 5 m nach Norden, 1 Foto, zurück. Für den ersten Flug. */
+    fun hoverTest(center: LatLon): Mission {
+        val a = Waypoint(center, 10.0, gimbalPitchDeg = 0.0, takePhoto = false, hoverSec = 3)
+        val b = Waypoint(Geo.offset(center, 5.0, 0.0), 10.0, gimbalPitchDeg = 0.0, takePhoto = true)
+        return Mission(name = "schwebetest", waypoints = listOf(a, b), speedMs = 2.0, takeOffSecurityHeightM = 10.0)
+    }
+
     /** Testflug: Quadrat mit [sideM] Metern Kantenlänge um [center], Foto an jeder Ecke. */
     fun testSquare(center: LatLon, sideM: Double = 30.0, heightM: Double = 30.0): Mission {
         val half = sideM / 2
