@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         DroneManager.addStateListener(stateListener)
+        log.text = ""  // Beim Wiederanmelden liefert der Manager die ganze Historie neu
         DroneManager.addLogListener(logListener)
     }
 
