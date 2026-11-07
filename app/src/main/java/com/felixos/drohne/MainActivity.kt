@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_PHONE_STATE,
         ), 1)
 
+        CrashLog.takeReport(this)?.let { showCrash(it) }
+
         setupVideo(findViewById(R.id.video))
 
         findViewById<Button>(R.id.btnPlan).setOnClickListener { planSquare() }
@@ -71,6 +73,17 @@ class MainActivity : AppCompatActivity() {
         DroneManager.removeStateListener(stateListener)
         DroneManager.removeLogListener(logListener)
         super.onStop()
+    }
+
+    private fun showCrash(report: String) {
+        AlertDialog.Builder(this).setTitle("Letzter Absturz")
+            .setMessage(report.take(3000))
+            .setPositiveButton("Kopieren") { _, _ ->
+                val cm = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                cm.setPrimaryClip(android.content.ClipData.newPlainText("Absturz", report))
+                android.widget.Toast.makeText(this, "Kopiert – bitte an Claude schicken", android.widget.Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton("Schließen", null).show()
     }
 
     private fun setupVideo(view: SurfaceView) {

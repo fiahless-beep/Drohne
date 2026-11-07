@@ -46,6 +46,7 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
 
+    buildFeatures { buildConfig = true }
     lint { checkReleaseBuilds = false }
 
     packaging {
@@ -70,6 +71,21 @@ dependencies {
     compileOnly("com.dji:dji-sdk-v5-aircraft-provided:5.20.1")
     runtimeOnly("com.dji:dji-sdk-v5-networkImp:5.20.1")
     implementation("com.dji:wpmzsdk:1.0.5.2")
+
+    // Laufzeit-Bibliotheken, die das DJI SDK erwartet (wie in DJIs Beispiel-App)
+    implementation("com.squareup.okhttp3:okhttp:3.14.9")
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.0")
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.11")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("com.google.code.gson:gson:2.9.1")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-runtime:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-process:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.3.1")
+    implementation("androidx.room:room-runtime:2.4.1")
+    implementation("androidx.room:room-rxjava3:2.4.1")
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
