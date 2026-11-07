@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btnLog).setOnClickListener { showLog() }
         FlightReport.init(applicationContext)
+        ObstacleGuard.init(applicationContext)
         var collected = false
         MissionController.onFinished = {
             if (!collected) {
@@ -152,7 +153,8 @@ class MainActivity : AppCompatActivity() {
     private fun showMore() {
         val swap = FollowController.swapAxes(this)
         val items = arrayOf("Plan auf Karte zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
-            "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})")
+            "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})",
+            "Wächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which) {
                 0 -> showOnMap()
@@ -164,6 +166,7 @@ class MainActivity : AppCompatActivity() {
                     .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
                     .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
                     .setNegativeButton("Abbrechen", null).show()
+                7 -> ObstacleGuard.setArmed(this, !ObstacleGuard.armed)
                 6 -> { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }
             }
         }.show()

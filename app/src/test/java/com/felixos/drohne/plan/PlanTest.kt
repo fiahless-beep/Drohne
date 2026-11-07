@@ -101,3 +101,35 @@ class ObstaclesTest {
         assertTrue(Obstacles.distanceToPolygon(front, lmsi.polygon) in 0.5..10.0)
     }
 }
+
+class LoomingTest {
+    private fun texture(seed: Int): FloatArray {
+        val r = java.util.Random(seed.toLong())
+        val base = FloatArray(com.felixos.drohne.Looming.W * com.felixos.drohne.Looming.H) { r.nextInt(256).toFloat() }
+        // glätten, damit bilineares Abtasten sinnvoll ist
+        val out = base.copyOf()
+        val w = com.felixos.drohne.Looming.W; val h = com.felixos.drohne.Looming.H
+        for (j in 1 until h - 1) for (i in 1 until w - 1) out[j * w + i] = (base[j * w + i] + base[j * w + i - 1] + base[j * w + i + 1] + base[(j - 1) * w + i] + base[(j + 1) * w + i]) / 5
+        return out
+    }
+    private fun zoom(img: FloatArray, s: Double): FloatArray {
+        val w = com.felixos.drohne.Looming.W; val h = com.felixos.drohne.Looming.H
+        val out = FloatArray(w * h)
+        for (j in 0 until h) for (i in 0 until w) {
+            val x = ((i - w / 2) / s + w / 2).toInt().coerceIn(0, w - 1); val y = ((j - h / 2) / s + h / 2).toInt().coerceIn(0, h - 1)
+            out[j * w + i] = img[y * w + x]
+        }
+        return out
+    }
+    @Test fun erkenntVergroesserung() {
+        val a = texture(7)
+        val s = com.felixos.drohne.Looming.expansion(a, zoom(a, 1.12))!!
+        assertTrue("erwartet ~1.12, war $s", s in 1.08..1.17)
+        val s0 = com.felixos.drohne.Looming.expansion(a, a)!!
+        assertEquals(1.0, s0, 0.001)
+    }
+    @Test fun ohneStrukturKeinUrteil() {
+        val flat = FloatArray(com.felixos.drohne.Looming.W * com.felixos.drohne.Looming.H) { 100f }
+        assertEquals(null, com.felixos.drohne.Looming.expansion(flat, flat))
+    }
+}

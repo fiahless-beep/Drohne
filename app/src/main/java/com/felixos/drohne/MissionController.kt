@@ -33,6 +33,7 @@ object MissionController {
     /** Kurztext für die Missions-Kachel in der Oberfläche. */
     var onStateText: ((String) -> Unit)? = null
     private var stateText = ""
+    @Volatile var executing = false; private set
     private fun show(text: String) { stateText = text; onStateText?.invoke(text) }
 
     fun init(context: Context) {
@@ -49,6 +50,7 @@ object MissionController {
             override fun onMissionStateUpdate(state: WaypointMissionExecuteState?) {
                 if (state == last) return
                 last = state
+                executing = state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE
                 DroneManager.log("Mission: $state")
                 val m = currentMission
                 val name = m?.name ?: missionId
