@@ -11,8 +11,23 @@ import java.util.zip.ZipOutputStream
  * Aufbau: wpmz/template.kml (Planungsdaten) und wpmz/waylines.wpml (Ausführungsdaten).
  * Kein KI-Anteil: gleiche Mission ergibt immer die gleiche Datei.
  */
+/** Stellschrauben für die Datei-Erzeugung, um DJIs Prüfer-Meldungen einzugrenzen. */
+data class WpmlOptions(
+    /** Immer wpml:executeRCLostAction=goBack mitschreiben, auch bei goContinue. */
+    val alwaysRcLostAction: Boolean = false,
+    /** Keine Aktionen (Gimbal/Foto/Hover) an den Wegpunkten. */
+    val noActions: Boolean = false,
+    /** WPML-Namensraum-Version, z. B. "1.0.6" oder "1.0.0". */
+    val version: String = "1.0.6",
+    /** Gerätekennung überschreiben (null = aus der Mission). */
+    val droneEnum: Int? = null,
+    /** payloadInfo wie im DJI-Beispiel mitschreiben. */
+    val payloadInfo: Boolean = false,
+)
+
 object Wpml {
-    private const val NS = """xmlns="http://www.opengis.net/kml/2.2" xmlns:wpml="http://www.dji.com/wpmz/1.0.6""""
+    private var opt = WpmlOptions()
+    private val NS get() = """xmlns="http://www.opengis.net/kml/2.2" xmlns:wpml="http://www.dji.com/wpmz/${opt.version}""""
 
     private fun f(v: Double, digits: Int = 6) = String.format(Locale.US, "%.${digits}f", v)
 
@@ -21,13 +36,18 @@ object Wpml {
       <wpml:flyToWaylineMode>safely</wpml:flyToWaylineMode>
       <wpml:finishAction>goHome</wpml:finishAction>
       <wpml:exitOnRCLost>${if (m.rcLost == RcLost.CONTINUE) "goContinue" else "executeLostAction"}</wpml:exitOnRCLost>
-      ${if (m.rcLost == RcLost.GO_HOME) "<wpml:executeRCLostAction>goBack</wpml:executeRCLostAction>" else ""}
+      ${if (m.rcLost == RcLost.GO_HOME || opt.alwaysRcLostAction) "<wpml:executeRCLostAction>goBack</wpml:executeRCLostAction>" else ""}
       <wpml:takeOffSecurityHeight>${f(m.takeOffSecurityHeightM, 1)}</wpml:takeOffSecurityHeight>
       <wpml:globalTransitionalSpeed>${f(m.speedMs, 1)}</wpml:globalTransitionalSpeed>
       <wpml:droneInfo>
-        <wpml:droneEnumValue>${m.droneEnum}</wpml:droneEnumValue>
+        <wpml:droneEnumValue>${opt.droneEnum ?: m.droneEnum}</wpml:droneEnumValue>
         <wpml:droneSubEnumValue>${m.droneSubEnum}</wpml:droneSubEnumValue>
-      </wpml:droneInfo>
+      </wpml:droneInfo>${if (opt.payloadInfo) """
+      <wpml:payloadInfo>
+        <wpml:payloadEnumValue>0</wpml:payloadEnumValue>
+        <wpml:payloadSubEnumValue>0</wpml:payloadSubEnumValue>
+        <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
+      </wpml:payloadInfo>""" else ""}
     </wpml:missionConfig>"""
 
     private fun heading() = """
@@ -85,7 +105,7 @@ object Wpml {
         <wpml:index>$i</wpml:index>
         ${if (execution) "<wpml:executeHeight>${f(w.heightM, 1)}</wpml:executeHeight>"
           else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>1</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>1</wpml:useGlobalTurnParam>"}
-        <wpml:waypointSpeed>${f(m.speedMs, 1)}</wpml:waypointSpeed>${if (execution) heading() else ""}${actions(i, w, i)}
+        <wpml:waypointSpeed>${f(m.speedMs, 1)}</wpml:waypointSpeed>${if (execution) heading() else ""}${if (opt.noActions) "" else actions(i, w, i)}
       </Placemark>"""
 
     fun templateKml(m: Mission, nowMs: Long): String = """<?xml version="1.0" encoding="UTF-8"?>
@@ -136,7 +156,8 @@ object Wpml {
 """
 
     /** Schreibt die KMZ-Datei und gibt sie zurück. */
-    fun writeKmz(m: Mission, out: File, nowMs: Long = System.currentTimeMillis()): File {
+    fun writeKmz(m: Mission, out: File, nowMs: Long = System.currentTimeMillis(), options: WpmlOptions = WpmlOptions()): File {
+        opt = options
         out.parentFile?.mkdirs()
         ZipOutputStream(FileOutputStream(out)).use { zip ->
             zip.putNextEntry(ZipEntry("wpmz/template.kml")); zip.write(templateKml(m, nowMs).toByteArray()); zip.closeEntry()

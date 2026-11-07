@@ -4,6 +4,9 @@ import android.content.Context
 import com.dji.wpmzsdk.manager.WPMZManager
 import com.felixos.drohne.plan.Mission
 import com.felixos.drohne.plan.Wpml
+import com.felixos.drohne.plan.WpmlOptions
+import com.felixos.drohne.plan.Geo
+import com.felixos.drohne.plan.RcLost
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
 import dji.v5.manager.aircraft.waypoint3.WaylineExecutingInfoListener
@@ -46,22 +49,73 @@ object MissionController {
         })
     }
 
-    /** Mission als KMZ schreiben und (wenn möglich) mit DJIs eigenem Prüfer kontrollieren. */
+    /** Eine Prüf-Variante: Beschreibung, abgewandelte Mission, Datei-Optionen. */
+    private data class Variant(val label: String, val m: Mission, val o: WpmlOptions)
+
+    /**
+     * Mission als KMZ schreiben und mit DJIs eigenem Prüfer kontrollieren.
+     * Meldet der Prüfer Fehler, werden einzelne Abwandlungen durchprobiert und protokolliert,
+     * damit die Ursache sichtbar wird; die erste fehlerfreie Variante wird übernommen.
+     */
     fun prepare(m: Mission): Boolean {
-        val f = Wpml.writeKmz(m, File(dir, "${m.name}.kmz"))
-        currentKmz = f
         uploaded = false
+        val base = Variant("Standard", m, WpmlOptions())
+        var errs = check(base, "${m.name}.kmz")
         DroneManager.log("KMZ erstellt: ${m.waypoints.size} Punkte, ${m.lengthM.toInt()} m, ca. ${(m.durationSec / 60).toInt() + 1} min")
-        if (wpmzReady) {
-            val res = WPMZManager.getInstance().checkValidation(f.absolutePath)
-            val errs = res?.value ?: emptyList()
-            if (errs.isNotEmpty()) {
-                DroneManager.log("DJI-Prüfung meldet: $errs")
-                return false
-            }
-            DroneManager.log("DJI-Prüfung: in Ordnung")
+        if (errs.isEmpty()) { DroneManager.log("DJI-Prüfung: in Ordnung"); return true }
+        DroneManager.log("DJI-Prüfung meldet: $errs – probiere Abwandlungen …")
+        val home = m.waypoints.first().pos
+        val shifted = m.copy(waypoints = m.waypoints.mapIndexed { i, w ->
+            w.copy(pos = Geo.offset(w.pos, 5.0 * (i + 1), 0.0))
+        })
+        val singles = listOf(
+            Variant("Funkverlust=Heimflug", m.copy(rcLost = RcLost.GO_HOME), WpmlOptions()),
+            Variant("goContinue+Heimflugaktion", m, WpmlOptions(alwaysRcLostAction = true)),
+            Variant("ohne Aktionen", m, WpmlOptions(noActions = true)),
+            Variant("Punkte 5 m weiter weg", shifted, WpmlOptions()),
+            Variant("Gerät 77 (M3E)", m, WpmlOptions(droneEnum = 77)),
+            Variant("Gerät 67 (M30, DJI-Beispiel)", m, WpmlOptions(droneEnum = 67)),
+            Variant("WPML 1.0.0", m, WpmlOptions(version = "1.0.0")),
+            Variant("mit payloadInfo", m, WpmlOptions(payloadInfo = true)),
+        )
+        val results = singles.map { v -> v to check(v, "probe.kmz") }
+        results.forEach { (v, e) -> DroneManager.log("  ${v.label}: ${if (e.isEmpty()) "OK" else e.toString()}") }
+        // Erste Abwandlung, die alle Fehler beseitigt
+        results.firstOrNull { it.second.isEmpty() }?.let { (v, _) ->
+            check(v, "${m.name}.kmz"); DroneManager.log("Übernommen: ${v.label}"); return true
         }
-        return true
+        // Sonst: alle Abwandlungen kombinieren, die je einen Fehler weniger hatten
+        val helpful = results.filter { it.second.size < errs.size }.map { it.first }
+        if (helpful.isNotEmpty()) {
+            var mm = m; var oo = WpmlOptions()
+            helpful.forEach { v ->
+                if (v.m !== m) mm = if (v.m.rcLost == RcLost.GO_HOME) mm.copy(rcLost = RcLost.GO_HOME) else mm.copy(waypoints = v.m.waypoints)
+                oo = oo.copy(
+                    alwaysRcLostAction = oo.alwaysRcLostAction || v.o.alwaysRcLostAction,
+                    noActions = oo.noActions || v.o.noActions,
+                    version = if (v.o.version != "1.0.6") v.o.version else oo.version,
+                    droneEnum = v.o.droneEnum ?: oo.droneEnum,
+                    payloadInfo = oo.payloadInfo || v.o.payloadInfo,
+                )
+            }
+            val combo = Variant("Kombination: " + helpful.joinToString(" + ") { it.label }, mm, oo)
+            val e = check(combo, "${m.name}.kmz")
+            DroneManager.log("  ${combo.label}: ${if (e.isEmpty()) "OK" else e.toString()}")
+            if (e.isEmpty()) { DroneManager.log("Übernommen: ${combo.label}"); return true }
+        }
+        check(base, "${m.name}.kmz")
+        DroneManager.log("Keine Variante fehlerfrei – Protokoll an Claude schicken")
+        return false
+    }
+
+    /** Schreibt die Variante als Datei und gibt DJIs Fehlerliste zurück (leer = in Ordnung). */
+    private fun check(v: Variant, fileName: String): List<Any> {
+        val f = Wpml.writeKmz(v.m, File(dir, fileName), options = v.o)
+        if (fileName != "probe.kmz") currentKmz = f
+        if (!wpmzReady) return emptyList()
+        return try {
+            WPMZManager.getInstance().checkValidation(f.absolutePath)?.value ?: emptyList()
+        } catch (t: Throwable) { listOf("Prüfer-Fehler: ${t.message}") }
     }
 
     fun upload(onDone: (Boolean) -> Unit) {
