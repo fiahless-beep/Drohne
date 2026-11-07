@@ -15,6 +15,11 @@ class DrohneApp : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+        if (CrashLog.hasReport(this)) {
+            // Nach einem Absturz SDK diesmal nicht starten, damit der Bericht in Ruhe kopiert werden kann.
+            DroneManager.log("Letzter Start ist abgestürzt: SDK diesmal nicht gestartet. Bericht kopieren, dann App neu öffnen.")
+            return
+        }
         try {
             DroneManager.init(this)
         } catch (t: Throwable) {

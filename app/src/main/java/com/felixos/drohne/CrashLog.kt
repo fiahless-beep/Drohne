@@ -30,6 +30,8 @@ object CrashLog {
         file(c).appendText(head + sw.toString().take(6000) + "\n\n")
     }
 
+    fun hasReport(c: Context) = file(c).exists()
+
     /** Liefert den letzten Absturzbericht und löscht ihn. */
     fun takeReport(c: Context): String? {
         val f = file(c)
