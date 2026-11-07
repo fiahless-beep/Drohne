@@ -144,6 +144,16 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Folgen") { _, _ ->
                 val hm = (h.text.toString().toDoubleOrNull() ?: 20.0).coerceIn(5.0, 60.0)
                 val dm = (d.text.toString().toDoubleOrNull() ?: 10.0).coerceIn(5.0, 50.0)
+                val st = DroneManager.state
+                val pos = st.location?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) } ?: st.home?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
+                val dark = pos != null && com.felixos.drohne.plan.Geo.sunElevationDeg(pos, System.currentTimeMillis()) < -3
+                val problem = when {
+                    pos == null -> "Keine Drohnenposition"
+                    hm < MIN_LOW_HEIGHT_M && dark -> "Folgen unter ${MIN_LOW_HEIGHT_M.toInt()} m nur bei Tageslicht (Sensoren nachts blind)"
+                    hm < MIN_LOW_HEIGHT_M && !st.sensorsOk -> "Folgen unter ${MIN_LOW_HEIGHT_M.toInt()} m nur mit Hinderniserkennung „aktiv“ (jetzt: ${st.sensors ?: "unbekannt"})"
+                    else -> null
+                }
+                if (problem != null) { AlertDialog.Builder(this).setTitle("Folgen nicht möglich").setMessage(problem).setPositiveButton("OK", null).show(); return@setPositiveButton }
                 FollowController.start(applicationContext, FollowController.Settings(hm, dm))
             }
             .setNegativeButton("Abbrechen", null).show()
@@ -320,11 +330,20 @@ class MainActivity : AppCompatActivity() {
         if (m != null) {
             val low = m.waypoints.filter { it.heightM < MIN_LOW_HEIGHT_M }
             val pos = s.location?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) } ?: home?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
-            val sun = pos?.let { com.felixos.drohne.plan.Geo.sunElevationDeg(it, System.currentTimeMillis()) }
+            val sun = com.felixos.drohne.plan.Geo.sunElevationDeg(pos ?: m.waypoints.first().pos, System.currentTimeMillis())
+            // Ohne Gebäudedaten und ohne ausdrücklich freie Umgebung: nichts unter Transithöhe.
+            val underTransit = m.waypoints.filter { it.heightM < MissionController.TRANSIT_HEIGHT_M }
+            if (underTransit.isNotEmpty() && m.obstacles.isEmpty() && !m.openArea) add("${underTransit.size} Punkte unter ${MissionController.TRANSIT_HEIGHT_M.toInt()} m, aber der Plan hat keine Gebäudedaten (hindernisse) und ist nicht als freie Umgebung markiert. Plan von Claude ergänzen lassen.")
             if (low.isNotEmpty() && sun != null && sun < -3) add("${low.size} Punkte unter ${MIN_LOW_HEIGHT_M.toInt()} m, aber es ist dunkel: die Hinderniserkennung ist nachts blind. Nur bei Tageslicht.")
             if (low.isNotEmpty() && !s.sensorsOk) add("${low.size} Punkte unter ${MIN_LOW_HEIGHT_M.toInt()} m, Hinderniserkennung ${s.sensors ?: "unbekannt"}. Erst wenn sie „aktiv“ meldet.")
         }
         if (s.home?.latitude == null || s.home.latitude == 0.0) add("Startpunkt (Home) noch nicht gesetzt")
+        else if (m != null) {
+            val h = LatLon(s.home.latitude, s.home.longitude)
+            val ph = MissionController.preparedHome
+            if (ph == null || com.felixos.drohne.plan.Geo.distance(h, ph) > 30) add("Plan wurde ohne diesen Startpunkt vorbereitet (Transit, Gebäude-Wächter) → Plan erneut übernehmen")
+            m.plannedStart?.let { if (com.felixos.drohne.plan.Geo.distance(h, it) > 50) add("Plan wurde für einen Startpunkt ${com.felixos.drohne.plan.Geo.distance(h, it).toInt()} m von hier geprüft (max. 50 m). Zum geplanten Start gehen oder Plan neu prüfen lassen.") }
+        }
     }
 
     private fun planSquare() {

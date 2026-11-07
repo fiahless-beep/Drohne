@@ -14,8 +14,8 @@ data class Obstacle(val name: String, val heightM: Double, val polygon: List<Lat
  * und dabei tiefer als Gebäudehöhe + [CLEARANCE_M] ist.
  */
 object Obstacles {
-    const val MARGIN_M = 4.0
-    const val CLEARANCE_M = 5.0
+    const val MARGIN_M = 8.0   // Kartenkoordinaten und GPS sind je einige Meter ungenau
+    const val CLEARANCE_M = 8.0
 
     data class Conflict(val from: Int, val to: Int, val obstacle: Obstacle, val heightM: Double) {
         override fun toString() = "Strecke ${from + 1}→${to + 1} auf ${heightM.toInt()} m trifft „${obstacle.name}“ (${obstacle.heightM.toInt()} m hoch)"

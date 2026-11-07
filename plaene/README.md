@@ -28,7 +28,12 @@ Startpunkt (Home) ist dort, wo die Drohne steht; Höhen sind relativ dazu. Hinde
 
 - `relativ` (optional, mit `ziel`, ersetzt `waypoints`): Punkte als `richtung` (Grad, vom Ziel aus gesehen: 180 = die Drohne steht südlich vom Ziel und schaut nach Norden) und `abstand` (m), `h` Flughöhe. Kamera und Nase zeigen aufs Ziel. Für Fassadenfotos: `ziel.h` = halbe Gebäudehöhe, `abstand` ≈ 1,5× Gebäudebreite, `h` ≈ Gebäudehöhe.
 
-## Sicherheitsregeln (seit dem Absturz 7.11.2026)
-- Die App legt den Anflug und den Rückweg automatisch auf eine Transithöhe von mindestens 30 m (oder die höchste Missionshöhe): erst über dem ersten Punkt absteigen, nach dem letzten Punkt wieder hoch, dann über den Startpunkt. Die Drohne steigt beim Start nur auf die Höhe des ersten Punkts und fliegt dann gerade; ohne Transithöhe fliegt sie in jedes Gebäude auf der Linie.
-- Punkte unter 25 m sind nur bei Tageslicht und mit arbeitender Hinderniserkennung erlaubt (die Sensoren sind Kameras, nachts blind). Die App verweigert sonst den Start.
-- Beim Planen immer den Startpunkt berücksichtigen und die Linie zum ersten Punkt gegen Gebäudeumrisse prüfen. In engen Straßen keine Punkte unter Dachhöhe der Nachbarn.
+## Sicherheitsregeln (seit dem Absturz 7.11.2026, verschärft 8.11.)
+Was schiefging: Plan mit erstem Punkt auf 12 m, 7 m vor einer Fassade, nachts, ohne Startpunkt und ohne Gebäudedaten. Die Drohne steigt beim Start nur bis zur Höhe des ersten Punkts und fliegt dann gerade – mitten in das Gebäude auf der Linie. Die DJI-Hinderniserkennung ist nachts blind.
+Stufen in der App (jede für sich reicht, um diesen Absturz zu verhindern):
+1. **Transit**: erster Wegpunkt senkrecht über dem Startpunkt auf mindestens 30 m (unabhängig von DJIs takeOffSecurityHeight), dann über den ersten Missionspunkt, erst dort absteigen; nach dem letzten Punkt wieder hoch, dann über den Startpunkt. Der Plan muss mit dem echten Startpunkt übernommen worden sein („Übernehmen + auf Drohne“ erst, wenn die Drohne Home hat); sonst verweigert die App den Start.
+2. **Gebäudedaten Pflicht**: Punkte unter 30 m nur, wenn der Plan `hindernisse` (Umrisse + Höhen aus den Kartendaten) enthält oder ausdrücklich `"umgebung": "frei"` sagt (nichts über 2 m im Umkreis von 50 m). Der Gebäude-Wächter prüft jede Strecke inkl. Start: 8 m waagerechter Abstand und 8 m über Dachhöhe.
+3. **Geplanter Start** `"start": {lat, lon}`: die Prüfung gilt für diesen Startpunkt; steht die Drohne mehr als 50 m weg, verweigert die App den Start.
+4. **Nachts/ohne Sensoren**: Punkte unter 25 m nur bei Tageslicht (Sonne über −3°) und wenn die Hinderniserkennung „aktiv“ meldet. Gilt auch für „Folgen“.
+5. **Hinderniswächter im Livebild**: hält Mission oder Folgen an, wenn eine Fläche schnell näher kommt (Standard an; reiner Abstieg wird ausgeblendet). Abschalten unter Mehr ….
+Für den Planer (Claude): Startpunkt und Gebäude immer aus den Kartendaten holen, Linie Start→erster Punkt prüfen, in engen Straßen keine Punkte unter Dachhöhe der Nachbarn, nachts nie unter 25 m, Testflüge nur bei Tageslicht.

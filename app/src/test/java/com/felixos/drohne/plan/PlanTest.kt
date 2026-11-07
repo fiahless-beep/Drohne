@@ -133,3 +133,14 @@ class LoomingTest {
         assertEquals(null, com.felixos.drohne.Looming.expansion(flat, flat))
     }
 }
+
+class SicherheitsfelderTest {
+    @Test fun umgebungUndStartWerdenGelesen() {
+        val (m, _) = PlanJson.parse("""{"name":"t","umgebung":"frei","start":{"lat":38.74,"lon":-9.1},"waypoints":[{"lat":38.7401,"lon":-9.1,"h":20},{"lat":38.7402,"lon":-9.1,"h":20}]}""")
+        assertTrue(m.openArea)
+        assertEquals(38.74, m.plannedStart!!.lat, 1e-9)
+        val (m2, _) = PlanJson.parse("""{"name":"t","waypoints":[{"lat":38.7401,"lon":-9.1,"h":20},{"lat":38.7402,"lon":-9.1,"h":20}]}""")
+        assertTrue(!m2.openArea && m2.plannedStart == null)
+        assertTrue(PlanJson.toJson(m).contains("umgebung") && PlanJson.toJson(m).contains("frei"))
+    }
+}

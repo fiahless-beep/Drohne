@@ -11,6 +11,8 @@ import org.json.JSONObject
  *   "beschreibung": "Fotos vom Haupthaus, 4 Seiten",
  *   "speed": 5,                       // m/s
  *   "rcLost": "continue" | "goHome",
+ *   "umgebung": "frei",               // nur wenn im Umkreis von 50 m wirklich nichts höher als 2 m steht; sonst braucht jeder Punkt unter 30 m "hindernisse"
+ *   "start": {"lat": 39.05, "lon": -8.17},   // Startpunkt, für den die Strecke geprüft wurde; steht die Drohne > 50 m weg, verweigert die App den Start
  *   "licht": true,                    // optional: Landelampe unten während der Mission an (kleine LED, hilft nur aus wenigen Metern)
  *   "hindernisse": [ {"name": "LMSI", "h": 15, "umriss": [[lat, lon], [lat, lon], ...]} ],  // Gebäude aus den Kartendaten; die App prüft die Strecke dagegen
  *   "ziel": {"lat": 39.05, "lon": -8.17, "h": 8},   // optional: Gebäude/Platz; Kamera zeigt darauf (h = Zielhöhe über Boden)
@@ -37,12 +39,14 @@ object PlanJson {
             }
         } ?: emptyList()
         val targetH = o.optJSONObject("ziel")?.optDouble("h", 0.0) ?: 0.0
+        val openArea = o.optString("umgebung", "") == "frei"
+        val plannedStart = o.optJSONObject("start")?.let { LatLon(it.getDouble("lat"), it.getDouble("lon")) }
         val kreis = o.optJSONObject("kreis")
         if (kreis != null && !o.has("waypoints")) {
             requireNotNull(target) { "kreis braucht ziel" }
             val m = Missions.orbit(target, kreis.getDouble("radius"), kreis.getDouble("h"), kreis.optInt("punkte", 8),
                 kreis.optDouble("start", 0.0), targetH, speed, name, kreis.optBoolean("uhrzeigersinn", true), kreis.optInt("fotos", kreis.optInt("punkte", 8)))
-            return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false), obstacles = obstacles) to o.optString("beschreibung", "")
+            return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart) to o.optString("beschreibung", "")
         }
         // "relativ": Punkte als Richtung/Abstand vom Ziel (z. B. Fassadenfoto: richtung = von wo aus man schaut).
         val rel = o.optJSONArray("relativ")
@@ -58,7 +62,7 @@ object PlanJson {
                     headingDeg = if (w.has("yaw")) w.getDouble("yaw") else Geo.bearing(pos, target))
             }
             val wps2 = if (wps.size == 1) wps + wps.first().copy(pos = Geo.offset(wps.first().pos, 3.0, 0.0), takePhoto = false) else wps
-            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles) to o.optString("beschreibung", "")
+            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart) to o.optString("beschreibung", "")
         }
         val arr: JSONArray = o.getJSONArray("waypoints")
         val wps = (0 until arr.length()).map { i ->
@@ -75,7 +79,7 @@ object PlanJson {
                 headingDeg = if (w.has("yaw")) w.getDouble("yaw") else target?.let { Geo.bearing(pos, it) },
             )
         }
-        val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles)
+        val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart)
         return m to o.optString("beschreibung", "")
     }
 
@@ -87,6 +91,8 @@ object PlanJson {
         o.put("rcLost", if (m.rcLost == RcLost.GO_HOME) "goHome" else "continue")
         m.target?.let { o.put("ziel", JSONObject().put("lat", it.lat).put("lon", it.lon)) }
         if (m.light) o.put("licht", true)
+        if (m.openArea) o.put("umgebung", "frei")
+        m.plannedStart?.let { o.put("start", JSONObject().put("lat", it.lat).put("lon", it.lon)) }
         val arr = JSONArray()
         m.waypoints.forEach { w ->
             val j = JSONObject().put("lat", w.pos.lat).put("lon", w.pos.lon).put("h", w.heightM)

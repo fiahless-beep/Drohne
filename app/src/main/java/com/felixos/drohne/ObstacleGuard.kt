@@ -26,6 +26,8 @@ object ObstacleGuard {
     private var lastTriggerMs = 0L
     private var lastLogMs = 0L
     private var listening = false
+    private var lastAlt = Double.NaN; private var lastLat = 0.0; private var lastLon = 0.0; private var lastPosMs = 0L
+    @Volatile var descending = false; private set
 
     private val listener = ICameraStreamManager.CameraFrameListener { data, offset, _, width, height, format ->
         try { onFrame(data, offset, width, height, format) } catch (_: Throwable) {}
@@ -33,7 +35,7 @@ object ObstacleGuard {
 
     fun init(c: Context) {
         val p = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        enabled = p.getBoolean(KEY_ON, true); armed = p.getBoolean(KEY_ARMED, false)
+        enabled = p.getBoolean(KEY_ON, true); armed = p.getBoolean(KEY_ARMED, true)
         DroneManager.addStateListener { s -> if (s.connected && s.registered) start() }
     }
 
@@ -60,6 +62,17 @@ object ObstacleGuard {
         lastExpansion = s
         val st = DroneManager.state
         val now = System.currentTimeMillis()
+        // Reiner Abstieg mit Kamera nach unten sieht auch wie „Fläche kommt näher“ aus: dann nicht werten.
+        st.location?.let { l ->
+            if (lastPosMs > 0 && now - lastPosMs >= 400) {
+                val dt = (now - lastPosMs) / 1000.0
+                val vz = if (lastAlt.isNaN()) 0.0 else (l.altitude - lastAlt) / dt
+                val vh = com.felixos.drohne.plan.Geo.distance(com.felixos.drohne.plan.LatLon(lastLat, lastLon), com.felixos.drohne.plan.LatLon(l.latitude, l.longitude)) / dt
+                descending = vz < -0.4 && vh < 0.6
+                lastAlt = l.altitude; lastLat = l.latitude; lastLon = l.longitude; lastPosMs = now
+            } else if (lastPosMs == 0L) { lastAlt = l.altitude; lastLat = l.latitude; lastLon = l.longitude; lastPosMs = now }
+        }
+        if (descending) { hits = 0; return }
         val moving = st.flying && (MissionController.executing || FollowController.active)
         if (s >= 1.06) hits++ else hits = maxOf(0, hits - 1)
         if (now - lastLogMs > 5000 && moving) { lastLogMs = now; DroneManager.log(String.format(Locale.GERMANY, "Wächter: Vergrößerung %.2f/Bild, Treffer %d", s, hits)) }

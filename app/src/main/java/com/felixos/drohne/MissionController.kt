@@ -25,6 +25,8 @@ object MissionController {
     var currentMission: Mission? = null
     /** Konflikte des aktuellen Plans mit bekannten Gebäuden (Obstacles.check). */
     var conflicts: List<com.felixos.drohne.plan.Obstacles.Conflict> = emptyList()
+    /** Startpunkt, mit dem der aktuelle Plan vorbereitet (Transit, Gebäude-Wächter) wurde; null = ohne Startpunkt. */
+    var preparedHome: LatLon? = null
         private set
     var uploaded = false
         private set
@@ -98,17 +100,25 @@ object MissionController {
         uploaded = false
         val h = DroneManager.state.home
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
-        val far = home != null && m0.waypoints.any { Geo.distance(it.pos, home) > 25.0 }
-        val m = if (far && m0.waypoints.size <= 196) {
-            // Anflug hoch: erst über den ersten Punkt steigen, dort absteigen; am Ende wieder hoch, dann über den Startpunkt (Heimflug = nur Abstieg).
-            val transit = maxOf(TRANSIT_HEIGHT_M, m0.waypoints.maxOf { it.heightM })
+        preparedHome = home
+        // Absturz 7.11.: die Drohne steigt beim Start nur bis zur Höhe des ersten Punkts und fliegt dann gerade.
+        // Deshalb: erster Punkt = senkrecht über dem Startpunkt auf Transithöhe (unabhängig von takeOffSecurityHeight),
+        // dann über den ersten Missionspunkt, dort absteigen; am Ende wieder hoch und über den Startpunkt (Heimflug = nur Abstieg).
+        val transit = maxOf(TRANSIT_HEIGHT_M, m0.waypoints.maxOf { it.heightM })
+        val m = if (m0.waypoints.size <= 196) {
             val first = m0.waypoints.first(); val last = m0.waypoints.last()
-            val pre = if (first.heightM < transit - 1) listOf(first.copy(heightM = transit, takePhoto = false, hoverSec = 0)) else emptyList()
-            val post = buildList {
-                if (last.heightM < transit - 1) add(last.copy(heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
-                add(last.copy(pos = home!!, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
+            // Übereinanderliegende Punkte 1,5 m versetzen (DJI mag keine Punkte ohne waagerechten Abstand).
+            fun beside(p: LatLon, towards: LatLon) = Geo.offset(p, 1.5, Geo.bearing(p, towards))
+            val pre = buildList {
+                if (home != null) add(first.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
+                if (first.heightM < transit - 1) add(first.copy(pos = beside(first.pos, home ?: last.pos), heightM = transit, takePhoto = false, hoverSec = 0))
             }
-            DroneManager.log("Transithöhe ${transit.toInt()} m: Anflug und Rückweg oben, Abstieg erst über dem Ziel")
+            val post = buildList {
+                if (last.heightM < transit - 1) add(last.copy(pos = beside(last.pos, home ?: first.pos), heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
+                if (home != null) add(last.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
+            }
+            if (home == null) DroneManager.log("ACHTUNG: Startpunkt unbekannt, Transit nur über dem Ziel. Vor dem Start Plan erneut übernehmen!")
+            else DroneManager.log("Transithöhe ${transit.toInt()} m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel")
             m0.copy(waypoints = pre + m0.waypoints + post, takeOffSecurityHeightM = transit)
         } else m0
         conflicts = com.felixos.drohne.plan.Obstacles.check(m, home)

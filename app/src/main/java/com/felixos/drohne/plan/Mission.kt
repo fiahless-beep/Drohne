@@ -35,6 +35,10 @@ data class Mission(
     val light: Boolean = false,
     /** Bekannte Gebäude aus den Kartendaten; die App prüft die Strecke dagegen (Obstacles.check). */
     val obstacles: List<Obstacle> = emptyList(),
+    /** Umgebung ausdrücklich frei (keine Gebäude/Bäume im Umkreis von 50 m, z. B. Feld, Hafenbecken). Ohne das und ohne [obstacles] verweigert die App Punkte unter 30 m. */
+    val openArea: Boolean = false,
+    /** Startpunkt, für den der Plan geprüft wurde; weicht der echte Startpunkt mehr als 50 m ab, verweigert die App den Start. */
+    val plannedStart: LatLon? = null,
 ) {
     init {
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }
@@ -81,7 +85,7 @@ object Missions {
     fun hoverTest(center: LatLon): Mission {
         val a = Waypoint(center, 10.0, gimbalPitchDeg = 0.0, takePhoto = false, hoverSec = 3)
         val b = Waypoint(Geo.offset(center, 5.0, 0.0), 10.0, gimbalPitchDeg = 0.0, takePhoto = true)
-        return Mission(name = "schwebetest", waypoints = listOf(a, b), speedMs = 2.0, takeOffSecurityHeightM = 10.0)
+        return Mission(name = "schwebetest", waypoints = listOf(a, b), speedMs = 2.0, takeOffSecurityHeightM = 10.0, openArea = true)
     }
 
     /** Testflug: Quadrat mit [sideM] Metern Kantenlänge um [center], Foto an jeder Ecke. */
@@ -92,6 +96,6 @@ object Missions {
         val pts = (corners + corners.first()).mapIndexed { i, p ->
             Waypoint(p, heightM, gimbalPitchDeg = -90.0, takePhoto = i < corners.size)
         }
-        return Mission(name = "testquadrat", waypoints = pts, speedMs = 4.0)
+        return Mission(name = "testquadrat", waypoints = pts, speedMs = 4.0, openArea = true)
     }
 }
