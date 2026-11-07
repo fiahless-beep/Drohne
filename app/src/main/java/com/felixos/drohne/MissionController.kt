@@ -24,6 +24,8 @@ object MissionController {
         private set
     var uploaded = false
         private set
+    /** Wird einmal aufgerufen, wenn die Mission abgeflogen ist (vor dem Heimflug). */
+    var onFinished: (() -> Unit)? = null
 
     fun init(context: Context) {
         dir = File(context.getExternalFilesDir(null), "missions").apply { mkdirs() }
@@ -35,8 +37,14 @@ object MissionController {
         }
         val mgr = WaypointMissionManager.getInstance()
         mgr.addWaypointMissionExecuteStateListener(object : WaypointMissionExecuteStateListener {
+            private var last: WaypointMissionExecuteState? = null
             override fun onMissionStateUpdate(state: WaypointMissionExecuteState?) {
+                if (state == last) return
+                last = state
                 DroneManager.log("Mission: $state")
+                if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
+                    onFinished?.invoke()
+                }
             }
         })
         mgr.addWaylineExecutingInfoListener(object : WaylineExecutingInfoListener {
@@ -139,6 +147,7 @@ object MissionController {
     fun start() {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
+        FlightReport.startFlight(missionId)
         DroneManager.safe("Start") {
             val ids = WaypointMissionManager.getInstance().getAvailableWaylineIDs(f.absolutePath)
             WaypointMissionManager.getInstance().startMission(missionId, ids, cb("Start"))

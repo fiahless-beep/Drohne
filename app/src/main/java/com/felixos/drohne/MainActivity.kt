@@ -74,12 +74,17 @@ class MainActivity : AppCompatActivity() {
             true
         }
         findViewById<Button>(R.id.btnLog).setOnClickListener { showLog() }
-        findViewById<Button>(R.id.btnPair).setOnClickListener {
-            AlertDialog.Builder(this).setTitle("Neu koppeln?")
-                .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
-                .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
-                .setNegativeButton("Abbrechen", null).show()
+        FlightReport.init(applicationContext)
+        var collected = false
+        MissionController.onFinished = {
+            if (!collected) {
+                collected = true
+                DroneManager.log("Mission beendet → hole Fotos und lade hoch")
+                // Erst nach der Landung, sonst stört der Wiedergabemodus den Heimflug.
+                waitLandedThen { FlightReport.collectAndUpload(applicationContext) { collected = false } }
+            }
         }
+        findViewById<Button>(R.id.btnPair).setOnClickListener { showMore() }
         findViewById<Button>(R.id.btnHome).setOnClickListener {
             MissionController.stop()
             DroneManager.goHome()
@@ -97,6 +102,51 @@ class MainActivity : AppCompatActivity() {
         DroneManager.removeStateListener(stateListener)
         DroneManager.removeLogListener(logListener)
         super.onStop()
+    }
+
+    /** Wartet, bis die Drohne am Boden ist (Motoren aus), dann [block]. */
+    private fun waitLandedThen(block: () -> Unit) {
+        val h = android.os.Handler(mainLooper)
+        var tries = 0
+        val r = object : Runnable {
+            override fun run() {
+                val s = DroneManager.state
+                if (!s.flying && !s.motorsOn) block()
+                else if (++tries < 300) h.postDelayed(this, 2000)
+                else DroneManager.log("Fotos: Drohne nicht gelandet, später „Fotos holen“ im Mehr-Menü")
+            }
+        }
+        h.postDelayed(r, 5000)
+    }
+
+    /** Mehr-Menü: Fotos holen, Token, Koppeln. */
+    private fun showMore() {
+        val items = arrayOf("Fotos holen und hochladen", "GitHub-Token eintragen", "Fernbedienung neu koppeln")
+        AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
+            when (which) {
+                0 -> FlightReport.collectAndUpload(applicationContext)
+                1 -> askToken()
+                2 -> AlertDialog.Builder(this).setTitle("Neu koppeln?")
+                    .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
+                    .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
+                    .setNegativeButton("Abbrechen", null).show()
+            }
+        }.show()
+    }
+
+    private fun askToken() {
+        val input = android.widget.EditText(this).apply {
+            hint = "github_pat_…"; setText(FlightReport.token(this@MainActivity) ?: "")
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+        AlertDialog.Builder(this).setTitle("GitHub-Token")
+            .setMessage("Fine-grained Token mit Schreibrecht „Contents“ nur für das Repo Drohne. Bleibt auf diesem Handy.")
+            .setView(input)
+            .setPositiveButton("Speichern") { _, _ ->
+                FlightReport.saveToken(this, input.text.toString())
+                DroneManager.log(if (input.text.isBlank()) "Token gelöscht" else "Token gespeichert")
+            }
+            .setNegativeButton("Abbrechen", null).show()
     }
 
     /** Ganzes Protokoll groß anzeigen, mit Kopieren-Knopf. */

@@ -219,6 +219,22 @@ object DroneManager {
         watch(FlightControllerKey.KeyCompassHeading) { s, v -> s.copy(headingDeg = v) }
         watch(FlightControllerKey.KeyIsFlying) { s, v -> s.copy(flying = v == true) }
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
+        // Landebestätigung: DJI hält kurz über dem Boden an und wartet auf ein Ja. Das gibt die App selbst.
+        try {
+            KeyManager.getInstance().listen(KeyTools.createKey(FlightControllerKey.KeyIsLandingConfirmationNeeded), holder) { _, v ->
+                if (v == true) {
+                    log("Drohne wartet auf Landebestätigung → bestätige Landung")
+                    safe("Landebestätigung") {
+                        KeyManager.getInstance().performAction(
+                            KeyTools.createKey(FlightControllerKey.KeyConfirmLanding),
+                            object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
+                                override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) { log("Landung bestätigt") }
+                                override fun onFailure(error: IDJIError) { log("Landebestätigung fehlgeschlagen: ${error.description()}") }
+                            })
+                    }
+                }
+            }
+        } catch (t: Throwable) { log("Landebestätigung nicht verfügbar: ${t.message}") }
         startPolling()
         log("Telemetrie läuft")
     }
