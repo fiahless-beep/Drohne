@@ -23,6 +23,8 @@ object MissionController {
     private var wpmzReady = false
     var currentKmz: File? = null
     var currentMission: Mission? = null
+    /** Konflikte des aktuellen Plans mit bekannten Gebäuden (Obstacles.check). */
+    var conflicts: List<com.felixos.drohne.plan.Obstacles.Conflict> = emptyList()
         private set
     var uploaded = false
         private set
@@ -107,6 +109,10 @@ object MissionController {
             DroneManager.log("Transithöhe ${transit.toInt()} m: Anflug und Rückweg oben, Abstieg erst über dem Ziel")
             m0.copy(waypoints = pre + m0.waypoints + post, takeOffSecurityHeightM = transit)
         } else m0
+        conflicts = com.felixos.drohne.plan.Obstacles.check(m, home)
+        if (conflicts.isNotEmpty()) {
+            DroneManager.log("GEBÄUDE-WÄCHTER: ${conflicts.size} Konflikt(e): " + conflicts.joinToString("; "))
+        } else if (m.obstacles.isNotEmpty()) DroneManager.log("Gebäude-Wächter: Strecke frei (${m.obstacles.size} Gebäude geprüft)")
         val base = Variant("Standard", m, WpmlOptions())
         var errs = check(base, "${m.name}.kmz")
         DroneManager.log("KMZ erstellt: ${m.waypoints.size} Punkte, ${m.lengthM.toInt()} m, ca. ${(m.durationSec / 60).toInt() + 1} min")

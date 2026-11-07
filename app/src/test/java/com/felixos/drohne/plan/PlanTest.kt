@@ -75,3 +75,29 @@ class RelativPlanTest {
         assertTrue(m.waypoints[0].gimbalPitchDeg > -10 && m.waypoints[0].gimbalPitchDeg < 0)
     }
 }
+
+class ObstaclesTest {
+    // LMSI-Block (OSM way 240952310) an der Rua Capitão Leitão, ca. 15 m hoch
+    private val lmsi = Obstacle("LMSI", 15.0, listOf(LatLon(38.7380898,-9.1053589), LatLon(38.7383091,-9.1052909), LatLon(38.7382861,-9.1051676),
+        LatLon(38.7382547,-9.105012), LatLon(38.7382341,-9.104891), LatLon(38.7380179,-9.1049699), LatLon(38.7380723,-9.1052678)))
+    private val start = LatLon(38.73885, -9.10400)  // weiter nordöstlich in der Straße
+    private val front = LatLon(38.738118, -9.105378)
+
+    @Test fun absturzflugWirdErkannt() {
+        val m = Mission("test", listOf(Waypoint(front, 12.0), Waypoint(LatLon(38.738193,-9.105380), 10.0)), obstacles = listOf(lmsi))
+        val c = Obstacles.check(m, start)
+        assertTrue("Start→Punkt 1 auf 12 m muss das Gebäude treffen", c.any { it.from == -1 && it.obstacle.name == "LMSI" })
+    }
+
+    @Test fun transitHoeheIstFrei() {
+        val m = Mission("test", listOf(Waypoint(front, 30.0), Waypoint(LatLon(38.738193,-9.105380), 30.0)), obstacles = listOf(lmsi))
+        assertTrue(Obstacles.check(m, start).isEmpty())
+    }
+
+    @Test fun punktImGebaeude() {
+        assertTrue(Obstacles.inside(LatLon(38.73815, -9.10515), lmsi.polygon))
+        assertTrue(!Obstacles.inside(front, lmsi.polygon))
+        // Punkt 1 des Absturzplans lag nur ~2 m vor der LMSI-Wand
+        assertTrue(Obstacles.distanceToPolygon(front, lmsi.polygon) in 0.5..10.0)
+    }
+}

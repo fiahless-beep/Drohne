@@ -33,6 +33,8 @@ data class Mission(
     val target: LatLon? = null,
     /** Landelampe (LED unten) während der Mission einschalten, z. B. zum Ausleuchten beim Schweben. */
     val light: Boolean = false,
+    /** Bekannte Gebäude aus den Kartendaten; die App prüft die Strecke dagegen (Obstacles.check). */
+    val obstacles: List<Obstacle> = emptyList(),
 ) {
     init {
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }

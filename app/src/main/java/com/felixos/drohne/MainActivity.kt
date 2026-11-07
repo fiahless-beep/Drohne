@@ -312,6 +312,7 @@ class MainActivity : AppCompatActivity() {
             if (est.maxDistanceFromHomeM > 1000) add("Ein Punkt ist ${est.maxDistanceFromHomeM.toInt()} m vom Startpunkt entfernt (max. 1000 m)")
         }
         if ((s.satellites ?: 0) < minSatellites) add("Zu wenig GPS (mind. $minSatellites Satelliten)")
+        MissionController.conflicts.forEach { add("Gebäude-Wächter: $it") }
         // Absturz 7.11.: tiefe Punkte nur bei Tageslicht und mit arbeitenden Sensoren.
         if (m != null) {
             val low = m.waypoints.filter { it.heightM < MIN_LOW_HEIGHT_M }
@@ -372,6 +373,7 @@ class MainActivity : AppCompatActivity() {
             appendLine(String.format(Locale.GERMANY, "Mission ca. %.1f min (ohne An-/Rückflug)", m.durationSec / 60))
         }
         m.target?.let { appendLine("Kamera zeigt aufs Ziel (${String.format(Locale.US, "%.5f, %.5f", it.lat, it.lon)})") }
+        if (m.obstacles.isNotEmpty()) appendLine("${m.obstacles.size} Gebäude bekannt, Strecke wird dagegen geprüft")
         if (m.light) appendLine("Landelampe an")
         append("Funkabriss: " + if (m.rcLost == com.felixos.drohne.plan.RcLost.CONTINUE) "zu Ende fliegen, dann heim" else "sofort heim")
     }

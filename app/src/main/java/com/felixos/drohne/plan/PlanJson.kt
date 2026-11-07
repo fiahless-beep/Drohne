@@ -12,6 +12,7 @@ import org.json.JSONObject
  *   "speed": 5,                       // m/s
  *   "rcLost": "continue" | "goHome",
  *   "licht": true,                    // optional: Landelampe unten während der Mission an (kleine LED, hilft nur aus wenigen Metern)
+ *   "hindernisse": [ {"name": "LMSI", "h": 15, "umriss": [[lat, lon], [lat, lon], ...]} ],  // Gebäude aus den Kartendaten; die App prüft die Strecke dagegen
  *   "ziel": {"lat": 39.05, "lon": -8.17, "h": 8},   // optional: Gebäude/Platz; Kamera zeigt darauf (h = Zielhöhe über Boden)
  *   "kreis": {"radius": 30, "h": 40, "punkte": 8, "fotos": 4, "start": 180, "uhrzeigersinn": true}, // optional: Kreisflug ums Ziel, ersetzt waypoints; fotos = Anzahl Fotos (an weniger Punkten = flüssiger)
  *   "relativ": [ {"richtung": 200, "abstand": 30, "h": 15} ],   // optional, mit ziel: Punkte als Richtung (vom Ziel aus gesehen) und Abstand; Kamera aufs Ziel
@@ -27,13 +28,21 @@ object PlanJson {
         val speed = o.optDouble("speed", 5.0)
         val rcLost = if (o.optString("rcLost", "continue") == "goHome") RcLost.GO_HOME else RcLost.CONTINUE
         val target = o.optJSONObject("ziel")?.let { LatLon(it.getDouble("lat"), it.getDouble("lon")) }
+        val obstacles = o.optJSONArray("hindernisse")?.let { arr ->
+            (0 until arr.length()).map { i ->
+                val h = arr.getJSONObject(i)
+                val u = h.getJSONArray("umriss")
+                Obstacle(h.optString("name", "Gebäude ${i + 1}"), h.getDouble("h"),
+                    (0 until u.length()).map { k -> val c = u.getJSONArray(k); LatLon(c.getDouble(0), c.getDouble(1)) })
+            }
+        } ?: emptyList()
         val targetH = o.optJSONObject("ziel")?.optDouble("h", 0.0) ?: 0.0
         val kreis = o.optJSONObject("kreis")
         if (kreis != null && !o.has("waypoints")) {
             requireNotNull(target) { "kreis braucht ziel" }
             val m = Missions.orbit(target, kreis.getDouble("radius"), kreis.getDouble("h"), kreis.optInt("punkte", 8),
                 kreis.optDouble("start", 0.0), targetH, speed, name, kreis.optBoolean("uhrzeigersinn", true), kreis.optInt("fotos", kreis.optInt("punkte", 8)))
-            return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false)) to o.optString("beschreibung", "")
+            return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false), obstacles = obstacles) to o.optString("beschreibung", "")
         }
         // "relativ": Punkte als Richtung/Abstand vom Ziel (z. B. Fassadenfoto: richtung = von wo aus man schaut).
         val rel = o.optJSONArray("relativ")
@@ -49,7 +58,7 @@ object PlanJson {
                     headingDeg = if (w.has("yaw")) w.getDouble("yaw") else Geo.bearing(pos, target))
             }
             val wps2 = if (wps.size == 1) wps + wps.first().copy(pos = Geo.offset(wps.first().pos, 3.0, 0.0), takePhoto = false) else wps
-            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false)) to o.optString("beschreibung", "")
+            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles) to o.optString("beschreibung", "")
         }
         val arr: JSONArray = o.getJSONArray("waypoints")
         val wps = (0 until arr.length()).map { i ->
@@ -66,7 +75,7 @@ object PlanJson {
                 headingDeg = if (w.has("yaw")) w.getDouble("yaw") else target?.let { Geo.bearing(pos, it) },
             )
         }
-        val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false))
+        val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles)
         return m to o.optString("beschreibung", "")
     }
 
