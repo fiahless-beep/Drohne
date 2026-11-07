@@ -39,5 +39,5 @@ Der DJI-App-Key kommt **nicht** ins Repo. Er wird als GitHub-Secret `DJI_API_KEY
 ## Am Gerät noch zu prüfen
 
 - `droneEnumValue` 68 für die Mini 4 Pro in der KMZ (DJIs Prüfer meldet sonst einen Fehler im Log)
-- Verhalten bei Funkabriss (aktuell: Rückkehr zum Startpunkt)
+- Verhalten bei Funkabriss (aktuell: Mission zu Ende fliegen, dann Rückkehr zum Startpunkt)
 - Kameraneigung −90° an allen Fotopunkten

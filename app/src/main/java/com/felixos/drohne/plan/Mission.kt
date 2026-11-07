@@ -22,7 +22,8 @@ data class Mission(
     val waypoints: List<Waypoint>,
     val speedMs: Double = 5.0,
     val takeOffSecurityHeightM: Double = 20.0,
-    val rcLost: RcLost = RcLost.GO_HOME,
+    // Felix 30.10.: Missionen fliegen bei Funkabriss zu Ende, danach Heimflug (finishAction goHome).
+    val rcLost: RcLost = RcLost.CONTINUE,
     /** DJI-Gerätekennung im WPML. Mini 4 Pro = 68 laut DJI-Doku; am Gerät mit checkValidation prüfen. */
     val droneEnum: Int = 68,
     val droneSubEnum: Int = 0,
