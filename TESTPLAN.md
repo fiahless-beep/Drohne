@@ -1,7 +1,7 @@
 # Testplan – Schritt für Schritt
 
 Jede Stufe einzeln testen. Erst weiter, wenn die vorige klappt. Ergebnis (Screenshot) an Claude.
-DJI Fly vorher immer komplett schließen.
+DJI Fly vorher immer komplett schließen. Drohne nicht am Ladekabel lassen: am Strom liefert sie keine Position (7.11. beobachtet).
 
 | Stufe | Was | Wie | Erwartet | Drohne fliegt? |
 |---|---|---|---|---|
