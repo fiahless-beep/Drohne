@@ -74,7 +74,12 @@ class MainActivity : AppCompatActivity() {
             true
         }
         findViewById<Button>(R.id.btnLog).setOnClickListener { showLog() }
-        findViewById<Button>(R.id.btnPair).setOnClickListener { DroneManager.requestPairing() }
+        findViewById<Button>(R.id.btnPair).setOnClickListener {
+            AlertDialog.Builder(this).setTitle("Neu koppeln?")
+                .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
+                .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
+                .setNegativeButton("Abbrechen", null).show()
+        }
         findViewById<Button>(R.id.btnHome).setOnClickListener {
             MissionController.stop()
             DroneManager.goHome()
@@ -172,7 +177,7 @@ class MainActivity : AppCompatActivity() {
         val loc = s.location
         status.text = buildString {
             appendLine("SDK:     " + when {
-                s.registered -> "registriert"
+                s.registered -> "registriert (App ${BuildConfig.VERSION_NAME})"
                 s.registerError != null -> "FEHLER: ${s.registerError}"
                 else -> "startet …"
             })
