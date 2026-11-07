@@ -6,6 +6,7 @@ import com.felixos.drohne.plan.Mission
 import com.felixos.drohne.plan.Wpml
 import com.felixos.drohne.plan.WpmlOptions
 import com.felixos.drohne.plan.Geo
+import com.felixos.drohne.plan.LatLon
 import com.felixos.drohne.plan.RcLost
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
@@ -86,8 +87,14 @@ object MissionController {
      * Meldet der Prüfer Fehler, werden einzelne Abwandlungen durchprobiert und protokolliert,
      * damit die Ursache sichtbar wird; die erste fehlerfreie Variante wird übernommen.
      */
-    fun prepare(m: Mission): Boolean {
+    fun prepare(m0: Mission): Boolean {
         uploaded = false
+        // Letzter Punkt direkt über dem Startpunkt (Höhe des letzten Punkts): der Heimflug wird dann nur noch ein Abstieg.
+        val h = DroneManager.state.home
+        val m = if (h?.latitude != null && h.latitude != 0.0 && m0.waypoints.size < 200 &&
+            Geo.distance(m0.waypoints.last().pos, LatLon(h.latitude, h.longitude)) > 10.0) {
+            m0.copy(waypoints = m0.waypoints + m0.waypoints.last().copy(pos = LatLon(h.latitude, h.longitude), takePhoto = false, hoverSec = 0, headingDeg = null))
+        } else m0
         val base = Variant("Standard", m, WpmlOptions())
         var errs = check(base, "${m.name}.kmz")
         DroneManager.log("KMZ erstellt: ${m.waypoints.size} Punkte, ${m.lengthM.toInt()} m, ca. ${(m.durationSec / 60).toInt() + 1} min")
@@ -98,6 +105,7 @@ object MissionController {
             w.copy(pos = Geo.offset(w.pos, 5.0 * (i + 1), 0.0))
         })
         val singles = listOf(
+            Variant("ohne Kurvenflug", m, WpmlOptions(smooth = false)),
             Variant("Funkverlust=Heimflug", m.copy(rcLost = RcLost.GO_HOME), WpmlOptions()),
             Variant("ohne Heimflugaktion", m, WpmlOptions(alwaysRcLostAction = false)),
             Variant("ohne Aktionen", m, WpmlOptions(noActions = true)),
@@ -176,6 +184,7 @@ object MissionController {
             DroneManager.log("Karte: https://www.google.com/maps/dir/$pts/data=!4m2!4m1!3e2")
         }
         if (currentMission?.light == true) DroneManager.setBottomLight("an")
+        currentMission?.let { m -> DroneManager.setGoHomeHeight(m.waypoints.maxOf { it.heightM }.toInt().coerceIn(20, 120)) }
         DroneManager.safe("Start") {
             val ids = WaypointMissionManager.getInstance().getAvailableWaylineIDs(f.absolutePath)
             WaypointMissionManager.getInstance().startMission(missionId, ids, cb("Start"))

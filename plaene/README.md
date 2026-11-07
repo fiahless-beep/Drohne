@@ -18,7 +18,7 @@ Nach dem Flug lädt die App Fotos + `protokoll.txt` nach `fluege/<datum>_<name>/
 ```
 
 - `ziel` (optional): Objekt, auf das Nase und Kamera zeigen. `h` = Höhe des Ziels über dem Boden (Dachfirst ≈ 6–10 m).
-- `kreis` (optional, ersetzt `waypoints`): Kreisflug ums Ziel. `radius` 5–200 m, `h` Flughöhe 2–120 m, `punkte` 3–36 (Foto an jedem), `start` = Richtung vom Ziel zum ersten Punkt in Grad (Sonne im Rücken: Richtung der Sonne wählen, z. B. mittags in Portugal ≈ 180).
+- `kreis` (optional, ersetzt `waypoints`): Kreisflug ums Ziel. `radius` 5–200 m, `h` Flughöhe 2–120 m, `punkte` 3–36, `fotos` = Anzahl Fotos (Standard = punkte; weniger Fotos = flüssiger, Punkte ohne Foto werden im Kurvenflug durchflogen), `start` = Richtung vom Ziel zum ersten Punkt in Grad (Sonne im Rücken: Richtung der Sonne wählen, z. B. mittags in Portugal ≈ 180).
 - `waypoints` (alternativ): Liste `{lat, lon, h, pitch, photo, hover, yaw}`. Mit `ziel` werden `yaw` (Blickrichtung) und `pitch` (Kameraneigung) automatisch aufs Ziel gerechnet, wenn sie fehlen.
 - `rcLost`: `continue` = Mission zu Ende fliegen, dann heim (Standard); `goHome` = sofort heim.
 - `licht`: Landelampe unten während der Mission an (kleine LED, hilft nur aus wenigen Metern).

@@ -298,6 +298,15 @@ object DroneManager {
         main.postDelayed(tick, 2000)
     }
 
+    /** Rückkehrhöhe (m) setzen, damit der Heimflug nicht unnötig hoch steigt. */
+    fun setGoHomeHeight(h: Int) = safe("Rückkehrhöhe") {
+        KeyManager.getInstance().setValue(KeyTools.createKey(FlightControllerKey.KeyGoHomeHeight), h,
+            object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
+                override fun onSuccess() { log("Rückkehrhöhe: $h m") }
+                override fun onFailure(error: IDJIError) { log("Rückkehrhöhe $h m fehlgeschlagen: ${error.description()}") }
+            })
+    }
+
     /** Landelampe unten: "an", "aus" oder "auto" (Standard: nur beim Landen). */
     fun setBottomLight(mode: String) = safe("Licht") {
         val m = when (mode) { "an" -> AuxiliaryLightMode.ON; "aus" -> AuxiliaryLightMode.OFF; else -> AuxiliaryLightMode.AUTO }

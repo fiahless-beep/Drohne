@@ -13,7 +13,7 @@ import org.json.JSONObject
  *   "rcLost": "continue" | "goHome",
  *   "licht": true,                    // optional: Landelampe unten während der Mission an (kleine LED, hilft nur aus wenigen Metern)
  *   "ziel": {"lat": 39.05, "lon": -8.17, "h": 8},   // optional: Gebäude/Platz; Kamera zeigt darauf (h = Zielhöhe über Boden)
- *   "kreis": {"radius": 30, "h": 40, "punkte": 8, "start": 180, "uhrzeigersinn": true}, // optional: Kreisflug ums Ziel, ersetzt waypoints
+ *   "kreis": {"radius": 30, "h": 40, "punkte": 8, "fotos": 4, "start": 180, "uhrzeigersinn": true}, // optional: Kreisflug ums Ziel, ersetzt waypoints; fotos = Anzahl Fotos (an weniger Punkten = flüssiger)
  *   "waypoints": [ {"lat": 39.05, "lon": -8.17, "h": 40, "pitch": -45, "photo": true, "hover": 0, "yaw": 90}, ... ]
  * }
  * Mit "ziel": Wegpunkte ohne "yaw" blicken zum Ziel, ohne "pitch" neigt die Kamera aufs Ziel.
@@ -31,7 +31,7 @@ object PlanJson {
         if (kreis != null && !o.has("waypoints")) {
             requireNotNull(target) { "kreis braucht ziel" }
             val m = Missions.orbit(target, kreis.getDouble("radius"), kreis.getDouble("h"), kreis.optInt("punkte", 8),
-                kreis.optDouble("start", 0.0), targetH, speed, name, kreis.optBoolean("uhrzeigersinn", true))
+                kreis.optDouble("start", 0.0), targetH, speed, name, kreis.optBoolean("uhrzeigersinn", true), kreis.optInt("fotos", kreis.optInt("punkte", 8)))
             return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false)) to o.optString("beschreibung", "")
         }
         val arr: JSONArray = o.getJSONArray("waypoints")

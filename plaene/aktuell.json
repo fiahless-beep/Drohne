@@ -1,7 +1,7 @@
 {
   "name": "kreisverkehr-poco-do-bispo",
-  "beschreibung": "Vom Start am Südende der Doca do Poço do Bispo ca. 350 m nach Norden zum Kreisverkehr Praça 25 de Abril, einmal rum (70 m Radius, 40 m hoch, 8 Fotos, Kamera auf die Mitte), zurück zum Start. Weitester Punkt ca. 420 m.",
-  "speed": 5,
+  "beschreibung": "Vom Start am Südende der Doca do Poço do Bispo ca. 350 m nach Norden zum Kreisverkehr Praça 25 de Abril, einmal rum (70 m Radius, 40 m hoch, 12 Punkte im Kurvenflug, 4 Fotos, Kamera auf die Mitte), zurück über den Start. Weitester Punkt ca. 420 m.",
+  "speed": 6,
   "rcLost": "continue",
   "ziel": {
     "lat": 38.743,
@@ -11,8 +11,9 @@
   "kreis": {
     "radius": 70,
     "h": 40,
-    "punkte": 8,
+    "punkte": 12,
     "start": 180,
-    "uhrzeigersinn": true
+    "uhrzeigersinn": true,
+    "fotos": 4
   }
 }

@@ -61,14 +61,16 @@ object Missions {
      * [startBearingDeg] = Richtung vom Ziel zum ersten Punkt (z. B. Sonne im Rücken: Sonnenrichtung wählen).
      */
     fun orbit(target: LatLon, radiusM: Double, heightM: Double, points: Int = 8, startBearingDeg: Double = 0.0,
-              targetHeightM: Double = 0.0, speedMs: Double = 4.0, name: String = "kreisflug", clockwise: Boolean = true): Mission {
+              targetHeightM: Double = 0.0, speedMs: Double = 4.0, name: String = "kreisflug", clockwise: Boolean = true,
+              photos: Int = points): Mission {
         require(points in 3..36) { "3–36 Punkte" }
         require(radiusM in 5.0..200.0) { "Radius 5–200 m" }
         val pitch = pitchTo(radiusM, heightM - targetHeightM)
         val wps = (0..points).map { i ->
             val b = startBearingDeg + (if (clockwise) 1 else -1) * 360.0 * (i % points) / points
             val p = Geo.offset(target, radiusM, b)
-            Waypoint(p, heightM, gimbalPitchDeg = pitch, takePhoto = i < points, headingDeg = (b + 180) % 360)
+            val every = if (photos <= 0) Int.MAX_VALUE else maxOf(1, points / photos)
+            Waypoint(p, heightM, gimbalPitchDeg = pitch, takePhoto = i < points && i % every == 0, headingDeg = (b + 180) % 360)
         }
         return Mission(name = name, waypoints = wps, speedMs = speedMs, target = target)
     }

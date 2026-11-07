@@ -23,6 +23,8 @@ data class WpmlOptions(
     val droneEnum: Int? = null,
     /** payloadInfo wie im DJI-Beispiel mitschreiben. */
     val payloadInfo: Boolean = false,
+    /** Kurvenflug: Punkte ohne Foto/Schweben werden ohne Anhalten durchflogen (sonst stoppt die Drohne an jedem Punkt). */
+    val smooth: Boolean = true,
 )
 
 object Wpml {
@@ -62,7 +64,14 @@ object Wpml {
           <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
         </wpml:waypointHeadingParam>"""
 
-    private fun turn() = """
+    private fun passes(w: Waypoint) = opt.smooth && !w.takePhoto && w.hoverSec == 0
+
+    private fun turn(w: Waypoint) = if (passes(w)) """
+        <wpml:waypointTurnParam>
+          <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
+          <wpml:waypointTurnDampingDist>5</wpml:waypointTurnDampingDist>
+        </wpml:waypointTurnParam>
+        <wpml:useStraightLine>0</wpml:useStraightLine>""" else """
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndStopWithDiscontinuityCurvature</wpml:waypointTurnMode>
           <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
@@ -109,8 +118,8 @@ object Wpml {
         <Point><coordinates>${f(w.pos.lon)},${f(w.pos.lat)}</coordinates></Point>
         <wpml:index>$i</wpml:index>
         ${if (execution) "<wpml:executeHeight>${f(w.heightM, 1)}</wpml:executeHeight>"
-          else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>${if (w.headingDeg != null) 0 else 1}</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>1</wpml:useGlobalTurnParam>"}
-        <wpml:waypointSpeed>${f(m.speedMs, 1)}</wpml:waypointSpeed>${if (execution || w.headingDeg != null) heading(w) else ""}${if (execution) turn() else ""}${if (opt.noActions) "" else actions(i, w, i)}
+          else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>${if (w.headingDeg != null) 0 else 1}</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>${if (passes(w)) 0 else 1}</wpml:useGlobalTurnParam>" + (if (passes(w)) turn(w) else "")}
+        <wpml:waypointSpeed>${f(m.speedMs, 1)}</wpml:waypointSpeed>${if (execution || w.headingDeg != null) heading(w) else ""}${if (execution) turn(w) else ""}${if (opt.noActions) "" else actions(i, w, i)}
       </Placemark>"""
 
     fun templateKml(m: Mission, nowMs: Long): String = """<?xml version="1.0" encoding="UTF-8"?>
