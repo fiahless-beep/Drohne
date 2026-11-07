@@ -18,6 +18,12 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v4
+      # Gleicher Signierschlüssel für jede Version, damit Updates sich drüber installieren lassen.
+      - name: Signierschlüssel aus Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: drohne-signing-v1
       - name: Tests
         run: ./gradlew :app:testDebugUnitTest
       - name: APK bauen
