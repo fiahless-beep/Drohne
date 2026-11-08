@@ -118,6 +118,10 @@ object MissionController {
         val h = DroneManager.state.home
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
         preparedHome = home
+        // Gebäudedatenbank der Stadt dazu (alle Gebäude im Umkreis von 300 m um Strecke und Start).
+        val city = com.felixos.drohne.plan.Buildings.near(m0.waypoints.map { it.pos } + listOfNotNull(home), 300.0)
+        val m0 = if (city.isNotEmpty()) m0.copy(obstacles = m0.obstacles + city).also { DroneManager.log("Gebäudedatenbank: ${city.size} Gebäude im Umkreis der Strecke") }
+            else m0.also { if (com.felixos.drohne.plan.Buildings.loaded) DroneManager.log("Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)") else DroneManager.log("Gebäudedatenbank nicht geladen") }
         // Absturz 7.11.: die Drohne steigt beim Start nur bis zur Höhe des ersten Punkts und fliegt dann gerade.
         // Deshalb: erster Punkt = senkrecht über dem Startpunkt auf Transithöhe (unabhängig von takeOffSecurityHeight),
         // dann über den ersten Missionspunkt, dort absteigen; am Ende wieder hoch und über den Startpunkt (Heimflug = nur Abstieg).

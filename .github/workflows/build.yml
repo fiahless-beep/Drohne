@@ -34,6 +34,10 @@ jobs:
             -alias drohne -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Felix Drohne"
       - name: Signatur-Fingerabdruck
         run: keytool -list -keystore keystore/drohne.keystore -storepass drohne-app | grep -i sha
+      - name: Gebäudedatenbank packen (falls plaene/daten/*.geojson vorhanden)
+        run: |
+          mkdir -p app/src/main/assets
+          if ls plaene/daten/*.geojson >/dev/null 2>&1; then python3 tools/gebaeude_pack.py "plaene/daten/*.geojson" app/src/main/assets/gebaeude.bin; else echo "keine Gebäudedaten"; fi
       - name: Tests
         run: ./gradlew :app:testDebugUnitTest
       - name: APK bauen

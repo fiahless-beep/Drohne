@@ -144,3 +144,29 @@ class SicherheitsfelderTest {
         assertTrue(PlanJson.toJson(m).contains("umgebung") && PlanJson.toJson(m).contains("frei"))
     }
 }
+
+class BuildingsTest {
+    @Test fun findetGebaeudeImUmkreis() {
+        val haus = listOf(LatLon(38.7380, -9.1056), LatLon(38.7380, -9.1053), LatLon(38.7383, -9.1053), LatLon(38.7383, -9.1056))
+        val fern = listOf(LatLon(38.7500, -9.1500), LatLon(38.7500, -9.1497), LatLon(38.7503, -9.1497), LatLon(38.7503, -9.1500))
+        Buildings.loadForTest(listOf(haus to 12.5, fern to 30.0))
+        val near = Buildings.near(listOf(LatLon(38.7381, -9.1060)), 300.0)
+        assertEquals(1, near.size)
+        assertEquals(12.5, near.first().heightM, 1e-9)
+        assertEquals(4, near.first().polygon.size)
+        assertTrue(Buildings.near(listOf(LatLon(38.70, -9.20)), 300.0).isEmpty())
+    }
+
+    @Test fun binaerformatRundreise() {
+        val haus = listOf(LatLon(38.7380, -9.1056), LatLon(38.7380, -9.1053), LatLon(38.7383, -9.1053))
+        val bytes = java.io.ByteArrayOutputStream()
+        val b = java.nio.ByteBuffer.allocate(4 + 4 + 20 + 3 * 8).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+        b.put("GEB1".toByteArray()); b.putInt(1)
+        b.putInt(38738000); b.putInt(-9105600); b.putInt(38738300); b.putInt(-9105300); b.putShort(125); b.putShort(3)
+        haus.forEach { b.putInt((it.lat * 1e6).toInt()); b.putInt((it.lon * 1e6).toInt()) }
+        bytes.write(b.array())
+        assertEquals(1, Buildings.load(java.io.ByteArrayInputStream(bytes.toByteArray())))
+        val near = Buildings.near(listOf(LatLon(38.7381, -9.1055)), 50.0)
+        assertEquals(1, near.size); assertEquals(12.5, near.first().heightM, 1e-9)
+    }
+}

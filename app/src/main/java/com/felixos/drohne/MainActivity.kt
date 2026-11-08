@@ -83,6 +83,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnLog).setOnClickListener { showLog() }
         FlightReport.init(applicationContext)
         ObstacleGuard.init(applicationContext)
+        Thread {
+            try {
+                val n = assets.open("gebaeude.bin").use { com.felixos.drohne.plan.Buildings.load(it) }
+                DroneManager.log("Gebäudedatenbank geladen: $n Gebäude")
+            } catch (t: Throwable) { DroneManager.log("Keine Gebäudedatenbank in der App (${t.javaClass.simpleName})") }
+        }.start()
         var collected = false
         MissionController.onFinished = {
             if (!collected) {
