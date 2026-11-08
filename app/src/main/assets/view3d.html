@@ -29,6 +29,7 @@
 const canvas = document.getElementById('view'), hint = document.getElementById('hint'), camLabel = document.getElementById('cam'), reticle = document.getElementById('reticle');
 let renderer, scene, cam, sun, drone, rotors = [], camCone, trail, trailPts = [], buildings = [], routeObjs = [], markers = [], droneShadow, droneLine, glow;
 let routeTex = null, wallTex = null, routeCurve = null, routeTube = null, routeRadius = 0.55, curtain = null, droneTarget = null;
+let terrain = null, terrainMesh = null, groundPlane = null; // Gelände (optional): {x0,y0,dx,dy,nx,ny,z[]} relativ zum Startboden
 let center = null, theta = -0.7, phi = 0.75, dist = 220;
 let camMode = 'orbit', flightMode = 'fpv';           // flightMode: gewünschte Kamera im Flug (fpv | chase)
 let chaseDist = 30, chasePitch = 0.4, yawOff = 0, pitchOff = 0, lastTouch = 0;
@@ -60,7 +61,7 @@ function init() {
   // Boden: helle Fläche mit feinem Raster, nimmt Schatten an
   const groundTex = texCanvas(256, 256, g => { g.fillStyle = '#c3cad0'; g.fillRect(0, 0, 256, 256); g.strokeStyle = 'rgba(70,80,90,0.16)'; g.lineWidth = 2; g.strokeRect(0, 0, 256, 256); g.strokeStyle = 'rgba(70,80,90,0.08)'; g.lineWidth = 1; for (let i = 64; i < 256; i += 64) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 256); g.moveTo(0, i); g.lineTo(256, i); g.stroke(); } });
   groundTex.repeat.set(80, 80);
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshLambertMaterial({ color: 0xffffff, map: groundTex })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  groundPlane = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshLambertMaterial({ color: 0xffffff, map: groundTex })); groundPlane.rotation.x = -Math.PI / 2; groundPlane.receiveShadow = true; scene.add(groundPlane);
   // Fassaden: feine Stockwerkslinien alle 3 m
   wallTex = texCanvas(64, 64, g => { g.fillStyle = '#ece8e1'; g.fillRect(0, 0, 64, 64); g.fillStyle = 'rgba(70,75,80,0.16)'; g.fillRect(0, 60, 64, 2); g.fillStyle = 'rgba(255,255,255,0.35)'; g.fillRect(0, 0, 64, 1); });
   wallTex.repeat.set(1 / 6, 1 / 3);
@@ -180,6 +181,26 @@ function place() {
   cam.position.copy(camPos); cam.lookAt(camLook);
 }
 
+// Geländehöhe unter (x, z) relativ zum Startboden; ohne Gelände 0
+function groundAt(x, z) {
+  const t = terrain; if (!t) return 0;
+  const fx = (x - t.x0) / t.dx, fy = (-z - t.y0) / t.dy; const i = Math.floor(fx), j = Math.floor(fy);
+  if (i < 0 || j < 0 || i >= t.nx - 1 || j >= t.ny - 1) return 0;
+  const u = fx - i, v = fy - j, z00 = t.z[j * t.nx + i], z10 = t.z[j * t.nx + i + 1], z01 = t.z[(j + 1) * t.nx + i], z11 = t.z[(j + 1) * t.nx + i + 1];
+  return (z00 * (1 - u) + z10 * u) * (1 - v) + (z01 * (1 - u) + z11 * u) * v;
+}
+function buildTerrain(t) {
+  if (terrainMesh) { scene.remove(terrainMesh); terrainMesh.geometry.dispose(); terrainMesh = null; }
+  terrain = t || null; if (!t) { groundPlane.position.y = 0; return; }
+  const geo = new THREE.PlaneGeometry((t.nx - 1) * t.dx, (t.ny - 1) * t.dy, t.nx - 1, t.ny - 1); geo.rotateX(-Math.PI / 2);
+  const pos = geo.attributes.position; let mn = 1e9;
+  for (let j = 0; j < t.ny; j++) for (let i = 0; i < t.nx; i++) { const k = j * t.nx + i; const z = t.z[(t.ny - 1 - j) * t.nx + i]; pos.setY(k, z); mn = Math.min(mn, z); }
+  geo.computeVertexNormals();
+  const tex = groundPlane.material.map;
+  terrainMesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0xffffff, map: tex })); terrainMesh.receiveShadow = true;
+  terrainMesh.position.set(t.x0 + (t.nx - 1) * t.dx / 2, 0, -(t.y0 + (t.ny - 1) * t.dy / 2)); scene.add(terrainMesh);
+  groundPlane.position.y = mn - 1;
+}
 function distPointSeg(p, a, b) { const ab = b.clone().sub(a); const l = ab.lengthSq(); const t = l ? Math.max(0, Math.min(1, p.clone().sub(a).dot(ab) / l)) : 0; return p.distanceTo(a.clone().add(ab.multiplyScalar(t))); }
 function nearRoute(route, poly, h, clear, mar) {
   for (let i = 0; i < route.length - 1; i++) { const a = route[i], b = route[i + 1]; if (Math.min(a.y, b.y) >= h + clear) continue;
@@ -218,13 +239,14 @@ function setScene(D) {
   buildings.forEach(o => scene.remove(o)); buildings = []; routeObjs.forEach(o => scene.remove(o)); routeObjs = []; markers = []; passed = 0;
   routeInfo = (D.r || []).map(p => ({ pos: new THREE.Vector3(p[0], p[2], -p[1]), yaw: p[3] == null ? null : THREE.MathUtils.degToRad(p[3]), pitch: p[4] == null ? -20 : p[4], hold: p[5] || 0, speed: p[6] || 5 }));
   const route = routeInfo.map(r => r.pos);
+  buildTerrain(D.t);
   const roofMat = new THREE.MeshLambertMaterial({ color: 0xcfc9c0 }), wallMat = new THREE.MeshLambertMaterial({ color: 0xffffff, map: wallTex });
   const roofWarn = new THREE.MeshLambertMaterial({ color: 0xe0823a }), wallWarn = new THREE.MeshLambertMaterial({ color: 0xf0a060, map: wallTex });
   const gOk = [], gWarn = [], eOk = [], eWarn = [];
   (D.b || []).forEach(b => {
     try {
       const shape = new THREE.Shape(b.p.map(q => new THREE.Vector2(q[0], -q[1])));
-      const g = new THREE.ExtrudeGeometry(shape, { depth: b.h, bevelEnabled: false }); g.rotateX(-Math.PI / 2);
+      const g = new THREE.ExtrudeGeometry(shape, { depth: b.h, bevelEnabled: false }); g.rotateX(-Math.PI / 2); if (b.g) g.translate(0, b.g, 0);
       const conflict = route.length > 1 && nearRoute(route, b.p, b.h, D.clear || 8, D.mar || 8);
       (conflict ? gWarn : gOk).push(g); (conflict ? eWarn : eOk).push(new THREE.EdgesGeometry(g, 20));
     } catch (e) {}
@@ -242,25 +264,28 @@ function setScene(D) {
       routeTube = new THREE.Mesh(new THREE.TubeGeometry(routeCurve, Math.max(8, route.length * 12), 0.55, 8, false), new THREE.MeshBasicMaterial({ map: routeTex, side: THREE.FrontSide })); routeRadius = 0.55; scene.add(routeTube); routeObjs.push(routeTube);
       // Höhenvorhang: durchscheinende Fläche vom Boden bis zur Linie, zeigt das Höhenprofil von oben und schräg
       const cp = [], ci = [];
-      route.forEach((p, i) => { cp.push(p.x, p.y, p.z, p.x, 0.05, p.z); if (i) { const k = (i - 1) * 2; ci.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); } });
+      route.forEach((p, i) => { cp.push(p.x, p.y, p.z, p.x, groundAt(p.x, p.z) + 0.05, p.z); if (i) { const k = (i - 1) * 2; ci.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); } });
       const cg = new THREE.BufferGeometry(); cg.setAttribute('position', new THREE.Float32BufferAttribute(cp, 3)); cg.setIndex(ci);
       curtain = new THREE.Mesh(cg, new THREE.MeshBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false })); scene.add(curtain); routeObjs.push(curtain);
-      const groundLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(route.map(p => new THREE.Vector3(p.x, 0.1, p.z))), new THREE.LineBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.5 })); scene.add(groundLine); routeObjs.push(groundLine);
+      const groundLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(route.map(p => new THREE.Vector3(p.x, groundAt(p.x, p.z) + 0.1, p.z))), new THREE.LineBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.5 })); scene.add(groundLine); routeObjs.push(groundLine);
     } catch (e) {}
     route.forEach((p, i) => {
       const first = i === 0, last = i === route.length - 1;
       const sp = numberSprite(first ? '▲' : (last ? '⌂' : i), (first || last) ? '#30d158' : (routeInfo[i].hold > 0 ? '#ff9f0a' : '#2f8cff'));
       sp.position.set(p.x, p.y + 4, p.z); scene.add(sp); routeObjs.push(sp); markers.push(sp);
-      const pole = new THREE.Line(new THREE.BufferGeometry().setFromPoints([p, new THREE.Vector3(p.x, 0, p.z)]), new THREE.LineBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.3 })); scene.add(pole); routeObjs.push(pole);
-      const foot = new THREE.Mesh(new THREE.RingGeometry(1.0, 1.6, 20), new THREE.MeshBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.45, side: THREE.DoubleSide })); foot.rotation.x = -Math.PI / 2; foot.position.set(p.x, 0.1, p.z); scene.add(foot); routeObjs.push(foot);
+      const pole = new THREE.Line(new THREE.BufferGeometry().setFromPoints([p, new THREE.Vector3(p.x, groundAt(p.x, p.z), p.z)]), new THREE.LineBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.3 })); scene.add(pole); routeObjs.push(pole);
+      const foot = new THREE.Mesh(new THREE.RingGeometry(1.0, 1.6, 20), new THREE.MeshBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.45, side: THREE.DoubleSide })); foot.rotation.x = -Math.PI / 2; foot.position.set(p.x, groundAt(p.x, p.z) + 0.1, p.z); scene.add(foot); routeObjs.push(foot);
     });
     center = new THREE.Box3().setFromPoints(route).getCenter(new THREE.Vector3()); center.y = 10;
     dist = Math.max(120, route.reduce((m, p) => Math.max(m, p.distanceTo(center)), 0) * 2.2);
     hint.style.display = 'none';
     if (!flying) startPreview();
   } else { center = new THREE.Vector3(0, 10, 0); hint.style.display = ''; }
-  sun.target.position.copy(center); sun.position.set(center.x + 260, 420, center.z + 180); sun.shadow.camera.updateProjectionMatrix();
-  const homeMark = new THREE.Mesh(new THREE.RingGeometry(2.6, 3.6, 32), new THREE.MeshBasicMaterial({ color: 0x30d158, side: THREE.DoubleSide })); homeMark.rotation.x = -Math.PI / 2; homeMark.position.y = 0.1; scene.add(homeMark); routeObjs.push(homeMark);
+  sun.target.position.copy(center); sun.position.set(center.x + 260, 420, center.z + 180);
+  // Schattenbereich und Dunst an die Größe des Plans anpassen (sonst verschwinden ferne Gebäude bei großen Routen im Nebel)
+  const ext = Math.max(450, dist * 0.8); const sc2 = sun.shadow.camera; sc2.left = sc2.bottom = -ext; sc2.right = sc2.top = ext; sc2.updateProjectionMatrix();
+  scene.fog.near = Math.max(500, dist * 1.3); scene.fog.far = Math.max(1600, dist * 4);
+  const homeMark = new THREE.Mesh(new THREE.RingGeometry(2.6, 3.6, 32), new THREE.MeshBasicMaterial({ color: 0x30d158, side: THREE.DoubleSide })); homeMark.rotation.x = -Math.PI / 2; homeMark.position.y = 0.1; // Start = Bezug (Gelände 0) scene.add(homeMark); routeObjs.push(homeMark);
   const homeH = new THREE.Mesh(new THREE.CircleGeometry(2.4, 32), new THREE.MeshBasicMaterial({ color: 0x30d158, transparent: true, opacity: 0.25, side: THREE.DoubleSide })); homeH.rotation.x = -Math.PI / 2; homeH.position.y = 0.1; scene.add(homeH); routeObjs.push(homeH);
   trailPts = []; trail.geometry.setFromPoints(trailPts);
 }
@@ -297,8 +322,9 @@ function previewStep() {
     gimbal = w.pitch;
     p.hold = w.hold > 0 ? w.hold : 0.3;
   } else drone.position.copy(a).lerp(b, p.t);
-  droneLine.geometry.setFromPoints([drone.position, new THREE.Vector3(drone.position.x, 0, drone.position.z)]);
-  droneShadow.position.set(drone.position.x, 0.12, drone.position.z);
+  const gy = groundAt(drone.position.x, drone.position.z);
+  droneLine.geometry.setFromPoints([drone.position, new THREE.Vector3(drone.position.x, gy, drone.position.z)]);
+  droneShadow.position.set(drone.position.x, gy + 0.12, drone.position.z);
 }
 function endPreview() { preview = null; camMode = flying ? flightMode : 'orbit'; if (!flying) flightMode = flightMode === 'orbit' ? 'fpv' : flightMode; markers.forEach(m => m.material.opacity = 1); passed = 0; if (!flying) { droneOn = false; droneLine.visible = droneShadow.visible = false; } }
 
@@ -310,8 +336,9 @@ function setDrone(x, y, z, hdg, pitch) {
   if (!droneTarget || np.distanceTo(drone.position) > 15) drone.position.copy(np);
   droneTarget = np;
   heading = hdg * Math.PI / 180; if (pitch != null) gimbal = pitch;
-  droneLine.visible = true; droneLine.geometry.setFromPoints([np, new THREE.Vector3(x, 0, -z)]);
-  droneShadow.visible = true; droneShadow.position.set(x, 0.12, -z);
+  const gy = groundAt(x, -z);
+  droneLine.visible = true; droneLine.geometry.setFromPoints([np, new THREE.Vector3(x, gy, -z)]);
+  droneShadow.visible = true; droneShadow.position.set(x, gy + 0.12, -z);
   for (let i = passed; i < routeInfo.length; i++) if (routeInfo[i].pos.distanceTo(drone.position) < 3) markPassed(i);
   const last = trailPts[trailPts.length - 1];
   if (!last || last.distanceTo(drone.position) > 0.5) { trailPts.push(drone.position.clone()); if (trailPts.length > 2000) trailPts.shift(); trail.geometry.setFromPoints(trailPts); }

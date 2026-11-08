@@ -1,0 +1,194 @@
+{
+  "name": "marques-de-pombal-runde",
+  "beschreibung": "Von der Rua Rodrigo da Fonseca 190 zur Praça Marquês de Pombal (690 m), eine Runde um das Denkmal (Radius 70 m, 60 m hoch, 8 Fotos mit Blick zur Säule, Kamera 30° nach unten), zurück nach Hause. Nur tagsüber.",
+  "speed": 4,
+  "rcLost": "continue",
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.72525,
+    "lon": -9.15004,
+    "h": 36
+  },
+  "waypoints": [
+    {
+      "lat": 38.727499,
+      "lon": -9.156342,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727168,
+      "lon": -9.155414,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726837,
+      "lon": -9.154486,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726505,
+      "lon": -9.153558,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726174,
+      "lon": -9.15263,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725843,
+      "lon": -9.151702,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725512,
+      "lon": -9.150774,
+      "h": 60,
+      "photo": true,
+      "hover": 2,
+      "yaw": 115,
+      "pitch": -30
+    },
+    {
+      "lat": 38.72584,
+      "lon": -9.150322,
+      "h": 60,
+      "photo": true,
+      "hover": 2,
+      "yaw": 160,
+      "pitch": -30
+    },
+    {
+      "lat": 38.725822,
+      "lon": -9.149704,
+      "h": 60,
+      "photo": true,
+      "hover": 2,
+      "yaw": 205,
+      "pitch": -30
+    },
+    {
+      "lat": 38.72547,
+      "lon": -9.149284,
+      "h": 60,
+      "photo": true,
+      "hover": 2,
+      "yaw": 250,
+      "pitch": -30
+    },
+    {
+      "lat": 38.724988,
+      "lon": -9.149306,
+      "h": 60,
+      "photo": true,
+      "hover": 2,
+      "yaw": 295,
+      "pitch": -30
+    },
+    {
+      "lat": 38.72466,
+      "lon": -9.149758,
+      "h": 60,
+      "photo": true,
+      "hover": 2,
+      "yaw": 340,
+      "pitch": -30
+    },
+    {
+      "lat": 38.724678,
+      "lon": -9.150376,
+      "h": 60,
+      "photo": true,
+      "hover": 2,
+      "yaw": 25,
+      "pitch": -30
+    },
+    {
+      "lat": 38.72503,
+      "lon": -9.150796,
+      "h": 60,
+      "photo": true,
+      "hover": 2,
+      "yaw": 70,
+      "pitch": -30
+    },
+    {
+      "lat": 38.725512,
+      "lon": -9.150774,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "yaw": 115,
+      "pitch": -30
+    },
+    {
+      "lat": 38.725843,
+      "lon": -9.151702,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726174,
+      "lon": -9.15263,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726505,
+      "lon": -9.153558,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726837,
+      "lon": -9.154486,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727168,
+      "lon": -9.155414,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727499,
+      "lon": -9.156342,
+      "h": 60,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    }
+  ]
+}

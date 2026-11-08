@@ -126,9 +126,26 @@ def main(argv):
             if rises: rise = max(rises)
     length = sum(math.hypot(wps[i + 1]["x"] - wps[i]["x"], wps[i + 1]["y"] - wps[i]["y"]) + abs(wps[i + 1]["h"] - wps[i]["h"]) for i in range(len(wps) - 1))
     dur = sum((math.hypot(wps[i + 1]["x"] - wps[i]["x"], wps[i + 1]["y"] - wps[i]["y"]) / max(wps[i]["speed"], 0.5)) for i in range(len(wps) - 1)) + sum((2 if w["photo"] else 0) + w["hover"] for w in wps) + transit / 2.5 + transit / 1.5
+    # Gelände aus dem Höhenmodell (10-m-Raster, relativ zum Startboden) + Gebäude auf Geländehöhe
+    terr = None; bg = {}
+    if Path(hp).exists():
+        ground, surf = load_hoehen(hp); g0 = ground(*home)
+        if g0 is not None:
+            xs = [w["x"] for w in wps]; ys = [w["y"] for w in wps]; M = 300.0; step = 10.0
+            x0 = math.floor((min(xs) - M) / step) * step; y0 = math.floor((min(ys) - M) / step) * step
+            nx = int((max(xs) + M - x0) / step) + 2; ny = int((max(ys) + M - y0) / step) + 2
+            zs = []
+            for j in range(ny):
+                for i in range(nx):
+                    la, lo = loc.ll(x0 + i * step, y0 + j * step); v = ground(la, lo); zs.append(round((v - g0) if v is not None else 0, 1))
+            terr = {"x0": x0, "y0": y0, "dx": step, "dy": step, "nx": nx, "ny": ny, "z": zs}
+            for idx, (h, poly, _) in enumerate(bl):
+                cx = sum(p[0] for p in poly) / len(poly); cy = sum(p[1] for p in poly) / len(poly); la, lo = loc.ll(cx, cy); v = ground(la, lo)
+                if v is not None: bg[idx] = round(v - g0, 1)
     # Szene wie View3D.kt
     route = [[round(w["x"], 1), round(w["y"], 1), w["h"], w["yaw"], w["pitch"], (2 if w["photo"] else 0) + w["hover"], w["speed"]] for w in wps]
-    scene = {"b": [{"h": h, "p": [[round(x, 1), round(y, 1)] for x, y in poly]} for h, poly, _ in bl], "r": route, "clear": CLEAR, "mar": MARGIN}
+    scene = {"b": [dict({"h": h, "p": [[round(x, 1), round(y, 1)] for x, y in poly]}, **({"g": bg[idx]} if bg.get(idx) else {})) for idx, (h, poly, _) in enumerate(bl)], "r": route, "clear": CLEAR, "mar": MARGIN}
+    if terr: scene["t"] = terr
     # 3D-Code der App übernehmen
     html3d = (ROOT / "app/src/main/assets/view3d.html").read_text(encoding="utf-8")
     js = re.search(r"<script>\n(// Koordinaten.*?)</script>", html3d, re.S).group(1)
