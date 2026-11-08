@@ -73,9 +73,11 @@ class View3D(private val web: WebView) {
         obstacles.forEach { ob ->
             if (ob.polygon.size < 3) return@forEach
             val poly = JSONArray(); ob.polygon.forEach { p -> val (x, y) = local(p); poly.put(JSONArray().put(Math.round(x * 10) / 10.0).put(Math.round(y * 10) / 10.0)) }
-            val bo = JSONObject().put("h", ob.heightM).put("p", poly)
-            val g = if (ob.groundRelM != 0.0) ob.groundRelM else (if (com.felixos.drohne.plan.Terrain.loaded) (com.felixos.drohne.plan.Terrain.riseM(o, ob.polygon[0]) ?: 0.0) - MissionController.startAboveGroundM else 0.0)
-            if (g != 0.0) bo.put("g", Math.round(g * 10) / 10.0)
+            // Sockel bis zum tiefsten Geländepunkt unter dem Umriss (Hang: sonst schwebt die Talseite), Dach bleibt auf Boden(Mitte) + Höhe
+            val gc = if (ob.groundRelM != 0.0) ob.groundRelM else (if (com.felixos.drohne.plan.Terrain.loaded) (com.felixos.drohne.plan.Terrain.riseM(o, ob.polygon[0]) ?: 0.0) - MissionController.startAboveGroundM else 0.0)
+            val base = if (com.felixos.drohne.plan.Terrain.loaded) (ob.polygon.mapNotNull { com.felixos.drohne.plan.Terrain.riseM(o, it) }.minOrNull()?.let { it - MissionController.startAboveGroundM }?.coerceAtMost(gc) ?: gc) else gc
+            val bo = JSONObject().put("h", Math.round((ob.heightM + (gc - base)) * 10) / 10.0).put("p", poly)
+            if (base != 0.0) bo.put("g", Math.round(base * 10) / 10.0)
             b.put(bo)
         }
         val r = JSONArray()

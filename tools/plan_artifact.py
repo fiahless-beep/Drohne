@@ -163,9 +163,12 @@ def main(argv):
                             if s is not None and gg is not None: c = max(c, s - gg)
                     cs.append(round(c) if c >= 3 else 0)
             terr = {"x0": x0, "y0": y0, "dx": step, "dy": step, "nx": nx, "ny": ny, "z": zs, "c": cs}
+            # Sockel bis zum tiefsten Geländepunkt unter dem Umriss (Hanglagen: sonst schwebt die Talseite), Dachhöhe = Boden Mitte + h
             for idx, (h, poly, _) in enumerate(bl):
                 cx = sum(p[0] for p in poly) / len(poly); cy = sum(p[1] for p in poly) / len(poly); la, lo = loc.ll(cx, cy); v = ground(la, lo)
-                if v is not None: bg[idx] = round(v - g0, 1)
+                if v is None: continue
+                vs = [ground(*loc.ll(px, py)) for px, py in poly]; base = min([v] + [x for x in vs if x is not None])
+                bg[idx] = round(base - g0, 1); bl[idx] = (round(h + (v - base), 1), poly, bl[idx][2])
     # Szene wie View3D.kt
     route = [[round(w["x"], 1), round(w["y"], 1), w["h"], w["yaw"], w["pitch"], (2 if w["photo"] else 0) + w["hover"], w["speed"]] for w in wps]
     scene = {"b": [dict({"h": h, "p": [[round(x, 1), round(y, 1)] for x, y in poly]}, **({"g": bg[idx]} if bg.get(idx) else {})) for idx, (h, poly, _) in enumerate(bl)], "r": route, "clear": CLEAR, "mar": MARGIN}
