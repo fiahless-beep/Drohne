@@ -3,6 +3,9 @@ name: APK bauen
 on:
   push:
     branches: [main]
+    # Uploads der App (Fotos, Protokolle, Flugaufzeichnungen) lösen keinen Build aus.
+    paths-ignore:
+      - "fluege/**"
   workflow_dispatch:
 
 permissions:

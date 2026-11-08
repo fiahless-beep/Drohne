@@ -137,6 +137,19 @@ object FlightReport {
         }.start()
     }
 
+    /** Einen Text (z. B. Selbsttest) als Datei ins Repo laden; onDone(true) bei Erfolg, null-Token → false. */
+    fun uploadText(c: Context, path: String, text: String, onDone: (Boolean) -> Unit) {
+        val token = token(c) ?: run { DroneManager.log("Kein GitHub-Token (Mehr … → GitHub-Token eintragen)"); onDone(false); return }
+        Thread {
+            val ok = try {
+                val f = File(c.cacheDir, File(path).name).apply { writeText(text) }
+                uploadFile(token, path, f).also { f.delete() }
+            } catch (t: Throwable) { DroneManager.log("Upload $path: ${t.message}"); false }
+            if (ok) DroneManager.log("Hochgeladen: github.com/$OWNER/$REPO/blob/main/$path")
+            onDone(ok)
+        }.start()
+    }
+
     /** Holt die Fotoliste von der Drohne und lädt alle Fotos, die nach Flugbeginn entstanden sind. */
     private fun downloadPhotos(dir: File): List<File> {
         val mm = MediaDataCenter.getInstance().mediaManager

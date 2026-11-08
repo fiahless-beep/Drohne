@@ -635,14 +635,23 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("OK", null).show(); return
         }
         val tv = TextView(this).apply { setPadding(40, 24, 40, 24); textSize = 14f; setTextIsSelectable(true); text = "Prüfe Sensoren … (bis zu 6 s)" }
+        var last: SelfTest.Result? = null
         val dlg = AlertDialog.Builder(this).setTitle("Selbsttest").setView(ScrollView(this).apply { addView(tv) })
-            .setPositiveButton("OK", null).setNeutralButton("Nochmal", null).create()
+            .setPositiveButton("OK", null).setNeutralButton("Nochmal", null).setNegativeButton("An Claude senden", null).create()
         dlg.show()
         fun go() {
-            tv.text = "Prüfe Sensoren … (bis zu 6 s)"
-            SelfTest.run { r -> if (dlg.isShowing) tv.text = SelfTest.text(r) }
+            tv.text = "Prüfe Sensoren … (bis zu 6 s)"; last = null
+            SelfTest.run { r -> last = r; if (dlg.isShowing) tv.text = SelfTest.text(r) }
         }
         dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { go() }
+        dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+            val r = last ?: run { android.widget.Toast.makeText(this, "Noch kein Ergebnis", android.widget.Toast.LENGTH_SHORT).show(); return@setOnClickListener }
+            val stamp = java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm", java.util.Locale.GERMANY).format(java.util.Date())
+            val s = DroneManager.state
+            val head = "Selbsttest $stamp · App ${BuildConfig.VERSION_NAME} · Typ ${s.productType} · SN ${s.serial ?: "?"} · fliegt=${s.flying}\n\n"
+            FlightReport.uploadText(applicationContext, "fluege/selbsttest/$stamp.txt", head + SelfTest.text(r)) { ok -> runOnUiThread {
+                android.widget.Toast.makeText(this, if (ok) "An Claude gesendet" else "Senden fehlgeschlagen – GitHub-Token? Internet?", android.widget.Toast.LENGTH_LONG).show() } }
+        }
         go()
     }
 
