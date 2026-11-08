@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         btnMap.setOnClickListener { chooseView(Mode.MAP, byUser = true) }
         btnVideo.setOnClickListener { chooseView(Mode.VIDEO, byUser = true) }
         btn3d.setOnClickListener { chooseView(Mode.THREE, byUser = true) }
-        btnCenter.setOnClickListener { if (mode == Mode.THREE) view3d.follow(true) else mapPanel.fit() }
+        btnCenter.setOnClickListener { if (mode == Mode.THREE) view3d.toggleCamera { android.widget.Toast.makeText(this, if (it == "chase") "Kamera folgt der Drohne" else "Übersicht", android.widget.Toast.LENGTH_SHORT).show() } else mapPanel.fit() }
         findViewById<View>(R.id.btnLog).setOnClickListener { showLog() }
         findViewById<View>(R.id.btnLog).setOnLongClickListener { copyLog(); true }
         findViewById<View>(R.id.btnMore).setOnClickListener { showMore() }
@@ -494,6 +494,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun renderChecklist(problems: List<String>, hasPlan: Boolean) {
+        // Im Flug ist die Startprüfung erledigt; Platz fürs Wesentliche.
+        if (MissionController.executing || FollowController.active) { checklist.removeAllViews(); return }
         fillChecklist(checklist, problems, hasPlan)
     }
 

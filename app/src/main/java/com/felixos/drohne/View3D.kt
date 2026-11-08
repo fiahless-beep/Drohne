@@ -59,8 +59,12 @@ class View3D(private val web: WebView) {
         if (ready) js("setScene($scene)") else pendingScene = scene
     }
 
-    /** Drohne setzen (max. 10× je Sekunde). */
+    private var lastFlying: Boolean? = null
+
+    /** Drohne setzen (max. 10× je Sekunde); Kamera folgt, sobald sie fliegt. */
     fun update(s: DroneState) {
+        val fly = s.flying || s.motorsOn
+        if (fly != lastFlying) { lastFlying = fly; js("setFlying($fly)") }
         val loc = s.location?.takeIf { it.latitude != 0.0 } ?: run { js("clearDrone()"); return }
         val now = System.currentTimeMillis()
         if (now - lastDroneMs < 100) return
@@ -71,4 +75,7 @@ class View3D(private val web: WebView) {
     }
 
     fun follow(on: Boolean) = js("setFollow($on)")
+
+    /** Kameramodus wechseln (Verfolgen ↔ Übersicht); [onMode] bekommt "chase" oder "orbit". */
+    fun toggleCamera(onMode: (String) -> Unit) { if (ready) web.evaluateJavascript("toggleCamera()") { r -> onMode(r?.trim('"') ?: "chase") } }
 }
