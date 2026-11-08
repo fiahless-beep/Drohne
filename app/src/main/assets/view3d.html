@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>3D</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0b0f14; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  #hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #9aa6b2; font: 15px system-ui, sans-serif; background: rgba(20,24,30,.8); padding: 8px 14px; border-radius: 20px; }
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+<div id="hint">3D lädt …</div>
+<script src="three.min.js"></script>
+<script>if (!window.THREE) document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+<script>
+// Koordinaten: x = Ost (m), y = Höhe (m), z = -Nord (m), alles relativ zum Startpunkt.
+// Android ruft: setScene({b:[{h,p:[[x,y],…]}], r:[[x,y,z],…], clear, mar}) und setDrone(x, y, z, headingDeg).
+const canvas = document.getElementById('view'); const hint = document.getElementById('hint');
+let renderer, scene, cam, drone, trail, trailPts = [], buildings = [], routeObjs = [];
+let center = null, theta = -0.7, phi = 0.75, dist = 220, follow = true;
+function init() {
+  if (!window.THREE) { hint.textContent = 'three.js fehlt (kein Internet beim Build)'; return false; }
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  scene = new THREE.Scene(); scene.background = new THREE.Color(0x0b0f14); scene.fog = new THREE.Fog(0x0b0f14, 600, 1600);
+  cam = new THREE.PerspectiveCamera(55, 1, 0.5, 5000);
+  scene.add(new THREE.HemisphereLight(0xdde6f0, 0x1a2230, 1.0));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.7); sun.position.set(200, 400, 150); scene.add(sun);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshLambertMaterial({ color: 0x18212a })); ground.rotation.x = -Math.PI / 2; scene.add(ground);
+  scene.add(new THREE.GridHelper(2000, 100, 0x2a3640, 0x1f2a33));
+  // Drohne: kleiner Körper mit Pfeil in Blickrichtung, dazu Lot auf den Boden
+  drone = new THREE.Group();
+  drone.add(new THREE.Mesh(new THREE.SphereGeometry(1.6, 12, 12), new THREE.MeshLambertMaterial({ color: 0xffd60a })));
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(1.0, 3.2, 10), new THREE.MeshLambertMaterial({ color: 0xff453a })); nose.rotation.x = -Math.PI / 2; nose.position.z = -2.8; drone.add(nose);
+  scene.add(drone); drone.visible = false;
+  trail = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xffd60a })); scene.add(trail);
+  canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, id: e.pointerId }; canvas.setPointerCapture(e.pointerId); follow = false; });
+  canvas.addEventListener('pointermove', e => { if (!drag || e.pointerId !== drag.id) return; theta -= (e.clientX - drag.x) * 0.006; phi = Math.max(0.08, Math.min(1.5, phi + (e.clientY - drag.y) * 0.006)); drag.x = e.clientX; drag.y = e.clientY; });
+  canvas.addEventListener('pointerup', () => drag = null);
+  canvas.addEventListener('wheel', e => { e.preventDefault(); dist = Math.max(20, Math.min(2000, dist * (1 + e.deltaY * 0.001))); }, { passive: false });
+  // Zwei Finger: Zoom
+  let pinch = null;
+  canvas.addEventListener('touchstart', e => { if (e.touches.length === 2) pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); }, { passive: true });
+  canvas.addEventListener('touchmove', e => { if (e.touches.length === 2 && pinch) { const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); dist = Math.max(20, Math.min(2000, dist * pinch / d)); pinch = d; drag = null; } }, { passive: true });
+  canvas.addEventListener('touchend', () => pinch = null);
+  window.addEventListener('resize', resize); resize();
+  hint.textContent = 'Kein Plan – Karte zeigt nur die Umgebung';
+  (function loop() { place(); renderer.render(scene, cam); requestAnimationFrame(loop); })();
+  return true;
+}
+let drag = null;
+function resize() { const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight; renderer.setSize(w, h, false); renderer.setPixelRatio(Math.min(2, devicePixelRatio)); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+function place() {
+  const c = center || new THREE.Vector3(0, 10, 0);
+  const look = (follow && drone.visible) ? drone.position : c;
+  cam.position.set(look.x + dist * Math.cos(phi) * Math.sin(theta), look.y + dist * Math.sin(phi), look.z + dist * Math.cos(phi) * Math.cos(theta)); cam.lookAt(look);
+}
+function distPointSeg(p, a, b) { const ab = b.clone().sub(a); const l = ab.lengthSq(); const t = l ? Math.max(0, Math.min(1, p.clone().sub(a).dot(ab) / l)) : 0; return p.distanceTo(a.clone().add(ab.multiplyScalar(t))); }
+function nearRoute(route, poly, h, clear, mar) {
+  for (let i = 0; i < route.length - 1; i++) { const a = route[i], b = route[i + 1]; if (Math.min(a.y, b.y) >= h + clear) continue;
+    const a2 = new THREE.Vector3(a.x, 0, a.z), b2 = new THREE.Vector3(b.x, 0, b.z);
+    for (let k = 0; k <= 20; k++) { const p = a2.clone().lerp(b2, k / 20); for (let j = 0; j < poly.length; j++) { const q1 = new THREE.Vector3(poly[j][0], 0, -poly[j][1]), q2 = new THREE.Vector3(poly[(j + 1) % poly.length][0], 0, -poly[(j + 1) % poly.length][1]); if (distPointSeg(p, q1, q2) < mar) return true; } } }
+  return false;
+}
+function setScene(D) {
+  if (!scene) return;
+  buildings.forEach(o => scene.remove(o)); buildings = []; routeObjs.forEach(o => scene.remove(o)); routeObjs = [];
+  const route = (D.r || []).map(p => new THREE.Vector3(p[0], p[2], -p[1]));
+  (D.b || []).forEach(b => {
+    try {
+      const shape = new THREE.Shape(b.p.map(q => new THREE.Vector2(q[0], -q[1])));
+      const g = new THREE.ExtrudeGeometry(shape, { depth: b.h, bevelEnabled: false }); g.rotateX(-Math.PI / 2);
+      const conflict = route.length > 1 && nearRoute(route, b.p, b.h, D.clear || 8, D.mar || 8);
+      const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color: conflict ? 0xd9772f : 0x6e7f8e }));
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(g, 20), new THREE.LineBasicMaterial({ color: conflict ? 0xffb070 : 0x9fb0bf, transparent: true, opacity: 0.35 }));
+      scene.add(m); scene.add(edges); buildings.push(m, edges);
+    } catch (e) {}
+  });
+  if (route.length) {
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(route), new THREE.LineBasicMaterial({ color: 0x0a84ff })); scene.add(line); routeObjs.push(line);
+    route.forEach((p, i) => { const s = new THREE.Mesh(new THREE.SphereGeometry(1.0, 8, 8), new THREE.MeshLambertMaterial({ color: i === 0 ? 0x30d158 : 0x0a84ff })); s.position.copy(p); scene.add(s); routeObjs.push(s);
+      const pole = new THREE.Line(new THREE.BufferGeometry().setFromPoints([p, new THREE.Vector3(p.x, 0, p.z)]), new THREE.LineBasicMaterial({ color: 0x0a84ff, transparent: true, opacity: 0.25 })); scene.add(pole); routeObjs.push(pole); });
+    center = new THREE.Box3().setFromPoints(route).getCenter(new THREE.Vector3()); center.y = 10;
+    dist = Math.max(120, route.reduce((m, p) => Math.max(m, p.distanceTo(center)), 0) * 2.2);
+    hint.style.display = 'none';
+  } else { center = new THREE.Vector3(0, 10, 0); hint.style.display = ''; }
+  // Startpunkt
+  const homeMark = new THREE.Mesh(new THREE.RingGeometry(2.5, 3.5, 24), new THREE.MeshBasicMaterial({ color: 0x30d158, side: THREE.DoubleSide })); homeMark.rotation.x = -Math.PI / 2; homeMark.position.y = 0.1; scene.add(homeMark); routeObjs.push(homeMark);
+  trailPts = []; trail.geometry.setFromPoints(trailPts);
+}
+function setDrone(x, y, z, heading) {
+  if (!scene) return;
+  drone.visible = true; drone.position.set(x, y, -z); drone.rotation.y = -heading * Math.PI / 180;
+  const last = trailPts[trailPts.length - 1];
+  if (!last || last.distanceTo(drone.position) > 0.5) { trailPts.push(drone.position.clone()); if (trailPts.length > 2000) trailPts.shift(); trail.geometry.setFromPoints(trailPts); }
+}
+function clearDrone() { if (drone) drone.visible = false; }
+function setFollow(f) { follow = f; }
+init();
+</script>
+</body>
+</html>

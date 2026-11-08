@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mapPanel: MapPanel
     private lateinit var btnMap: ImageView
     private lateinit var btnVideo: ImageView
+    private lateinit var btn3d: ImageView
+    private lateinit var view3d: View3D
     private lateinit var btnCenter: ImageView
     private lateinit var videoHint: TextView
     private lateinit var telemetry: TextView
@@ -119,9 +121,11 @@ class MainActivity : AppCompatActivity() {
 
         setupVideo(video)
         mapPanel = MapPanel(mapView)
-        btnMap.setOnClickListener { chooseView(map = true, byUser = true) }
-        btnVideo.setOnClickListener { chooseView(map = false, byUser = true) }
-        btnCenter.setOnClickListener { mapPanel.fit() }
+        view3d.init()
+        btnMap.setOnClickListener { chooseView(Mode.MAP, byUser = true) }
+        btnVideo.setOnClickListener { chooseView(Mode.VIDEO, byUser = true) }
+        btn3d.setOnClickListener { chooseView(Mode.THREE, byUser = true) }
+        btnCenter.setOnClickListener { if (mode == Mode.THREE) view3d.follow(true) else mapPanel.fit() }
         findViewById<View>(R.id.btnLog).setOnClickListener { showLog() }
         findViewById<View>(R.id.btnLog).setOnLongClickListener { copyLog(); true }
         findViewById<View>(R.id.btnMore).setOnClickListener { showMore() }
@@ -157,7 +161,7 @@ class MainActivity : AppCompatActivity() {
             MissionController.stop()
             DroneManager.goHome()
         }
-        chooseView(map = true, byUser = false)
+        chooseView(Mode.MAP, byUser = false)
         renderChecklist(emptyList(), hasPlan = false)
         renderNow(DroneManager.state)
     }
@@ -166,7 +170,8 @@ class MainActivity : AppCompatActivity() {
         linkDot = findViewById(R.id.linkDot); linkText = findViewById(R.id.linkText); phase = findViewById(R.id.phase)
         chipGps = findViewById(R.id.chipGps); chipBattery = findViewById(R.id.chipBattery); chipSensors = findViewById(R.id.chipSensors); chipWind = findViewById(R.id.chipWind)
         video = findViewById(R.id.video); mapView = findViewById(R.id.map)
-        btnMap = findViewById(R.id.btnMap); btnVideo = findViewById(R.id.btnVideo); btnCenter = findViewById(R.id.btnCenter)
+        btnMap = findViewById(R.id.btnMap); btnVideo = findViewById(R.id.btnVideo); btn3d = findViewById(R.id.btn3d); btnCenter = findViewById(R.id.btnCenter)
+        view3d = View3D(findViewById(R.id.view3d))
         videoHint = findViewById(R.id.videoHint); telemetry = findViewById(R.id.telemetry)
         planName = findViewById(R.id.planName); planMeta = findViewById(R.id.planMeta); progress = findViewById(R.id.progress); nextAction = findViewById(R.id.nextAction)
         checklist = findViewById(R.id.checklist); btnPrimary = findViewById(R.id.btnPrimary); btnFollow = findViewById(R.id.btnFollow); btnHome = findViewById(R.id.btnHome)
@@ -215,31 +220,38 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    // ---------------------------------------------------------------- Bildfläche: Karte | Video
+    // ---------------------------------------------------------------- Bildfläche: Karte | Video | 3D
 
-    /** null = automatisch (Video sobald verbunden, sonst Karte); true/false = von Hand gewählt. */
-    private var userWantsMap: Boolean? = null
-    private var showingMap = false
+    enum class Mode { MAP, VIDEO, THREE }
 
-    private fun chooseView(map: Boolean, byUser: Boolean) {
-        if (byUser) userWantsMap = map
-        showingMap = map
-        btnMap.isSelected = map; btnVideo.isSelected = !map
-        mapView.visibility = if (map) View.VISIBLE else View.GONE
-        btnCenter.visibility = if (map) View.VISIBLE else View.INVISIBLE
+    /** null = automatisch (Video sobald verbunden, sonst Karte); sonst von Hand gewählt. */
+    private var userMode: Mode? = null
+    private var mode = Mode.MAP
+    private val showingMap: Boolean get() = mode == Mode.MAP
+
+    private fun chooseView(m: Mode, byUser: Boolean) {
+        if (byUser) userMode = m
+        mode = m
+        btnMap.isSelected = m == Mode.MAP; btnVideo.isSelected = m == Mode.VIDEO; btn3d.isSelected = m == Mode.THREE
+        mapView.visibility = if (m == Mode.MAP) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.view3d).visibility = if (m == Mode.THREE) View.VISIBLE else View.GONE
+        btnCenter.visibility = if (m == Mode.VIDEO) View.INVISIBLE else View.VISIBLE
         // GONE zerstört die Bildfläche; beim Zurückschalten meldet surfaceChanged das Livebild neu an.
-        video.visibility = if (map) View.GONE else View.VISIBLE
-        videoHint.visibility = if (map) View.GONE else View.VISIBLE
-        if (map) { mapPanel.update(DroneManager.state, MissionController.currentMission ?: mission); mapPanel.fit() }
+        video.visibility = if (m == Mode.VIDEO) View.VISIBLE else View.GONE
+        videoHint.visibility = if (m == Mode.VIDEO) View.VISIBLE else View.GONE
+        if (m == Mode.MAP) { mapPanel.update(DroneManager.state, MissionController.currentMission ?: mission); mapPanel.fit() }
+        if (m == Mode.THREE) { view3d.setMission(MissionController.currentMission ?: mission, MissionController.preparedHome ?: homeLatLon()); view3d.update(DroneManager.state) }
     }
+
+    private fun homeLatLon(): LatLon? = DroneManager.state.home?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
 
     private var lastConnected: Boolean? = null
 
-    /** Automatik: beim Verbinden auf Video, beim Trennen auf Karte – solange nichts von Hand gewählt wurde. */
+    /** Automatik: beim Verbinden auf Video, beim Trennen auf Karte – solange nichts von Hand gewählt wurde. Simulation: 3D. */
     private fun autoView(s: DroneState) {
         if (lastConnected == s.connected) return
         lastConnected = s.connected
-        if (userWantsMap == null) chooseView(map = !s.connected, byUser = false)
+        if (userMode == null) chooseView(if (Simulator.active) Mode.THREE else if (s.connected) Mode.VIDEO else Mode.MAP, byUser = false)
     }
 
     // ---------------------------------------------------------------- Anzeige
@@ -255,6 +267,7 @@ class MainActivity : AppCompatActivity() {
         renderTelemetry(s)
         renderNow(s)
         if (showingMap) mapPanel.update(s, MissionController.currentMission ?: mission)
+        if (mode == Mode.THREE) view3d.update(s)
         val now = System.currentTimeMillis()
         if (now - lastChecklistMs > 1000) { lastChecklistMs = now; renderChecklist(preflightProblems(s), hasPlan = mission != null) }
     }
@@ -313,7 +326,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun renderTelemetry(s: DroneState) {
         val loc = s.location?.takeIf { it.latitude != 0.0 }
-        videoHint.visibility = if (showingMap || (s.connected && videoAttached)) View.GONE else View.VISIBLE
+        videoHint.visibility = if (mode != Mode.VIDEO || (s.connected && videoAttached)) View.GONE else View.VISIBLE
         videoHint.text = if (s.connected) "Livebild kommt …" else "Kein Livebild"
         if (loc == null) { telemetry.visibility = View.GONE; speedMs = null; lastLoc = null; return }
         telemetry.visibility = View.VISIBLE
@@ -535,12 +548,17 @@ class MainActivity : AppCompatActivity() {
     /** Mehr-Menü: Karte extern, Fotos holen, Token, Landelampe, Koppeln, Achsen, Wächter. */
     private fun showMore() {
         val swap = FollowController.swapAxes(this)
-        val items = arrayOf("Plan in Google Maps zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
+        val items = arrayOf(
+            if (Simulator.active) "Simulation beenden" else "Simulation starten (ohne Drohne)",
+            "Simulation: Zeitraffer ${if (Simulator.timeScale > 1) "aus" else "5×"}",
+            "Plan in Google Maps zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
             "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})",
             "Bildwächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})",
             "Bildwächter ${if (ObstacleGuard.enabled) "ausschalten" else "einschalten"}")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
-            when (which) {
+            when (which - 2) {
+                -2 -> toggleSimulation()
+                -1 -> { Simulator.timeScale = if (Simulator.timeScale > 1) 1.0 else 5.0; DroneManager.log("Simulation: Zeitraffer ${Simulator.timeScale.toInt()}×") }
                 0 -> showOnMap()
                 1 -> FlightReport.collectAndUpload(applicationContext)
                 2 -> askToken()
@@ -556,6 +574,31 @@ class MainActivity : AppCompatActivity() {
             }
             renderNow(DroneManager.state)
         }.show()
+    }
+
+    /**
+     * Simulation (Felix 8.11.): Drohne vortäuschen, Plan echt prüfen, Route abfliegen, 3D-Ansicht.
+     * Startpunkt = letzte Handyposition; fehlt sie, kommt er mit dem Plan (geplanter Start bzw. erster Punkt).
+     */
+    private fun toggleSimulation() {
+        if (Simulator.active) {
+            Simulator.stopSimulation(); lastConnected = null; userMode = null
+            mission = null; missionText = ""; setPlanCard("Kein Plan", ""); renderChecklist(emptyList(), hasPlan = false); renderNow(DroneManager.state)
+            return
+        }
+        if (DroneManager.state.connected) { AlertDialog.Builder(this).setMessage("Drohne ist verbunden – Simulation nur ohne Drohne.").setPositiveButton("OK", null).show(); return }
+        MissionController.initOffline(applicationContext)
+        val phone = try {
+            val lm = getSystemService(LOCATION_SERVICE) as android.location.LocationManager
+            listOf(android.location.LocationManager.GPS_PROVIDER, android.location.LocationManager.NETWORK_PROVIDER).mapNotNull { runCatching { lm.getLastKnownLocation(it) }.getOrNull() }.maxByOrNull { it.time }
+        } catch (_: Throwable) { null }
+        Simulator.start(phone?.let { LatLon(it.latitude, it.longitude) })
+        userMode = null; lastConnected = null
+        chooseView(Mode.THREE, byUser = false)
+        AlertDialog.Builder(this).setTitle("Simulation")
+            .setMessage("Die App tut jetzt so, als wäre eine Drohne am Boden verbunden" + (if (phone != null) " (Startpunkt = Handyposition)." else ". Der Startpunkt kommt mit dem Plan.") +
+                "\n\nPlan holen oder Testflug wählen, Startprüfung, Start. Die Route wird mit den geplanten Geschwindigkeiten abgeflogen; Pause, Weiter und STOPP wirken. Ansicht 3D zeigt Gebäude, Weg und Drohne. Beenden: Mehr → Simulation beenden.")
+            .setPositiveButton("OK", null).show()
     }
 
     /** Wegpunkte des aktuellen Plans in Google Maps öffnen (als Fußweg-Route, zeigt die Lage auf dem Satellitenbild). */
@@ -791,6 +834,7 @@ class MainActivity : AppCompatActivity() {
      * Zusammenfassung steht im Plan-Feld; Ergebnis (geprüft, auf der Drohne, Fehler) ebenfalls.
      */
     private fun useMission(m: Mission, beschreibung: String) {
+        if (Simulator.active && homeLatLon() == null) Simulator.setHome(m.plannedStart ?: m.waypoints.first().pos)
         val text = summary(m, beschreibung)
         if (m.name.startsWith("beispiel")) {
             setPlanCard("Beispielplan „${m.name}“ (nur Ansicht)", text + "\n\nWird nicht geflogen – Claude muss erst einen echten Plan ablegen.")
@@ -810,6 +854,7 @@ class MainActivity : AppCompatActivity() {
         setPlanCard("Plan „${m.name}“ – lade auf die Drohne …", text + "\n\n" + guardNote)
         DroneManager.log("Plan übernommen, lade auf die Drohne …")
         if (showingMap) { mapPanel.update(DroneManager.state, MissionController.currentMission); mapPanel.fit() }
+        view3d.setMission(MissionController.currentMission, MissionController.preparedHome ?: homeLatLon())
         uploadCurrent()
     }
 

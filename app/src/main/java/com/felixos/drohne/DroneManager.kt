@@ -86,10 +86,22 @@ object DroneManager {
         main.post { logListeners.forEach { it(line) } }
     }
 
+    /** Echter Zustand (SDK/Drohne), auch während der Simulation weitergeführt. */
+    @Volatile private var realState = DroneState()
+
     private fun update(f: (DroneState) -> DroneState) {
-        state = f(state)
+        realState = f(realState)
+        if (Simulator.active) return  // Simulation zeigt ihren eigenen Zustand
+        state = realState
         val s = state
         main.post { stateListeners.forEach { it(s) } }
+    }
+
+    /** Zustand aus der Simulation anzeigen; null = Simulation beendet, zurück zum echten Zustand. */
+    fun simulated(s: DroneState?) {
+        state = s ?: realState
+        val v = state
+        main.post { stateListeners.forEach { it(v) } }
     }
 
     /** true, sobald SDKManager.init aufgerufen wurde (nur einmal pro App-Start). */
@@ -278,7 +290,8 @@ object DroneManager {
     private var confirmSent = false
 
     /** Landung bestätigen (Drohne hängt ~0,5 m über dem Boden und wartet). */
-    fun confirmLanding(reason: String) = safe("Landebestätigung") {
+    fun confirmLanding(reason: String) { if (Simulator.active) return; confirmLandingReal(reason) }
+    private fun confirmLandingReal(reason: String) = safe("Landebestätigung") {
         log("$reason → bestätige Landung")
         KeyManager.getInstance().performAction(
             KeyTools.createKey(FlightControllerKey.KeyConfirmLanding),
@@ -289,7 +302,8 @@ object DroneManager {
     }
 
     /** Landung auslösen (falls die Drohne nach der Mission nur schwebt). */
-    fun startLanding() = safe("Landen") {
+    fun startLanding() { if (Simulator.active) return; startLandingReal() }
+    private fun startLandingReal() = safe("Landen") {
         KeyManager.getInstance().performAction(
             KeyTools.createKey(FlightControllerKey.KeyStartAutoLanding),
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
@@ -303,6 +317,7 @@ object DroneManager {
      * bestätigt die App die Landung bzw. leitet sie ein. Endet, sobald die Drohne am Boden ist (max. 5 min).
      */
     fun landingHelper() {
+        if (Simulator.active) return
         var stableSince = 0L
         var lastAlt = Double.NaN
         var tries = 0
@@ -330,7 +345,8 @@ object DroneManager {
     }
 
     /** Rückkehrhöhe (m) setzen, damit der Heimflug nicht unnötig hoch steigt. */
-    fun setGoHomeHeight(h: Int) = safe("Rückkehrhöhe") {
+    fun setGoHomeHeight(h: Int) { if (Simulator.active) { log("Simulation: Rückkehrhöhe $h m"); return }; setGoHomeHeightReal(h) }
+    private fun setGoHomeHeightReal(h: Int) = safe("Rückkehrhöhe") {
         KeyManager.getInstance().setValue(KeyTools.createKey(FlightControllerKey.KeyGoHomeHeight), h,
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
                 override fun onSuccess() { log("Rückkehrhöhe: $h m") }
@@ -339,7 +355,8 @@ object DroneManager {
     }
 
     /** Landelampe unten: "an", "aus" oder "auto" (Standard: nur beim Landen). */
-    fun setBottomLight(mode: String) = safe("Licht") {
+    fun setBottomLight(mode: String) { if (Simulator.active) { log("Simulation: Landelampe $mode"); return }; setBottomLightReal(mode) }
+    private fun setBottomLightReal(mode: String) = safe("Licht") {
         val m = when (mode) { "an" -> AuxiliaryLightMode.ON; "aus" -> AuxiliaryLightMode.OFF; else -> AuxiliaryLightMode.AUTO }
         KeyManager.getInstance().setValue(
             KeyTools.createKey(FlightAssistantKey.KeyBottomAuxiliaryLightMode), m,
@@ -350,7 +367,8 @@ object DroneManager {
     }
 
     /** Rückkehr zum Startpunkt auslösen (Notfallknopf). */
-    fun goHome() = safe("Rückkehr") {
+    fun goHome() { if (Simulator.active) { Simulator.goHome(); return }; goHomeReal() }
+    private fun goHomeReal() = safe("Rückkehr") {
         KeyManager.getInstance().performAction(
             KeyTools.createKey(FlightControllerKey.KeyStartGoHome),
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {

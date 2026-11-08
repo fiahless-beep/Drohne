@@ -44,43 +44,69 @@ object MissionController {
     @Volatile var currentWaypointIndex = -1; private set
     private fun show(text: String) { stateText = text; onStateText?.invoke(text) }
 
-    fun init(context: Context) {
+    private var initialized = false
+
+    /** Ordner und KMZ-Prüfer ohne Drohne (Simulation vor der SDK-Registrierung). */
+    fun initOffline(context: Context) {
+        if (::dir.isInitialized) return
         dir = File(context.getExternalFilesDir(null), "missions").apply { mkdirs() }
-        try {
-            WPMZManager.getInstance().init(context)
-            wpmzReady = true
-        } catch (t: Throwable) {
-            DroneManager.log("KMZ-Prüfer nicht verfügbar: ${t.message}")
+        try { WPMZManager.getInstance().init(context); wpmzReady = true } catch (t: Throwable) { DroneManager.log("KMZ-Prüfer nicht verfügbar: ${t.message}") }
+    }
+
+    /** Zustandswechsel verarbeiten (von DJI gemeldet oder von der Simulation). */
+    private fun applyState(state: WaypointMissionExecuteState?, index: Int?) {
+        executeState = state
+        if (index != null) currentWaypointIndex = index
+        else if (state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE) { if (currentWaypointIndex < 0) currentWaypointIndex = 0 } else if (state != WaypointMissionExecuteState.RECOVERING) currentWaypointIndex = -1
+        executing = state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE
+        DroneManager.log("Mission: $state")
+        val m = currentMission
+        val name = m?.name ?: missionId
+        show(when (state) {
+            WaypointMissionExecuteState.EXECUTING -> "▶ $name läuft"
+            WaypointMissionExecuteState.RECOVERING -> "$name: setzt fort"
+            WaypointMissionExecuteState.RETURN_TO_START_POINT -> "$name: Heimflug"
+            WaypointMissionExecuteState.FINISHED -> "✓ $name fertig – Fotos kommen nach der Landung"
+            WaypointMissionExecuteState.INTERRUPTED -> "⚠ $name unterbrochen"
+            null -> ""
+            else -> "$name: $state"
+        })
+        if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
+            if (currentMission?.light == true) DroneManager.setBottomLight("auto")
+            DroneManager.landingHelper()
+            if (!Simulator.active) onFinished?.invoke()
         }
+    }
+
+    private var lastSimState: WaypointMissionExecuteState? = null
+    private var lastSimIndex = -2
+
+    /** Von der Simulation: Zustand und Wegpunkt setzen (gleiche Anzeige wie bei DJI-Meldungen). */
+    fun simulatedState(state: WaypointMissionExecuteState?, index: Int) {
+        if (state == lastSimState && index == lastSimIndex) return
+        val idxChanged = index != lastSimIndex && index >= 0
+        lastSimState = state; lastSimIndex = index
+        if (state != executeState || index < 0) applyState(state, index)
+        if (idxChanged) { currentWaypointIndex = index; val n = currentMission?.waypoints?.size; DroneManager.log("Wegpunkt ${index + 1}"); show("▶ ${currentMission?.name ?: missionId}: Wegpunkt ${index + 1}" + (n?.let { c -> " von $c" } ?: "")) }
+    }
+
+    fun init(context: Context) {
+        if (initialized) return
+        initialized = true
+        initOffline(context)
         val mgr = WaypointMissionManager.getInstance()
         mgr.addWaypointMissionExecuteStateListener(object : WaypointMissionExecuteStateListener {
             private var last: WaypointMissionExecuteState? = null
             override fun onMissionStateUpdate(state: WaypointMissionExecuteState?) {
                 if (state == last) return
                 last = state
-                executeState = state
-                if (state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE) { if (currentWaypointIndex < 0) currentWaypointIndex = 0 } else if (state != WaypointMissionExecuteState.RECOVERING) currentWaypointIndex = -1
-                executing = state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE
-                DroneManager.log("Mission: $state")
-                val m = currentMission
-                val name = m?.name ?: missionId
-                show(when (state) {
-                    WaypointMissionExecuteState.EXECUTING -> "▶ $name läuft"
-                    WaypointMissionExecuteState.RECOVERING -> "$name: setzt fort"
-                    WaypointMissionExecuteState.RETURN_TO_START_POINT -> "$name: Heimflug"
-                    WaypointMissionExecuteState.FINISHED -> "✓ $name fertig – Fotos kommen nach der Landung"
-                    WaypointMissionExecuteState.INTERRUPTED -> "⚠ $name unterbrochen"
-                    else -> "$name: $state"
-                })
-                if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
-                    if (currentMission?.light == true) DroneManager.setBottomLight("auto")
-                    DroneManager.landingHelper()
-                    onFinished?.invoke()
-                }
+                if (Simulator.active) return
+                applyState(state, null)
             }
         })
         mgr.addWaylineExecutingInfoListener(object : WaylineExecutingInfoListener {
             override fun onWaylineExecutingInfoUpdate(info: WaylineExecutingInfo?) {
+                if (Simulator.active) return
                 info?.let {
                     DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}")
                     currentWaypointIndex = it.currentWaypointIndex
@@ -228,6 +254,7 @@ object MissionController {
 
     fun upload(onDone: (Boolean) -> Unit) {
         val f = currentKmz ?: return DroneManager.log("Erst Mission planen").also { onDone(false) }
+        if (Simulator.active) { uploaded = Simulator.upload(); show("${currentMission?.name ?: missionId}: auf der Drohne (Simulation) → „Start“"); onDone(uploaded); return }
         if (!DroneManager.requireSdk("Hochladen")) return onDone(false)
         DroneManager.log("Lade Mission auf die Drohne …")
         DroneManager.safe("Hochladen") { WaypointMissionManager.getInstance().pushKMZFileToAircraft(f.absolutePath,
@@ -247,6 +274,7 @@ object MissionController {
     fun start() {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
+        if (Simulator.active) { currentMission?.let { Simulator.fly(it, rthHeightM) }; return }
         FlightReport.startFlight(missionId)
         currentMission?.let { m ->
             val h = DroneManager.state.home
@@ -262,9 +290,9 @@ object MissionController {
         }
     }
 
-    fun pause() = DroneManager.safe("Pause") { WaypointMissionManager.getInstance().pauseMission(cb("Pause")) }
-    fun resume() = DroneManager.safe("Weiter") { WaypointMissionManager.getInstance().resumeMission(cb("Weiter")) }
-    fun stop() = DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(missionId, cb("Abbruch")) }
+    fun pause() { if (Simulator.active) return Simulator.pause(); DroneManager.safe("Pause") { WaypointMissionManager.getInstance().pauseMission(cb("Pause")) } }
+    fun resume() { if (Simulator.active) return Simulator.resume(); DroneManager.safe("Weiter") { WaypointMissionManager.getInstance().resumeMission(cb("Weiter")) } }
+    fun stop() { if (Simulator.active) return; DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(missionId, cb("Abbruch")) } }
 
     private fun cb(what: String) = object : CommonCallbacks.CompletionCallback {
         override fun onSuccess() { DroneManager.log("$what: ok") }

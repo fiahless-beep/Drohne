@@ -23,6 +23,12 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
+    <WebView
+        android:id="@+id/view3d"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/videoHint"
         android:layout_width="wrap_content"
@@ -101,6 +107,7 @@
             android:orientation="vertical">
             <ImageView android:id="@+id/btnMap" style="@style/RailButton" android:layout_marginTop="0dp" android:src="@drawable/ic_map" android:contentDescription="Karte" />
             <ImageView android:id="@+id/btnVideo" style="@style/RailButton" android:src="@drawable/ic_video" android:contentDescription="Livebild" />
+            <ImageView android:id="@+id/btn3d" style="@style/RailButton" android:src="@drawable/ic_cube" android:contentDescription="3D" />
             <ImageView android:id="@+id/btnCenter" style="@style/RailButton" android:layout_marginTop="22dp" android:src="@drawable/ic_center" android:contentDescription="Karte einpassen" />
             <ImageView android:id="@+id/btnLog" style="@style/RailButton" android:src="@drawable/ic_list" android:contentDescription="Protokoll" />
             <ImageView android:id="@+id/btnMore" style="@style/RailButton" android:src="@drawable/ic_more" android:contentDescription="Mehr" />
