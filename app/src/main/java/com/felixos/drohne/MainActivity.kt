@@ -855,6 +855,8 @@ class MainActivity : AppCompatActivity() {
         DroneManager.log("Plan übernommen, lade auf die Drohne …")
         if (showingMap) { mapPanel.update(DroneManager.state, MissionController.currentMission); mapPanel.fit() }
         view3d.setMission(MissionController.currentMission, MissionController.preparedHome ?: homeLatLon())
+        // Felix 8.11.: nach „Plan holen“ gleich die 3D-Vorschau zeigen (nicht im Flug).
+        if (mode != Mode.THREE && !DroneManager.state.flying) chooseView(Mode.THREE, byUser = false)
         uploadCurrent()
     }
 
