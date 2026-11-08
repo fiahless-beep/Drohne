@@ -91,17 +91,26 @@ def main(argv):
                 poly = [loc.xy(p[1], p[0]) for p in r]
                 cx = sum(p[0] for p in poly) / len(poly); cy = sum(p[1] for p in poly) / len(poly)
                 if min(math.hypot(cx - w["x"], cy - w["y"]) for w in wps) < RADIUS: bl.append((h, poly, ft["properties"].get("n", "")))
+    # Gelände je Gebäude (Dachhöhe relativ zum Start = Gebäudehöhe + Geländeunterschied), wie die App ab Build 66
+    hp = opts.get("hoehen", str(ROOT / "app/src/main/assets/hoehen.bin"))
+    grel = [0.0] * len(bl)
+    if Path(hp).exists():
+        ground_f, _surf = load_hoehen(hp); g0h = ground_f(*home)
+        if g0h is not None:
+            for idx, (h, poly, _) in enumerate(bl):
+                la, lo = loc.ll(poly[0][0], poly[0][1]); v = ground_f(la, lo)
+                if v is not None: grel[idx] = v - g0h
     # Tempo je Abschnitt + Abstand/Konflikte
     base_speed = min(plan.get("speed", 5), TRANSIT_SPEED)
-    conflicts = []; rth = max(transit, (max((b[0] for b in bl), default=0) + CLEAR)); rth = min(max(rth, 20), 120)
+    conflicts = []; rth = max(transit, (max((b[0] + grel[i] for i, b in enumerate(bl)), default=0) + CLEAR)); rth = min(max(rth, 20), 120)
     for i, w in enumerate(wps):
         n = wps[i + 1] if i + 1 < len(wps) else None
         cap = min(base_speed, LOW_SPEED if (w["h"] < TRANSIT - 0.5 or (n and n["h"] < TRANSIT - 0.5)) else TRANSIT_SPEED)
         dist = 1e9; nearest = ""
         if n:
             lowest = min(w["h"], n["h"])
-            for h, poly, name in bl:
-                if h + CLEAR <= lowest: continue
+            for bi, (h, poly, name) in enumerate(bl):
+                if h + grel[bi] + CLEAR <= lowest: continue
                 dd = seg_building_dist((w["x"], w["y"]), (n["x"], n["y"]), poly)
                 if dd < dist: dist, nearest = dd, name
                 if dd < MARGIN: conflicts.append((i, name, h, dd))
@@ -109,7 +118,6 @@ def main(argv):
         w["dist"] = None if dist >= 1e8 else round(dist, 1); w["near"] = nearest
     # Oberflächen-Wächter (Höhenmodell), relativ zum Startgelände
     terrain = []; rise = None
-    hp = opts.get("hoehen", str(ROOT / "app/src/main/assets/hoehen.bin"))
     if Path(hp).exists():
         ground, surf = load_hoehen(hp); g0 = ground(*home)
         if g0 is not None:

@@ -23,7 +23,8 @@ for ft in gj['features']:
     gm = ft['geometry']; h = float(ft['properties'].get('h') or 0)
     for r in ([gm['coordinates'][0]] if gm['type'] == 'Polygon' else [p[0] for p in gm['coordinates']]):
         poly = [xy((p[1], p[0])) for p in r]; mx = sum(p[0] for p in poly) / len(poly); my = sum(p[1] for p in poly) / len(poly)
-        if math.hypot(mx - xy(C)[0] * 0.5, my - xy(C)[1] * 0.5) < 900: bl.append((h, poly))
+        if math.hypot(mx - xy(C)[0] * 0.5, my - xy(C)[1] * 0.5) < 900:
+            gb = smp(G, *ll(poly[0][0], poly[0][1])); bl.append((h + ((gb - g0) if gb is not None else 0), poly))  # Dachhöhe relativ zum Start
 def need(a, b):
     ax, ay = xy(a); bx, by = xy(b); L = math.hypot(bx - ax, by - ay); k = max(1, int(L / 3)); nx, ny = (-(by - ay) / L, (bx - ax) / L) if L else (0, 0); m = -1e9
     for i in range(k + 1):
@@ -31,7 +32,7 @@ def need(a, b):
             v = smp(S, *ll(ax + (bx - ax) * i / k + nx * o, ay + (by - ay) * i / k + ny * o))
             if v is not None: m = max(m, v - g0 + CLEAR)
     for h, poly in bl:
-        if seg_building_dist((ax, ay), (bx, by), poly) < CLEAR + 0.5: m = max(m, h + CLEAR)  # App-Regel ohne Geländebezug
+        if seg_building_dist((ax, ay), (bx, by), poly) < CLEAR + 0.5: m = max(m, h + CLEAR)  # Gebäude-Wächter der App (Dach relativ zum Start + 8)
     return m
 def offset(p, d, brg): x, y = xy(p); return ll(x + d * math.sin(math.radians(brg)), y + d * math.cos(math.radians(brg)))
 def bearing(a, b): ax, ay = xy(a); bx, by = xy(b); return (math.degrees(math.atan2(bx - ax, by - ay)) + 360) % 360

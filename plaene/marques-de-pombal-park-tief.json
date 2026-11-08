@@ -1,6 +1,6 @@
 {
   "name": "marques-de-pombal-park-tief",
-  "beschreibung": "Zuhause → Rua Castilho (über den Dächern, 44 m) → Parque Eduardo VII, die Rasenachse hinunter (8 m über Baumkronen) → Praça Marquês de Pombal: 2 Achsen-Fotos vom Park nach Süden (Statue, Avenida, Tejo), tiefer Ring (50 m Abstand, Kamera auf Statuenmitte, 8 Fotos) und hoher Ring (8 Fotos, Blick 20° nach unten), gleicher Weg zurück. Praça liegt 48 m tiefer als der Start, daher negative Höhen. Sonne um 15:00: Azimut 221°, Höhe 23° → 10 Fotos mit Sonne im Rücken, 6 im Gegenlicht (Auswahl danach). Nur tagsüber mit Sensoren.",
+  "beschreibung": "Zuhause → Rua Castilho (über den Dächern, 39 m) → Parque Eduardo VII, die Rasenachse hinunter (8 m über Baumkronen) → Praça Marquês de Pombal: 2 Achsen-Fotos vom Park nach Süden (Statue, Avenida, Tejo), tiefer Ring (50 m Abstand, Kamera auf Statuenmitte, 8 Fotos) und hoher Ring (8 Fotos, Blick 20° nach unten), gleicher Weg zurück. Praça liegt 48 m tiefer als der Start, daher negative Höhen. Sonne um 15:00: Azimut 221°, Höhe 23° → 10 Fotos mit Sonne im Rücken, 6 im Gegenlicht (Auswahl danach). Nur tagsüber mit Sensoren.",
   "speed": 4,
   "rcLost": "continue",
   "start": {
@@ -16,7 +16,7 @@
     {
       "lat": 38.727869,
       "lon": -9.156717,
-      "h": 44,
+      "h": 39,
       "photo": false,
       "hover": 0,
       "pitch": -20
@@ -24,7 +24,7 @@
     {
       "lat": 38.727907,
       "lon": -9.156164,
-      "h": 44,
+      "h": 39,
       "photo": false,
       "hover": 0,
       "pitch": -20
@@ -32,7 +32,7 @@
     {
       "lat": 38.727946,
       "lon": -9.155611,
-      "h": 43,
+      "h": 37,
       "photo": false,
       "hover": 0,
       "pitch": -20
@@ -408,7 +408,7 @@
     {
       "lat": 38.727946,
       "lon": -9.155611,
-      "h": 43,
+      "h": 37,
       "photo": false,
       "hover": 0,
       "pitch": -20
@@ -416,7 +416,7 @@
     {
       "lat": 38.727907,
       "lon": -9.156164,
-      "h": 44,
+      "h": 39,
       "photo": false,
       "hover": 0,
       "pitch": -20
@@ -424,7 +424,7 @@
     {
       "lat": 38.727869,
       "lon": -9.156717,
-      "h": 44,
+      "h": 39,
       "photo": false,
       "hover": 0,
       "pitch": -20
@@ -432,7 +432,7 @@
     {
       "lat": 38.72783,
       "lon": -9.15727,
-      "h": 37,
+      "h": 36,
       "photo": false,
       "hover": 0,
       "pitch": -20
