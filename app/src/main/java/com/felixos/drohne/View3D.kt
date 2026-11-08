@@ -19,18 +19,38 @@ class View3D(private val web: WebView) {
     private var origin: LatLon? = null
     private var ready = false
     private var pendingScene: String? = null
+    private var pendingJs: String? = null
     private var lastDroneMs = 0L
+    /** true = fotorealistische Google-Seite (assets/google3d.html, braucht Schlüssel + Internet), false = Klötzchen (view3d.html). */
+    private var google = false
+    private var loader: androidx.webkit.WebViewAssetLoader? = null
+
+    private fun wantGoogle(): Boolean = GoogleKey.get(web.context) != null && (web.context.getSystemService(android.content.Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager)?.activeNetworkInfo?.isConnected == true
 
     @SuppressLint("SetJavaScriptEnabled")
     fun init() {
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.setBackgroundColor(0xFF0B0F14.toInt())
+        loader = androidx.webkit.WebViewAssetLoader.Builder().addPathHandler("/assets/", androidx.webkit.WebViewAssetLoader.AssetsPathHandler(web.context)).build()
         web.webViewClient = object : android.webkit.WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) { ready = true; pendingScene?.let { js("setScene($it)") }; pendingScene = null }
+            override fun shouldInterceptRequest(view: WebView?, request: android.webkit.WebResourceRequest?): android.webkit.WebResourceResponse? =
+                request?.url?.let { loader?.shouldInterceptRequest(it) } ?: super.shouldInterceptRequest(view, request)
+            override fun onPageFinished(view: WebView?, url: String?) {
+                ready = true
+                pendingScene?.let { js("setScene($it)") }; pendingScene = null
+                pendingJs?.let { js(it) }; pendingJs = null
+            }
         }
-        web.loadUrl("file:///android_asset/view3d.html")
+        load(wantGoogle())
     }
+
+    /** Seite (neu) laden – Google-Seite über https://appassets… (Maps JavaScript API braucht eine echte Herkunft), Klötzchen aus file://. */
+    private fun load(g: Boolean) {
+        google = g; ready = false
+        web.loadUrl(if (g) "https://appassets.androidplatform.net/assets/google3d.html?app=1" else "file:///android_asset/view3d.html")
+    }
+    fun reload() { load(wantGoogle()) }
 
     private fun js(code: String) { if (ready) web.evaluateJavascript(code, null) }
 
@@ -45,6 +65,8 @@ class View3D(private val web: WebView) {
     fun setMission(m: Mission?, home: LatLon?, radiusM: Double = 350.0) {
         val o = home ?: m?.waypoints?.firstOrNull()?.pos ?: origin ?: return
         origin = o
+        if (google != wantGoogle()) load(wantGoogle())
+        if (google) { setMissionGoogle(m, o); return }
         val pts = (m?.waypoints?.map { it.pos } ?: emptyList()) + o
         val obstacles = (m?.obstacles ?: emptyList()).ifEmpty { Buildings.near(pts, radiusM) }
         val b = JSONArray()
@@ -85,6 +107,24 @@ class View3D(private val web: WebView) {
 
 
 
+    /** Plan für die Google-Seite: Höhen relativ zum Start (h), über dem Boden am Punkt (agl, DGT) und absolut (alt = Startboden DGT + h), wie tools/plan_artifact.py. */
+    private fun setMissionGoogle(m: Mission?, o: LatLon) {
+        val t = com.felixos.drohne.plan.Terrain
+        val g0 = if (t.loaded) t.groundM(o) else null
+        val pts = JSONArray()
+        m?.waypoints?.forEachIndexed { i, w ->
+            val rise = if (t.loaded) t.riseM(o, w.pos) ?: 0.0 else 0.0
+            pts.put(JSONObject().put("lat", w.pos.lat).put("lon", w.pos.lon).put("h", w.heightM).put("agl", Math.round((w.heightM - rise) * 10) / 10.0)
+                .put("alt", Math.round(((g0 ?: 0.0) + w.heightM) * 10) / 10.0).put("yaw", w.headingDeg ?: JSONObject.NULL).put("pitch", w.gimbalPitchDeg)
+                .put("hold", (if (w.takePhoto) 2 else 0) + w.hoverSec).put("speed", w.speedMs ?: m.speedMs).put("kind", if (i == 0 || i == m.waypoints.size - 1) "transit" else "plan").put("photo", w.takePhoto))
+        }
+        val plan = JSONObject().put("name", m?.name ?: "Kein Plan").put("beschreibung", "").put("home", JSONObject().put("lat", o.lat).put("lon", o.lon).put("alt", g0 ?: JSONObject.NULL))
+            .put("laenge_m", m?.lengthM?.toInt() ?: 0).put("dauer_s", 0).put("punkte", pts)
+        val key = JSONObject.quote(GoogleKey.get(web.context) ?: "")
+        val call = "appStart(${plan}, $key)"
+        if (ready) js(call) else pendingJs = call
+    }
+
     private var lastFlying: Boolean? = null
 
     /** Drohne setzen (max. 10× je Sekunde); Kamera folgt, sobald sie fliegt. */
@@ -96,6 +136,11 @@ class View3D(private val web: WebView) {
         if (now - lastDroneMs < 100) return
         lastDroneMs = now
         if (origin == null) origin = LatLon(loc.latitude, loc.longitude)
+        if (google) {
+            val t = com.felixos.drohne.plan.Terrain; val g0 = (if (t.loaded) origin?.let { t.groundM(it) } else null) ?: 0.0
+            js("appDrone(${loc.latitude}, ${loc.longitude}, ${"%.1f".format(java.util.Locale.US, g0 + (loc.altitude ?: 0.0))}, ${(s.headingDeg ?: 0.0).toInt()}, ${s.gimbalPitchDeg?.toInt() ?: "null"}, $fly)")
+            return
+        }
         val (x, y) = local(LatLon(loc.latitude, loc.longitude))
         js("setDrone(${"%.1f".format(java.util.Locale.US, x)}, ${"%.1f".format(java.util.Locale.US, loc.altitude ?: 0.0)}, ${"%.1f".format(java.util.Locale.US, y)}, ${(s.headingDeg ?: 0.0).toInt()}, ${s.gimbalPitchDeg?.toInt() ?: "null"})")
     }

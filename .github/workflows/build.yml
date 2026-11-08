@@ -39,7 +39,9 @@ jobs:
           mkdir -p app/src/main/assets
           if ls plaene/daten/*.geojson >/dev/null 2>&1; then python3 tools/gebaeude_pack.py "plaene/daten/*.geojson" app/src/main/assets/gebaeude.bin; else echo "keine Gebäudedaten"; fi
       - name: "three.js für die 3D-Ansicht holen (sonst CDN im WebView)"
-        run: curl -fsSL -o app/src/main/assets/three.min.js https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js || echo "three.js nicht geladen"
+        run: |
+          curl -fsSL -o app/src/main/assets/three.min.js https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js || echo "three.js nicht geladen"
+          cp planer/index.html app/src/main/assets/google3d.html
       - name: "three.js als Build-Artefakt ablegen (für Rendertests)"
         uses: actions/upload-artifact@v4
         with:

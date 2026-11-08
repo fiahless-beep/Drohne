@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Felix Drohne – Flugplaner 3D</title>
+<!-- Flugplan auf der fotorealistischen 3D-Karte von Google (Maps JavaScript API, Map3DElement).
+     Plan: ?plan=<name> → ../plaene/3d/<name>.json (vom Build-Skript tools/plan_artifact.py erzeugt),
+     oder die App setzt window.PLAN und window.GOOGLE_KEY vor dem Laden.
+     Schlüssel: ?key=…, sonst aus localStorage (einmal eingeben), nie in dieser Datei. -->
+<style>
+:root { --bg: #0b0f14; --fg: #e8edf2; --muted: #93a1b0; --accent: #2f8cff; --sans: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; color-scheme: dark; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 15px/1.4 var(--sans); overflow: hidden; }
+gmp-map-3d { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bar { position: absolute; left: 50%; bottom: max(14px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; z-index: 5; max-width: calc(100% - 32px); }
+.bar button { font: 600 14px var(--sans); color: #fff; background: rgba(20,24,30,.72); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 9px 14px; cursor: pointer; backdrop-filter: blur(6px); }
+.bar button.primary { background: var(--accent); border-color: var(--accent); }
+#label { position: absolute; left: 50%; top: max(14px, env(safe-area-inset-top, 0px)); transform: translateX(-50%); color: #fff; background: rgba(20,24,30,.6); padding: 6px 12px; border-radius: 16px; font-weight: 600; font-size: 13px; opacity: 0; transition: opacity .4s; pointer-events: none; z-index: 5; }
+#setup { position: absolute; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 10; padding: 16px; }
+#setup form { display: grid; gap: 10px; max-width: 420px; width: 100%; }
+#setup input { font: 15px var(--sans); padding: 10px 12px; border-radius: 10px; border: 1px solid #243040; background: #151b23; color: var(--fg); }
+#setup button { font: 600 15px var(--sans); padding: 10px 14px; border-radius: 10px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }
+#setup p { color: var(--muted); margin: 0; }
+#info { position: absolute; left: max(12px, env(safe-area-inset-left, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); color: #fff; background: rgba(20,24,30,.6); padding: 6px 10px; border-radius: 12px; font-size: 12px; z-index: 5; max-width: 60%; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="setup" hidden>
+  <form id="setupForm">
+    <strong>Google-Schlüssel</strong>
+    <p>Einmal eintragen, bleibt in diesem Browser gespeichert (Maps JavaScript API).</p>
+    <input id="keyIn" type="password" autocomplete="off" placeholder="AIza…">
+    <button type="submit">Karte laden</button>
+  </form>
+</div>
+<gmp-map-3d id="map" mode="hybrid" center="38.7250,-9.1498,60" range="1200" tilt="60" heading="320" default-ui-disabled></gmp-map-3d>
+<div id="info"></div>
+<div id="label"></div>
+<div class="bar">
+  <button class="primary" id="bPlay" type="button">Vorschau</button>
+  <button id="bCam" type="button">Kamera: Drohne</button>
+  <button id="bSpeed" type="button">4×</button>
+  <button id="bTop" type="button">Übersicht</button>
+</div>
+<script>
+'use strict';
+const qs = new URLSearchParams(location.search);
+const $ = id => document.getElementById(id);
+let KEY = window.GOOGLE_KEY || qs.get('key') || '';
+try { if (!KEY) KEY = localStorage.getItem('google-key') || ''; else localStorage.setItem('google-key', KEY); } catch (e) {}
+let PLAN = window.PLAN || null, map, line, lineGround, markers = [];
+let scale = 4, camMode = 'fpv', running = false, raf = 0;
+const R = 6371000, D2R = Math.PI / 180;
+function dest(lat, lon, d, brg) { const la = lat * D2R, lo = lon * D2R, b = brg * D2R, dr = d / R; const la2 = Math.asin(Math.sin(la) * Math.cos(dr) + Math.cos(la) * Math.sin(dr) * Math.cos(b)); const lo2 = lo + Math.atan2(Math.sin(b) * Math.sin(dr) * Math.cos(la), Math.cos(dr) - Math.sin(la) * Math.sin(la2)); return { lat: la2 / D2R, lng: lo2 / D2R }; }
+function bearing(a, b) { const y = Math.sin((b.lon - a.lon) * D2R) * Math.cos(b.lat * D2R), x = Math.cos(a.lat * D2R) * Math.sin(b.lat * D2R) - Math.sin(a.lat * D2R) * Math.cos(b.lat * D2R) * Math.cos((b.lon - a.lon) * D2R); return (Math.atan2(y, x) / D2R + 360) % 360; }
+function distM(a, b) { const x = (b.lon - a.lon) * D2R * Math.cos((a.lat + b.lat) / 2 * D2R) * R, y = (b.lat - a.lat) * D2R * R; return Math.hypot(x, y); }
+function angLerp(a, b, k) { let d = ((b - a + 540) % 360) - 180; return (a + d * k + 360) % 360; }
+function showLabel(t) { const l = $('label'); l.textContent = t; l.style.opacity = 1; clearTimeout(showLabel.t); showLabel.t = setTimeout(() => l.style.opacity = 0, 2200); }
+
+async function loadPlan() {
+  if (PLAN) return PLAN;
+  const name = qs.get('plan') || 'aktuell';
+  const r = await fetch('../plaene/3d/' + name + '.json', { cache: 'no-store' });
+  if (!r.ok) throw new Error('Plan nicht gefunden: ' + name);
+  PLAN = await r.json(); return PLAN;
+}
+function loadMaps() {
+  return new Promise((res, rej) => {
+    window.__onMaps = res;
+    const s = document.createElement('script');
+    s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(KEY) + '&v=beta&libraries=maps3d&loading=async&callback=__onMaps';
+    s.onerror = rej; document.head.append(s);
+  });
+}
+// Kamera der 3D-Karte: Mittelpunkt + Abstand + Neigung + Kurs. Für Drohnensicht: Mittelpunkt = Punkt vor der Drohne, Abstand = Entfernung dazu.
+// alt = absolute Höhe über Meer (Google rechnet absolut); Drohnensicht: Mittelpunkt dist Meter vor der Drohne in Blickrichtung
+function camFrom(pos, alt, yaw, pitchDeg, dist) {
+  const p = pitchDeg * D2R; const horiz = dist * Math.cos(p);
+  const c = dest(pos.lat, pos.lon, horiz, yaw);
+  return { center: { lat: c.lat, lng: c.lng, altitude: alt + dist * Math.sin(p) }, range: dist, tilt: Math.max(1, Math.min(179, 90 + pitchDeg)), heading: yaw };
+}
+function applyCam(c) { map.center = c.center; map.range = c.range; map.tilt = c.tilt; map.heading = c.heading; }
+
+// Vorschau: Übersicht (Flug um den Plan) → Anflug auf den Start → Flug der Route in Echtzeit × Tempo
+let sim = null;
+function startPreview() {
+  if (!PLAN) return;
+  running = true; cancelAnimationFrame(raf);
+  const P = PLAN.punkte; const home = P[0];
+  const far = P.reduce((m, p) => Math.max(m, distM(home, p)), 0);
+  const mid = P.reduce((a, p) => ({ lat: a.lat + p.lat / P.length, lon: a.lon + p.lon / P.length }), { lat: 0, lon: 0 });
+  showLabel('Route im Überblick');
+  sim = { stage: 'overview', i: 0, t: 0, hold: 0, last: performance.now(), yaw: home.yaw ?? bearing(P[0], P[1]), pitch: -20 };
+  const midAlt = (PLAN.home.alt || 0) + 5;
+  map.flyCameraTo({ endCamera: { center: { lat: mid.lat, lng: mid.lon, altitude: midAlt }, range: Math.max(600, far * 2.4), tilt: 55, heading: bearing(P[0], P[Math.min(2, P.length - 1)]) }, durationMillis: 2500 });
+  setTimeout(() => { if (!running) return; map.flyCameraAround({ camera: { center: { lat: mid.lat, lng: mid.lon, altitude: midAlt }, range: Math.max(600, far * 2.4), tilt: 55 }, durationMillis: 7000, rounds: 0.25 }); }, 2600);
+  setTimeout(() => { if (!running) return; showLabel('Anflug auf den Start'); const c = camFrom(home, home.alt, sim.yaw, -20, 2); map.flyCameraTo({ endCamera: c, durationMillis: 3500 }); }, 9800);
+  setTimeout(() => { if (!running) return; sim.stage = 'fly'; sim.last = performance.now(); showLabel(camName()); raf = requestAnimationFrame(step); }, 13500);
+}
+function camName() { return { fpv: 'Drohnensicht', chase: 'Verfolger', top: 'Übersicht' }[camMode]; }
+// Simulierte Flugzeit um dt Sekunden weiter (Tempo, Schweben an Fotopunkten, Kurs/Neigung weich); liefert false am Ende
+function advance(dt) {
+  const P = PLAN.punkte;
+  if (sim.hold > 0) sim.hold -= dt;
+  else if (sim.i >= P.length - 1) return false;
+  else {
+    const a = P[sim.i], b = P[sim.i + 1]; const L = Math.max(0.1, Math.hypot(distM(a, b), b.h - a.h));
+    const vertical = distM(a, b) < 0.5; const v = vertical ? 2.5 : (a.speed || 4);
+    sim.t += dt * v / L;
+    if (sim.t >= 1) { sim.t = 0; sim.i++; const w = P[sim.i]; sim.hold = w.hold > 0 ? w.hold : 0.3; if (w.yaw != null) sim.yawTarget = w.yaw; sim.pitchTarget = w.pitch ?? -20; }
+    else if (!vertical) { sim.yawTarget = bearing(a, b); sim.pitchTarget = -20; }
+  }
+  const k = Math.min(1, dt * 1.5);
+  sim.yaw = angLerp(sim.yaw, sim.yawTarget ?? sim.yaw, k); sim.pitch += ((sim.pitchTarget ?? -20) - sim.pitch) * k;
+  return true;
+}
+function simPose() {
+  const P = PLAN.punkte, i = Math.min(sim.i, P.length - 1), a = P[i], b = P[Math.min(i + 1, P.length - 1)], t = sim.t;
+  return { lat: a.lat + (b.lat - a.lat) * t, lon: a.lon + (b.lon - a.lon) * t, alt: a.alt + (b.alt - a.alt) * t, yaw: sim.yaw, pitch: sim.pitch, i };
+}
+function applyView() {
+  const q = simPose();
+  if (camMode === 'fpv') applyCam(camFrom(q, q.alt, q.yaw, q.pitch, 2));
+  else if (camMode === 'chase') { map.center = { lat: q.lat, lng: q.lon, altitude: q.alt + 2 }; map.heading = q.yaw; map.tilt = 62; map.range = 45; }
+  else { map.center = { lat: q.lat, lng: q.lon, altitude: q.alt }; map.range = 350; map.tilt = 50; }
+}
+function step() {
+  if (!running || !sim || sim.stage !== 'fly') return;
+  const now = performance.now(), dt = Math.min(0.1, (now - sim.last) / 1000); sim.last = now;
+  if (!advance(dt * scale)) { running = false; showLabel('Ende der Route'); return; }
+  applyView();
+  raf = requestAnimationFrame(step);
+}
+// Für Tests ohne Echtzeit: Flug sofort auf Sekunde s setzen (ab Routenbeginn), Kamera anwenden
+window.simSeek = function (sec) {
+  if (!PLAN) return null; running = false; cancelAnimationFrame(raf);
+  const P = PLAN.punkte; sim = { stage: 'fly', i: 0, t: 0, hold: 0, last: performance.now(), yaw: P[0].yaw ?? bearing(P[0], P[1]), pitch: -20 };
+  let left = sec; while (left > 0 && advance(0.1)) left -= 0.1;
+  applyView(); const q = simPose(); return { i: q.i, lat: q.lat, lon: q.lon, alt: q.alt, yaw: Math.round(q.yaw), pitch: Math.round(q.pitch), done: left > 0 };
+};
+window.simTotal = function () { if (!PLAN) return 0; const P = PLAN.punkte; sim = { stage: 'fly', i: 0, t: 0, hold: 0, yaw: 0, pitch: -20 }; let s = 0; while (advance(0.1) && s < 36000) s += 0.1; return Math.round(s); };
+function drawRoute() {
+  const { Polyline3DElement, AltitudeMode, Marker3DElement, PinElement } = google.maps;
+  const P = PLAN.punkte;
+  const ABS = google.maps.maps3d.AltitudeMode.ABSOLUTE;
+  line = new google.maps.maps3d.Polyline3DElement({ altitudeMode: ABS, strokeColor: '#2f8cff', strokeWidth: 5, drawsOccludedSegments: true, extruded: true, outerColor: 'rgba(47,140,255,0.3)', outerWidth: 0.4 });
+  line.path = P.map(p => ({ lat: p.lat, lng: p.lon, altitude: p.alt }));
+  map.append(line);
+  P.forEach((p, i) => { if (!p.photo && i !== 0) return; const m = new google.maps.maps3d.Marker3DElement({ position: { lat: p.lat, lng: p.lon, altitude: p.alt }, altitudeMode: ABS, label: i === 0 ? 'Start' : String(i), extruded: true }); map.append(m); markers.push(m); });
+}
+// Aufruf aus der App (assets/google3d.html?app=1): appStart(plan, key) setzt Plan und Schlüssel, appDrone(...) zeigt die echte Drohne
+const APP = qs.get('app') === '1';
+let drone = null;
+window.appStart = function (plan, key) { PLAN = plan; KEY = key; if (!window.__mapsLoaded) main(); else { try { clearRoute(); drawRoute(); } catch (e) {} } };
+window.appDrone = function (lat, lon, alt, hdg, pitch, flying) {
+  if (!map) return; drone = { lat, lon, alt, hdg, pitch: pitch == null ? -20 : pitch, flying };
+  if (!flying) return;
+  running = false; cancelAnimationFrame(raf);
+  if (camMode === 'fpv') applyCam(camFrom(drone, alt, hdg, drone.pitch, 2));
+  else if (camMode === 'chase') { map.center = { lat, lng: lon, altitude: alt }; map.heading = hdg; map.tilt = 62; map.range = 45; }
+  else { map.center = { lat, lng: lon, altitude: alt }; map.range = 350; map.tilt = 50; }
+};
+window.cycleCamera = function () { $('bCam').click(); return camMode === 'top' ? 'orbit' : camMode; };
+function clearRoute() { if (line) line.remove(); line = null; markers.forEach(m => m.remove()); markers = []; }
+async function main() {
+  if (APP && (!PLAN || !KEY)) return;
+  if (!KEY) { $('setup').hidden = false; $('setupForm').addEventListener('submit', e => { e.preventDefault(); KEY = $('keyIn').value.trim(); try { localStorage.setItem('google-key', KEY); } catch (x) {} $('setup').hidden = true; main(); }); return; }
+  try {
+    if (!window.__mapsLoaded) { await loadMaps(); await google.maps.importLibrary('maps3d'); window.__mapsLoaded = true; }
+    map = $('map');
+    await loadPlan();
+    clearRoute();
+    $('info').textContent = PLAN.name + ' · ' + PLAN.laenge_m + ' m · ca. ' + Math.round(PLAN.dauer_s / 60) + ' min · ' + PLAN.punkte.length + ' Punkte';
+    drawRoute();
+    const home = PLAN.punkte[0];
+    map.center = { lat: home.lat, lng: home.lon, altitude: home.alt }; map.range = 900; map.tilt = 60; map.heading = bearing(PLAN.punkte[0], PLAN.punkte[Math.min(2, PLAN.punkte.length - 1)]);
+    window.__state = 'ready';
+    if (qs.get('autoplay') === '1') setTimeout(startPreview, 1500);
+  } catch (e) { window.__state = 'err:' + e.message; $('info').textContent = 'Fehler: ' + e.message; }
+}
+$('bPlay').addEventListener('click', startPreview);
+$('bCam').addEventListener('click', e => { camMode = { fpv: 'chase', chase: 'top', top: 'fpv' }[camMode]; e.currentTarget.textContent = 'Kamera: ' + camName().replace('Drohnensicht', 'Drohne'); showLabel(camName()); });
+$('bSpeed').addEventListener('click', e => { scale = { 1: 2, 2: 4, 4: 8, 8: 1 }[scale]; e.currentTarget.textContent = scale === 1 ? 'Echtzeit' : scale + '×'; });
+$('bTop').addEventListener('click', () => { running = false; cancelAnimationFrame(raf); const P = PLAN.punkte, home = P[0]; const far = P.reduce((m, p) => Math.max(m, distM(home, p)), 0); const mid = P.reduce((a, p) => ({ lat: a.lat + p.lat / P.length, lon: a.lon + p.lon / P.length }), { lat: 0, lon: 0 }); map.flyCameraTo({ endCamera: { center: { lat: mid.lat, lng: mid.lon, altitude: (PLAN.home.alt || 0) + 5 }, range: Math.max(600, far * 2.4), tilt: 55, heading: 0 }, durationMillis: 2000 }); });
+main();
+</script>
+</body>
+</html>

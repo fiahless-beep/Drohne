@@ -1,6 +1,6 @@
 {
   "name": "marques-de-pombal-park-tief",
-  "beschreibung": "Zuhause → Rua Castilho (über den Dächern, 39 m) → Parque Eduardo VII, die Rasenachse hinunter (8 m über Baumkronen) → Praça Marquês de Pombal: 2 Achsen-Fotos vom Park nach Süden (Statue, Avenida, Tejo), tiefer Ring (50 m Abstand, Kamera auf Statuenmitte, 8 Fotos) und hoher Ring (8 Fotos, Blick 20° nach unten), gleicher Weg zurück. Praça liegt 48 m tiefer als der Start, daher negative Höhen. Sonne um 15:00: Azimut 221°, Höhe 23° → 10 Fotos mit Sonne im Rücken, 6 im Gegenlicht (Auswahl danach). Nur tagsüber mit Sensoren.",
+  "beschreibung": "Zuhause → gerade Linie zur Praça Marquês de Pombal (über die Dächer der Rua Castilho, dann über die Südwestecke des Parque Eduardo VII, 8 m über Baumkronen und Dächern): 2 Achsen-Fotos vom Park nach Süden (Statue, Avenida, Tejo), tiefer Ring (50 m Abstand, Kamera auf Statuenmitte, 8 Fotos) und hoher Ring (8 Fotos, Blick 20° nach unten), gleicher Weg zurück. Praça liegt 49 m tiefer als der Start, daher negative Höhen. Sonne um 15:00: Azimut 221°, Höhe 23° → 10 Fotos mit Sonne im Rücken, 6 im Gegenlicht (Auswahl danach). Nur tagsüber mit Sensoren.",
   "speed": 4,
   "rcLost": "continue",
   "start": {
@@ -8,127 +8,175 @@
     "lon": -9.15727
   },
   "ziel": {
-    "lat": 38.72525,
-    "lon": -9.15004,
+    "lat": 38.72506,
+    "lon": -9.14976,
     "h": 36.0
   },
+  "hindernisse": [
+    {
+      "name": "Denkmal Marquês de Pombal",
+      "h": 36.0,
+      "umriss": [
+        [
+          38.725123,
+          -9.14976
+        ],
+        [
+          38.725105,
+          -9.149703
+        ],
+        [
+          38.72506,
+          -9.149679
+        ],
+        [
+          38.725015,
+          -9.149703
+        ],
+        [
+          38.724997,
+          -9.14976
+        ],
+        [
+          38.725015,
+          -9.149817
+        ],
+        [
+          38.72506,
+          -9.149841
+        ],
+        [
+          38.725105,
+          -9.149817
+        ]
+      ]
+    }
+  ],
   "waypoints": [
     {
-      "lat": 38.727869,
-      "lon": -9.156717,
+      "lat": 38.727661,
+      "lon": -9.156811,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727491,
+      "lon": -9.156352,
       "h": 39,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.727907,
-      "lon": -9.156164,
-      "h": 39,
+      "lat": 38.727322,
+      "lon": -9.155893,
+      "h": 43,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.727946,
-      "lon": -9.155611,
-      "h": 37,
+      "lat": 38.727153,
+      "lon": -9.155434,
+      "h": 43,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.727984,
-      "lon": -9.155059,
-      "h": 17,
+      "lat": 38.726984,
+      "lon": -9.154975,
+      "h": 6,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728023,
-      "lon": -9.154506,
-      "h": 11,
+      "lat": 38.726814,
+      "lon": -9.154516,
+      "h": 6,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728061,
-      "lon": -9.153953,
-      "h": 4,
+      "lat": 38.726645,
+      "lon": -9.154057,
+      "h": -2,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.7281,
-      "lon": -9.1534,
-      "h": 1,
+      "lat": 38.726476,
+      "lon": -9.153598,
+      "h": -2,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728067,
-      "lon": -9.152833,
-      "h": -4,
+      "lat": 38.726307,
+      "lon": -9.153139,
+      "h": -2,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728033,
-      "lon": -9.152267,
-      "h": -8,
+      "lat": 38.726137,
+      "lon": -9.15268,
+      "h": -2,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728,
-      "lon": -9.1517,
-      "h": -8,
+      "lat": 38.725968,
+      "lon": -9.152221,
+      "h": -13,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.7276,
-      "lon": -9.151463,
-      "h": -10,
+      "lat": 38.725799,
+      "lon": -9.151762,
+      "h": -13,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.7272,
-      "lon": -9.151225,
-      "h": -18,
-      "photo": false,
-      "hover": 0,
-      "pitch": -20
-    },
-    {
-      "lat": 38.7268,
-      "lon": -9.150987,
-      "h": -24,
-      "photo": false,
-      "hover": 0,
-      "pitch": -20
-    },
-    {
-      "lat": 38.7264,
-      "lon": -9.15075,
+      "lat": 38.72563,
+      "lon": -9.151303,
       "h": -22,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.726426,
-      "lon": -9.15004,
-      "h": 0,
+      "lat": 38.72546,
+      "lon": -9.150844,
+      "h": -35,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725291,
+      "lon": -9.150385,
+      "h": -36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726236,
+      "lon": -9.14976,
+      "h": -1,
       "photo": true,
       "hover": 2,
       "yaw": 180,
@@ -136,9 +184,9 @@
       "notiz": "Achse Park → Avenida, Sonne im Rücken"
     },
     {
-      "lat": 38.726064,
-      "lon": -9.15004,
-      "h": -8,
+      "lat": 38.725874,
+      "lon": -9.14976,
+      "h": -9,
       "photo": true,
       "hover": 2,
       "yaw": 180,
@@ -146,9 +194,9 @@
       "notiz": "Achse Park → Avenida, Sonne im Rücken"
     },
     {
-      "lat": 38.725702,
-      "lon": -9.15004,
-      "h": -28,
+      "lat": 38.725512,
+      "lon": -9.14976,
+      "h": -29,
       "photo": true,
       "hover": 2,
       "yaw": 180,
@@ -156,9 +204,9 @@
       "notiz": "Ring tief, Sonne im Rücken"
     },
     {
-      "lat": 38.72557,
-      "lon": -9.149633,
-      "h": -28,
+      "lat": 38.72538,
+      "lon": -9.149353,
+      "h": -29,
       "photo": true,
       "hover": 2,
       "yaw": 225,
@@ -166,9 +214,9 @@
       "notiz": "Ring tief, Sonne im Rücken"
     },
     {
-      "lat": 38.72525,
-      "lon": -9.149464,
-      "h": -28,
+      "lat": 38.72506,
+      "lon": -9.149184,
+      "h": -29,
       "photo": true,
       "hover": 2,
       "yaw": 270,
@@ -176,9 +224,9 @@
       "notiz": "Ring tief, Sonne im Rücken"
     },
     {
-      "lat": 38.72493,
-      "lon": -9.149633,
-      "h": -28,
+      "lat": 38.72474,
+      "lon": -9.149353,
+      "h": -29,
       "photo": true,
       "hover": 2,
       "yaw": 315,
@@ -186,9 +234,9 @@
       "notiz": "Ring tief, Seitenlicht"
     },
     {
-      "lat": 38.724798,
-      "lon": -9.15004,
-      "h": -28,
+      "lat": 38.724608,
+      "lon": -9.14976,
+      "h": -29,
       "photo": true,
       "hover": 2,
       "yaw": 0,
@@ -196,9 +244,9 @@
       "notiz": "Ring tief, Gegenlicht"
     },
     {
-      "lat": 38.72493,
-      "lon": -9.150447,
-      "h": -28,
+      "lat": 38.72474,
+      "lon": -9.150167,
+      "h": -29,
       "photo": true,
       "hover": 2,
       "yaw": 45,
@@ -206,9 +254,9 @@
       "notiz": "Ring tief, Gegenlicht"
     },
     {
-      "lat": 38.72525,
-      "lon": -9.150616,
-      "h": -28,
+      "lat": 38.72506,
+      "lon": -9.150336,
+      "h": -29,
       "photo": true,
       "hover": 2,
       "yaw": 90,
@@ -216,9 +264,9 @@
       "notiz": "Ring tief, Gegenlicht"
     },
     {
-      "lat": 38.72557,
-      "lon": -9.150447,
-      "h": -28,
+      "lat": 38.72538,
+      "lon": -9.150167,
+      "h": -29,
       "photo": true,
       "hover": 2,
       "yaw": 135,
@@ -226,9 +274,9 @@
       "notiz": "Ring tief, Seitenlicht"
     },
     {
-      "lat": 38.725702,
-      "lon": -9.15004,
-      "h": -28,
+      "lat": 38.725512,
+      "lon": -9.14976,
+      "h": -29,
       "photo": false,
       "hover": 0,
       "yaw": 180,
@@ -236,9 +284,9 @@
       "notiz": "Ring tief, Sonne im Rücken"
     },
     {
-      "lat": 38.725793,
-      "lon": -9.15004,
-      "h": -6,
+      "lat": 38.725603,
+      "lon": -9.14976,
+      "h": -7,
       "photo": true,
       "hover": 2,
       "yaw": 180,
@@ -246,9 +294,9 @@
       "notiz": "Ring hoch, Sonne im Rücken"
     },
     {
-      "lat": 38.725634,
-      "lon": -9.149551,
-      "h": -6,
+      "lat": 38.725444,
+      "lon": -9.149271,
+      "h": -7,
       "photo": true,
       "hover": 2,
       "yaw": 225,
@@ -256,9 +304,9 @@
       "notiz": "Ring hoch, Sonne im Rücken"
     },
     {
-      "lat": 38.72525,
-      "lon": -9.149349,
-      "h": -6,
+      "lat": 38.72506,
+      "lon": -9.149069,
+      "h": -7,
       "photo": true,
       "hover": 2,
       "yaw": 270,
@@ -266,9 +314,9 @@
       "notiz": "Ring hoch, Sonne im Rücken"
     },
     {
-      "lat": 38.724866,
-      "lon": -9.149551,
-      "h": -6,
+      "lat": 38.724676,
+      "lon": -9.149271,
+      "h": -7,
       "photo": true,
       "hover": 2,
       "yaw": 315,
@@ -276,9 +324,9 @@
       "notiz": "Ring hoch, Seitenlicht"
     },
     {
-      "lat": 38.724707,
-      "lon": -9.15004,
-      "h": -6,
+      "lat": 38.724517,
+      "lon": -9.14976,
+      "h": -7,
       "photo": true,
       "hover": 2,
       "yaw": 0,
@@ -286,9 +334,9 @@
       "notiz": "Ring hoch, Gegenlicht"
     },
     {
-      "lat": 38.724866,
-      "lon": -9.150529,
-      "h": -6,
+      "lat": 38.724676,
+      "lon": -9.150249,
+      "h": -7,
       "photo": true,
       "hover": 2,
       "yaw": 45,
@@ -296,9 +344,9 @@
       "notiz": "Ring hoch, Gegenlicht"
     },
     {
-      "lat": 38.72525,
-      "lon": -9.150731,
-      "h": -6,
+      "lat": 38.72506,
+      "lon": -9.150451,
+      "h": -7,
       "photo": true,
       "hover": 2,
       "yaw": 90,
@@ -306,9 +354,9 @@
       "notiz": "Ring hoch, Gegenlicht"
     },
     {
-      "lat": 38.725634,
-      "lon": -9.150529,
-      "h": -6,
+      "lat": 38.725444,
+      "lon": -9.150249,
+      "h": -7,
       "photo": true,
       "hover": 2,
       "yaw": 135,
@@ -316,9 +364,9 @@
       "notiz": "Ring hoch, Seitenlicht"
     },
     {
-      "lat": 38.725793,
-      "lon": -9.15004,
-      "h": -6,
+      "lat": 38.725603,
+      "lon": -9.14976,
+      "h": -7,
       "photo": false,
       "hover": 0,
       "yaw": 180,
@@ -326,105 +374,113 @@
       "notiz": "Ring hoch, Sonne im Rücken"
     },
     {
-      "lat": 38.7268,
-      "lon": -9.150987,
-      "h": -24,
+      "lat": 38.72546,
+      "lon": -9.150844,
+      "h": -35,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.7272,
-      "lon": -9.151225,
-      "h": -18,
+      "lat": 38.72563,
+      "lon": -9.151303,
+      "h": -22,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.7276,
-      "lon": -9.151463,
-      "h": -10,
+      "lat": 38.725799,
+      "lon": -9.151762,
+      "h": -13,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728,
-      "lon": -9.1517,
-      "h": -8,
+      "lat": 38.725968,
+      "lon": -9.152221,
+      "h": -13,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728033,
-      "lon": -9.152267,
-      "h": -8,
+      "lat": 38.726137,
+      "lon": -9.15268,
+      "h": -2,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728067,
-      "lon": -9.152833,
-      "h": -4,
+      "lat": 38.726307,
+      "lon": -9.153139,
+      "h": -2,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.7281,
-      "lon": -9.1534,
-      "h": 1,
+      "lat": 38.726476,
+      "lon": -9.153598,
+      "h": -2,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728061,
-      "lon": -9.153953,
-      "h": 4,
+      "lat": 38.726645,
+      "lon": -9.154057,
+      "h": -2,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.728023,
-      "lon": -9.154506,
-      "h": 11,
+      "lat": 38.726814,
+      "lon": -9.154516,
+      "h": 6,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.727984,
-      "lon": -9.155059,
-      "h": 17,
+      "lat": 38.726984,
+      "lon": -9.154975,
+      "h": 6,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.727946,
-      "lon": -9.155611,
-      "h": 37,
+      "lat": 38.727153,
+      "lon": -9.155434,
+      "h": 43,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.727907,
-      "lon": -9.156164,
+      "lat": 38.727322,
+      "lon": -9.155893,
+      "h": 43,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727491,
+      "lon": -9.156352,
       "h": 39,
       "photo": false,
       "hover": 0,
       "pitch": -20
     },
     {
-      "lat": 38.727869,
-      "lon": -9.156717,
-      "h": 39,
+      "lat": 38.727661,
+      "lon": -9.156811,
+      "h": 36,
       "photo": false,
       "hover": 0,
       "pitch": -20

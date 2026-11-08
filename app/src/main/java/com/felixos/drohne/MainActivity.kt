@@ -551,7 +551,7 @@ class MainActivity : AppCompatActivity() {
         val items = arrayOf(
             if (Simulator.active) "Simulation beenden" else "Simulation starten (ohne Drohne)",
             "Simulation: ${if (Simulator.timeScale > 1) "Echtzeit (jetzt ${Simulator.timeScale.toInt()}×)" else "Zeitraffer 4×"}",
-            "Plan in Google Maps zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
+            "Plan in Google Maps zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Google-Schlüssel eintragen (3D fotorealistisch)", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
             "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})",
             "Bildwächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})",
             "Bildwächter ${if (ObstacleGuard.enabled) "ausschalten" else "einschalten"}")
@@ -562,15 +562,16 @@ class MainActivity : AppCompatActivity() {
                 0 -> showOnMap()
                 1 -> FlightReport.collectAndUpload(applicationContext)
                 2 -> askToken()
-                3 -> DroneManager.setBottomLight("an")
-                4 -> DroneManager.setBottomLight("auto")
-                5 -> AlertDialog.Builder(this).setTitle("Neu koppeln?")
+                3 -> askGoogleKey()
+                4 -> DroneManager.setBottomLight("an")
+                5 -> DroneManager.setBottomLight("auto")
+                6 -> AlertDialog.Builder(this).setTitle("Neu koppeln?")
                     .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
                     .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
                     .setNegativeButton("Abbrechen", null).show()
-                6 -> { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }
-                7 -> ObstacleGuard.setArmed(this, !ObstacleGuard.armed)
-                8 -> ObstacleGuard.setEnabled(this, !ObstacleGuard.enabled)
+                7 -> { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }
+                8 -> ObstacleGuard.setArmed(this, !ObstacleGuard.armed)
+                9 -> ObstacleGuard.setEnabled(this, !ObstacleGuard.enabled)
             }
             renderNow(DroneManager.state)
         }.show()
@@ -621,6 +622,23 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Speichern") { _, _ ->
                 FlightReport.saveToken(this, input.text.toString())
                 DroneManager.log(if (input.text.isBlank()) "Token gelöscht" else "Token gespeichert")
+            }
+            .setNegativeButton("Abbrechen", null).show()
+    }
+
+    /** Google-Schlüssel für die fotorealistische 3D-Ansicht (Maps JavaScript API). Nur auf dem Handy. */
+    private fun askGoogleKey() {
+        val input = android.widget.EditText(this).apply {
+            hint = "AIza…"; setText(GoogleKey.get(this@MainActivity) ?: "")
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+        AlertDialog.Builder(this).setTitle("Google-Schlüssel")
+            .setMessage("API-Schlüssel aus der Google Cloud Console (Maps JavaScript API + Map Tiles API). Mit Schlüssel zeigt die 3D-Ansicht Lissabon fotorealistisch (braucht Internet); ohne Schlüssel die Klötzchen-Ansicht aus der Gebäudedatenbank. Bleibt auf diesem Handy.")
+            .setView(input)
+            .setPositiveButton("Speichern") { _, _ ->
+                GoogleKey.save(this, input.text.toString())
+                DroneManager.log(if (input.text.isBlank()) "Google-Schlüssel gelöscht" else "Google-Schlüssel gespeichert")
+                view3d.reload(); if (mode == Mode.THREE) view3d.setMission(MissionController.currentMission ?: mission, MissionController.preparedHome ?: homeLatLon())
             }
             .setNegativeButton("Abbrechen", null).show()
     }

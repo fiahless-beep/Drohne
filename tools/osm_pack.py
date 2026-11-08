@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Overpass-JSON (out geom) → kompakte GeoJSONs für Planer und App.
-Aufruf: python3 tools/osm_pack.py overpass-strassen-lisboa.json plaene/daten/strassen-lisboa.geojson
-        python3 tools/osm_pack.py overpass-parks-lisboa.json plaene/daten/parks-lisboa.geojson --parks
+Aufruf: python3 tools/osm_pack.py overpass-strassen-lisboa.json plaene/daten/osm/strassen-lisboa.geojson
+        python3 tools/osm_pack.py overpass-parks-lisboa.json plaene/daten/osm/parks-lisboa.geojson --parks
 Straßen: LineString mit w = typische Breite in m (nach highway-Klasse) und n = Name. Parks: Polygon.
 """
 import json, sys

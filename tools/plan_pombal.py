@@ -6,7 +6,7 @@ Aufruf: python3 tools/plan_pombal.py [HH:MM] > plaene/marques-de-pombal-park-tie
 """
 import array, json, math, struct, sys
 sys.path.insert(0, 'tools'); from plan_artifact import seg_building_dist
-H = (38.72783, -9.15727); C = (38.72525, -9.15004)   # Zuhause, Statue
+H = (38.72783, -9.15727); C = (38.72506, -9.14976)   # Zuhause, Statue (Mitte des Hausrings „Praça do Marquês de Pombal“ aus der Gebäudedatenbank)
 STATUE_H = 36.0; CORR = 8.0; CLEAR = 8.0
 
 b = open('app/src/main/assets/hoehen.bin', 'rb').read(); lat0, lon0, dlat, dlon, rows, cols = struct.unpack('<ddddii', b[4:44]); n = rows * cols
@@ -50,10 +50,13 @@ solar = hh + mm / 60 + (C[1] * 4 + eot) / 60; ha = math.radians(15 * (solar - 12
 el = math.asin(math.sin(lat) * math.sin(decl) + math.cos(lat) * math.cos(decl) * math.cos(ha))
 az = math.degrees(math.atan2(math.sin(ha), math.cos(ha) * math.sin(lat) - math.tan(decl) * math.cos(lat))) + 180
 sun_az = az % 360; sun_el = math.degrees(el)
-# Geländebezug an der Praça
+# Geländebezug an der Praça; Denkmal (Sockel + Säule, ca. 36 m) als eigenes Hindernis, es fehlt in der Gebäudedatenbank
 gP = smp(G, *C) - g0; top = gP + STATUE_H; mid = gP + STATUE_H * 0.55
+def offset(p, d, brg): x, y = xy(p); return ll(x + d * math.sin(math.radians(brg)), y + d * math.cos(math.radians(brg)))
+denkmal = [offset(C, 7, a) for a in range(0, 360, 45)]
+bl.append((gP + STATUE_H, [xy(q) for q in denkmal]))
 # Weg hin: Zuhause → Rua Castilho → Parkrand → Rasenachse → Südende des Parks
-corners = [H, (38.72810, -9.15340), (38.72800, -9.15170), (38.72640, -9.15075)]
+corners = [H, offset(C, 60, bearing(C, H))]  # Felix 8.11.: direkte Linie, kein Umweg; die Linie streift die Südwestecke des Parks (Bäume über LiDAR)
 hin = densify(corners)
 # Fotostandpunkte: 2 Achsen-Punkte vom Park (Blick nach Süden über Statue und Avenida), dann tiefer Ring (Abstand 50 m, Kamera auf Statuenmitte), dann hoher Ring
 shots = []
@@ -79,7 +82,8 @@ for i in range(1, len(path)):
         wps.append({"lat": path[i][0], "lon": path[i][1], "h": hmin, "photo": False, "hover": 0, "pitch": -20})
 gut = sum(1 for w in wps if w.get('notiz', '').endswith('Rücken')); gegen = sum(1 for w in wps if w.get('notiz', '').endswith('Gegenlicht'))
 plan = {"name": "marques-de-pombal-park-tief",
-        "beschreibung": f"Zuhause → Rua Castilho (über den Dächern, {max(w['h'] for w in wps[:3])} m) → Parque Eduardo VII, die Rasenachse hinunter (8 m über Baumkronen) → Praça Marquês de Pombal: 2 Achsen-Fotos vom Park nach Süden (Statue, Avenida, Tejo), tiefer Ring (50 m Abstand, Kamera auf Statuenmitte, {len(ring_lo)} Fotos) und hoher Ring ({len(ring_hi)} Fotos, Blick 20° nach unten), gleicher Weg zurück. Praça liegt {-gP:.0f} m tiefer als der Start, daher negative Höhen. Sonne um {hhmm}: Azimut {sun_az:.0f}°, Höhe {sun_el:.0f}° → {gut} Fotos mit Sonne im Rücken, {gegen} im Gegenlicht (Auswahl danach). Nur tagsüber mit Sensoren.",
-        "speed": 4, "rcLost": "continue", "start": {"lat": H[0], "lon": H[1]}, "ziel": {"lat": C[0], "lon": C[1], "h": STATUE_H}, "waypoints": wps}
+        "beschreibung": f"Zuhause → gerade Linie zur Praça Marquês de Pombal (über die Dächer der Rua Castilho, dann über die Südwestecke des Parque Eduardo VII, 8 m über Baumkronen und Dächern): 2 Achsen-Fotos vom Park nach Süden (Statue, Avenida, Tejo), tiefer Ring (50 m Abstand, Kamera auf Statuenmitte, {len(ring_lo)} Fotos) und hoher Ring ({len(ring_hi)} Fotos, Blick 20° nach unten), gleicher Weg zurück. Praça liegt {-gP:.0f} m tiefer als der Start, daher negative Höhen. Sonne um {hhmm}: Azimut {sun_az:.0f}°, Höhe {sun_el:.0f}° → {gut} Fotos mit Sonne im Rücken, {gegen} im Gegenlicht (Auswahl danach). Nur tagsüber mit Sensoren.",
+        "speed": 4, "rcLost": "continue", "start": {"lat": H[0], "lon": H[1]}, "ziel": {"lat": C[0], "lon": C[1], "h": STATUE_H},
+        "hindernisse": [{"name": "Denkmal Marquês de Pombal", "h": STATUE_H, "umriss": [[q[0], q[1]] for q in denkmal]}], "waypoints": wps}
 json.dump(plan, sys.stdout, ensure_ascii=False, indent=2); print()
 print(f"# {len(wps)} Punkte, Höhen {min(w['h'] for w in wps)}…{max(w['h'] for w in wps)} m, Sonne {sun_az:.0f}°/{sun_el:.0f}°", file=sys.stderr)

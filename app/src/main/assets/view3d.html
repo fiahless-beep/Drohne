@@ -169,16 +169,27 @@ function place() {
     const yaw = smoothHeading + yawOff, pitch = chasePitch + pitchOff;
     target = drone.position.clone().add(fwd(yaw).multiplyScalar(-chaseDist * Math.cos(pitch))).add(new THREE.Vector3(0, chaseDist * Math.sin(pitch), 0));
     look = drone.position.clone().add(fwd(yaw).multiplyScalar(chaseDist * 0.5));
-    if (target.y < 2) target.y = 2;
+    target = clearCam(drone.position, target);
   } else {
     const c = center || new THREE.Vector3(0, 10, 0);
     const ph = (preview && preview.stage === 'overview') ? 0.95 : phi;
     look = c;
     target = new THREE.Vector3(c.x + dist * Math.cos(ph) * Math.sin(theta), c.y + dist * Math.sin(ph), c.z + dist * Math.cos(ph) * Math.cos(theta));
   }
+  if (mode !== 'fpv') { const gy = groundAt(target.x, target.z) + 3; if (target.y < gy) target.y = gy; }
   if (!camPos) { camPos = target.clone(); camLook = look.clone(); }
   camPos.lerp(target, k); camLook.lerp(look, Math.min(1, k * 1.4));
   cam.position.copy(camPos); cam.lookAt(camLook);
+}
+// Verfolgerkamera nie in Gebäuden: Strahl von der Drohne zur gewünschten Kameraposition, bei Treffer kurz davor bleiben
+const camRay = new THREE.Raycaster();
+function clearCam(from, want) {
+  const dir = want.clone().sub(from); const len = dir.length(); if (len < 0.5) return want;
+  camRay.set(from, dir.normalize()); camRay.far = len + 1.5;
+  const hits = camRay.intersectObjects(buildings.filter(o => o.isMesh), false);
+  if (!hits.length) return want;
+  const d = Math.max(2, hits[0].distance - 2.5);
+  return from.clone().add(dir.multiplyScalar(d));
 }
 
 // Geländehöhe unter (x, z) relativ zum Startboden; ohne Gelände 0
@@ -214,10 +225,12 @@ function buildTerrain(t, roads, parks) {
   groundPlane.position.y = mn - 1;
 }
 function distPointSeg(p, a, b) { const ab = b.clone().sub(a); const l = ab.lengthSq(); const t = l ? Math.max(0, Math.min(1, p.clone().sub(a).dot(ab) / l)) : 0; return p.distanceTo(a.clone().add(ab.multiplyScalar(t))); }
-function nearRoute(route, poly, h, clear, mar) {
-  for (let i = 0; i < route.length - 1; i++) { const a = route[i], b = route[i + 1]; if (Math.min(a.y, b.y) >= h + clear) continue;
+// Gebäude-Wächter wie in der App: Dach = Höhe + Geländeversatz (g); Konflikt, wenn die Route näher als mar waagerecht und unter Dach + clear ist
+function nearRoute(route, poly, h, clear, mar, g) {
+  const top = h + (g || 0) + clear;
+  for (let i = 0; i < route.length - 1; i++) { const a = route[i], b = route[i + 1]; if (Math.min(a.y, b.y) >= top) continue;
     const a2 = new THREE.Vector3(a.x, 0, a.z), b2 = new THREE.Vector3(b.x, 0, b.z);
-    for (let k = 0; k <= 20; k++) { const p = a2.clone().lerp(b2, k / 20); for (let j = 0; j < poly.length; j++) { const q1 = new THREE.Vector3(poly[j][0], 0, -poly[j][1]), q2 = new THREE.Vector3(poly[(j + 1) % poly.length][0], 0, -poly[(j + 1) % poly.length][1]); if (distPointSeg(p, q1, q2) < mar) return true; } } }
+    for (let k = 0; k <= 20; k++) { const p = a2.clone().lerp(b2, k / 20); if (a.y + (b.y - a.y) * k / 20 >= top) continue; for (let j = 0; j < poly.length; j++) { const q1 = new THREE.Vector3(poly[j][0], 0, -poly[j][1]), q2 = new THREE.Vector3(poly[(j + 1) % poly.length][0], 0, -poly[(j + 1) % poly.length][1]); if (distPointSeg(p, q1, q2) < mar) return true; } } }
   return false;
 }
 
@@ -261,7 +274,7 @@ function setScene(D) {
     try {
       const shape = new THREE.Shape(b.p.map(q => new THREE.Vector2(q[0], -q[1])));
       const g = new THREE.ExtrudeGeometry(shape, { depth: b.h, bevelEnabled: false }); g.rotateX(-Math.PI / 2); if (b.g) g.translate(0, b.g, 0);
-      const conflict = route.length > 1 && nearRoute(route, b.p, b.h, D.clear || 8, D.mar || 8);
+      const conflict = route.length > 1 && nearRoute(route, b.p, b.h, D.clear || 8, D.mar || 8, b.g);
       (conflict ? gWarn : gOk).push(g); (conflict ? eWarn : eOk).push(new THREE.EdgesGeometry(g, 20));
     } catch (e) {}
   });

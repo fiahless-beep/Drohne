@@ -73,6 +73,7 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxjava:2.2.11")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("com.google.code.gson:gson:2.9.1")
+    implementation("androidx.webkit:webkit:1.8.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.lifecycle:lifecycle-runtime:2.3.1")
     implementation("androidx.lifecycle:lifecycle-process:2.3.1")

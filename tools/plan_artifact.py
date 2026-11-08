@@ -91,6 +91,10 @@ def main(argv):
                 poly = [loc.xy(p[1], p[0]) for p in r]
                 cx = sum(p[0] for p in poly) / len(poly); cy = sum(p[1] for p in poly) / len(poly)
                 if min(math.hypot(cx - w["x"], cy - w["y"]) for w in wps) < RADIUS: bl.append((h, poly, ft["properties"].get("n", "")))
+    # Hindernisse aus dem Plan selbst (z. B. Denkmal, das in der Gebäudedatenbank fehlt)
+    for hd in plan.get("hindernisse", []):
+        poly = [loc.xy(q[0], q[1]) for q in hd.get("umriss", [])]
+        if len(poly) >= 3: bl.append((float(hd.get("h", 0)), poly, hd.get("name", "Hindernis")))
     # Gelände je Gebäude (Dachhöhe relativ zum Start = Gebäudehöhe + Geländeunterschied), wie die App ab Build 66
     hp = opts.get("hoehen", str(ROOT / "app/src/main/assets/hoehen.bin"))
     grel = [0.0] * len(bl)
@@ -157,7 +161,7 @@ def main(argv):
     # Straßen und Parks (OSM, von tools/osm_pack.py), nur im Umkreis der Strecke
     xs = [w["x"] for w in wps]; ys = [w["y"] for w in wps]; M2 = 350.0
     bx0, bx1, by0, by1 = min(xs) - M2, max(xs) + M2, min(ys) - M2, max(ys) + M2
-    sp = ROOT / "plaene/daten/strassen-lisboa.geojson"; pp = ROOT / "plaene/daten/parks-lisboa.geojson"
+    sp = ROOT / "plaene/daten/osm/strassen-lisboa.geojson"; pp = ROOT / "plaene/daten/osm/parks-lisboa.geojson"
     if sp.exists():
         roads = []
         for ft in json.load(open(sp, encoding="utf-8"))["features"]:
@@ -214,8 +218,9 @@ header .facts {{ color: var(--muted); font-variant-numeric: tabular-nums; }}
 .stage {{ position: relative; aspect-ratio: 16 / 9; max-height: 72vh; width: 100%; max-width: 100%; border-radius: 14px; overflow: hidden; background: #c9d6e2; border: 1px solid var(--line); }}
 .stage.full {{ position: fixed; inset: 0; z-index: 50; aspect-ratio: auto; max-height: none; border-radius: 0; border: 0; }}
 .stage:fullscreen {{ aspect-ratio: auto; max-height: none; border-radius: 0; }}
-.stage.full .exit, .stage:fullscreen .exit {{ display: block; }}
-.exit {{ display: none; position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); font: 600 13px var(--sans); color: #fff; background: rgba(20,24,30,.6); border: 0; border-radius: 999px; padding: 8px 12px; cursor: pointer; }}
+.stage.full .ov, .stage:fullscreen .ov {{ display: flex; }}
+.ov {{ display: none; position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); gap: 8px; z-index: 2; }}
+.ov button {{ font: 600 13px var(--sans); color: #fff; background: rgba(20,24,30,.6); border: 0; border-radius: 999px; padding: 8px 12px; cursor: pointer; }}
 .stage canvas {{ display: block; width: 100%; height: 100%; touch-action: none; }}
 #hint {{ position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #3a4652; background: rgba(255,255,255,.75); padding: 8px 14px; border-radius: 20px; }}
 #cam {{ position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); color: #f5f7fa; font-weight: 600; font-size: 13px; background: rgba(20,24,30,.6); padding: 6px 12px; border-radius: 16px; pointer-events: none; opacity: 0; transition: opacity .4s; }}
@@ -245,7 +250,7 @@ td:last-child {{ color: var(--muted); max-width: 26ch; overflow: hidden; text-ov
 <div class="wrap">
   <header><h1>{esc(name)}</h1><span class="facts">{length:.0f} m · ca. {dur / 60:.0f} min · {len(wps0)} Punkte + Transit · Höhe {min(w["h"] for w in wps):.0f}–{max(w["h"] for w in wps):.0f} m</span></header>
   <p class="desc">{desc}</p>
-  <div class="stage"><canvas id="view"></canvas><div id="hint">3D lädt …</div><div id="reticle"></div><div id="cam"></div><button class="exit" id="bExit" type="button">Vollbild beenden</button></div>
+  <div class="stage"><canvas id="view"></canvas><div id="hint">3D lädt …</div><div id="reticle"></div><div id="cam"></div><div class="ov"><button id="oPlay" type="button">Vorschau</button><button id="oCam" type="button">Kamera</button><button id="oSpeed" type="button">4×</button><button id="bExit" type="button">Beenden</button></div></div>
   <div class="bar">
     <button class="primary" id="bPreview" type="button">Vorschau abspielen</button>
     <button id="bCam" type="button">Kamera wechseln</button>
@@ -268,7 +273,11 @@ document.getElementById('bPreview').addEventListener('click', () => {{ flying = 
 document.getElementById('bCam').addEventListener('click', () => {{ flying = false; cycleCamera(); }});
 document.getElementById('bOrbit').addEventListener('click', () => {{ if (preview) {{ flightMode = 'orbit'; preview.stage = 'fly'; }} else camMode = 'orbit'; camPos = null; showLabel('Übersicht'); }});
 const speeds = [1, 2, 4, 8]; let si = 2;
-document.getElementById('bSpeed').addEventListener('click', e => {{ si = (si + 1) % speeds.length; setPreviewScale(speeds[si]); e.currentTarget.textContent = speeds[si] === 1 ? 'Echtzeit' : speeds[si] + '×'; }});
+function nextSpeed() {{ si = (si + 1) % speeds.length; setPreviewScale(speeds[si]); const t = speeds[si] === 1 ? 'Echtzeit' : speeds[si] + '×'; document.getElementById('bSpeed').textContent = t; document.getElementById('oSpeed').textContent = t; }}
+document.getElementById('bSpeed').addEventListener('click', nextSpeed);
+document.getElementById('oSpeed').addEventListener('click', nextSpeed);
+document.getElementById('oCam').addEventListener('click', () => {{ flying = false; cycleCamera(); }});
+document.getElementById('oPlay').addEventListener('click', () => {{ flying = false; startPreview(); }});
 const stage = document.querySelector('.stage'), bFull = document.getElementById('bFull');
 function fullOn() {{ return !!document.fullscreenElement || stage.classList.contains('full'); }}
 function setFull(on) {{ stage.classList.toggle('full', on); bFull.textContent = on ? 'Vollbild beenden' : 'Vollbild'; setTimeout(resize, 50); setTimeout(resize, 400); }}
@@ -280,6 +289,23 @@ document.addEventListener('keydown', e => {{ if (e.key === 'Escape' && stage.cla
 </script>
 """
     out = Path(opts.get("out", "/tmp/flugplaner.html")); out.write_text(page, encoding="utf-8")
+    # Export für die Google-3D-Seite (planer/index.html): Höhe über dem Boden am Punkt = h − Geländeunterschied zum Start
+    g_at = (lambda la, lo: None); g0abs = None
+    if Path(hp).exists():
+        ground, _s = load_hoehen(hp); g0 = ground(*home)
+        if g0 is not None: g0abs = g0; g_at = lambda la, lo: (lambda v: None if v is None else round(v - g0, 1))(ground(la, lo))
+    pts = []
+    for w in wps:
+        gr = g_at(w["lat"], w["lon"]); gr = 0.0 if gr is None else gr
+        pts.append({"lat": round(w["lat"], 6), "lon": round(w["lon"], 6), "h": w["h"], "agl": round(w["h"] - gr, 1), "alt": round((g0abs or 0) + w["h"], 1),
+                    "yaw": w["yaw"], "pitch": w["pitch"], "hold": (2 if w["photo"] else 0) + w["hover"], "speed": w["speed"], "kind": w["kind"], "photo": w["photo"]})
+    notes = [w.get("notiz", "") for w in wps0]; k0 = 2 if len(wps) > 1 and wps[1]["kind"] == "transit" else 1
+    for j, n in enumerate(notes):
+        if k0 + j < len(pts): pts[k0 + j]["notiz"] = n
+    # Höhen: h relativ zum Startboden (wie die App), agl über dem Boden am Punkt (DGT), alt absolut über Meer (Startboden DGT + h; Google rechnet absolut)
+    d3 = {"name": name, "beschreibung": plan.get("beschreibung", ""), "home": {"lat": home[0], "lon": home[1], "alt": g0abs}, "ziel": plan.get("ziel"), "laenge_m": round(length), "dauer_s": round(dur), "punkte": pts}
+    d3dir = ROOT / "plaene/3d"; d3dir.mkdir(exist_ok=True); (d3dir / f"{Path(args[0]).stem}.json").write_text(json.dumps(d3, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    idx = sorted(p.stem for p in d3dir.glob("*.json") if p.stem != "index"); (d3dir / "index.json").write_text(json.dumps(idx), encoding="utf-8")
     print(f"{out}: {len(wps)} Punkte, {len(bl)} Gebäude, {len(conflicts)} Gebäude-, {len(terrain)} Oberflächen-Konflikte, {len(page) // 1024} KB", file=sys.stderr)
 
 
