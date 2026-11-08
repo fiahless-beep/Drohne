@@ -154,7 +154,10 @@ object MissionController {
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
         preparedHome = home
         // Gebäudedatenbank der Stadt dazu (alle Gebäude im Umkreis von 300 m um Strecke und Start).
-        val city = com.felixos.drohne.plan.Buildings.near(m0.waypoints.map { it.pos } + listOfNotNull(home), 300.0)
+        val city0 = com.felixos.drohne.plan.Buildings.near(m0.waypoints.map { it.pos } + listOfNotNull(home), 300.0)
+        // Gelände: Gebäudehöhen gelten über dem Boden des Gebäudes, Flughöhen über dem Start → Dachhöhe relativ zum Start (Lissabon: 48 m Gefälle sind normal)
+        val city = if (home != null && com.felixos.drohne.plan.Terrain.loaded) city0.map { it.copy(groundRelM = com.felixos.drohne.plan.Terrain.riseM(home, it.polygon[0]) ?: 0.0) } else city0
+        if (city !== city0 && city.isNotEmpty()) DroneManager.log("Gelände: Gebäude ${String.format(java.util.Locale.GERMANY, "%.0f", city.minOf { it.groundRelM })} bis ${String.format(java.util.Locale.GERMANY, "%+.0f", city.maxOf { it.groundRelM })} m gegenüber dem Start")
         val m0 = if (city.isNotEmpty()) m0.copy(obstacles = m0.obstacles + city).also { DroneManager.log("Gebäudedatenbank: ${city.size} Gebäude im Umkreis der Strecke") }
             else m0.also { if (com.felixos.drohne.plan.Buildings.loaded) DroneManager.log("Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)") else DroneManager.log("Gebäudedatenbank nicht geladen") }
         // Absturz 7.11.: die Drohne steigt beim Start nur bis zur Höhe des ersten Punkts und fliegt dann gerade.
@@ -182,7 +185,7 @@ object MissionController {
         val m = m1.copy(waypoints = wps, speedMs = minOf(m1.speedMs, TRANSIT_SPEED_MAX))
         val slow = wps.filter { (it.speedMs ?: 99.0) < LOW_SPEED_MAX - 0.1 }
         DroneManager.log("Tempo: max ${m.speedMs} m/s" + if (slow.isNotEmpty()) ", ${slow.size} Abschnitte nahe Gebäuden gedrosselt (min ${String.format(java.util.Locale.GERMANY, "%.1f", slow.minOf { it.speedMs!! })} m/s)" else "")
-        rthHeightM = maxOf(transit, (m.obstacles.maxOfOrNull { it.heightM } ?: 0.0) + com.felixos.drohne.plan.Obstacles.CLEARANCE_M).coerceIn(20.0, 120.0)
+        rthHeightM = maxOf(transit, (m.obstacles.maxOfOrNull { it.topM } ?: 0.0) + com.felixos.drohne.plan.Obstacles.CLEARANCE_M).coerceIn(20.0, 120.0)
         conflicts = com.felixos.drohne.plan.Obstacles.check(m, home) + (home?.let { com.felixos.drohne.plan.Obstacles.checkReturn(m, it, rthHeightM) } ?: emptyList())
         terrainConflicts = if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.check(m, home) else emptyList()
         if (com.felixos.drohne.plan.Terrain.loaded && home != null) {

@@ -52,7 +52,8 @@ class View3D(private val web: WebView) {
             if (ob.polygon.size < 3) return@forEach
             val poly = JSONArray(); ob.polygon.forEach { p -> val (x, y) = local(p); poly.put(JSONArray().put(Math.round(x * 10) / 10.0).put(Math.round(y * 10) / 10.0)) }
             val bo = JSONObject().put("h", ob.heightM).put("p", poly)
-            if (com.felixos.drohne.plan.Terrain.loaded) { val c = ob.polygon[0]; val gz = com.felixos.drohne.plan.Terrain.groundM(c); val g0 = com.felixos.drohne.plan.Terrain.groundM(o); if (gz != null && g0 != null) bo.put("g", Math.round((gz - g0) * 10) / 10.0) }
+            val g = if (ob.groundRelM != 0.0) ob.groundRelM else (if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.riseM(o, ob.polygon[0]) ?: 0.0 else 0.0)
+            if (g != 0.0) bo.put("g", Math.round(g * 10) / 10.0)
             b.put(bo)
         }
         val r = JSONArray()

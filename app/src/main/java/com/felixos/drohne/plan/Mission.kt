@@ -46,7 +46,7 @@ data class Mission(
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }
         require(waypoints.size <= 200) { "Höchstens 200 Wegpunkte" }
         require(speedMs in 1.0..15.0) { "Geschwindigkeit 1–15 m/s" }
-        waypoints.forEach { require(it.heightM in 2.0..120.0) { "Höhe 2–120 m" } }
+        waypoints.forEach { require(it.heightM in -100.0..120.0) { "Höhe −100…120 m relativ zum Start" } } // negativ = bergab (Lissabon), Oberflächen-Wächter prüft den Bodenabstand
     }
 
     /** Streckenlänge in Metern, ohne An- und Rückflug. */

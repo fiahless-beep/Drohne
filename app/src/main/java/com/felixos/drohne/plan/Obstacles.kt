@@ -6,7 +6,10 @@ import kotlin.math.min
 import kotlin.math.sqrt
 
 /** Ein Hindernis aus den Kartendaten: Gebäude-Umriss (Polygon) mit Höhe über Grund. */
-data class Obstacle(val name: String, val heightM: Double, val polygon: List<LatLon>)
+data class Obstacle(val name: String, val heightM: Double, val polygon: List<LatLon>, val groundRelM: Double = 0.0) {
+    /** Dachhöhe relativ zum Startpunkt: Gebäudehöhe + Geländeunterschied (aus dem Höhenmodell, sonst 0). Flughöhen sind relativ zum Start. */
+    val topM: Double get() = heightM + groundRelM
+}
 
 /**
  * Geometrie-Wächter (Absturz 7.11.2026): prüft jede Flugstrecke gegen bekannte Gebäude.
@@ -28,7 +31,7 @@ object Obstacles {
         val out = mutableListOf<Conflict>()
         m.waypoints.forEachIndexed { i, w ->
             for (o in obstacles) {
-                if (rthHeightM >= o.heightM + CLEARANCE_M) continue
+                if (rthHeightM >= o.topM + CLEARANCE_M) continue
                 if (segmentNear(w.pos, home, o.polygon, MARGIN_M)) { out += Conflict(i, -1, o, rthHeightM, toHome = true); break }
             }
         }
@@ -37,7 +40,7 @@ object Obstacles {
 
     /** Waagerechter Abstand vom Punkt zum nächsten Gebäude, das auf dieser Höhe im Weg sein kann (Höhe + Sicherheitsabstand über der Flughöhe); null = keins relevant. */
     fun nearestRelevant(p: LatLon, heightM: Double, obstacles: List<Obstacle>): Double? =
-        obstacles.filter { heightM < it.heightM + CLEARANCE_M }.minOfOrNull { if (inside(p, it.polygon)) 0.0 else distanceToPolygon(p, it.polygon) }
+        obstacles.filter { heightM < it.topM + CLEARANCE_M }.minOfOrNull { if (inside(p, it.polygon)) 0.0 else distanceToPolygon(p, it.polygon) }
 
     /** Alle Konflikte der Mission inkl. Start (Steigflug am Startpunkt, dann gerade zum ersten Punkt). */
     fun check(m: Mission, home: LatLon?, obstacles: List<Obstacle> = m.obstacles): List<Conflict> {
@@ -52,7 +55,7 @@ object Obstacles {
             val a = pts[i]; val b = pts[i + 1]
             val hMin = min(a.heightM, b.heightM)
             for (o in obstacles) {
-                if (hMin >= o.heightM + CLEARANCE_M) continue
+                if (hMin >= o.topM + CLEARANCE_M) continue
                 if (segmentNear(a.pos, b.pos, o.polygon, MARGIN_M)) out += Conflict(i + offset, i + 1 + offset, o, hMin)
             }
         }
