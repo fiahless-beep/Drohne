@@ -27,6 +27,10 @@ object MissionController {
     var conflicts: List<com.felixos.drohne.plan.Obstacles.Conflict> = emptyList()
     /** Startpunkt, mit dem der aktuelle Plan vorbereitet (Transit, Gebäude-Wächter) wurde; null = ohne Startpunkt. */
     var preparedHome: LatLon? = null
+    /** Startplatz über dem Boden des Höhenmodells (Balkon); 0 = ebenerdig. Wird in prepare() gesetzt, View3D nutzt ihn. */
+    var startAboveGroundM = 0.0
+    /** Antwort auf „Start vom Balkon?“ für den nächsten prepare(): null = Plan/kein erhöhter Platz, sonst Meter. */
+    var startAboveOverrideM: Double? = null
     /** Konflikte mit dem Höhenmodell (Gelände, Dächer, Bäume). */
     var terrainConflicts: List<com.felixos.drohne.plan.Terrain.Conflict> = emptyList()
         private set
@@ -148,18 +152,26 @@ object MissionController {
         return (NEAR_SPEED_MIN + t * (cap - NEAR_SPEED_MIN)).coerceAtMost(cap)
     }
 
-    fun prepare(m0: Mission): Boolean {
+    fun prepare(mIn: Mission): Boolean {
         uploaded = false
         val h = DroneManager.state.home
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
         preparedHome = home
+        // Erhöhter Startplatz (Felix 8.11.: Balkon 3. Stock): Planhöhen gelten ab Boden → für die Drohne um den Versatz senken,
+        // Gelände und Gebäude entsprechend tiefer relativ zur Drohne. Herkunft: Planfeld startUeberBoden, sonst Antwort im Dialog.
+        val above = (mIn.startAboveGroundM ?: startAboveOverrideM ?: 0.0).coerceIn(0.0, 60.0)
+        startAboveGroundM = above
+        val mB = if (above > 0.1) {
+            DroneManager.log("Startplatz ${String.format(java.util.Locale.GERMANY, "%.0f", above)} m über dem Boden (Balkon): alle Planhöhen um diesen Wert gesenkt")
+            mIn.copy(waypoints = mIn.waypoints.map { it.copy(heightM = (it.heightM - above).coerceAtLeast(-100.0)) }, transitHeightM = mIn.transitHeightM?.let { it - above })
+        } else mIn
         // Gebäudedatenbank der Stadt dazu (alle Gebäude im Umkreis von 300 m um Strecke und Start).
-        val city0 = com.felixos.drohne.plan.Buildings.near(m0.waypoints.map { it.pos } + listOfNotNull(home), 300.0)
+        val city0 = com.felixos.drohne.plan.Buildings.near(mB.waypoints.map { it.pos } + listOfNotNull(home), 300.0)
         // Gelände: Gebäudehöhen gelten über dem Boden des Gebäudes, Flughöhen über dem Start → Dachhöhe relativ zum Start (Lissabon: 48 m Gefälle sind normal)
-        val city = if (home != null && com.felixos.drohne.plan.Terrain.loaded) city0.map { it.copy(groundRelM = com.felixos.drohne.plan.Terrain.riseM(home, it.polygon[0]) ?: 0.0) } else city0
+        val city = if (home != null && com.felixos.drohne.plan.Terrain.loaded) city0.map { it.copy(groundRelM = (com.felixos.drohne.plan.Terrain.riseM(home, it.polygon[0]) ?: 0.0) - above) } else city0
         if (city !== city0 && city.isNotEmpty()) DroneManager.log("Gelände: Gebäude ${String.format(java.util.Locale.GERMANY, "%.0f", city.minOf { it.groundRelM })} bis ${String.format(java.util.Locale.GERMANY, "%+.0f", city.maxOf { it.groundRelM })} m gegenüber dem Start")
-        val m0 = if (city.isNotEmpty()) m0.copy(obstacles = m0.obstacles + city).also { DroneManager.log("Gebäudedatenbank: ${city.size} Gebäude im Umkreis der Strecke") }
-            else m0.also { if (com.felixos.drohne.plan.Buildings.loaded) DroneManager.log("Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)") else DroneManager.log("Gebäudedatenbank nicht geladen") }
+        val m0 = if (city.isNotEmpty()) mB.copy(obstacles = mB.obstacles + city).also { DroneManager.log("Gebäudedatenbank: ${city.size} Gebäude im Umkreis der Strecke") }
+            else mB.also { if (com.felixos.drohne.plan.Buildings.loaded) DroneManager.log("Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)") else DroneManager.log("Gebäudedatenbank nicht geladen") }
         // Absturz 7.11.: die Drohne steigt beim Start nur bis zur Höhe des ersten Punkts und fliegt dann gerade.
         // Deshalb: erster Punkt = senkrecht über dem Startpunkt auf Transithöhe (unabhängig von takeOffSecurityHeight),
         // dann über den ersten Missionspunkt, dort absteigen; am Ende wieder hoch und über den Startpunkt (Heimflug = nur Abstieg).
@@ -187,7 +199,7 @@ object MissionController {
         DroneManager.log("Tempo: max ${m.speedMs} m/s" + if (slow.isNotEmpty()) ", ${slow.size} Abschnitte nahe Gebäuden gedrosselt (min ${String.format(java.util.Locale.GERMANY, "%.1f", slow.minOf { it.speedMs!! })} m/s)" else "")
         rthHeightM = maxOf(transit, (m.obstacles.maxOfOrNull { it.topM } ?: 0.0) + com.felixos.drohne.plan.Obstacles.CLEARANCE_M).coerceIn(20.0, 120.0)
         conflicts = com.felixos.drohne.plan.Obstacles.check(m, home) + (home?.let { com.felixos.drohne.plan.Obstacles.checkReturn(m, it, rthHeightM) } ?: emptyList())
-        terrainConflicts = if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.check(m, home) else emptyList()
+        terrainConflicts = if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.check(m, home, homeAboveGroundM = above) else emptyList()
         if (com.felixos.drohne.plan.Terrain.loaded && home != null) {
             val rises = m0.waypoints.mapNotNull { com.felixos.drohne.plan.Terrain.riseM(home, it.pos) }
             if (rises.isNotEmpty()) DroneManager.log("Höhenmodell: Gelände am Ziel ${if (rises.max() >= 0) "+" else ""}${rises.max().toInt()} m gegenüber dem Start")

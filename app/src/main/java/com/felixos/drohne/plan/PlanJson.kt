@@ -42,12 +42,13 @@ object PlanJson {
         val openArea = o.optString("umgebung", "") == "frei"
         val plannedStart = o.optJSONObject("start")?.let { LatLon(it.getDouble("lat"), it.getDouble("lon")) }
         val transitH = if (o.has("transitHoehe")) o.getDouble("transitHoehe") else null
+        val startAbove = if (o.has("startUeberBoden")) o.getDouble("startUeberBoden") else null
         val kreis = o.optJSONObject("kreis")
         if (kreis != null && !o.has("waypoints")) {
             requireNotNull(target) { "kreis braucht ziel" }
             val m = Missions.orbit(target, kreis.getDouble("radius"), kreis.getDouble("h"), kreis.optInt("punkte", 8),
                 kreis.optDouble("start", 0.0), targetH, speed, name, kreis.optBoolean("uhrzeigersinn", true), kreis.optInt("fotos", kreis.optInt("punkte", 8)))
-            return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH) to o.optString("beschreibung", "")
+            return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove) to o.optString("beschreibung", "")
         }
         // "relativ": Punkte als Richtung/Abstand vom Ziel (z. B. Fassadenfoto: richtung = von wo aus man schaut).
         val rel = o.optJSONArray("relativ")
@@ -63,7 +64,7 @@ object PlanJson {
                     headingDeg = if (w.has("yaw")) w.getDouble("yaw") else Geo.bearing(pos, target))
             }
             val wps2 = if (wps.size == 1) wps + wps.first().copy(pos = Geo.offset(wps.first().pos, 3.0, 0.0), takePhoto = false) else wps
-            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH) to o.optString("beschreibung", "")
+            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove) to o.optString("beschreibung", "")
         }
         val arr: JSONArray = o.getJSONArray("waypoints")
         val wps = (0 until arr.length()).map { i ->
@@ -80,7 +81,7 @@ object PlanJson {
                 headingDeg = if (w.has("yaw")) w.getDouble("yaw") else target?.let { Geo.bearing(pos, it) },
             )
         }
-        val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH)
+        val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove)
         return m to o.optString("beschreibung", "")
     }
 
@@ -95,6 +96,7 @@ object PlanJson {
         if (m.openArea) o.put("umgebung", "frei")
         m.plannedStart?.let { o.put("start", JSONObject().put("lat", it.lat).put("lon", it.lon)) }
         m.transitHeightM?.let { o.put("transitHoehe", it) }
+        m.startAboveGroundM?.let { o.put("startUeberBoden", it) }
         val arr = JSONArray()
         m.waypoints.forEach { w ->
             val j = JSONObject().put("lat", w.pos.lat).put("lon", w.pos.lon).put("h", w.heightM)

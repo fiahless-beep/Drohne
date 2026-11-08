@@ -243,6 +243,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun homeLatLon(): LatLon? = DroneManager.state.home?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
 
+    /** Letzte bekannte Handyposition (GPS oder Netz), null ohne Berechtigung/Fix. */
+    private fun phoneLatLon(): LatLon? = try {
+        val lm = getSystemService(LOCATION_SERVICE) as android.location.LocationManager
+        listOf(android.location.LocationManager.GPS_PROVIDER, android.location.LocationManager.NETWORK_PROVIDER)
+            .mapNotNull { runCatching { lm.getLastKnownLocation(it) }.getOrNull() }.maxByOrNull { it.time }?.let { LatLon(it.latitude, it.longitude) }
+    } catch (_: Throwable) { null }
+
     private var lastConnected: Boolean? = null
 
     /** Automatik: beim Verbinden auf Video, beim Trennen auf Karte – solange nichts von Hand gewählt wurde. Simulation: 3D. */
@@ -557,7 +564,9 @@ class MainActivity : AppCompatActivity() {
             "Bildwächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})",
             "Bildwächter ${if (ObstacleGuard.enabled) "ausschalten" else "einschalten"}",
             "Seriennummer der Drohne",
-            "Selbsttest (Sensoren, DJI-Meldungen)")
+            "Selbsttest (Sensoren, DJI-Meldungen)",
+            "Flugaufzeichnungen sichern (SDK-Logs ins Repo)",
+            "Startplatz hier merken (Balkon/Dach)")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which - 2) {
                 -2 -> toggleSimulation()
@@ -578,9 +587,36 @@ class MainActivity : AppCompatActivity() {
                 10 -> { val sn = DroneManager.state.serial ?: getSharedPreferences("drohne", MODE_PRIVATE).getString("letzte_sn", null)
                     AlertDialog.Builder(this).setTitle("Seriennummer").setMessage(sn?.let { "Fluggerät: $it" } ?: "Noch unbekannt – wird beim nächsten Verbinden gespeichert.").setPositiveButton("OK", null).show() }
                 11 -> showSelfTest()
+                12 -> { DroneManager.log("Flugaufzeichnungen werden gesucht …"); FlightReport.uploadFlightRecords(applicationContext) }
+                13 -> askStartPlace()
             }
             renderNow(DroneManager.state)
         }.show()
+    }
+
+    /**
+     * Erhöhten Startplatz merken (Felix 8.11.: Balkon 3. Stock). Position = Drohne (wenn verbunden) sonst Handy;
+     * Höhe über Boden vorbelegt mit der aktuellen Flughöhe der Drohne (vom Gehweg gestartet, vor dem Balkon schwebend) oder 10 m.
+     */
+    private fun askStartPlace() {
+        val s = DroneManager.state
+        val pos = s.location?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) } ?: homeLatLon() ?: phoneLatLon()
+        if (pos == null) { AlertDialog.Builder(this).setMessage("Keine Position (weder Drohne noch Handy).").setPositiveButton("OK", null).show(); return }
+        val existing = StartPlaces.near(this, pos)
+        val name = android.widget.EditText(this).apply { hint = "Name"; setText(existing?.name ?: "Balkon") }
+        val hgt = android.widget.EditText(this).apply { hint = "Höhe über Boden m"; inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            setText(String.format(java.util.Locale.US, "%.1f", existing?.offsetM ?: s.location?.altitude?.takeIf { s.flying && it > 1 } ?: 10.0)) }
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 10, 40, 0); addView(name); addView(hgt) }
+        AlertDialog.Builder(this).setTitle("Startplatz merken")
+            .setMessage("Die App senkt hier alle Planhöhen um diesen Wert und prüft mit dem erhöhten Start. Beim Übernehmen eines Plans fragt sie: Balkon oder Straße?")
+            .setView(box)
+            .setPositiveButton("Speichern") { _, _ ->
+                val off = hgt.text.toString().replace(',', '.').toDoubleOrNull()?.coerceIn(0.0, 60.0) ?: 10.0
+                StartPlaces.save(this, StartPlaces.Place(name.text.toString().ifBlank { "Balkon" }, pos, off))
+                DroneManager.log("Startplatz gemerkt: ${name.text} ${String.format(java.util.Locale.GERMANY, "%.1f", off)} m über Boden bei ${"%.5f".format(pos.lat)}, ${"%.5f".format(pos.lon)}")
+            }
+            .apply { if (existing != null) setNeutralButton("Löschen") { _, _ -> StartPlaces.remove(this@MainActivity, existing); DroneManager.log("Startplatz gelöscht: ${existing.name}") } }
+            .setNegativeButton("Abbrechen", null).show()
     }
 
     /**
@@ -878,6 +914,8 @@ class MainActivity : AppCompatActivity() {
      * Ein Schritt: Plan prüfen/vorbereiten (MissionController.prepare, unverändert) und auf die Drohne laden.
      * Zusammenfassung steht im Plan-Feld; Ergebnis (geprüft, auf der Drohne, Fehler) ebenfalls.
      */
+    private var askedStartPlace = false
+
     private fun useMission(m: Mission, beschreibung: String) {
         if (Simulator.active && homeLatLon() == null) Simulator.setHome(m.plannedStart ?: m.waypoints.first().pos)
         val text = summary(m, beschreibung)
@@ -886,6 +924,18 @@ class MainActivity : AppCompatActivity() {
             DroneManager.log("Plan laden funktioniert (Beispiel, wird nicht geflogen)")
             return
         }
+        // Erhöhter Startplatz (Felix 8.11.): zu Hause fragen, ob vom Balkon gestartet wird; Plan mit startUeberBoden fragt nicht.
+        val place = if (m.startAboveGroundM == null) StartPlaces.near(this, homeLatLon() ?: m.plannedStart) else null
+        if (place != null && MissionController.startAboveOverrideM == null && !askedStartPlace) {
+            askedStartPlace = true
+            AlertDialog.Builder(this).setTitle("Wo startet die Drohne?")
+                .setMessage("Hier gibt es den gemerkten Startplatz „${place.name}“, ${String.format(java.util.Locale.GERMANY, "%.0f", place.offsetM)} m über der Straße. Startest du von dort oder ebenerdig?")
+                .setPositiveButton(place.name) { _, _ -> MissionController.startAboveOverrideM = place.offsetM; useMission(m, beschreibung) }
+                .setNegativeButton("Straße / ebenerdig") { _, _ -> MissionController.startAboveOverrideM = 0.0; useMission(m, beschreibung) }
+                .setCancelable(false).show()
+            return
+        }
+        askedStartPlace = false
         setPlanCard("Plan „${m.name}“ – wird geprüft …", text)
         if (!MissionController.prepare(m)) {
             setPlanCard("Plan „${m.name}“ – DJI-Prüfung fehlgeschlagen", text + "\n\nKeine Variante fehlerfrei – Protokoll an Claude schicken.")

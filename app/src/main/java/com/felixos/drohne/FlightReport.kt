@@ -92,6 +92,44 @@ object FlightReport {
         }.start()
     }
 
+    /**
+     * Flugaufzeichnungen des DJI-SDK (Ordner FlightRecord, Textdateien, verschlüsselt, mit DJIs Parser lesbar) ins Repo laden:
+     * fluege/aufzeichnungen/<Datei>. Nur Dateien, die noch nicht hochgeladen wurden (Name+Größe gemerkt).
+     * Felix 8.11.: Absturzanalyse ohne die 2-GB-Blackbox der Drohne.
+     */
+    fun uploadFlightRecords(c: Context, onDone: (Int) -> Unit = {}) {
+        if (busy) { DroneManager.log("Aufzeichnungen: Upload läuft schon"); return }
+        val token = token(c) ?: run { DroneManager.log("Kein GitHub-Token (Mehr … → GitHub-Token eintragen)"); onDone(-1); return }
+        busy = true
+        Thread {
+            var n = 0
+            try {
+                val dirs = mutableListOf<File>()
+                try {
+                    val fm = dji.v5.manager.aircraft.flightrecord.FlightLogManager.getInstance()
+                    fm.flightRecordPath?.let { dirs += File(it) }
+                    fm.flyClogPath?.let { dirs += File(it) }
+                } catch (t: Throwable) { DroneManager.log("Aufzeichnungspfad vom SDK nicht lesbar: ${t.message}") }
+                // Rückfall: bekannte Orte unter dem App-Speicher
+                c.getExternalFilesDir(null)?.let { base -> dirs += listOf(File(base, "FlightRecord"), File(base.parentFile, "FlightRecord"), File(base, "DJI/FlightRecord")) }
+                val files = dirs.filter { it.isDirectory }.flatMap { d -> d.walkTopDown().maxDepth(2).filter { it.isFile && it.length() in 1..60_000_000 }.toList() }.distinctBy { it.absolutePath }
+                DroneManager.log("Aufzeichnungen gefunden: ${files.size} in ${dirs.filter { it.isDirectory }.joinToString { it.absolutePath }}")
+                val prefs = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                val done = prefs.getStringSet("aufzeichnungen_hochgeladen", emptySet())!!.toMutableSet()
+                val todo = files.filter { "${it.name}:${it.length()}" !in done }.sortedByDescending { it.lastModified() }.take(30)
+                DroneManager.log("Davon neu: ${todo.size}")
+                todo.forEach { f ->
+                    val stamp = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.GERMANY).format(Date(f.lastModified()))
+                    if (uploadFile(token, "fluege/aufzeichnungen/${stamp}_${f.name}", f)) { n++; done += "${f.name}:${f.length()}" }
+                }
+                prefs.edit().putStringSet("aufzeichnungen_hochgeladen", done).apply()
+                DroneManager.log("Aufzeichnungen hochgeladen: $n von ${todo.size} → github.com/$OWNER/$REPO/tree/main/fluege/aufzeichnungen")
+            } catch (t: Throwable) {
+                DroneManager.log("Aufzeichnungen: ${t.javaClass.simpleName}: ${t.message}")
+            } finally { busy = false; onDone(n) }
+        }.start()
+    }
+
     /** Holt die Fotoliste von der Drohne und lädt alle Fotos, die nach Flugbeginn entstanden sind. */
     private fun downloadPhotos(dir: File): List<File> {
         val mm = MediaDataCenter.getInstance().mediaManager
@@ -160,7 +198,7 @@ object FlightReport {
             }
         } catch (_: Throwable) { null }
         val body = StringBuilder()
-        body.append("{\"message\":\"Flug ${f.parentFile?.name}: ${f.name}\",")
+        body.append("{\"message\":\"${if (path.startsWith("fluege/aufzeichnungen/")) "Flugaufzeichnung" else "Flug ${f.parentFile?.name}"}: ${f.name}\",")
         if (sha != null) body.append("\"sha\":\"$sha\",")
         body.append("\"content\":\"").append(Base64.encodeToString(f.readBytes(), Base64.NO_WRAP)).append("\"}")
         val conn = url.openConnection() as HttpURLConnection

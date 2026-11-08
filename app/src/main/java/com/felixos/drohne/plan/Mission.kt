@@ -43,6 +43,8 @@ data class Mission(
     val plannedStart: LatLon? = null,
     /** Transithöhe aus dem Plan (Pläne mit korridorgeprüften Höhen, z. B. plan_objekt.py): sonst steigt der Transit auf die höchste Planhöhe. */
     val transitHeightM: Double? = null,
+    /** Startplatz liegt so viele Meter über dem Boden des Höhenmodells (Balkon, Dach, Mauer). Die App zieht den Wert von allen Planhöhen ab und prüft mit dem erhöhten Start. */
+    val startAboveGroundM: Double? = null,
 ) {
     init {
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }

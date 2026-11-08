@@ -74,7 +74,7 @@ class View3D(private val web: WebView) {
             if (ob.polygon.size < 3) return@forEach
             val poly = JSONArray(); ob.polygon.forEach { p -> val (x, y) = local(p); poly.put(JSONArray().put(Math.round(x * 10) / 10.0).put(Math.round(y * 10) / 10.0)) }
             val bo = JSONObject().put("h", ob.heightM).put("p", poly)
-            val g = if (ob.groundRelM != 0.0) ob.groundRelM else (if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.riseM(o, ob.polygon[0]) ?: 0.0 else 0.0)
+            val g = if (ob.groundRelM != 0.0) ob.groundRelM else (if (com.felixos.drohne.plan.Terrain.loaded) (com.felixos.drohne.plan.Terrain.riseM(o, ob.polygon[0]) ?: 0.0) - MissionController.startAboveGroundM else 0.0)
             if (g != 0.0) bo.put("g", Math.round(g * 10) / 10.0)
             b.put(bo)
         }
@@ -89,7 +89,7 @@ class View3D(private val web: WebView) {
     /** Gelände aus dem Höhenmodell als 10-m-Raster relativ zum Startboden (wie tools/plan_artifact.py); Gebäude stehen in der Ansicht auf 0, das Raster zeigt das Gefälle. */
     private fun terrainJson(pts: List<LatLon>, o: LatLon): JSONObject? {
         if (!com.felixos.drohne.plan.Terrain.loaded) return null
-        val g0 = com.felixos.drohne.plan.Terrain.groundM(o) ?: return null
+        val g0 = (com.felixos.drohne.plan.Terrain.groundM(o) ?: return null) + MissionController.startAboveGroundM
         val xs = pts.map { local(it).first }; val ys = pts.map { local(it).second }
         val m = 300.0; val step = 10.0
         val x0 = Math.floor((xs.min() - m) / step) * step; val y0 = Math.floor((ys.min() - m) / step) * step
