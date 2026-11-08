@@ -556,7 +556,8 @@ class MainActivity : AppCompatActivity() {
             "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})",
             "Bildwächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})",
             "Bildwächter ${if (ObstacleGuard.enabled) "ausschalten" else "einschalten"}",
-            "Seriennummer der Drohne")
+            "Seriennummer der Drohne",
+            "Selbsttest (Sensoren, DJI-Meldungen)")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which - 2) {
                 -2 -> toggleSimulation()
@@ -576,9 +577,31 @@ class MainActivity : AppCompatActivity() {
                 9 -> ObstacleGuard.setEnabled(this, !ObstacleGuard.enabled)
                 10 -> { val sn = DroneManager.state.serial ?: getSharedPreferences("drohne", MODE_PRIVATE).getString("letzte_sn", null)
                     AlertDialog.Builder(this).setTitle("Seriennummer").setMessage(sn?.let { "Fluggerät: $it" } ?: "Noch unbekannt – wird beim nächsten Verbinden gespeichert.").setPositiveButton("OK", null).show() }
+                11 -> showSelfTest()
             }
             renderNow(DroneManager.state)
         }.show()
+    }
+
+    /**
+     * Selbsttest (Felix 8.11., nach dem Absturz): Sensoren + DJI-Gesundheitsmeldungen als Ampel-Liste.
+     * Ergebnis landet auch im Protokoll (Mehr … → Fotos holen lädt es mit hoch).
+     */
+    private fun showSelfTest() {
+        if (!DroneManager.state.connected && !Simulator.active) {
+            AlertDialog.Builder(this).setTitle("Selbsttest").setMessage("Drohne ist nicht verbunden. Drohne einschalten, Fernbedienung per USB ans Handy, DJI Fly beenden – dann erneut.")
+                .setPositiveButton("OK", null).show(); return
+        }
+        val tv = TextView(this).apply { setPadding(40, 24, 40, 24); textSize = 14f; setTextIsSelectable(true); text = "Prüfe Sensoren … (bis zu 6 s)" }
+        val dlg = AlertDialog.Builder(this).setTitle("Selbsttest").setView(ScrollView(this).apply { addView(tv) })
+            .setPositiveButton("OK", null).setNeutralButton("Nochmal", null).create()
+        dlg.show()
+        fun go() {
+            tv.text = "Prüfe Sensoren … (bis zu 6 s)"
+            SelfTest.run { r -> if (dlg.isShowing) tv.text = SelfTest.text(r) }
+        }
+        dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { go() }
+        go()
     }
 
     /**

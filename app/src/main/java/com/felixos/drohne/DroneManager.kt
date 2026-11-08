@@ -147,6 +147,7 @@ object DroneManager {
                 log("Registrierung erfolgreich (App-Key gültig)")
                 update { it.copy(registered = true, registerError = null) }
                 startTelemetry()
+                SelfTest.startListening()
                 MissionController.init(context)
             }
 
