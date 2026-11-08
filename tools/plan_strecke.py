@@ -3,6 +3,7 @@
 
 Aufruf: python3 tools/plan_strecke.py NAME startLat startLon zielLat zielLon hoeheM [beschreibung] > plaene/aktuell.json
 Zwischenpunkte alle ~80 m auf der geraden Linie (damit der Gebäude-Wächter und die Tempo-Drosselung je Abschnitt greifen).
+Kamera unterwegs leicht nach vorn-unten (-20°), am Ziel -45° (Felix 8.11.: kein Senkrechtblick an jedem Punkt).
 Die App setzt Transit (senkrecht über dem Start) und Heimflug selbst dazu.
 """
 import json
@@ -35,9 +36,9 @@ def main(name, s_lat, s_lon, z_lat, z_lon, h, beschreibung=""):
     pts = []
     for i, (la, lo) in enumerate(hin):
         last = i == len(hin) - 1
-        pts.append({"lat": round(la, 6), "lon": round(lo, 6), "h": h, "photo": last, "hover": 5 if last else 0, "pitch": -60 if last else -90})
+        pts.append({"lat": round(la, 6), "lon": round(lo, 6), "h": h, "photo": last, "hover": 5 if last else 0, "pitch": -45 if last else -20})
     for la, lo in reversed(hin[:-1]):
-        pts.append({"lat": round(la, 6), "lon": round(lo, 6), "h": h, "photo": False, "hover": 0, "pitch": -90})
+        pts.append({"lat": round(la, 6), "lon": round(lo, 6), "h": h, "photo": False, "hover": 0, "pitch": -20})
     plan = {
         "name": name,
         "beschreibung": beschreibung or f"Vom Start zum Ziel ({d:.0f} m) in {h:.0f} m Höhe, dort Foto und 5 s Schweben, zurück zum Start.",

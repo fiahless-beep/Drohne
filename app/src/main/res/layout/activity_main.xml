@@ -166,7 +166,7 @@
                 android:fontFeatureSettings="tnum"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="Plan holen oder Testflug" />
+                android:text="Plan holen" />
 
             <ProgressBar
                 android:id="@+id/progress"

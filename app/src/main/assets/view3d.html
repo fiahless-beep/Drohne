@@ -33,7 +33,7 @@ let center = null, theta = -0.7, phi = 0.75, dist = 220;
 let camMode = 'orbit', flightMode = 'fpv';           // flightMode: gewünschte Kamera im Flug (fpv | chase)
 let chaseDist = 30, chasePitch = 0.4, yawOff = 0, pitchOff = 0, lastTouch = 0;
 let heading = 0, smoothHeading = 0, gimbal = -20, smoothGimbal = -20, camPos = null, camLook = null, flying = false;
-let preview = null, drag = null, labelTimer = null, passed = 0;
+let preview = null, drag = null, labelTimer = null, passed = 0, droneOn = false; // droneOn: Drohne gesetzt (Modell wird in der Drohnensicht ausgeblendet)
 const SKY_TOP = 0x4f86c9, SKY_HORIZON = 0xdfe8f1;
 
 function texCanvas(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d')); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; return t; }
@@ -51,14 +51,14 @@ function init() {
     fragmentShader: 'uniform vec3 top; uniform vec3 bottom; varying vec3 vP; void main(){ float h = clamp(normalize(vP).y, 0.0, 1.0); gl_FragColor = vec4(mix(bottom, top, pow(h, 0.55)), 1.0); }' }));
   sky.renderOrder = -1; scene.add(sky);
   // Licht: Sonne mit weichen Schatten, Himmelslicht, leichtes Gegenlicht
-  scene.add(new THREE.HemisphereLight(0xe9f0f7, 0x8a8f94, 0.75));
-  sun = new THREE.DirectionalLight(0xfff4e0, 1.05); sun.position.set(260, 420, 180); sun.castShadow = true;
+  scene.add(new THREE.HemisphereLight(0xdfe8f2, 0x7d8388, 0.55));
+  sun = new THREE.DirectionalLight(0xfff2dc, 0.85); sun.position.set(260, 420, 180); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.near = 50; sun.shadow.camera.far = 1600; sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.3;
   const sc = sun.shadow.camera; sc.left = sc.bottom = -450; sc.right = sc.top = 450;
   scene.add(sun); scene.add(sun.target);
-  const fill = new THREE.DirectionalLight(0xcfe0ff, 0.25); fill.position.set(-300, 200, -200); scene.add(fill);
+  const fill = new THREE.DirectionalLight(0xcfe0ff, 0.18); fill.position.set(-300, 200, -200); scene.add(fill);
   // Boden: helle Fläche mit feinem Raster, nimmt Schatten an
-  const groundTex = texCanvas(256, 256, g => { g.fillStyle = '#d3d8dc'; g.fillRect(0, 0, 256, 256); g.strokeStyle = 'rgba(90,100,110,0.10)'; g.lineWidth = 2; g.strokeRect(0, 0, 256, 256); g.strokeStyle = 'rgba(90,100,110,0.05)'; g.lineWidth = 1; for (let i = 64; i < 256; i += 64) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 256); g.moveTo(0, i); g.lineTo(256, i); g.stroke(); } });
+  const groundTex = texCanvas(256, 256, g => { g.fillStyle = '#c3cad0'; g.fillRect(0, 0, 256, 256); g.strokeStyle = 'rgba(70,80,90,0.16)'; g.lineWidth = 2; g.strokeRect(0, 0, 256, 256); g.strokeStyle = 'rgba(70,80,90,0.08)'; g.lineWidth = 1; for (let i = 64; i < 256; i += 64) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 256); g.moveTo(0, i); g.lineTo(256, i); g.stroke(); } });
   groundTex.repeat.set(80, 80);
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshLambertMaterial({ color: 0xffffff, map: groundTex })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
   // Fassaden: feine Stockwerkslinien alle 3 m
@@ -107,7 +107,7 @@ function buildDrone() {
   camCone = new THREE.Mesh(new THREE.ConeGeometry(9, 28, 4, 1, true), new THREE.MeshBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.10, side: THREE.DoubleSide, depthWrite: false }));
   camCone.geometry.rotateX(Math.PI / 2); camCone.geometry.rotateZ(Math.PI / 4); camCone.geometry.translate(0, 0, -14);
   camCone.position.set(0, -0.15, -1.5); drone.add(camCone);
-  scene.add(drone); drone.visible = false;
+  scene.add(drone); droneOn = false;
 }
 
 function isFpv() { return camMode === 'fpv' || (camMode === 'preview' && flightMode === 'fpv'); }
@@ -116,7 +116,7 @@ function zoom(f) {
   else if (isFpv()) { cam.fov = Math.max(25, Math.min(100, cam.fov * f)); cam.updateProjectionMatrix(); }
   else chaseDist = Math.max(6, Math.min(300, chaseDist * f));
 }
-function resize() { const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight; renderer.setSize(w, h, false); renderer.setPixelRatio(Math.min(2, devicePixelRatio)); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+function resize() { const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight; renderer.setSize(w, h, false); renderer.setPixelRatio(Math.min(2, devicePixelRatio)); cam.aspect = w / h; cam.updateProjectionMatrix(); markers.forEach(spriteScale); }
 function showLabel(t) { camLabel.textContent = t; camLabel.style.opacity = 1; clearTimeout(labelTimer); labelTimer = setTimeout(() => camLabel.style.opacity = 0, 2200); }
 function angDiff(a, b) { return ((a - b + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI; }
 function fwd(yaw) { return new THREE.Vector3(Math.sin(yaw), 0, -Math.cos(yaw)); }
@@ -128,30 +128,31 @@ function tick() {
   smoothGimbal += (gimbal - smoothGimbal) * 0.08;
   if (performance.now() - lastTouch > 4000) { yawOff *= 0.95; pitchOff *= 0.95; }
   const fpvNow = isFpv();
-  if (drone.visible) {
+  drone.visible = droneOn && !fpvNow;
+  if (droneOn) {
     drone.rotation.y = -smoothHeading;
-    const sc = camMode === 'orbit' ? Math.max(1, dist / 70) : 1.0; drone.scale.set(sc, sc, sc);
+    const sc = camMode === 'orbit' ? Math.max(1, dist / 70) : Math.max(1, chaseDist / 20); drone.scale.set(sc, sc, sc);
     rotors.forEach((r, i) => r.rotation.y += (i % 2 ? 0.9 : -0.9));
     camCone.rotation.x = THREE.MathUtils.degToRad(smoothGimbal);
     camCone.visible = !fpvNow;
     glow.visible = camMode === 'orbit';
   }
   if (routeTex) routeTex.offset.x -= 0.012;
-  markers.forEach(m => { m.visible = !(fpvNow && m.position.distanceTo(cam.position) < 6); });
-  reticle.style.display = (fpvNow && drone.visible) ? 'block' : 'none';
+  markers.forEach(m => { m.visible = !(fpvNow && m.position.distanceTo(cam.position) < 8); });
+  reticle.style.display = (fpvNow && droneOn) ? 'block' : 'none';
 }
 
 function place() {
   let target, look;
   const mode = camMode === 'preview' ? flightMode : camMode;
   let k = 0.1;
-  if (mode === 'fpv' && drone.visible) {
+  if (mode === 'fpv' && droneOn) {
     const yaw = smoothHeading + yawOff, pitch = THREE.MathUtils.degToRad(smoothGimbal) + pitchOff;
     const dir = new THREE.Vector3(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
     target = drone.position.clone().add(new THREE.Vector3(0, 0.1, 0)).add(dir.clone().multiplyScalar(1.2));
     look = target.clone().add(dir.multiplyScalar(100));
     k = 0.45;
-  } else if (mode === 'chase' && drone.visible) {
+  } else if (mode === 'chase' && droneOn) {
     const yaw = smoothHeading + yawOff, pitch = chasePitch + pitchOff;
     target = drone.position.clone().add(fwd(yaw).multiplyScalar(-chaseDist * Math.cos(pitch))).add(new THREE.Vector3(0, chaseDist * Math.sin(pitch), 0));
     look = drone.position.clone().add(fwd(yaw).multiplyScalar(chaseDist * 0.5));
@@ -174,12 +175,13 @@ function nearRoute(route, poly, h, clear, mar) {
   return false;
 }
 
+function spriteScale(s) { const a = cam ? cam.aspect : 2; s.scale.set(0.075 / a, 0.075, 1); }
 function numberSprite(n, color) {
   const c = document.createElement('canvas'); c.width = c.height = 96; const g = c.getContext('2d');
   g.fillStyle = color; g.beginPath(); g.arc(48, 48, 40, 0, Math.PI * 2); g.fill();
   g.strokeStyle = 'rgba(255,255,255,0.9)'; g.lineWidth = 5; g.stroke();
   g.fillStyle = '#fff'; g.font = 'bold 44px system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(n), 48, 50);
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false })); s.scale.set(4.5, 4.5, 1); s.renderOrder = 5; return s;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false, sizeAttenuation: false })); s.renderOrder = 5; spriteScale(s); return s;
 }
 
 let routeInfo = [];
@@ -188,7 +190,7 @@ function setScene(D) {
   buildings.forEach(o => scene.remove(o)); buildings = []; routeObjs.forEach(o => scene.remove(o)); routeObjs = []; markers = []; passed = 0;
   routeInfo = (D.r || []).map(p => ({ pos: new THREE.Vector3(p[0], p[2], -p[1]), yaw: p[3] == null ? null : THREE.MathUtils.degToRad(p[3]), pitch: p[4] == null ? -20 : p[4], hold: p[5] || 0 }));
   const route = routeInfo.map(r => r.pos);
-  const roofMat = new THREE.MeshLambertMaterial({ color: 0xd9d4cc }), wallMat = new THREE.MeshLambertMaterial({ color: 0xffffff, map: wallTex });
+  const roofMat = new THREE.MeshLambertMaterial({ color: 0xcfc9c0 }), wallMat = new THREE.MeshLambertMaterial({ color: 0xffffff, map: wallTex });
   const roofWarn = new THREE.MeshLambertMaterial({ color: 0xe0823a }), wallWarn = new THREE.MeshLambertMaterial({ color: 0xf0a060, map: wallTex });
   (D.b || []).forEach(b => {
     try {
@@ -233,7 +235,7 @@ function startPreview() {
   if (routeInfo.length < 2) return;
   preview = { i: 0, t: 0, hold: 0.8, last: performance.now() };
   camMode = 'preview';
-  drone.visible = true; drone.position.copy(routeInfo[0].pos); heading = smoothHeading = routeInfo[0].yaw ?? segYaw(0); gimbal = smoothGimbal = -20;
+  droneOn = true; drone.position.copy(routeInfo[0].pos); heading = smoothHeading = routeInfo[0].yaw ?? segYaw(0); gimbal = smoothGimbal = -20;
   droneLine.visible = droneShadow.visible = true;
   camPos = null;
   showLabel('Vorschau · Kameraknopf wechselt die Sicht');
@@ -256,13 +258,13 @@ function previewStep() {
   droneLine.geometry.setFromPoints([drone.position, new THREE.Vector3(drone.position.x, 0, drone.position.z)]);
   droneShadow.position.set(drone.position.x, 0.12, drone.position.z);
 }
-function endPreview() { preview = null; camMode = flying ? flightMode : 'orbit'; markers.forEach(m => m.material.opacity = 1); passed = 0; if (!flying) { drone.visible = false; droneLine.visible = droneShadow.visible = false; } }
+function endPreview() { preview = null; camMode = flying ? flightMode : 'orbit'; markers.forEach(m => m.material.opacity = 1); passed = 0; if (!flying) { droneOn = false; droneLine.visible = droneShadow.visible = false; } }
 
 function setFlying(f) { flying = !!f; if (flying) { if (preview) endPreview(); camMode = flightMode; } else if (camMode !== 'orbit') camMode = 'orbit'; }
 function setDrone(x, y, z, hdg, pitch) {
   if (!scene) return;
   if (preview) endPreview();
-  drone.visible = true; drone.position.set(x, y, -z);
+  droneOn = true; drone.position.set(x, y, -z);
   heading = hdg * Math.PI / 180; if (pitch != null) gimbal = pitch;
   droneLine.visible = true; droneLine.geometry.setFromPoints([drone.position, new THREE.Vector3(x, 0, -z)]);
   droneShadow.visible = true; droneShadow.position.set(x, 0.12, -z);
@@ -270,7 +272,7 @@ function setDrone(x, y, z, hdg, pitch) {
   const last = trailPts[trailPts.length - 1];
   if (!last || last.distanceTo(drone.position) > 0.5) { trailPts.push(drone.position.clone()); if (trailPts.length > 2000) trailPts.shift(); trail.geometry.setFromPoints(trailPts); }
 }
-function clearDrone() { if (drone && !preview) { drone.visible = false; droneLine.visible = false; droneShadow.visible = false; } }
+function clearDrone() { if (drone && !preview) { droneOn = false; droneLine.visible = false; droneShadow.visible = false; } }
 // Kamera weiterschalten: Drohnensicht → Verfolger → Übersicht. Gibt den Namen zurück.
 function cycleCamera() {
   const order = ['fpv', 'chase', 'orbit'];

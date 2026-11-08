@@ -371,7 +371,7 @@ class MainActivity : AppCompatActivity() {
         btnPrimary.text = label
         btnPrimary.setBackgroundResource(bg)
         btnPrimary.isEnabled = !loading && !uploading
-        secondaryRow.visibility = if (running || paused) View.GONE else View.VISIBLE
+        secondaryRow.visibility = View.GONE // Testflug/Folgen vorerst raus (Felix 8.11.)
         btnFollow.text = if (FollowController.active) "Folgen beenden" else "Folgen"
         btnHome.alpha = if (s.flying || s.motorsOn || FollowController.active) 1f else 0.6f
     }
@@ -402,7 +402,7 @@ class MainActivity : AppCompatActivity() {
     /** Was die Drohne als Nächstes tut – aus Plan, Wegpunkt-Index und Zustand abgeleitet (nur Anzeige). */
     private fun nextActionText(s: DroneState, m: Mission?, idx: Int, st: WaypointMissionExecuteState?): String {
         if (FollowController.active) return "folgt dem Handy"
-        if (m == null) return "Plan holen oder Testflug wählen"
+        if (m == null) return "Plan holen"
         return when {
             st == WaypointMissionExecuteState.FINISHED -> "fertig – Heimflug, dann Landung"
             st == WaypointMissionExecuteState.RETURN_TO_START_POINT -> "Heimflug, dann Landung"
@@ -597,13 +597,13 @@ class MainActivity : AppCompatActivity() {
         chooseView(Mode.THREE, byUser = false)
         AlertDialog.Builder(this).setTitle("Simulation")
             .setMessage("Die App tut jetzt so, als wäre eine Drohne am Boden verbunden" + (if (phone != null) " (Startpunkt = Handyposition)." else ". Der Startpunkt kommt mit dem Plan.") +
-                "\n\nPlan holen oder Testflug wählen, Startprüfung, Start. Die Route wird mit den geplanten Geschwindigkeiten abgeflogen; Pause, Weiter und STOPP wirken. Ansicht 3D zeigt Gebäude, Weg und Drohne. Beenden: Mehr → Simulation beenden.")
+                "\n\nPlan holen, Startprüfung, Start. Die Route wird mit den geplanten Geschwindigkeiten abgeflogen; Pause, Weiter und STOPP wirken. Ansicht 3D zeigt Gebäude, Weg und Drohne. Beenden: Mehr → Simulation beenden.")
             .setPositiveButton("OK", null).show()
     }
 
     /** Wegpunkte des aktuellen Plans in Google Maps öffnen (als Fußweg-Route, zeigt die Lage auf dem Satellitenbild). */
     private fun showOnMap() {
-        val m = mission ?: return DroneManager.log("Kein Plan: erst Testflug oder Plan holen")
+        val m = mission ?: return DroneManager.log("Kein Plan: erst Plan holen")
         val pts = m.waypoints.take(10).joinToString("/") { String.format(Locale.US, "%.6f,%.6f", it.pos.lat, it.pos.lon) }
         val url = "https://www.google.com/maps/dir/$pts/data=!4m2!4m1!3e2"
         try { startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))) }
