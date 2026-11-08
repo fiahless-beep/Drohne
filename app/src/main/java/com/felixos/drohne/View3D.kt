@@ -51,13 +51,38 @@ class View3D(private val web: WebView) {
         obstacles.forEach { ob ->
             if (ob.polygon.size < 3) return@forEach
             val poly = JSONArray(); ob.polygon.forEach { p -> val (x, y) = local(p); poly.put(JSONArray().put(Math.round(x * 10) / 10.0).put(Math.round(y * 10) / 10.0)) }
-            b.put(JSONObject().put("h", ob.heightM).put("p", poly))
+            val bo = JSONObject().put("h", ob.heightM).put("p", poly)
+            if (com.felixos.drohne.plan.Terrain.loaded) { val c = ob.polygon[0]; val gz = com.felixos.drohne.plan.Terrain.groundM(c); val g0 = com.felixos.drohne.plan.Terrain.groundM(o); if (gz != null && g0 != null) bo.put("g", Math.round((gz - g0) * 10) / 10.0) }
+            b.put(bo)
         }
         val r = JSONArray()
         m?.waypoints?.forEach { w -> val (x, y) = local(w.pos); r.put(JSONArray().put(Math.round(x * 10) / 10.0).put(Math.round(y * 10) / 10.0).put(w.heightM).put(w.headingDeg ?: JSONObject.NULL).put(w.gimbalPitchDeg).put((if (w.takePhoto) 2 else 0) + w.hoverSec)) }
-        val scene = JSONObject().put("b", b).put("r", r).put("clear", Obstacles.CLEARANCE_M).put("mar", Obstacles.MARGIN_M).toString()
-        if (ready) js("setScene($scene)") else pendingScene = scene
+        val scene = JSONObject().put("b", b).put("r", r).put("clear", Obstacles.CLEARANCE_M).put("mar", Obstacles.MARGIN_M)
+        terrainJson(pts, o)?.let { scene.put("t", it) }
+        val sceneStr = scene.toString()
+        if (ready) js("setScene($sceneStr)") else pendingScene = sceneStr
     }
+
+    /** Gelände aus dem Höhenmodell als 10-m-Raster relativ zum Startboden (wie tools/plan_artifact.py); Gebäude stehen in der Ansicht auf 0, das Raster zeigt das Gefälle. */
+    private fun terrainJson(pts: List<LatLon>, o: LatLon): JSONObject? {
+        if (!com.felixos.drohne.plan.Terrain.loaded) return null
+        val g0 = com.felixos.drohne.plan.Terrain.groundM(o) ?: return null
+        val xs = pts.map { local(it).first }; val ys = pts.map { local(it).second }
+        val m = 300.0; val step = 10.0
+        val x0 = Math.floor((xs.min() - m) / step) * step; val y0 = Math.floor((ys.min() - m) / step) * step
+        val nx = ((xs.max() + m - x0) / step).toInt() + 2; val ny = ((ys.max() + m - y0) / step).toInt() + 2
+        if (nx * ny > 40_000) return null
+        val cosLat = cos(Math.toRadians(o.lat))
+        val z = JSONArray()
+        for (j in 0 until ny) for (i in 0 until nx) {
+            val p = LatLon(o.lat + (y0 + j * step) / 110_540.0, o.lon + (x0 + i * step) / (111_320.0 * cosLat))
+            val v = com.felixos.drohne.plan.Terrain.groundM(p)
+            z.put(if (v == null) 0.0 else Math.round((v - g0) * 10) / 10.0)
+        }
+        return JSONObject().put("x0", x0).put("y0", y0).put("dx", step).put("dy", step).put("nx", nx).put("ny", ny).put("z", z)
+    }
+
+
 
     private var lastFlying: Boolean? = null
 
