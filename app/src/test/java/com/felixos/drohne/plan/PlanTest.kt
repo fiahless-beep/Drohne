@@ -170,3 +170,23 @@ class BuildingsTest {
         assertEquals(1, near.size); assertEquals(12.5, near.first().heightM, 1e-9)
     }
 }
+
+class TerrainTest {
+    @Test fun hangUndBaumWerdenErkannt() {
+        // 10 x 10 Zellen à ~11 m; Gelände steigt nach Osten von 0 auf 27 m, Baum (Oberfläche +15 m) in Spalte 5.
+        val lat0 = 38.7410; val lon0 = -9.1000; val d = 0.0001
+        val ground = Array(10) { DoubleArray(10) { c -> c * 3.0 } }
+        val surface = Array(10) { DoubleArray(10) { c -> c * 3.0 + if (c == 5) 15.0 else 0.0 } }
+        Terrain.loadForTest(lat0, lon0, d, d, ground, surface)
+        val home = LatLon(38.74055, -9.09995)            // Spalte 0, Gelände 0 m
+        val ziel = LatLon(38.74055, -9.09905)            // Spalte 9, Gelände 27 m
+        assertEquals(27.0, Terrain.riseM(home, ziel)!!, 1e-9)
+        val tief = Mission("t", listOf(Waypoint(ziel, 20.0), Waypoint(ziel, 25.0)), speedMs = 3.0)
+        val c = Terrain.check(tief, home)
+        assertTrue("20 m über Start sind 7 m unter dem Gelände am Ziel", c.isNotEmpty() && c.first().surfaceRelM >= 20.0)
+        val hoch = Mission("t", listOf(Waypoint(ziel, 45.0), Waypoint(ziel, 50.0)), speedMs = 3.0)
+        assertTrue(Terrain.check(hoch, home).isEmpty())
+        val baum = Mission("t", listOf(Waypoint(ziel, 36.0), Waypoint(ziel, 40.0)), speedMs = 3.0)
+        assertTrue("36 m über Start: Ziel frei (27+8), aber Baum unterwegs (15+15+8)", Terrain.check(baum, home).any { it.surfaceRelM > 28.0 })
+    }
+}

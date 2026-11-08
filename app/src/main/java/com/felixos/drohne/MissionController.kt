@@ -27,6 +27,8 @@ object MissionController {
     var conflicts: List<com.felixos.drohne.plan.Obstacles.Conflict> = emptyList()
     /** Startpunkt, mit dem der aktuelle Plan vorbereitet (Transit, Gebäude-Wächter) wurde; null = ohne Startpunkt. */
     var preparedHome: LatLon? = null
+    /** Konflikte mit dem Höhenmodell (Gelände, Dächer, Bäume). */
+    var terrainConflicts: List<com.felixos.drohne.plan.Terrain.Conflict> = emptyList()
         private set
     var uploaded = false
         private set
@@ -149,6 +151,12 @@ object MissionController {
         DroneManager.log("Tempo: max ${m.speedMs} m/s" + if (slow.isNotEmpty()) ", ${slow.size} Abschnitte nahe Gebäuden gedrosselt (min ${String.format(java.util.Locale.GERMANY, "%.1f", slow.minOf { it.speedMs!! })} m/s)" else "")
         rthHeightM = maxOf(transit, (m.obstacles.maxOfOrNull { it.heightM } ?: 0.0) + com.felixos.drohne.plan.Obstacles.CLEARANCE_M).coerceIn(20.0, 120.0)
         conflicts = com.felixos.drohne.plan.Obstacles.check(m, home) + (home?.let { com.felixos.drohne.plan.Obstacles.checkReturn(m, it, rthHeightM) } ?: emptyList())
+        terrainConflicts = if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.check(m, home) else emptyList()
+        if (com.felixos.drohne.plan.Terrain.loaded && home != null) {
+            val rises = m0.waypoints.mapNotNull { com.felixos.drohne.plan.Terrain.riseM(home, it.pos) }
+            if (rises.isNotEmpty()) DroneManager.log("Höhenmodell: Gelände am Ziel ${if (rises.max() >= 0) "+" else ""}${rises.max().toInt()} m gegenüber dem Start")
+            if (terrainConflicts.isNotEmpty()) DroneManager.log("OBERFLÄCHEN-WÄCHTER: ${terrainConflicts.size} Konflikt(e): " + terrainConflicts.joinToString("; ")) else DroneManager.log("Oberflächen-Wächter: Strecke frei")
+        } else if (!com.felixos.drohne.plan.Terrain.loaded) DroneManager.log("Höhenmodell nicht in der App")
         if (conflicts.isNotEmpty()) {
             DroneManager.log("GEBÄUDE-WÄCHTER: ${conflicts.size} Konflikt(e): " + conflicts.joinToString("; "))
         } else if (m.obstacles.isNotEmpty()) DroneManager.log("Gebäude-Wächter: Strecke frei (${m.obstacles.size} Gebäude geprüft)")

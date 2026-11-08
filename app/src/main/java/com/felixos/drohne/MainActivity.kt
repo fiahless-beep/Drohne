@@ -88,6 +88,10 @@ class MainActivity : AppCompatActivity() {
                 val n = assets.open("gebaeude.bin").use { com.felixos.drohne.plan.Buildings.load(it) }
                 DroneManager.log("Gebäudedatenbank geladen: $n Gebäude")
             } catch (t: Throwable) { DroneManager.log("Keine Gebäudedatenbank in der App (${t.javaClass.simpleName})") }
+            try {
+                val n = assets.open("hoehen.bin").use { com.felixos.drohne.plan.Terrain.load(it) }
+                DroneManager.log("Höhenmodell geladen: $n Zellen")
+            } catch (t: Throwable) { DroneManager.log("Kein Höhenmodell in der App (${t.javaClass.simpleName})") }
         }.start()
         var collected = false
         MissionController.onFinished = {
@@ -332,6 +336,7 @@ class MainActivity : AppCompatActivity() {
         }
         if ((s.satellites ?: 0) < minSatellites) add("Zu wenig GPS (mind. $minSatellites Satelliten)")
         MissionController.conflicts.forEach { add("Gebäude-Wächter: $it") }
+        MissionController.terrainConflicts.forEach { add("Oberflächen-Wächter: $it") }
         if (m != null) {
             val top = maxOf(m.waypoints.maxOf { it.heightM }, MissionController.rthHeightM)
             s.heightLimitM?.let { if (it < top - 0.5) add("DJI-Höhenlimit $it m liegt unter der Flughöhe ${top.toInt()} m: die Drohne würde tiefer fliegen als geplant. Limit in DJI Fly anheben.") }
