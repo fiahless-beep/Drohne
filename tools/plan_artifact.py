@@ -127,7 +127,7 @@ def main(argv):
     length = sum(math.hypot(wps[i + 1]["x"] - wps[i]["x"], wps[i + 1]["y"] - wps[i]["y"]) + abs(wps[i + 1]["h"] - wps[i]["h"]) for i in range(len(wps) - 1))
     dur = sum((math.hypot(wps[i + 1]["x"] - wps[i]["x"], wps[i + 1]["y"] - wps[i]["y"]) / max(wps[i]["speed"], 0.5)) for i in range(len(wps) - 1)) + sum((2 if w["photo"] else 0) + w["hover"] for w in wps) + transit / 2.5 + transit / 1.5
     # Szene wie View3D.kt
-    route = [[round(w["x"], 1), round(w["y"], 1), w["h"], w["yaw"], w["pitch"], (2 if w["photo"] else 0) + w["hover"]] for w in wps]
+    route = [[round(w["x"], 1), round(w["y"], 1), w["h"], w["yaw"], w["pitch"], (2 if w["photo"] else 0) + w["hover"], w["speed"]] for w in wps]
     scene = {"b": [{"h": h, "p": [[round(x, 1), round(y, 1)] for x, y in poly]} for h, poly, _ in bl], "r": route, "clear": CLEAR, "mar": MARGIN}
     # 3D-Code der App übernehmen
     html3d = (ROOT / "app/src/main/assets/view3d.html").read_text(encoding="utf-8")
@@ -169,6 +169,10 @@ header h1 {{ font-size: 20px; margin: 0; font-weight: 650; letter-spacing: -0.01
 header .facts {{ color: var(--muted); font-variant-numeric: tabular-nums; }}
 .desc {{ color: var(--muted); max-width: 70ch; margin: 0; }}
 .stage {{ position: relative; aspect-ratio: 16 / 9; max-height: 72vh; width: 100%; max-width: 100%; border-radius: 14px; overflow: hidden; background: #c9d6e2; border: 1px solid var(--line); }}
+.stage.full {{ position: fixed; inset: 0; z-index: 50; aspect-ratio: auto; max-height: none; border-radius: 0; border: 0; }}
+.stage:fullscreen {{ aspect-ratio: auto; max-height: none; border-radius: 0; }}
+.stage.full .exit, .stage:fullscreen .exit {{ display: block; }}
+.exit {{ display: none; position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); font: 600 13px var(--sans); color: #fff; background: rgba(20,24,30,.6); border: 0; border-radius: 999px; padding: 8px 12px; cursor: pointer; }}
 .stage canvas {{ display: block; width: 100%; height: 100%; touch-action: none; }}
 #hint {{ position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #3a4652; background: rgba(255,255,255,.75); padding: 8px 14px; border-radius: 20px; }}
 #cam {{ position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); color: #f5f7fa; font-weight: 600; font-size: 13px; background: rgba(20,24,30,.6); padding: 6px 12px; border-radius: 16px; pointer-events: none; opacity: 0; transition: opacity .4s; }}
@@ -198,11 +202,13 @@ td:last-child {{ color: var(--muted); max-width: 26ch; overflow: hidden; text-ov
 <div class="wrap">
   <header><h1>{esc(name)}</h1><span class="facts">{length:.0f} m · ca. {dur / 60:.0f} min · {len(wps0)} Punkte + Transit · Höhe {min(w["h"] for w in wps):.0f}–{max(w["h"] for w in wps):.0f} m</span></header>
   <p class="desc">{desc}</p>
-  <div class="stage"><canvas id="view"></canvas><div id="hint">3D lädt …</div><div id="reticle"></div><div id="cam"></div></div>
+  <div class="stage"><canvas id="view"></canvas><div id="hint">3D lädt …</div><div id="reticle"></div><div id="cam"></div><button class="exit" id="bExit" type="button">Vollbild beenden</button></div>
   <div class="bar">
     <button class="primary" id="bPreview" type="button">Vorschau abspielen</button>
     <button id="bCam" type="button">Kamera wechseln</button>
     <button id="bOrbit" type="button">Übersicht</button>
+    <button id="bSpeed" type="button" title="Vorschau-Tempo">4×</button>
+    <button id="bFull" type="button">Vollbild</button>
     <span class="tip">Ziehen dreht, Rad oder zwei Finger zoomen. Orange = Gebäude näher als 8 m unter der Route.</span>
   </div>
   <div class="grid">
@@ -216,8 +222,18 @@ const SCENE = {json.dumps(scene, separators=(",", ":"))};
 {js}
 if (init()) {{ setScene(SCENE); }}
 document.getElementById('bPreview').addEventListener('click', () => {{ flying = false; startPreview(); }});
-document.getElementById('bCam').addEventListener('click', () => {{ if (!preview && !droneOn) {{ flying = false; startPreview(); preview.stage = 'fly'; }} cycleCamera(); }});
-document.getElementById('bOrbit').addEventListener('click', () => {{ if (preview) endPreview(); camMode = 'orbit'; camPos = null; showLabel('Übersicht'); }});
+document.getElementById('bCam').addEventListener('click', () => {{ flying = false; cycleCamera(); }});
+document.getElementById('bOrbit').addEventListener('click', () => {{ if (preview) {{ flightMode = 'orbit'; preview.stage = 'fly'; }} else camMode = 'orbit'; camPos = null; showLabel('Übersicht'); }});
+const speeds = [1, 2, 4, 8]; let si = 2;
+document.getElementById('bSpeed').addEventListener('click', e => {{ si = (si + 1) % speeds.length; setPreviewScale(speeds[si]); e.currentTarget.textContent = speeds[si] === 1 ? 'Echtzeit' : speeds[si] + '×'; }});
+const stage = document.querySelector('.stage'), bFull = document.getElementById('bFull');
+function fullOn() {{ return !!document.fullscreenElement || stage.classList.contains('full'); }}
+function setFull(on) {{ stage.classList.toggle('full', on); bFull.textContent = on ? 'Vollbild beenden' : 'Vollbild'; setTimeout(resize, 50); setTimeout(resize, 400); }}
+bFull.addEventListener('click', () => {{ if (fullOn()) {{ if (document.fullscreenElement) document.exitFullscreen().catch(() => {{}}); setFull(false); }}
+  else {{ const pr = stage.requestFullscreen ? stage.requestFullscreen() : Promise.reject(); Promise.resolve(pr).then(() => setFull(true)).catch(() => setFull(true)); }} }});
+document.addEventListener('fullscreenchange', () => {{ if (!document.fullscreenElement) setFull(false); }});
+document.getElementById('bExit').addEventListener('click', () => bFull.click());
+document.addEventListener('keydown', e => {{ if (e.key === 'Escape' && stage.classList.contains('full')) setFull(false); }});
 </script>
 """
     out = Path(opts.get("out", "/tmp/flugplaner.html")); out.write_text(page, encoding="utf-8")

@@ -73,7 +73,7 @@ function init() {
 
   canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, id: e.pointerId }; canvas.setPointerCapture(e.pointerId); lastTouch = performance.now(); });
   canvas.addEventListener('pointermove', e => { if (!drag || e.pointerId !== drag.id) return; const dx = (e.clientX - drag.x) * 0.006, dy = (e.clientY - drag.y) * 0.006; drag.x = e.clientX; drag.y = e.clientY; lastTouch = performance.now();
-    if (camMode === 'orbit') { theta -= dx; phi = Math.max(0.08, Math.min(1.5, phi + dy)); } else { yawOff -= dx; pitchOff = Math.max(-0.6, Math.min(0.8, pitchOff + dy)); } });
+    if (effMode() === 'orbit') { theta -= dx; phi = Math.max(0.08, Math.min(1.5, phi + dy)); } else { yawOff -= dx; pitchOff = Math.max(-0.6, Math.min(0.8, pitchOff + dy)); } });
   canvas.addEventListener('pointerup', () => drag = null);
   canvas.addEventListener('wheel', e => { e.preventDefault(); zoom(1 + e.deltaY * 0.001); }, { passive: false });
   let pinch = null;
@@ -110,9 +110,12 @@ function buildDrone() {
   scene.add(drone); droneOn = false;
 }
 
+function effMode() { return camMode === 'preview' ? flightMode : camMode; }
 function isFpv() { return camMode === 'fpv' || (camMode === 'preview' && flightMode === 'fpv' && preview && preview.stage === 'fly'); }
+let previewScale = 4; // Vorschau-Zeitraffer (1, 2, 4, 8)
+function setPreviewScale(f) { previewScale = f; showLabel(f === 1 ? 'Echtzeit' : f + '× Zeitraffer'); return f; }
 function zoom(f) {
-  if (camMode === 'orbit') dist = Math.max(20, Math.min(2000, dist * f));
+  if (effMode() === 'orbit') dist = Math.max(20, Math.min(2000, dist * f));
   else if (isFpv()) { cam.fov = Math.max(25, Math.min(100, cam.fov * f)); cam.updateProjectionMatrix(); }
   else chaseDist = Math.max(6, Math.min(300, chaseDist * f));
 }
@@ -133,17 +136,17 @@ function tick() {
   if (routeTube) routeTube.visible = !zoomFpv;
   if (droneOn) {
     drone.rotation.y = -smoothHeading;
-    const sc = camMode === 'orbit' ? Math.max(1, dist / 70) : Math.max(1, chaseDist / 20); drone.scale.set(sc, sc, sc);
+    const sc = effMode() === 'orbit' ? Math.max(1, dist / 70) : Math.max(1, chaseDist / 20); drone.scale.set(sc, sc, sc);
     rotors.forEach((r, i) => r.rotation.y += (i % 2 ? 0.9 : -0.9));
     camCone.rotation.x = THREE.MathUtils.degToRad(smoothGimbal);
     camCone.visible = !fpvNow;
-    glow.visible = camMode === 'orbit';
+    glow.visible = effMode() === 'orbit';
   }
   if (routeTex) routeTex.offset.x -= 0.012;
-  if (routeTube && routeCurve) { const want = (camMode === 'orbit' || (preview && preview.stage === 'overview')) ? Math.max(0.55, Math.min(3.5, dist / 110)) : 0.55;
+  if (routeTube && routeCurve) { const want = (effMode() === 'orbit' || (preview && preview.stage === 'overview')) ? Math.max(0.55, Math.min(3.5, dist / 110)) : 0.55;
     if (Math.abs(want - routeRadius) > routeRadius * 0.25) { routeRadius = want; const old = routeTube.geometry; routeTube.geometry = new THREE.TubeGeometry(routeCurve, Math.max(8, routeInfo.length * 12), want, 8, false); old.dispose(); } }
   markers.forEach(m => { m.visible = !((fpvNow || zoomFpv) && m.position.distanceTo(cam.position) < 8); });
-  if (curtain) curtain.visible = camMode === 'orbit' || (preview && preview.stage === 'overview');
+  if (curtain) curtain.visible = effMode() === 'orbit' || (preview && preview.stage === 'overview');
   // Echte Drohne: Positionen kommen 10× je Sekunde, dazwischen weich nachziehen (sonst ruckelt die Kamera)
   if (droneTarget && !preview) drone.position.lerp(droneTarget, 0.22);
   reticle.style.display = (fpvNow && droneOn) ? 'block' : 'none';
@@ -213,7 +216,7 @@ let routeInfo = [];
 function setScene(D) {
   if (!scene) return;
   buildings.forEach(o => scene.remove(o)); buildings = []; routeObjs.forEach(o => scene.remove(o)); routeObjs = []; markers = []; passed = 0;
-  routeInfo = (D.r || []).map(p => ({ pos: new THREE.Vector3(p[0], p[2], -p[1]), yaw: p[3] == null ? null : THREE.MathUtils.degToRad(p[3]), pitch: p[4] == null ? -20 : p[4], hold: p[5] || 0 }));
+  routeInfo = (D.r || []).map(p => ({ pos: new THREE.Vector3(p[0], p[2], -p[1]), yaw: p[3] == null ? null : THREE.MathUtils.degToRad(p[3]), pitch: p[4] == null ? -20 : p[4], hold: p[5] || 0, speed: p[6] || 5 }));
   const route = routeInfo.map(r => r.pos);
   const roofMat = new THREE.MeshLambertMaterial({ color: 0xcfc9c0 }), wallMat = new THREE.MeshLambertMaterial({ color: 0xffffff, map: wallTex });
   const roofWarn = new THREE.MeshLambertMaterial({ color: 0xe0823a }), wallWarn = new THREE.MeshLambertMaterial({ color: 0xf0a060, map: wallTex });
@@ -282,24 +285,24 @@ function previewStep() {
     if (p.stage === 'overview' && p.stageT > 3.5) { p.stage = 'zoom'; p.stageT = 0; showLabel('Vorschau · Kameraknopf wechselt die Sicht'); }
     else if (p.stage === 'zoom' && p.stageT > 3.0) { p.stage = 'fly'; p.stageT = 0; }
     return; }
-  if (p.hold > 0) { p.hold -= dt; return; }
+  if (p.hold > 0) { p.hold -= dt * previewScale; return; }
   if (p.i >= routeInfo.length - 1) { endPreview(); return; }
   const a = routeInfo[p.i].pos, b = routeInfo[p.i + 1].pos, L = Math.max(0.1, a.distanceTo(b));
-  p.t += dt * 8 / L;
+  p.t += dt * previewScale * Math.min(routeInfo[p.i].speed, Math.abs(a.y - b.y) > L - 0.5 ? 2.5 : 99) / L;
   heading = segYaw(p.i); gimbal = -20;
   if (p.t >= 1) {
     p.t = 0; p.i += 1; const w = routeInfo[p.i];
     drone.position.copy(w.pos); markPassed(p.i);
     if (w.yaw != null) heading = w.yaw;
     gimbal = w.pitch;
-    p.hold = Math.max(w.hold > 0 ? 1.5 : 0.3, Math.min(3, w.hold));
+    p.hold = w.hold > 0 ? w.hold : 0.3;
   } else drone.position.copy(a).lerp(b, p.t);
   droneLine.geometry.setFromPoints([drone.position, new THREE.Vector3(drone.position.x, 0, drone.position.z)]);
   droneShadow.position.set(drone.position.x, 0.12, drone.position.z);
 }
-function endPreview() { preview = null; camMode = flying ? flightMode : 'orbit'; markers.forEach(m => m.material.opacity = 1); passed = 0; if (!flying) { droneOn = false; droneLine.visible = droneShadow.visible = false; } }
+function endPreview() { preview = null; camMode = flying ? flightMode : 'orbit'; if (!flying) flightMode = flightMode === 'orbit' ? 'fpv' : flightMode; markers.forEach(m => m.material.opacity = 1); passed = 0; if (!flying) { droneOn = false; droneLine.visible = droneShadow.visible = false; } }
 
-function setFlying(f) { flying = !!f; if (flying) { if (preview) endPreview(); camMode = flightMode; } else if (camMode !== 'orbit') camMode = 'orbit'; }
+function setFlying(f) { flying = !!f; if (flying) { if (preview) endPreview(); camMode = flightMode === 'orbit' ? 'fpv' : flightMode; } else if (camMode !== 'orbit') camMode = 'orbit'; }
 function setDrone(x, y, z, hdg, pitch) {
   if (!scene) return;
   if (preview) endPreview();
@@ -320,12 +323,14 @@ function cycleCamera() {
   const cur = camMode === 'preview' ? flightMode : camMode;
   const next = order[(order.indexOf(cur) + 1) % order.length];
   yawOff = 0; pitchOff = 0;
-  if (camMode === 'preview') { if (next === 'orbit') endPreview(); else { flightMode = next; preview.stage = 'fly'; } }
-  else { camMode = next; if (next !== 'orbit') flightMode = next; }
   const names = { fpv: 'Drohnensicht', chase: 'Verfolger', orbit: 'Übersicht' };
+  // Aus der Übersicht ohne fliegende Drohne: Vorschau in der gewünschten Sicht neu starten (sonst bleibt es bei der Übersicht)
+  if (!preview && !droneOn && routeInfo.length > 1) { flightMode = next; startPreview(); preview.stage = 'fly'; showLabel(names[flightMode]); return flightMode; }
+  if (camMode === 'preview') { flightMode = next; preview.stage = 'fly'; if (next === 'orbit') camPos = null; }
+  else { camMode = next; flightMode = next; }
   showLabel(names[next]); return next;
 }
-function setFollow(f) { camMode = f ? flightMode : 'orbit'; }
+function setFollow(f) { camMode = f ? (flightMode === 'orbit' ? 'fpv' : flightMode) : 'orbit'; }
 init();
 </script>
 </body>
