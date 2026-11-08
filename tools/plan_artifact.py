@@ -146,11 +146,23 @@ def main(argv):
             xs = [w["x"] for w in wps]; ys = [w["y"] for w in wps]; M = 300.0; step = 10.0
             x0 = math.floor((min(xs) - M) / step) * step; y0 = math.floor((min(ys) - M) / step) * step
             nx = int((max(xs) + M - x0) / step) + 2; ny = int((max(ys) + M - y0) / step) + 2
-            zs = []
+            # Baumkronen: Oberfläche − Boden je Zelle (Maximum aus 4 Stichproben), außerhalb von Gebäuden → grün in der Geländetextur
+            cells = {}
+            for h, poly, _ in bl:
+                bx0 = min(p[0] for p in poly); bx1 = max(p[0] for p in poly); by0 = min(p[1] for p in poly); by1 = max(p[1] for p in poly)
+                for cj in range(int((by0 - y0) / step), int((by1 - y0) / step) + 1):
+                    for ci in range(int((bx0 - x0) / step), int((bx1 - x0) / step) + 1): cells.setdefault((ci, cj), []).append(poly)
+            zs = []; cs = []
             for j in range(ny):
                 for i in range(nx):
-                    la, lo = loc.ll(x0 + i * step, y0 + j * step); v = ground(la, lo); zs.append(round((v - g0) if v is not None else 0, 1))
-            terr = {"x0": x0, "y0": y0, "dx": step, "dy": step, "nx": nx, "ny": ny, "z": zs}
+                    x = x0 + i * step; y = y0 + j * step; la, lo = loc.ll(x, y); v = ground(la, lo); zs.append(round((v - g0) if v is not None else 0, 1))
+                    c = 0.0
+                    if v is not None and not any(inside((x, y), p) for p in cells.get((i, j), ())):
+                        for ox, oy in ((0, 0), (5, 0), (0, 5), (5, 5)):
+                            s = surf(*loc.ll(x + ox, y + oy)); gg = ground(*loc.ll(x + ox, y + oy))
+                            if s is not None and gg is not None: c = max(c, s - gg)
+                    cs.append(round(c) if c >= 3 else 0)
+            terr = {"x0": x0, "y0": y0, "dx": step, "dy": step, "nx": nx, "ny": ny, "z": zs, "c": cs}
             for idx, (h, poly, _) in enumerate(bl):
                 cx = sum(p[0] for p in poly) / len(poly); cy = sum(p[1] for p in poly) / len(poly); la, lo = loc.ll(cx, cy); v = ground(la, lo)
                 if v is not None: bg[idx] = round(v - g0, 1)

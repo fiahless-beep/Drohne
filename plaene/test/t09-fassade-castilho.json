@@ -1,0 +1,38 @@
+{
+  "name": "t09-fassade-castilho",
+  "beschreibung": "Gebäudefoto Rua Castilho: Gebäude 40 m hoch, Front 32 m, Straße 40 m breit. Drei Fotos aus der Straßenmitte in 51 m Höhe (höchstes Nachbarhaus 48 m, Regel +3 m bzw. +8 m bei <8 m Abstand), Kamera auf die Fassadenmitte.",
+  "speed": 4,
+  "rcLost": "continue",
+  "ziel": {
+    "lat": 38.727333,
+    "lon": -9.155763,
+    "h": 20.0
+  },
+  "waypoints": [
+    {
+      "lat": 38.727347,
+      "lon": -9.155495,
+      "h": 51,
+      "photo": true,
+      "hover": 2
+    },
+    {
+      "lat": 38.727436,
+      "lon": -9.155574,
+      "h": 51,
+      "photo": true,
+      "hover": 2
+    },
+    {
+      "lat": 38.727525,
+      "lon": -9.155653,
+      "h": 51,
+      "photo": true,
+      "hover": 2
+    }
+  ],
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  }
+}

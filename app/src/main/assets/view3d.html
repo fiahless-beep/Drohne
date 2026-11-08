@@ -206,6 +206,28 @@ function paintGround(t, roads, parks) {
   const c = document.createElement('canvas'); c.width = Math.round(px * W / Math.max(W, Hh)); c.height = Math.round(px * Hh / Math.max(W, Hh)); const g = c.getContext('2d');
   const sx = c.width / W, sy = c.height / Hh; const X = x => (x - t.x0) * sx, Y = y => c.height - (y - t.y0) * sy;
   g.fillStyle = '#c3cad0'; g.fillRect(0, 0, c.width, c.height);
+  // Schummerung: Hänge je nach Neigung zur Sonne (Nordwest, 45°) heller oder dunkler – so sieht man das Gefälle (Praça liegt 48 m tiefer)
+  if (t.z && t.nx > 4 && t.ny > 4) {
+    // geglättetes Gelände (5×5 Zellen), Neigung über 2 Zellen, Licht aus Nordwest
+    const zi = (i, j) => t.z[Math.min(t.ny - 1, Math.max(0, j)) * t.nx + Math.min(t.nx - 1, Math.max(0, i))];
+    const sm = (i, j) => { let s = 0; for (let b = -2; b <= 2; b++) for (let a = -2; a <= 2; a++) s += zi(i + a, j + b); return s / 25; };
+    const lx = -0.5, ly = 0.5, lz = 0.707;
+    for (let j = 0; j < t.ny - 1; j++) for (let i = 0; i < t.nx - 1; i++) {
+      const dzx = (sm(i + 1, j) - sm(i - 1, j)) / (2 * t.dx), dzy = (sm(i, j + 1) - sm(i, j - 1)) / (2 * t.dy);
+      const nl = Math.sqrt(dzx * dzx + dzy * dzy + 1); const shade = (-dzx * lx - dzy * ly + lz) / nl - lz;
+      if (Math.abs(shade) < 0.01) continue;
+      g.fillStyle = shade > 0 ? `rgba(255,255,255,${Math.min(0.35, shade * 2.2)})` : `rgba(40,50,60,${Math.min(0.35, -shade * 2.0)})`;
+      g.fillRect(X(t.x0 + i * t.dx), Y(t.y0 + (j + 1) * t.dy), t.dx * sx + 1, t.dy * sy + 1);
+    }
+  }
+  // Baumkronen aus dem Höhenmodell (c = Kronenhöhe je Zelle in m): grüne Flecken, je höher desto satter
+  if (t.c) {
+    for (let j = 0; j < t.ny - 1; j++) for (let i = 0; i < t.nx - 1; i++) {
+      const ch = t.c[j * t.nx + i]; if (!ch) continue;
+      g.fillStyle = `rgba(96,150,70,${Math.min(0.85, 0.3 + ch / 25)})`;
+      g.beginPath(); g.arc(X(t.x0 + i * t.dx + t.dx / 2), Y(t.y0 + j * t.dy + t.dy / 2), t.dx * sx * 0.75, 0, Math.PI * 2); g.fill();
+    }
+  }
   g.strokeStyle = 'rgba(70,80,90,0.10)'; g.lineWidth = 1; for (let x = Math.ceil(t.x0 / 50) * 50; x < t.x0 + W; x += 50) { g.beginPath(); g.moveTo(X(x), 0); g.lineTo(X(x), c.height); g.stroke(); } for (let y = Math.ceil(t.y0 / 50) * 50; y < t.y0 + Hh; y += 50) { g.beginPath(); g.moveTo(0, Y(y)); g.lineTo(c.width, Y(y)); g.stroke(); }
   (parks || []).forEach(poly => { g.fillStyle = '#b9d3a6'; g.beginPath(); poly.forEach((q, i) => i ? g.lineTo(X(q[0]), Y(q[1])) : g.moveTo(X(q[0]), Y(q[1]))); g.closePath(); g.fill(); });
   g.lineCap = 'round'; g.lineJoin = 'round';
@@ -341,7 +363,9 @@ function previewStep() {
   if (p.i >= routeInfo.length - 1) { endPreview(); return; }
   const a = routeInfo[p.i].pos, b = routeInfo[p.i + 1].pos, L = Math.max(0.1, a.distanceTo(b));
   p.t += dt * previewScale * Math.min(routeInfo[p.i].speed, Math.abs(a.y - b.y) > L - 0.5 ? 2.5 : 99) / L;
-  heading = segYaw(p.i); gimbal = -20;
+  const wa = routeInfo[p.i], wb = routeInfo[p.i + 1];
+  if (wa.yaw != null && wb.yaw != null) { heading = wa.yaw + angDiff(wb.yaw, wa.yaw) * p.t; gimbal = wa.pitch + (wb.pitch - wa.pitch) * p.t; }  // zwischen Fotopunkten: Kamera bleibt auf dem Motiv
+  else { heading = segYaw(p.i); gimbal = -20; }
   if (p.t >= 1) {
     p.t = 0; p.i += 1; const w = routeInfo[p.i];
     drone.position.copy(w.pos); markPassed(p.i);

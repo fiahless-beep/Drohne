@@ -1,0 +1,344 @@
+{
+  "name": "t07-herculano",
+  "beschreibung": "Zuhause → Rua Alexandre Herculano, so tief wie möglich",
+  "speed": 4,
+  "rcLost": "continue",
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.72337,
+    "lon": -9.14817
+  },
+  "waypoints": [
+    {
+      "lat": 38.727618,
+      "lon": -9.156837,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727405,
+      "lon": -9.156403,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727193,
+      "lon": -9.15597,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72698,
+      "lon": -9.155537,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726768,
+      "lon": -9.155103,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726556,
+      "lon": -9.15467,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726343,
+      "lon": -9.154237,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726131,
+      "lon": -9.153803,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725919,
+      "lon": -9.15337,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725706,
+      "lon": -9.152937,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725494,
+      "lon": -9.152503,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725281,
+      "lon": -9.15207,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725069,
+      "lon": -9.151637,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724857,
+      "lon": -9.151203,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724644,
+      "lon": -9.15077,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724432,
+      "lon": -9.150337,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72422,
+      "lon": -9.149903,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724007,
+      "lon": -9.14947,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723795,
+      "lon": -9.149037,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723582,
+      "lon": -9.148603,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72337,
+      "lon": -9.14817,
+      "h": 20,
+      "photo": true,
+      "hover": 5,
+      "pitch": -45
+    },
+    {
+      "lat": 38.723582,
+      "lon": -9.148603,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723795,
+      "lon": -9.149037,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724007,
+      "lon": -9.14947,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72422,
+      "lon": -9.149903,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724432,
+      "lon": -9.150337,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724644,
+      "lon": -9.15077,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724857,
+      "lon": -9.151203,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725069,
+      "lon": -9.151637,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725281,
+      "lon": -9.15207,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725494,
+      "lon": -9.152503,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725706,
+      "lon": -9.152937,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725919,
+      "lon": -9.15337,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726131,
+      "lon": -9.153803,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726343,
+      "lon": -9.154237,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726556,
+      "lon": -9.15467,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726768,
+      "lon": -9.155103,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72698,
+      "lon": -9.155537,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727193,
+      "lon": -9.15597,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727405,
+      "lon": -9.156403,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727618,
+      "lon": -9.156837,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "name": "t06-rato",
+  "beschreibung": "Zuhause → Rua Castilho/Braamcamp (Rato), so tief wie möglich, dichte Bebauung",
+  "speed": 4,
+  "rcLost": "continue",
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.72292,
+    "lon": -9.15165
+  },
+  "waypoints": [
+    {
+      "lat": 38.727523,
+      "lon": -9.156919,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727216,
+      "lon": -9.156568,
+      "h": 33,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726909,
+      "lon": -9.156216,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726602,
+      "lon": -9.155865,
+      "h": 53,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726296,
+      "lon": -9.155514,
+      "h": 53,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725989,
+      "lon": -9.155162,
+      "h": 50,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725682,
+      "lon": -9.154811,
+      "h": 50,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725375,
+      "lon": -9.15446,
+      "h": 50,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725068,
+      "lon": -9.154109,
+      "h": 24,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724761,
+      "lon": -9.153758,
+      "h": 24,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724454,
+      "lon": -9.153406,
+      "h": 22,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724148,
+      "lon": -9.153055,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723841,
+      "lon": -9.152704,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723534,
+      "lon": -9.152352,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723227,
+      "lon": -9.152001,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72292,
+      "lon": -9.15165,
+      "h": 20,
+      "photo": true,
+      "hover": 5,
+      "pitch": -45
+    },
+    {
+      "lat": 38.723227,
+      "lon": -9.152001,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723534,
+      "lon": -9.152352,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723841,
+      "lon": -9.152704,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724148,
+      "lon": -9.153055,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724454,
+      "lon": -9.153406,
+      "h": 22,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724761,
+      "lon": -9.153758,
+      "h": 24,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725068,
+      "lon": -9.154109,
+      "h": 24,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725375,
+      "lon": -9.15446,
+      "h": 50,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725682,
+      "lon": -9.154811,
+      "h": 50,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725989,
+      "lon": -9.155162,
+      "h": 50,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726296,
+      "lon": -9.155514,
+      "h": 53,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726602,
+      "lon": -9.155865,
+      "h": 53,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726909,
+      "lon": -9.156216,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727216,
+      "lon": -9.156568,
+      "h": 33,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727523,
+      "lon": -9.156919,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    }
+  ]
+}

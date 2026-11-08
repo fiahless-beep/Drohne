@@ -1,0 +1,184 @@
+{
+  "name": "t02-torres-amoreiras",
+  "beschreibung": "Zuhause → Rua das Amoreiras (Türme), so tief wie möglich – Test Gebäude-Wächter an hohen Türmen",
+  "speed": 4,
+  "rcLost": "continue",
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.72379,
+    "lon": -9.15966
+  },
+  "waypoints": [
+    {
+      "lat": 38.727463,
+      "lon": -9.157487,
+      "h": 37,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727095,
+      "lon": -9.157705,
+      "h": 41,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726728,
+      "lon": -9.157922,
+      "h": 41,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726361,
+      "lon": -9.158139,
+      "h": 35,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725994,
+      "lon": -9.158356,
+      "h": 29,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725626,
+      "lon": -9.158574,
+      "h": 29,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725259,
+      "lon": -9.158791,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724892,
+      "lon": -9.159008,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724525,
+      "lon": -9.159225,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724157,
+      "lon": -9.159443,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72379,
+      "lon": -9.15966,
+      "h": 51,
+      "photo": true,
+      "hover": 5,
+      "pitch": -45
+    },
+    {
+      "lat": 38.724157,
+      "lon": -9.159443,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724525,
+      "lon": -9.159225,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724892,
+      "lon": -9.159008,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725259,
+      "lon": -9.158791,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725626,
+      "lon": -9.158574,
+      "h": 29,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725994,
+      "lon": -9.158356,
+      "h": 29,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726361,
+      "lon": -9.158139,
+      "h": 35,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726728,
+      "lon": -9.157922,
+      "h": 41,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727095,
+      "lon": -9.157705,
+      "h": 41,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727463,
+      "lon": -9.157487,
+      "h": 37,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "name": "t08-castilho-kurz",
+  "beschreibung": "Zuhause → Rua Castilho (200 m), mindestens 12 m – kürzeste Strecke",
+  "speed": 4,
+  "rcLost": "continue",
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.72681,
+    "lon": -9.15517
+  },
+  "waypoints": [
+    {
+      "lat": 38.727626,
+      "lon": -9.15685,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727422,
+      "lon": -9.15643,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727218,
+      "lon": -9.15601,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727014,
+      "lon": -9.15559,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72681,
+      "lon": -9.15517,
+      "h": 51,
+      "photo": true,
+      "hover": 5,
+      "pitch": -45
+    },
+    {
+      "lat": 38.727014,
+      "lon": -9.15559,
+      "h": 51,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727218,
+      "lon": -9.15601,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727422,
+      "lon": -9.15643,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727626,
+      "lon": -9.15685,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    }
+  ]
+}

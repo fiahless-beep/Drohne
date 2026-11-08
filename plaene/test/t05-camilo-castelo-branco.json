@@ -1,0 +1,296 @@
+{
+  "name": "t05-camilo-castelo-branco",
+  "beschreibung": "Zuhause → Jardim Camilo Castelo Branco (hinter der Praça), so tief wie möglich",
+  "speed": 4,
+  "rcLost": "continue",
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.72542,
+    "lon": -9.14827
+  },
+  "waypoints": [
+    {
+      "lat": 38.727696,
+      "lon": -9.15677,
+      "h": 37,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727562,
+      "lon": -9.15627,
+      "h": 39,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727428,
+      "lon": -9.15577,
+      "h": 39,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727294,
+      "lon": -9.15527,
+      "h": 38,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727161,
+      "lon": -9.15477,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727027,
+      "lon": -9.15427,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726893,
+      "lon": -9.15377,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726759,
+      "lon": -9.15327,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726625,
+      "lon": -9.15277,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726491,
+      "lon": -9.15227,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726357,
+      "lon": -9.15177,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726223,
+      "lon": -9.15127,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726089,
+      "lon": -9.15077,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725956,
+      "lon": -9.15027,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725822,
+      "lon": -9.14977,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725688,
+      "lon": -9.14927,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725554,
+      "lon": -9.14877,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72542,
+      "lon": -9.14827,
+      "h": 20,
+      "photo": true,
+      "hover": 5,
+      "pitch": -45
+    },
+    {
+      "lat": 38.725554,
+      "lon": -9.14877,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725688,
+      "lon": -9.14927,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725822,
+      "lon": -9.14977,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725956,
+      "lon": -9.15027,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726089,
+      "lon": -9.15077,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726223,
+      "lon": -9.15127,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726357,
+      "lon": -9.15177,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726491,
+      "lon": -9.15227,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726625,
+      "lon": -9.15277,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726759,
+      "lon": -9.15327,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726893,
+      "lon": -9.15377,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727027,
+      "lon": -9.15427,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727161,
+      "lon": -9.15477,
+      "h": 20,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727294,
+      "lon": -9.15527,
+      "h": 38,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727428,
+      "lon": -9.15577,
+      "h": 39,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727562,
+      "lon": -9.15627,
+      "h": 39,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727696,
+      "lon": -9.15677,
+      "h": 37,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    }
+  ]
+}

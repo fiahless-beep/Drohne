@@ -109,6 +109,7 @@ function advance(dt) {
     const vertical = distM(a, b) < 0.5; const v = vertical ? 2.5 : (a.speed || 4);
     sim.t += dt * v / L;
     if (sim.t >= 1) { sim.t = 0; sim.i++; const w = P[sim.i]; sim.hold = w.hold > 0 ? w.hold : 0.3; if (w.yaw != null) sim.yawTarget = w.yaw; sim.pitchTarget = w.pitch ?? -20; }
+    else if (a.yaw != null && b.yaw != null) { sim.yawTarget = angLerp(a.yaw, b.yaw, sim.t); sim.pitchTarget = (a.pitch ?? -20) + ((b.pitch ?? -20) - (a.pitch ?? -20)) * sim.t; }  // zwischen zwei Fotopunkten (Ring): Kamera bleibt auf dem Motiv
     else if (!vertical) { sim.yawTarget = bearing(a, b); sim.pitchTarget = -20; }
   }
   const k = Math.min(1, dt * 1.5);
@@ -119,8 +120,18 @@ function simPose() {
   const P = PLAN.punkte, i = Math.min(sim.i, P.length - 1), a = P[i], b = P[Math.min(i + 1, P.length - 1)], t = sim.t;
   return { lat: a.lat + (b.lat - a.lat) * t, lon: a.lon + (b.lon - a.lon) * t, alt: a.alt + (b.alt - a.alt) * t, yaw: sim.yaw, pitch: sim.pitch, i };
 }
+let droneMark = null;
+function showDrone(q) {
+  if (camMode === 'fpv') { if (droneMark) { droneMark.remove(); droneMark = null; } return; }
+  if (!droneMark) {
+    droneMark = new google.maps.maps3d.Marker3DElement({ altitudeMode: google.maps.maps3d.AltitudeMode.ABSOLUTE, extruded: true, sizePreserved: true });
+    const t = document.createElement('template'); t.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="#2f8cff" fill-opacity=".92" stroke="#fff" stroke-width="2"/><g stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="9" y1="9" x2="25" y2="25"/><line x1="25" y1="9" x2="9" y2="25"/></g><circle cx="9" cy="9" r="3.2" fill="#fff"/><circle cx="25" cy="9" r="3.2" fill="#fff"/><circle cx="9" cy="25" r="3.2" fill="#fff"/><circle cx="25" cy="25" r="3.2" fill="#fff"/></svg>';
+    droneMark.append(t); map.append(droneMark);
+  }
+  droneMark.position = { lat: q.lat, lng: q.lon, altitude: q.alt };
+}
 function applyView() {
-  const q = simPose();
+  const q = simPose(); routeVisible(camMode !== 'fpv'); showDrone(q);
   if (camMode === 'fpv') applyCam(camFrom(q, q.alt, q.yaw, q.pitch, 2));
   else if (camMode === 'chase') { map.center = { lat: q.lat, lng: q.lon, altitude: q.alt + 2 }; map.heading = q.yaw; map.tilt = 62; map.range = 45; }
   else { map.center = { lat: q.lat, lng: q.lon, altitude: q.alt }; map.range = 350; map.tilt = 50; }
@@ -144,10 +155,18 @@ function drawRoute() {
   const { Polyline3DElement, AltitudeMode, Marker3DElement, PinElement } = google.maps;
   const P = PLAN.punkte;
   const ABS = google.maps.maps3d.AltitudeMode.ABSOLUTE;
-  line = new google.maps.maps3d.Polyline3DElement({ altitudeMode: ABS, strokeColor: '#2f8cff', strokeWidth: 5, drawsOccludedSegments: true, extruded: true, outerColor: 'rgba(47,140,255,0.3)', outerWidth: 0.4 });
+  line = new google.maps.maps3d.Polyline3DElement({ altitudeMode: ABS, strokeColor: '#2f8cff', strokeWidth: 4, drawsOccludedSegments: true, extruded: false, outerColor: 'rgba(47,140,255,0.25)', outerWidth: 0.3 });
   line.path = P.map(p => ({ lat: p.lat, lng: p.lon, altitude: p.alt }));
   map.append(line);
-  P.forEach((p, i) => { if (!p.photo && i !== 0) return; const m = new google.maps.maps3d.Marker3DElement({ position: { lat: p.lat, lng: p.lon, altitude: p.alt }, altitudeMode: ABS, label: i === 0 ? 'Start' : String(i), extruded: true }); map.append(m); markers.push(m); });
+  P.forEach((p, i) => { if (!p.photo && i !== 0) return; const m = new google.maps.maps3d.Marker3DElement({ position: { lat: p.lat, lng: p.lon, altitude: p.alt }, altitudeMode: ABS, label: i === 0 ? 'Start' : String(i), extruded: false, sizePreserved: false }); map.append(m); markers.push(m); });
+  routeVisible(true);
+}
+// Drohnensicht: Linie und Marker ausblenden (sie lägen sonst mitten im Bild); Verfolger/Übersicht zeigen sie
+let routeShown = true;
+function routeVisible(v) {
+  if (v === routeShown) return; routeShown = v;
+  if (v) { if (line) map.append(line); markers.forEach(m => map.append(m)); }
+  else { if (line) line.remove(); markers.forEach(m => m.remove()); }
 }
 // Aufruf aus der App (assets/google3d.html?app=1): appStart(plan, key) setzt Plan und Schlüssel, appDrone(...) zeigt die echte Drohne
 const APP = qs.get('app') === '1';
@@ -155,6 +174,7 @@ let drone = null;
 window.appStart = function (plan, key) { PLAN = plan; KEY = key; if (!window.__mapsLoaded) main(); else { try { clearRoute(); drawRoute(); } catch (e) {} } };
 window.appDrone = function (lat, lon, alt, hdg, pitch, flying) {
   if (!map) return; drone = { lat, lon, alt, hdg, pitch: pitch == null ? -20 : pitch, flying };
+  showDrone({ lat, lon, alt });
   if (!flying) return;
   running = false; cancelAnimationFrame(raf);
   if (camMode === 'fpv') applyCam(camFrom(drone, alt, hdg, drone.pitch, 2));
@@ -162,7 +182,7 @@ window.appDrone = function (lat, lon, alt, hdg, pitch, flying) {
   else { map.center = { lat, lng: lon, altitude: alt }; map.range = 350; map.tilt = 50; }
 };
 window.cycleCamera = function () { $('bCam').click(); return camMode === 'top' ? 'orbit' : camMode; };
-function clearRoute() { if (line) line.remove(); line = null; markers.forEach(m => m.remove()); markers = []; }
+function clearRoute() { if (line) line.remove(); line = null; markers.forEach(m => m.remove()); markers = []; routeShown = false; }
 async function main() {
   if (APP && (!PLAN || !KEY)) return;
   if (!KEY) { $('setup').hidden = false; $('setupForm').addEventListener('submit', e => { e.preventDefault(); KEY = $('keyIn').value.trim(); try { localStorage.setItem('google-key', KEY); } catch (x) {} $('setup').hidden = true; main(); }); return; }
@@ -180,9 +200,9 @@ async function main() {
   } catch (e) { window.__state = 'err:' + e.message; $('info').textContent = 'Fehler: ' + e.message; }
 }
 $('bPlay').addEventListener('click', startPreview);
-$('bCam').addEventListener('click', e => { camMode = { fpv: 'chase', chase: 'top', top: 'fpv' }[camMode]; e.currentTarget.textContent = 'Kamera: ' + camName().replace('Drohnensicht', 'Drohne'); showLabel(camName()); });
+$('bCam').addEventListener('click', e => { camMode = { fpv: 'chase', chase: 'top', top: 'fpv' }[camMode]; routeVisible(camMode !== 'fpv'); e.currentTarget.textContent = 'Kamera: ' + camName().replace('Drohnensicht', 'Drohne'); showLabel(camName()); });
 $('bSpeed').addEventListener('click', e => { scale = { 1: 2, 2: 4, 4: 8, 8: 1 }[scale]; e.currentTarget.textContent = scale === 1 ? 'Echtzeit' : scale + '×'; });
-$('bTop').addEventListener('click', () => { running = false; cancelAnimationFrame(raf); const P = PLAN.punkte, home = P[0]; const far = P.reduce((m, p) => Math.max(m, distM(home, p)), 0); const mid = P.reduce((a, p) => ({ lat: a.lat + p.lat / P.length, lon: a.lon + p.lon / P.length }), { lat: 0, lon: 0 }); map.flyCameraTo({ endCamera: { center: { lat: mid.lat, lng: mid.lon, altitude: (PLAN.home.alt || 0) + 5 }, range: Math.max(600, far * 2.4), tilt: 55, heading: 0 }, durationMillis: 2000 }); });
+$('bTop').addEventListener('click', () => { running = false; cancelAnimationFrame(raf); routeVisible(true); const P = PLAN.punkte, home = P[0]; const far = P.reduce((m, p) => Math.max(m, distM(home, p)), 0); const mid = P.reduce((a, p) => ({ lat: a.lat + p.lat / P.length, lon: a.lon + p.lon / P.length }), { lat: 0, lon: 0 }); map.flyCameraTo({ endCamera: { center: { lat: mid.lat, lng: mid.lon, altitude: (PLAN.home.alt || 0) + 5 }, range: Math.max(600, far * 2.4), tilt: 55, heading: 0 }, durationMillis: 2000 }); });
 main();
 </script>
 </body>

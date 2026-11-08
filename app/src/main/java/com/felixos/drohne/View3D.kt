@@ -96,13 +96,16 @@ class View3D(private val web: WebView) {
         val nx = ((xs.max() + m - x0) / step).toInt() + 2; val ny = ((ys.max() + m - y0) / step).toInt() + 2
         if (nx * ny > 40_000) return null
         val cosLat = cos(Math.toRadians(o.lat))
-        val z = JSONArray()
+        val z = JSONArray(); val c = JSONArray()
         for (j in 0 until ny) for (i in 0 until nx) {
             val p = LatLon(o.lat + (y0 + j * step) / 110_540.0, o.lon + (x0 + i * step) / (111_320.0 * cosLat))
             val v = com.felixos.drohne.plan.Terrain.groundM(p)
             z.put(if (v == null) 0.0 else Math.round((v - g0) * 10) / 10.0)
+            // Baumkronen/Hohes je Zelle: Oberfläche − Boden (≥ 3 m); Gebäude stehen als Klötze ohnehin darüber
+            val s = com.felixos.drohne.plan.Terrain.surfaceM(p); val ch = if (v != null && s != null) s - v else 0.0
+            c.put(if (ch >= 3.0) Math.round(ch).toInt() else 0)
         }
-        return JSONObject().put("x0", x0).put("y0", y0).put("dx", step).put("dy", step).put("nx", nx).put("ny", ny).put("z", z)
+        return JSONObject().put("x0", x0).put("y0", y0).put("dx", step).put("dy", step).put("nx", nx).put("ny", ny).put("z", z).put("c", c)
     }
 
 

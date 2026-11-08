@@ -1,0 +1,168 @@
+{
+  "name": "t03-amalia-rodrigues",
+  "beschreibung": "Zuhause → Jardim Amália Rodrigues (oben am Park), so tief wie möglich, bergauf",
+  "speed": 4,
+  "rcLost": "continue",
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.73144,
+    "lon": -9.15519
+  },
+  "waypoints": [
+    {
+      "lat": 38.728191,
+      "lon": -9.157062,
+      "h": 55,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.728552,
+      "lon": -9.156854,
+      "h": 55,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.728913,
+      "lon": -9.156646,
+      "h": 34,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.729274,
+      "lon": -9.156438,
+      "h": 22,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.729635,
+      "lon": -9.15623,
+      "h": 22,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.729996,
+      "lon": -9.156022,
+      "h": 25,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.730357,
+      "lon": -9.155814,
+      "h": 28,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.730718,
+      "lon": -9.155606,
+      "h": 28,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.731079,
+      "lon": -9.155398,
+      "h": 27,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.73144,
+      "lon": -9.15519,
+      "h": 26,
+      "photo": true,
+      "hover": 5,
+      "pitch": -45
+    },
+    {
+      "lat": 38.731079,
+      "lon": -9.155398,
+      "h": 27,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.730718,
+      "lon": -9.155606,
+      "h": 28,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.730357,
+      "lon": -9.155814,
+      "h": 28,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.729996,
+      "lon": -9.156022,
+      "h": 25,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.729635,
+      "lon": -9.15623,
+      "h": 22,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.729274,
+      "lon": -9.156438,
+      "h": 22,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.728913,
+      "lon": -9.156646,
+      "h": 34,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.728552,
+      "lon": -9.156854,
+      "h": 55,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.728191,
+      "lon": -9.157062,
+      "h": 55,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    }
+  ]
+}

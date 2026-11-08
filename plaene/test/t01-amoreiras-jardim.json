@@ -1,0 +1,232 @@
+{
+  "name": "t01-amoreiras-jardim",
+  "beschreibung": "Zuhause → Jardim das Amoreiras (400 m süd), so tief wie möglich, Foto am Ziel, zurück",
+  "speed": 4,
+  "rcLost": "continue",
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.72219,
+    "lon": -9.15631
+  },
+  "waypoints": [
+    {
+      "lat": 38.727427,
+      "lon": -9.157201,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727024,
+      "lon": -9.157133,
+      "h": 35,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726621,
+      "lon": -9.157064,
+      "h": 23,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726219,
+      "lon": -9.156996,
+      "h": 23,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725816,
+      "lon": -9.156927,
+      "h": 31,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725413,
+      "lon": -9.156859,
+      "h": 31,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72501,
+      "lon": -9.15679,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724607,
+      "lon": -9.156721,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724204,
+      "lon": -9.156653,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723801,
+      "lon": -9.156584,
+      "h": 41,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723399,
+      "lon": -9.156516,
+      "h": 25,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.722996,
+      "lon": -9.156447,
+      "h": 25,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.722593,
+      "lon": -9.156379,
+      "h": 25,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72219,
+      "lon": -9.15631,
+      "h": 20,
+      "photo": true,
+      "hover": 5,
+      "pitch": -45
+    },
+    {
+      "lat": 38.722593,
+      "lon": -9.156379,
+      "h": 25,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.722996,
+      "lon": -9.156447,
+      "h": 25,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723399,
+      "lon": -9.156516,
+      "h": 25,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.723801,
+      "lon": -9.156584,
+      "h": 41,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724204,
+      "lon": -9.156653,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.724607,
+      "lon": -9.156721,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.72501,
+      "lon": -9.15679,
+      "h": 45,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725413,
+      "lon": -9.156859,
+      "h": 31,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.725816,
+      "lon": -9.156927,
+      "h": 31,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726219,
+      "lon": -9.156996,
+      "h": 23,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.726621,
+      "lon": -9.157064,
+      "h": 23,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727024,
+      "lon": -9.157133,
+      "h": 35,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    },
+    {
+      "lat": 38.727427,
+      "lon": -9.157201,
+      "h": 36,
+      "photo": false,
+      "hover": 0,
+      "pitch": -20
+    }
+  ]
+}
