@@ -154,6 +154,24 @@ def main(argv):
     route = [[round(w["x"], 1), round(w["y"], 1), w["h"], w["yaw"], w["pitch"], (2 if w["photo"] else 0) + w["hover"], w["speed"]] for w in wps]
     scene = {"b": [dict({"h": h, "p": [[round(x, 1), round(y, 1)] for x, y in poly]}, **({"g": bg[idx]} if bg.get(idx) else {})) for idx, (h, poly, _) in enumerate(bl)], "r": route, "clear": CLEAR, "mar": MARGIN}
     if terr: scene["t"] = terr
+    # Straßen und Parks (OSM, von tools/osm_pack.py), nur im Umkreis der Strecke
+    xs = [w["x"] for w in wps]; ys = [w["y"] for w in wps]; M2 = 350.0
+    bx0, bx1, by0, by1 = min(xs) - M2, max(xs) + M2, min(ys) - M2, max(ys) + M2
+    sp = ROOT / "plaene/daten/strassen-lisboa.geojson"; pp = ROOT / "plaene/daten/parks-lisboa.geojson"
+    if sp.exists():
+        roads = []
+        for ft in json.load(open(sp, encoding="utf-8"))["features"]:
+            pts = [loc.xy(p[1], p[0]) for p in ft["geometry"]["coordinates"]]
+            if any(bx0 <= x <= bx1 and by0 <= y <= by1 for x, y in pts): roads.append([ft["properties"].get("w", 4), [[round(x, 1), round(y, 1)] for x, y in pts]])
+        scene["s"] = roads
+    if pp.exists():
+        parks = []
+        for ft in json.load(open(pp, encoding="utf-8"))["features"]:
+            g = ft["geometry"]; rings = [g["coordinates"][0]] if g["type"] == "Polygon" else [r[0] for r in g["coordinates"]]
+            for r in rings:
+                pts = [loc.xy(p[1], p[0]) for p in r]
+                if any(bx0 <= x <= bx1 and by0 <= y <= by1 for x, y in pts): parks.append([[round(x, 1), round(y, 1)] for x, y in pts])
+        scene["p"] = parks
     # 3D-Code der App übernehmen
     html3d = (ROOT / "app/src/main/assets/view3d.html").read_text(encoding="utf-8")
     js = re.search(r"<script>\n(// Koordinaten.*?)</script>", html3d, re.S).group(1)

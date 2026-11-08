@@ -189,14 +189,26 @@ function groundAt(x, z) {
   const u = fx - i, v = fy - j, z00 = t.z[j * t.nx + i], z10 = t.z[j * t.nx + i + 1], z01 = t.z[(j + 1) * t.nx + i], z11 = t.z[(j + 1) * t.nx + i + 1];
   return (z00 * (1 - u) + z10 * u) * (1 - v) + (z01 * (1 - u) + z11 * u) * v;
 }
-function buildTerrain(t) {
+// Straßen und Parks werden in die Geländetextur gemalt (kein Z-Fighting, läuft über Hänge mit): s = [[Breite m, [[x,y],…]],…], p = [[[x,y],…],…]
+function paintGround(t, roads, parks) {
+  const W = (t.nx - 1) * t.dx, Hh = (t.ny - 1) * t.dy, px = Math.min(2048, Math.max(256, Math.round(Math.max(W, Hh) / 0.8)));
+  const c = document.createElement('canvas'); c.width = Math.round(px * W / Math.max(W, Hh)); c.height = Math.round(px * Hh / Math.max(W, Hh)); const g = c.getContext('2d');
+  const sx = c.width / W, sy = c.height / Hh; const X = x => (x - t.x0) * sx, Y = y => c.height - (y - t.y0) * sy;
+  g.fillStyle = '#c3cad0'; g.fillRect(0, 0, c.width, c.height);
+  g.strokeStyle = 'rgba(70,80,90,0.10)'; g.lineWidth = 1; for (let x = Math.ceil(t.x0 / 50) * 50; x < t.x0 + W; x += 50) { g.beginPath(); g.moveTo(X(x), 0); g.lineTo(X(x), c.height); g.stroke(); } for (let y = Math.ceil(t.y0 / 50) * 50; y < t.y0 + Hh; y += 50) { g.beginPath(); g.moveTo(0, Y(y)); g.lineTo(c.width, Y(y)); g.stroke(); }
+  (parks || []).forEach(poly => { g.fillStyle = '#b9d3a6'; g.beginPath(); poly.forEach((q, i) => i ? g.lineTo(X(q[0]), Y(q[1])) : g.moveTo(X(q[0]), Y(q[1]))); g.closePath(); g.fill(); });
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  [[1, '#f2f4f6', 0], [0, '#ffffff', 0]].forEach(([pass, col, extra]) => (roads || []).forEach(([w, pts]) => { if (pts.length < 2) return; g.strokeStyle = pass ? 'rgba(120,130,140,0.55)' : col; g.lineWidth = Math.max(1.5, (w + (pass ? 1.5 : 0)) * sx); g.beginPath(); pts.forEach((q, i) => i ? g.lineTo(X(q[0]), Y(q[1])) : g.moveTo(X(q[0]), Y(q[1]))); g.stroke(); }));
+  const tex = new THREE.CanvasTexture(c); tex.anisotropy = 4; return tex;
+}
+function buildTerrain(t, roads, parks) {
   if (terrainMesh) { scene.remove(terrainMesh); terrainMesh.geometry.dispose(); terrainMesh = null; }
   terrain = t || null; if (!t) { groundPlane.position.y = 0; return; }
   const geo = new THREE.PlaneGeometry((t.nx - 1) * t.dx, (t.ny - 1) * t.dy, t.nx - 1, t.ny - 1); geo.rotateX(-Math.PI / 2);
   const pos = geo.attributes.position; let mn = 1e9;
   for (let j = 0; j < t.ny; j++) for (let i = 0; i < t.nx; i++) { const k = j * t.nx + i; const z = t.z[(t.ny - 1 - j) * t.nx + i]; pos.setY(k, z); mn = Math.min(mn, z); }
   geo.computeVertexNormals();
-  const tex = groundPlane.material.map;
+  const tex = (roads && roads.length) || (parks && parks.length) ? paintGround(t, roads, parks) : groundPlane.material.map;
   terrainMesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0xffffff, map: tex })); terrainMesh.receiveShadow = true;
   terrainMesh.position.set(t.x0 + (t.nx - 1) * t.dx / 2, 0, -(t.y0 + (t.ny - 1) * t.dy / 2)); scene.add(terrainMesh);
   groundPlane.position.y = mn - 1;
@@ -239,7 +251,9 @@ function setScene(D) {
   buildings.forEach(o => scene.remove(o)); buildings = []; routeObjs.forEach(o => scene.remove(o)); routeObjs = []; markers = []; passed = 0;
   routeInfo = (D.r || []).map(p => ({ pos: new THREE.Vector3(p[0], p[2], -p[1]), yaw: p[3] == null ? null : THREE.MathUtils.degToRad(p[3]), pitch: p[4] == null ? -20 : p[4], hold: p[5] || 0, speed: p[6] || 5 }));
   const route = routeInfo.map(r => r.pos);
-  buildTerrain(D.t);
+  let T = D.t;
+  if (!T && ((D.s && D.s.length) || (D.p && D.p.length))) { const all = [].concat(...(D.s || []).map(r => r[1]), ...(D.p || []), (D.r || []).map(p => [p[0], p[1]])); const xs = all.map(q => q[0]), ys = all.map(q => q[1]); const x0 = Math.min(...xs) - 50, y0 = Math.min(...ys) - 50, nx = 2, ny = 2; T = { x0, y0, dx: Math.max(...xs) + 50 - x0, dy: Math.max(...ys) + 50 - y0, nx, ny, z: [0, 0, 0, 0] }; }
+  buildTerrain(T, D.s, D.p);
   const roofMat = new THREE.MeshLambertMaterial({ color: 0xcfc9c0 }), wallMat = new THREE.MeshLambertMaterial({ color: 0xffffff, map: wallTex });
   const roofWarn = new THREE.MeshLambertMaterial({ color: 0xe0823a }), wallWarn = new THREE.MeshLambertMaterial({ color: 0xf0a060, map: wallTex });
   const gOk = [], gWarn = [], eOk = [], eWarn = [];
