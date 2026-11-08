@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pfeil für die Drohne auf der Karte; Spitze = Nase (wird nach Kurs gedreht). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp" android:height="36dp" android:viewportWidth="36" android:viewportHeight="36">
+    <path android:fillColor="#000000" android:fillAlpha="0.5" android:pathData="M18,3 L31,31 L18,24 L5,31 Z" android:strokeWidth="0"/>
+    <path android:fillColor="#FFB300" android:pathData="M18,4 L29,29 L18,23 L7,29 Z" android:strokeColor="#000000" android:strokeWidth="1.5"/>
+</vector>

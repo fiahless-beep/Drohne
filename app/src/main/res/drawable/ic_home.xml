@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Startpunkt (Home) auf der Karte -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="30dp" android:height="30dp" android:viewportWidth="30" android:viewportHeight="30">
+    <path android:fillColor="#22C55E" android:strokeColor="#000000" android:strokeWidth="1.5"
+        android:pathData="M15,3 L27,13 L23,13 L23,26 L17,26 L17,18 L13,18 L13,26 L7,26 L7,13 L3,13 Z"/>
+</vector>

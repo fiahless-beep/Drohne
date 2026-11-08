@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dunkle, kontrastreiche Farben für draußen in der Sonne. Statusfarben sind kräftig, Text fast weiß. -->
+<resources>
+    <color name="bg">#0B0F14</color>
+    <color name="surface">#1A232C</color>
+    <color name="surface2">#27333E</color>
+    <color name="line">#3A4854</color>
+    <color name="text">#F5F7FA</color>
+    <color name="textMuted">#AEBAC6</color>
+    <color name="textDim">#7E8B97</color>
+
+    <color name="ok">#22C55E</color>
+    <color name="warn">#FFB300</color>
+    <color name="bad">#EF4444</color>
+    <color name="neutral">#4B5B69</color>
+    <color name="accent">#2F80ED</color>
+    <color name="go">#1E9E4A</color>
+    <color name="stop">#D32F2F</color>
+    <color name="overlayScrim">#B3000000</color>
+</resources>

@@ -38,6 +38,10 @@ object MissionController {
     var onStateText: ((String) -> Unit)? = null
     private var stateText = ""
     @Volatile var executing = false; private set
+    /** Nur Anzeige: letzter von DJI gemeldeter Ausführungszustand. */
+    @Volatile var executeState: WaypointMissionExecuteState? = null; private set
+    /** Nur Anzeige: Index des aktuellen Wegpunkts in [currentMission] (0-basiert), -1 = keiner gemeldet. */
+    @Volatile var currentWaypointIndex = -1; private set
     private fun show(text: String) { stateText = text; onStateText?.invoke(text) }
 
     fun init(context: Context) {
@@ -54,6 +58,8 @@ object MissionController {
             override fun onMissionStateUpdate(state: WaypointMissionExecuteState?) {
                 if (state == last) return
                 last = state
+                executeState = state
+                if (state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE) { if (currentWaypointIndex < 0) currentWaypointIndex = 0 } else if (state != WaypointMissionExecuteState.RECOVERING) currentWaypointIndex = -1
                 executing = state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE
                 DroneManager.log("Mission: $state")
                 val m = currentMission
@@ -77,6 +83,7 @@ object MissionController {
             override fun onWaylineExecutingInfoUpdate(info: WaylineExecutingInfo?) {
                 info?.let {
                     DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}")
+                    currentWaypointIndex = it.currentWaypointIndex
                     val n = currentMission?.waypoints?.size
                     show("▶ ${currentMission?.name ?: missionId}: Wegpunkt ${it.currentWaypointIndex + 1}" + (n?.let { c -> " von $c" } ?: ""))
                 }

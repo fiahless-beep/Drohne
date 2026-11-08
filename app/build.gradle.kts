@@ -93,6 +93,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    // Kleine Karte (OpenStreetMap-Kacheln): Drohne, Startpunkt, Wegpunkte, Handy
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20231013")
 }
