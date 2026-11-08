@@ -1,0 +1,8 @@
+{
+  "name": "kreis-poco-do-bispo-30m",
+  "beschreibung": "Sicherer Testplan (Tageslicht): Kreis um den Kreisverkehr am Hafenbecken Poço do Bispo, 30 m hoch, Radius 20 m, 6 Fotos auf die Mitte. Start aus der Nähe (max. 200 m). Nichts in der Nähe ist höher als 15 m.",
+  "speed": 3,
+  "rcLost": "continue",
+  "ziel": { "lat": 38.74002, "lon": -9.09930, "h": 0 },
+  "kreis": { "radius": 20, "h": 30, "punkte": 12, "fotos": 6, "start": 180, "uhrzeigersinn": true }
+}

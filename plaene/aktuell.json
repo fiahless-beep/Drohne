@@ -1,8 +1,89 @@
 {
-  "name": "kreis-poco-do-bispo-30m",
-  "beschreibung": "Sicherer Testplan (Tageslicht): Kreis um den Kreisverkehr am Hafenbecken Poço do Bispo, 30 m hoch, Radius 20 m, 6 Fotos auf die Mitte. Start aus der Nähe (max. 200 m). Nichts in der Nähe ist höher als 15 m.",
-  "speed": 3,
+  "name": "rodrigo-da-fonseca-valenciana",
+  "beschreibung": "Simulation: von der Rua Rodrigo da Fonseca 190 zur Churrasqueira A Valenciana (Rua Marquês de Fronteira 157) und zurück, 60 m hoch (auf der Linie steht ein 36-m-Haus auf 7 m höherem Gelände), vor dem Restaurant Foto und 5 s Schweben.",
+  "speed": 5,
   "rcLost": "continue",
-  "ziel": { "lat": 38.74002, "lon": -9.09930, "h": 0 },
-  "kreis": { "radius": 20, "h": 30, "punkte": 12, "fotos": 6, "start": 180, "uhrzeigersinn": true }
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  },
+  "ziel": {
+    "lat": 38.72753,
+    "lon": -9.1619,
+    "h": 10
+  },
+  "waypoints": [
+    {
+      "lat": 38.72777,
+      "lon": -9.158196,
+      "h": 60.0,
+      "photo": false,
+      "hover": 0,
+      "pitch": -90
+    },
+    {
+      "lat": 38.72771,
+      "lon": -9.159122,
+      "h": 60.0,
+      "photo": false,
+      "hover": 0,
+      "pitch": -90
+    },
+    {
+      "lat": 38.72765,
+      "lon": -9.160048,
+      "h": 60.0,
+      "photo": false,
+      "hover": 0,
+      "pitch": -90
+    },
+    {
+      "lat": 38.72759,
+      "lon": -9.160974,
+      "h": 60.0,
+      "photo": false,
+      "hover": 0,
+      "pitch": -90
+    },
+    {
+      "lat": 38.72753,
+      "lon": -9.1619,
+      "h": 60.0,
+      "photo": true,
+      "hover": 5,
+      "pitch": -60
+    },
+    {
+      "lat": 38.72759,
+      "lon": -9.160974,
+      "h": 60.0,
+      "photo": false,
+      "hover": 0,
+      "pitch": -90
+    },
+    {
+      "lat": 38.72765,
+      "lon": -9.160048,
+      "h": 60.0,
+      "photo": false,
+      "hover": 0,
+      "pitch": -90
+    },
+    {
+      "lat": 38.72771,
+      "lon": -9.159122,
+      "h": 60.0,
+      "photo": false,
+      "hover": 0,
+      "pitch": -90
+    },
+    {
+      "lat": 38.72777,
+      "lon": -9.158196,
+      "h": 60.0,
+      "photo": false,
+      "hover": 0,
+      "pitch": -90
+    }
+  ]
 }
