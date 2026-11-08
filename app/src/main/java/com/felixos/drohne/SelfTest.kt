@@ -194,8 +194,11 @@ object SelfTest {
         f.get<String>("rcFw")?.let { add("Gerät", "Firmware Fernbedienung", it, Level.OK) }
         val link = f.get<Int>("link"); val up = f.get<Int>("up"); val down = f.get<Int>("down")
         if (link != null || up != null || down != null) {
-            val q = listOfNotNull(link, up, down).minOrNull() ?: 0
-            add("Gerät", "Funkverbindung", "Qualität ${link ?: "?"}  (↑${up ?: "?"} ↓${down ?: "?"})", if (q >= 60) Level.OK else if (q >= 30) Level.WARN else Level.ERROR)
+            // KeyLinkSignalQuality zählt 0–5 (5 = beste), Up/Down-Link in Prozent (Felix' Screenshot 8.11.: „Qualität 5 ↑100 ↓100“).
+            val pct = listOfNotNull(up, down).minOrNull()
+            val bars = link
+            val l = when { bars != null && bars <= 1 -> Level.ERROR; bars != null && bars == 2 -> Level.WARN; pct != null && pct < 30 -> Level.ERROR; pct != null && pct < 60 -> Level.WARN; else -> Level.OK }
+            add("Gerät", "Funkverbindung", "${bars?.let { "$it/5 Balken" } ?: ""}${if (bars != null && pct != null) ", " else ""}${pct?.let { "↑${up ?: "?"} % ↓${down ?: "?"} %" } ?: ""}", l)
         } else unk("Gerät", "Funkverbindung", "link")
 
         // --- IMU
@@ -237,14 +240,16 @@ object SelfTest {
         }
 
         // --- Kompass
-        val comps = f.get<List<*>>("compass")
+        val comps0 = f.get<List<*>>("compass")?.map { it as dji.sdk.keyvalue.value.flightcontroller.CompassState }
+        // Mini 4 Pro hat einen Kompass; das SDK liefert Platzhalter (Index 1, 2: DISCONNECTED, Wert −1) → nicht bewerten.
+        val comps = comps0?.filterNot { (it.compassSensorState == CompassSensorState.DISCONNECTED || it.compassSensorState == CompassSensorState.UNKNOWN) && (it.compassSensorValue ?: -1) < 0 && (it.index ?: 0) > 0 }
         if (comps != null && comps.isNotEmpty()) {
-            for (c in comps) {
-                val s = c as dji.sdk.keyvalue.value.flightcontroller.CompassState
+            for (s in comps) {
                 val st = s.compassSensorState ?: CompassSensorState.UNKNOWN
                 add("Kompass", "Sensor${if (comps.size > 1) " ${s.index}" else ""}", compassText(st) + (s.compassSensorValue?.let { "  Wert $it" } ?: ""), compassLevel(st), compassAdvice(st))
             }
-        } else unk("Kompass", "Sensor", "compass")
+        } else if (comps0 != null && comps0.isNotEmpty()) add("Kompass", "Sensor", "alle gemeldeten Kompasse getrennt", Level.ERROR, "Nach dem Absturz nicht fliegen – DJI-Service.")
+        else unk("Kompass", "Sensor", "compass")
         f.get<Boolean>("compassErr")?.let { if (it) add("Kompass", "Fehlerbit", "gesetzt", Level.ERROR, "Weg von Metall/Beton; Kompass in DJI Fly kalibrieren.") }
         f.get<FCConfigCompassCheckStatus>("compassCheck")?.let {
             val (l, a) = when (it) {
@@ -309,8 +314,8 @@ object SelfTest {
         f.get<CameraSDCardState>("sd")?.let {
             val free = f.get<Int>("sdFree")?.let { mb -> "  %.1f GB frei".format(mb / 1024.0) } ?: ""
             val l = when (it) { CameraSDCardState.NORMAL -> Level.OK; CameraSDCardState.NOT_INSERTED, CameraSDCardState.FULL, CameraSDCardState.INVALID, CameraSDCardState.READ_ONLY, CameraSDCardState.UNKNOWN_ERROR, CameraSDCardState.INVALID_FILE_SYSTEM -> Level.ERROR
-                CameraSDCardState.FORMAT_NEEDED, CameraSDCardState.FORMAT_RECOMMENDED, CameraSDCardState.SLOW, CameraSDCardState.WRITING_SLOWLY -> Level.WARN; else -> Level.INFO }
-            add("Kamera", "Speicherkarte", it.name.lowercase().replace('_', ' ') + free, l, if (l == Level.ERROR) "Karte prüfen/einsetzen – ohne Karte keine Fotos." else null)
+                CameraSDCardState.FORMAT_NEEDED, CameraSDCardState.FORMAT_RECOMMENDED -> Level.WARN; CameraSDCardState.SLOW, CameraSDCardState.WRITING_SLOWLY -> Level.INFO; else -> Level.INFO }
+            add("Kamera", "Speicherkarte", it.name.lowercase().replace('_', ' ') + free, l, when { l == Level.ERROR -> "Karte prüfen/einsetzen – ohne Karte keine Fotos."; it == CameraSDCardState.SLOW || it == CameraSDCardState.WRITING_SLOWLY -> "Für Fotos ok; für 4K-Video eine U3/V30-Karte."; else -> null })
         }
 
         // --- Akku
@@ -325,7 +330,7 @@ object SelfTest {
         if (f.get<Boolean>("batDmg") == true) add("Akku", "Zelle beschädigt", "JA", Level.ERROR, "Akku nicht mehr benutzen.")
         if (f.get<Boolean>("batLowCell") == true) add("Akku", "Zellspannung niedrig", "ja", Level.WARN, "Voll laden.")
         if (f.get<Boolean>("batDiff") == true) add("Akku", "Spannungsdifferenz", "erkannt", Level.WARN)
-        val cyc = f.get<Int>("batCycles"); val life = f.get<Int>("batLife")
+        val cyc = f.get<Int>("batCycles")?.takeIf { it > 0 }; val life = f.get<Int>("batLife")?.takeIf { it > 0 }  // Mini-Akku liefert hier 0/0 = unbekannt
         if (cyc != null || life != null) add("Akku", "Zustand", listOfNotNull(cyc?.let { "$it Ladezyklen" }, life?.let { "$it % Lebensdauer" }).joinToString(", "), if ((life ?: 100) >= 60) Level.OK else Level.WARN)
         f.get<String>("batSn")?.takeIf { it.isNotBlank() }?.let { add("Akku", "Seriennummer", it, Level.OK) }
 
@@ -349,11 +354,12 @@ object SelfTest {
         IMUSensorState.CALIBRATION_FAILED -> "Kalibrierung FEHLGESCHLAGEN"; IMUSensorState.DATA_EXCEPTION -> "DATENFEHLER"; IMUSensorState.DISCONNECTED -> "GETRENNT"; else -> "?"
     }
     private fun imuLevel(s: IMUSensorState) = when (s) {
-        IMUSensorState.NORMAL_BIAS -> Level.OK; IMUSensorState.MEDIUM_BIAS -> Level.WARN; IMUSensorState.WARMING_UP, IMUSensorState.IN_MOTION, IMUSensorState.CALIBRATING -> Level.INFO
+        IMUSensorState.NORMAL_BIAS -> Level.OK; IMUSensorState.MEDIUM_BIAS -> Level.INFO; IMUSensorState.WARMING_UP, IMUSensorState.IN_MOTION, IMUSensorState.CALIBRATING -> Level.INFO
         IMUSensorState.UNKNOWN -> Level.UNKNOWN; else -> Level.ERROR
     }
     private fun imuAdvice(s: IMUSensorState) = when (s) {
-        IMUSensorState.MEDIUM_BIAS, IMUSensorState.LARGE_BIAS, IMUSensorState.CALIBRATION_FAILED -> "IMU in DJI Fly kalibrieren (Drohne kalt, auf ebener Fläche)."
+        IMUSensorState.MEDIUM_BIAS -> "Gelegentlich IMU in DJI Fly kalibrieren (Drohne kalt, ebene Fläche); fliegen ist ok."
+        IMUSensorState.LARGE_BIAS, IMUSensorState.CALIBRATION_FAILED -> "IMU in DJI Fly kalibrieren (Drohne kalt, auf ebener Fläche), vorher nicht fliegen."
         IMUSensorState.DATA_EXCEPTION, IMUSensorState.DISCONNECTED -> "Nach dem Absturz nicht fliegen – DJI-Service."
         else -> null
     }
