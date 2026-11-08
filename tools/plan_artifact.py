@@ -66,7 +66,7 @@ def main(argv):
     home = (start["lat"], start["lon"]) if start else (wps0[0]["lat"], wps0[0]["lon"])
     loc = Local(*home)
     # Wie MissionController.prepare: Transit senkrecht über dem Start, Abstieg erst über dem Ziel, Rückweg oben
-    transit = max(TRANSIT, max(w["h"] for w in wps0))
+    transit = max(TRANSIT, plan["transitHoehe"]) if plan.get("transitHoehe") is not None else max(TRANSIT, max(w["h"] for w in wps0))  # Plan mit korridorgeprüften Höhen: Transit nur so hoch wie der erste Punkt
     def W(lat, lon, h, **k): return dict(lat=lat, lon=lon, h=h, photo=k.get("photo", False), hover=k.get("hover", 0), pitch=k.get("pitch", -20), yaw=k.get("yaw"), kind=k.get("kind", "plan"))
     def beside(p, towards):
         d = math.hypot(towards[0] - p[0], towards[1] - p[1]) or 1; return (p[0] + (towards[0] - p[0]) / d * 1.5, p[1] + (towards[1] - p[1]) / d * 1.5)
