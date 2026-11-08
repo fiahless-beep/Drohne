@@ -1,0 +1,38 @@
+{
+  "name": "foto-rodrigo-da-fonseca-190",
+  "beschreibung": "Gebäudefoto Rua Rodrigo da Fonseca: Gebäude 28 m hoch, Front 16 m, Straße 20 m breit. Drei Fotos aus der Straßenmitte in 32 m Höhe (höchstes Nachbarhaus 28 m, Regel +3 m bzw. +8 m bei <8 m Abstand), Kamera auf die Fassadenmitte. Gelände am Ziel +0 m gegenüber Start.",
+  "speed": 4,
+  "rcLost": "continue",
+  "ziel": {
+    "lat": 38.727754,
+    "lon": -9.157357,
+    "h": 14.0
+  },
+  "waypoints": [
+    {
+      "lat": 38.727791,
+      "lon": -9.15753,
+      "h": 32,
+      "photo": true,
+      "hover": 2
+    },
+    {
+      "lat": 38.727702,
+      "lon": -9.157451,
+      "h": 32,
+      "photo": true,
+      "hover": 2
+    },
+    {
+      "lat": 38.727613,
+      "lon": -9.157372,
+      "h": 32,
+      "photo": true,
+      "hover": 2
+    }
+  ],
+  "start": {
+    "lat": 38.72783,
+    "lon": -9.15727
+  }
+}
