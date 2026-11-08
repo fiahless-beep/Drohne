@@ -41,6 +41,8 @@ data class Mission(
     val openArea: Boolean = false,
     /** Startpunkt, für den der Plan geprüft wurde; weicht der echte Startpunkt mehr als 50 m ab, verweigert die App den Start. */
     val plannedStart: LatLon? = null,
+    /** Transithöhe aus dem Plan (Pläne mit korridorgeprüften Höhen, z. B. plan_objekt.py): sonst steigt der Transit auf die höchste Planhöhe. */
+    val transitHeightM: Double? = null,
 ) {
     init {
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }

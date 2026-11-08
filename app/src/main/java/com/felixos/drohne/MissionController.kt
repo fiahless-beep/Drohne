@@ -163,7 +163,7 @@ object MissionController {
         // Absturz 7.11.: die Drohne steigt beim Start nur bis zur Höhe des ersten Punkts und fliegt dann gerade.
         // Deshalb: erster Punkt = senkrecht über dem Startpunkt auf Transithöhe (unabhängig von takeOffSecurityHeight),
         // dann über den ersten Missionspunkt, dort absteigen; am Ende wieder hoch und über den Startpunkt (Heimflug = nur Abstieg).
-        val transit = maxOf(TRANSIT_HEIGHT_M, m0.waypoints.maxOf { it.heightM })
+        val transit = maxOf(TRANSIT_HEIGHT_M, m0.transitHeightM ?: m0.waypoints.maxOf { it.heightM })  // Plan darf eine eigene Transithöhe setzen (Hügelziele: nicht auf die höchste Planhöhe steigen)
         val m1 = if (m0.waypoints.size <= 196) {
             val first = m0.waypoints.first(); val last = m0.waypoints.last()
             // Übereinanderliegende Punkte 1,5 m versetzen (DJI mag keine Punkte ohne waagerechten Abstand).
