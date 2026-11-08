@@ -51,6 +51,8 @@ data class DroneState(
     val heightLimitM: Int? = null,
     /** Windwarnung der Drohne: 0 = keine, 1 = mäßig, 2 = stark. */
     val windWarning: Int? = null,
+    /** Kameraneigung (Gimbal) in Grad, −90 = senkrecht nach unten; null = unbekannt (nur Simulation gesetzt). */
+    val gimbalPitchDeg: Double? = null,
 ) {
     val sensorsOk: Boolean get() = sensors == "aktiv"
 }

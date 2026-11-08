@@ -54,7 +54,7 @@ class View3D(private val web: WebView) {
             b.put(JSONObject().put("h", ob.heightM).put("p", poly))
         }
         val r = JSONArray()
-        m?.waypoints?.forEach { w -> val (x, y) = local(w.pos); r.put(JSONArray().put(Math.round(x * 10) / 10.0).put(Math.round(y * 10) / 10.0).put(w.heightM)) }
+        m?.waypoints?.forEach { w -> val (x, y) = local(w.pos); r.put(JSONArray().put(Math.round(x * 10) / 10.0).put(Math.round(y * 10) / 10.0).put(w.heightM).put(w.headingDeg ?: JSONObject.NULL).put(w.gimbalPitchDeg).put((if (w.takePhoto) 2 else 0) + w.hoverSec)) }
         val scene = JSONObject().put("b", b).put("r", r).put("clear", Obstacles.CLEARANCE_M).put("mar", Obstacles.MARGIN_M).toString()
         if (ready) js("setScene($scene)") else pendingScene = scene
     }
@@ -71,11 +71,11 @@ class View3D(private val web: WebView) {
         lastDroneMs = now
         if (origin == null) origin = LatLon(loc.latitude, loc.longitude)
         val (x, y) = local(LatLon(loc.latitude, loc.longitude))
-        js("setDrone(${"%.1f".format(java.util.Locale.US, x)}, ${"%.1f".format(java.util.Locale.US, loc.altitude ?: 0.0)}, ${"%.1f".format(java.util.Locale.US, y)}, ${(s.headingDeg ?: 0.0).toInt()})")
+        js("setDrone(${"%.1f".format(java.util.Locale.US, x)}, ${"%.1f".format(java.util.Locale.US, loc.altitude ?: 0.0)}, ${"%.1f".format(java.util.Locale.US, y)}, ${(s.headingDeg ?: 0.0).toInt()}, ${s.gimbalPitchDeg?.toInt() ?: "null"})")
     }
 
     fun follow(on: Boolean) = js("setFollow($on)")
 
-    /** Kameramodus wechseln (Verfolgen ↔ Übersicht); [onMode] bekommt "chase" oder "orbit". */
-    fun toggleCamera(onMode: (String) -> Unit) { if (ready) web.evaluateJavascript("toggleCamera()") { r -> onMode(r?.trim('"') ?: "chase") } }
+    /** Kamera weiterschalten: Drohnensicht → Verfolger → Übersicht; [onMode] bekommt "fpv", "chase" oder "orbit". */
+    fun cycleCamera(onMode: (String) -> Unit) { if (ready) web.evaluateJavascript("cycleCamera()") { r -> onMode(r?.trim('"') ?: "fpv") } }
 }

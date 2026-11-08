@@ -21,7 +21,7 @@ import kotlin.math.min
 object Simulator {
     @Volatile var active = false; private set
     /** Zeitraffer (1 = Echtzeit). */
-    @Volatile var timeScale = 1.0
+    @Volatile var timeScale = 4.0
 
     private val main = Handler(Looper.getMainLooper())
     private const val TICK_MS = 100L
@@ -33,6 +33,7 @@ object Simulator {
     private var pos: LatLon? = null
     private var alt = 0.0
     private var heading = 0.0
+    private var gimbal = -20.0
     private var battery = 100.0
 
     // Flug
@@ -42,6 +43,8 @@ object Simulator {
     private var speeds: List<Double> = emptyList()               // Tempo ab Punkt i
     private var holdSec: List<Double> = emptyList()              // Aufenthalt an Punkt i (Foto/Schweben)
     private var photo: List<Boolean> = emptyList()
+    private var yaws: List<Double?> = emptyList()
+    private var pitches: List<Double> = emptyList()
     private var seg = 0            // aktueller Abschnitt seg → seg+1
     private var holdLeft = 0.0
     private var paused = false
@@ -51,7 +54,7 @@ object Simulator {
     /** Simulation einschalten; [at] = Startpunkt (Handyposition oder geplanter Start), null = später beim Plan setzen. */
     fun start(at: LatLon?) {
         active = true
-        timeScale = 1.0
+        timeScale = 4.0
         battery = 100.0
         setHome(at)
         DroneManager.log("SIMULATION an" + (at?.let { String.format(java.util.Locale.US, " – Startpunkt %.5f, %.5f", it.lat, it.lon) } ?: " – Startpunkt kommt mit dem Plan"))
@@ -83,7 +86,7 @@ object Simulator {
             productType = "Simulation", batteryPercent = battery.toInt(), satellites = 16,
             location = p?.let { LocationCoordinate3D(it.lat, it.lon, alt) },
             home = h?.let { LocationCoordinate2D(it.lat, it.lon) },
-            headingDeg = heading, flying = flying, motorsOn = flying, landing = phase == Phase.LAND,
+            headingDeg = heading, gimbalPitchDeg = gimbal, flying = flying, motorsOn = flying, landing = phase == Phase.LAND,
             sensors = "aktiv", heightLimitM = 120, windWarning = 0,
         ))
     }
@@ -100,6 +103,8 @@ object Simulator {
         speeds = m.waypoints.map { it.speedMs ?: m.speedMs }
         holdSec = m.waypoints.map { (if (it.takePhoto) PHOTO_SEC else 0.0) + it.hoverSec }
         photo = m.waypoints.map { it.takePhoto }
+        yaws = m.waypoints.map { it.headingDeg }
+        pitches = m.waypoints.map { it.gimbalPitchDeg }
         pos = h; alt = 0.0; seg = 0; paused = false
         phase = Phase.TAKEOFF
         MissionController.simulatedState(WaypointMissionExecuteState.ENTER_WAYLINE, -1)
@@ -170,6 +175,9 @@ object Simulator {
 
     private fun arrive(i: Int) {
         val hold = holdSec.getOrElse(i) { 0.0 }
+        // Am Punkt: Nase in die geplante Blickrichtung drehen, Gimbal auf die geplante Neigung
+        yaws.getOrNull(i)?.let { heading = it }
+        pitches.getOrNull(i)?.let { gimbal = it }
         if (photo.getOrElse(i) { false }) DroneManager.log("Simulation: Foto an Punkt ${i + 1}")
         if (hold > 0) { holdLeft = hold; phase = Phase.HOLD }
     }
@@ -190,7 +198,7 @@ object Simulator {
         val total = max(dist / max(speed, 0.1), abs(dAlt) / vClimb)
         if (total <= dt) { pos = target; alt = targetAlt; return true }
         val f = dt / total
-        if (dist > 0.01) { heading = Geo.bearing(p, target); pos = Geo.offset(p, dist * f, heading) }
+        if (dist > 0.01) { heading = Geo.bearing(p, target); pos = Geo.offset(p, dist * f, heading); gimbal = -20.0 }
         alt += dAlt * f
         return false
     }

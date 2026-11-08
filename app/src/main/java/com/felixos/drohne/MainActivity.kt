@@ -71,9 +71,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var video: SurfaceView
     private lateinit var mapView: org.osmdroid.views.MapView
     private lateinit var mapPanel: MapPanel
-    private lateinit var btnMap: ImageView
-    private lateinit var btnVideo: ImageView
-    private lateinit var btn3d: ImageView
+    private lateinit var btnView: ImageView
     private lateinit var view3d: View3D
     private lateinit var btnCenter: ImageView
     private lateinit var videoHint: TextView
@@ -122,10 +120,8 @@ class MainActivity : AppCompatActivity() {
         setupVideo(video)
         mapPanel = MapPanel(mapView)
         view3d.init()
-        btnMap.setOnClickListener { chooseView(Mode.MAP, byUser = true) }
-        btnVideo.setOnClickListener { chooseView(Mode.VIDEO, byUser = true) }
-        btn3d.setOnClickListener { chooseView(Mode.THREE, byUser = true) }
-        btnCenter.setOnClickListener { if (mode == Mode.THREE) view3d.toggleCamera { android.widget.Toast.makeText(this, if (it == "chase") "Kamera folgt der Drohne" else "Übersicht", android.widget.Toast.LENGTH_SHORT).show() } else mapPanel.fit() }
+        btnView.setOnClickListener { chooseView(when (mode) { Mode.MAP -> Mode.VIDEO; Mode.VIDEO -> Mode.THREE; Mode.THREE -> Mode.MAP }, byUser = true) }
+        btnCenter.setOnClickListener { if (mode == Mode.THREE) view3d.cycleCamera {} else mapPanel.fit() }
         findViewById<View>(R.id.btnLog).setOnClickListener { showLog() }
         findViewById<View>(R.id.btnLog).setOnLongClickListener { copyLog(); true }
         findViewById<View>(R.id.btnMore).setOnClickListener { showMore() }
@@ -170,7 +166,7 @@ class MainActivity : AppCompatActivity() {
         linkDot = findViewById(R.id.linkDot); linkText = findViewById(R.id.linkText); phase = findViewById(R.id.phase)
         chipGps = findViewById(R.id.chipGps); chipBattery = findViewById(R.id.chipBattery); chipSensors = findViewById(R.id.chipSensors); chipWind = findViewById(R.id.chipWind)
         video = findViewById(R.id.video); mapView = findViewById(R.id.map)
-        btnMap = findViewById(R.id.btnMap); btnVideo = findViewById(R.id.btnVideo); btn3d = findViewById(R.id.btn3d); btnCenter = findViewById(R.id.btnCenter)
+        btnView = findViewById(R.id.btnView); btnCenter = findViewById(R.id.btnCenter)
         view3d = View3D(findViewById(R.id.view3d))
         videoHint = findViewById(R.id.videoHint); telemetry = findViewById(R.id.telemetry)
         planName = findViewById(R.id.planName); planMeta = findViewById(R.id.planMeta); progress = findViewById(R.id.progress); nextAction = findViewById(R.id.nextAction)
@@ -232,10 +228,12 @@ class MainActivity : AppCompatActivity() {
     private fun chooseView(m: Mode, byUser: Boolean) {
         if (byUser) userMode = m
         mode = m
-        btnMap.isSelected = m == Mode.MAP; btnVideo.isSelected = m == Mode.VIDEO; btn3d.isSelected = m == Mode.THREE
+        btnView.setImageResource(when (m) { Mode.MAP -> R.drawable.ic_map; Mode.VIDEO -> R.drawable.ic_video; Mode.THREE -> R.drawable.ic_cube })
+        btnView.isSelected = true
         mapView.visibility = if (m == Mode.MAP) View.VISIBLE else View.GONE
         findViewById<View>(R.id.view3d).visibility = if (m == Mode.THREE) View.VISIBLE else View.GONE
         btnCenter.visibility = if (m == Mode.VIDEO) View.INVISIBLE else View.VISIBLE
+        btnCenter.contentDescription = if (m == Mode.THREE) "Kamera wechseln" else "Karte einpassen"
         // GONE zerstört die Bildfläche; beim Zurückschalten meldet surfaceChanged das Livebild neu an.
         video.visibility = if (m == Mode.VIDEO) View.VISIBLE else View.GONE
         videoHint.visibility = if (m == Mode.VIDEO) View.VISIBLE else View.GONE
@@ -552,7 +550,7 @@ class MainActivity : AppCompatActivity() {
         val swap = FollowController.swapAxes(this)
         val items = arrayOf(
             if (Simulator.active) "Simulation beenden" else "Simulation starten (ohne Drohne)",
-            "Simulation: Zeitraffer ${if (Simulator.timeScale > 1) "aus" else "5×"}",
+            "Simulation: ${if (Simulator.timeScale > 1) "Echtzeit (jetzt ${Simulator.timeScale.toInt()}×)" else "Zeitraffer 4×"}",
             "Plan in Google Maps zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
             "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})",
             "Bildwächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})",
@@ -560,7 +558,7 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which - 2) {
                 -2 -> toggleSimulation()
-                -1 -> { Simulator.timeScale = if (Simulator.timeScale > 1) 1.0 else 5.0; DroneManager.log("Simulation: Zeitraffer ${Simulator.timeScale.toInt()}×") }
+                -1 -> { Simulator.timeScale = if (Simulator.timeScale > 1) 1.0 else 4.0; DroneManager.log("Simulation: Zeitraffer ${Simulator.timeScale.toInt()}×") }
                 0 -> showOnMap()
                 1 -> FlightReport.collectAndUpload(applicationContext)
                 2 -> askToken()
