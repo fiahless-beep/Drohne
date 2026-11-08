@@ -587,7 +587,13 @@ class MainActivity : AppCompatActivity() {
                 10 -> { val sn = DroneManager.state.serial ?: getSharedPreferences("drohne", MODE_PRIVATE).getString("letzte_sn", null)
                     AlertDialog.Builder(this).setTitle("Seriennummer").setMessage(sn?.let { "Fluggerät: $it" } ?: "Noch unbekannt – wird beim nächsten Verbinden gespeichert.").setPositiveButton("OK", null).show() }
                 11 -> showSelfTest()
-                12 -> { DroneManager.log("Flugaufzeichnungen werden gesucht …"); FlightReport.uploadFlightRecords(applicationContext) }
+                12 -> {
+                    android.widget.Toast.makeText(this, "Flugaufzeichnungen werden gesucht und hochgeladen …", android.widget.Toast.LENGTH_SHORT).show()
+                    FlightReport.uploadFlightRecords(applicationContext) { n -> runOnUiThread {
+                        val msg = when { n < 0 -> "Kein GitHub-Token eingetragen (Mehr … → GitHub-Token)."; n == 0 -> "Nichts Neues – alle Aufzeichnungen waren schon im Repo."; else -> "$n Aufzeichnung(en) hochgeladen → Claude kann sie jetzt lesen." }
+                        AlertDialog.Builder(this).setTitle("Flugaufzeichnungen").setMessage(msg).setPositiveButton("OK", null).show()
+                    } }
+                }
                 13 -> askStartPlace()
             }
             renderNow(DroneManager.state)

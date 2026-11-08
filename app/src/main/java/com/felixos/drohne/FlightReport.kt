@@ -122,6 +122,13 @@ object FlightReport {
                     val stamp = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.GERMANY).format(Date(f.lastModified()))
                     if (uploadFile(token, "fluege/aufzeichnungen/${stamp}_${f.name}", f)) { n++; done += "${f.name}:${f.length()}" }
                 }
+                // Dazu die eigenen Flugprotokolle aller bisherigen Flüge (fluege/<flug>/protokoll.txt), die noch fehlen.
+                root.listFiles()?.filter { it.isDirectory }?.forEach { d ->
+                    val pf = File(d, "protokoll.txt")
+                    if (pf.isFile && pf.length() > 0 && "${d.name}/protokoll:${pf.length()}" !in done) {
+                        if (uploadFile(token, "fluege/${d.name}/protokoll.txt", pf)) { n++; done += "${d.name}/protokoll:${pf.length()}" }
+                    }
+                }
                 prefs.edit().putStringSet("aufzeichnungen_hochgeladen", done).apply()
                 DroneManager.log("Aufzeichnungen hochgeladen: $n von ${todo.size} → github.com/$OWNER/$REPO/tree/main/fluege/aufzeichnungen")
             } catch (t: Throwable) {
