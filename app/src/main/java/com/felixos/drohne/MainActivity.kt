@@ -331,7 +331,7 @@ class MainActivity : AppCompatActivity() {
         val now = System.currentTimeMillis()
         lastLoc?.let { (la, lo, t) ->
             val dt = (now - t) / 1000.0
-            if (dt >= 0.5) { speedMs = Geo.distance(LatLon(la, lo), LatLon(loc.latitude, loc.longitude)) / dt; lastLoc = Triple(loc.latitude, loc.longitude, now) }
+            if (dt >= 0.5) { speedMs = Geo.distance(LatLon(la, lo), LatLon(loc.latitude, loc.longitude)) / dt / (if (Simulator.active) Simulator.timeScale else 1.0); lastLoc = Triple(loc.latitude, loc.longitude, now) } // Simulation: Zeitraffer herausrechnen
         } ?: run { lastLoc = Triple(loc.latitude, loc.longitude, now) }
         val home = s.home?.takeIf { it.latitude != 0.0 }
         val dist = home?.let { Geo.distance(LatLon(it.latitude, it.longitude), LatLon(loc.latitude, loc.longitude)) }
