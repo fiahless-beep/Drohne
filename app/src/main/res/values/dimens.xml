@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="gutter">12dp</dimen>
-    <dimen name="gap">8dp</dimen>
-    <dimen name="radius">12dp</dimen>
-    <dimen name="touch">52dp</dimen>
-    <dimen name="viewHeight">240dp</dimen>
-    <dimen name="textBig">22sp</dimen>
-    <dimen name="textBody">16sp</dimen>
-    <dimen name="textSmall">13sp</dimen>
+    <dimen name="edge">12dp</dimen>
+    <dimen name="radius">16dp</dimen>
+    <dimen name="rail">48dp</dimen>
+    <dimen name="panelWidth">300dp</dimen>
 </resources>

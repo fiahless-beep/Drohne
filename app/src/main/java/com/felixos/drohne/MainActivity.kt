@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -14,12 +15,17 @@ import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.felixos.drohne.plan.Budget
 import com.felixos.drohne.plan.Geo
 import com.felixos.drohne.plan.LatLon
@@ -33,13 +39,11 @@ import dji.v5.manager.interfaces.ICameraStreamManager
 import java.util.Locale
 
 /**
- * Oberfläche, hochkant, eine Hand:
- *  - Statusleiste oben (Drohne, Akku, GPS, Sensoren, Status + Kleinzeile)
- *  - Bildfläche: Livebild oder Karte (Umschalter), Telemetrie-Streifen unten
- *  - „Was passiert“: Missionszustand, Fortschritt, nächste Aktion, Kennzahlen, Wächter
- *  - Vorbereiten (Plan holen & auf Drohne, Testflug, Startprüfung als Liste)
- *  - Fliegen (Starten, Pause, Weiter, Folgen), Mehr, Protokoll
- *  - STOPP – Heimflug immer sichtbar unten
+ * Cockpit im Querformat: Karte oder Livebild füllen den Bildschirm, darüber Glasflächen.
+ *  - oben: Verbindung · Phase (Punkt 3/12, Heimflug …) · GPS, Akku, Sensoren, Wind
+ *  - links: Karte | Livebild, Karte einpassen, Protokoll, Mehr
+ *  - unten links: Höhe, Abstand zum Start, Tempo
+ *  - rechts: Plan, nächster Schritt, Startprüfung (nur Probleme), ein Hauptknopf je Zustand, STOPP
  * Die Sicherheitslogik (MissionController.prepare, preflightProblems, Wächter) ist unverändert.
  */
 class MainActivity : AppCompatActivity() {
@@ -52,44 +56,36 @@ class MainActivity : AppCompatActivity() {
 
     private var mission: Mission? = null
     private var missionText: String = ""
+    /** Letzter Zustandstext des MissionControllers (fürs Protokoll und die Phase). */
+    private var controllerText: String = ""
 
-    // Statusleiste
-    private lateinit var status: TextView
-    private lateinit var tileLink: TextView
-    private lateinit var tileBattery: TextView
-    private lateinit var tileGps: TextView
-    private lateinit var tileSensors: TextView
-    private lateinit var tileMode: TextView
-    // Bildfläche
+    // oben
+    private lateinit var linkDot: View
+    private lateinit var linkText: TextView
+    private lateinit var phase: TextView
+    private lateinit var chipGps: TextView
+    private lateinit var chipBattery: TextView
+    private lateinit var chipSensors: TextView
+    private lateinit var chipWind: TextView
+    // Bildfläche + Leiste
     private lateinit var video: SurfaceView
     private lateinit var mapView: org.osmdroid.views.MapView
     private lateinit var mapPanel: MapPanel
-    private lateinit var segMap: TextView
-    private lateinit var segVideo: TextView
-    private lateinit var btnCenter: TextView
-    private lateinit var overlay: TextView
+    private lateinit var btnMap: ImageView
+    private lateinit var btnVideo: ImageView
+    private lateinit var btnCenter: ImageView
     private lateinit var videoHint: TextView
-    // Was passiert
-    private lateinit var missionCard: TextView
+    private lateinit var telemetry: TextView
+    // Aktionsfeld
+    private lateinit var planName: TextView
+    private lateinit var planMeta: TextView
     private lateinit var progress: ProgressBar
     private lateinit var nextAction: TextView
-    private lateinit var statWaypoint: TextView
-    private lateinit var statHeight: TextView
-    private lateinit var statSpeed: TextView
-    private lateinit var statHome: TextView
-    private lateinit var statBattery: TextView
-    private lateinit var guardBuildings: TextView
-    private lateinit var guardTerrain: TextView
-    private lateinit var guardImage: TextView
-    // Vorbereiten / Fliegen / Mehr
-    private lateinit var planName: TextView
-    private lateinit var planSummary: TextView
     private lateinit var checklist: LinearLayout
-    private lateinit var btnLoad: Button
-    private lateinit var btnStart: Button
+    private lateinit var btnPrimary: Button
     private lateinit var btnFollow: Button
-    private lateinit var scroll: ScrollView
-    private lateinit var log: TextView
+    private lateinit var btnHome: Button
+    private lateinit var secondaryRow: View
     private val logLines = ArrayDeque<String>()
 
     private val colorOk by lazy { getColor(R.color.ok) }
@@ -100,18 +96,17 @@ class MainActivity : AppCompatActivity() {
     private val colorMuted by lazy { getColor(R.color.textMuted) }
 
     private val stateListener: (DroneState) -> Unit = { render(it) }
-    private val logListener: (String) -> Unit = { line ->
-        logLines.addLast(line); while (logLines.size > 6) logLines.removeFirst()
-        log.text = logLines.joinToString("\n")
-    }
-    private val missionListener: (String) -> Unit = { text -> runOnUiThread { missionCard.text = text; renderNow(DroneManager.state) } }
+    private val logListener: (String) -> Unit = { line -> logLines.addLast(line); while (logLines.size > 6) logLines.removeFirst() }
+    private val missionListener: (String) -> Unit = { text -> runOnUiThread { controllerText = text; renderNow(DroneManager.state) } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        setupEdgeToEdge()
         MapPanel.configure(applicationContext)
         setContentView(R.layout.activity_main)
         bindViews()
+        applyInsets()
         MissionController.onStateText = missionListener
 
         ActivityCompat.requestPermissions(this, arrayOf(
@@ -124,21 +119,17 @@ class MainActivity : AppCompatActivity() {
 
         setupVideo(video)
         mapPanel = MapPanel(mapView)
-        segMap.setOnClickListener { chooseView(map = true, byUser = true) }
-        segVideo.setOnClickListener { chooseView(map = false, byUser = true) }
+        btnMap.setOnClickListener { chooseView(map = true, byUser = true) }
+        btnVideo.setOnClickListener { chooseView(map = false, byUser = true) }
         btnCenter.setOnClickListener { mapPanel.fit() }
+        findViewById<View>(R.id.btnLog).setOnClickListener { showLog() }
+        findViewById<View>(R.id.btnLog).setOnLongClickListener { copyLog(); true }
+        findViewById<View>(R.id.btnMore).setOnClickListener { showMore() }
 
-        btnLoad.setOnClickListener { loadPlan() }
+        btnPrimary.setOnClickListener { primaryAction() }
         findViewById<Button>(R.id.btnPlan).setOnClickListener { planSquare() }
-        findViewById<Button>(R.id.btnUpload).setOnClickListener { uploadCurrent() }
-        btnStart.setOnClickListener { confirmStart() }
-        findViewById<Button>(R.id.btnPause).setOnClickListener { MissionController.pause() }
-        findViewById<Button>(R.id.btnResume).setOnClickListener { MissionController.resume() }
-        // Langes Drücken auf die Statuszeile kopiert das ganze Protokoll (zum Schicken an Claude).
-        status.setOnLongClickListener { copyLog(); true }
-        findViewById<Button>(R.id.btnLog).setOnClickListener { showLog() }
-        findViewById<View>(R.id.cardLog).setOnClickListener { showLog() }
-        log.setOnClickListener { showLog() }
+        planName.setOnClickListener { showPlanDetails() }
+        planMeta.setOnClickListener { showPlanDetails() }
         FlightReport.init(applicationContext)
         ObstacleGuard.init(applicationContext)
         Thread {
@@ -160,38 +151,52 @@ class MainActivity : AppCompatActivity() {
                 waitLandedThen { FlightReport.collectAndUpload(applicationContext) { collected = false } }
             }
         }
-        findViewById<Button>(R.id.btnPair).setOnClickListener { showMore() }
         btnFollow.setOnClickListener { askFollow() }
-        findViewById<Button>(R.id.btnHome).setOnClickListener {
+        btnHome.setOnClickListener {
             FollowController.stop()
             MissionController.stop()
             DroneManager.goHome()
         }
-        findViewById<TextView>(R.id.version).text = "App ${BuildConfig.VERSION_NAME} · DJI MSDK 5.20.1 · Karte © OpenStreetMap"
         chooseView(map = true, byUser = false)
         renderChecklist(emptyList(), hasPlan = false)
+        renderNow(DroneManager.state)
     }
 
     private fun bindViews() {
-        status = findViewById(R.id.status)
-        tileLink = findViewById(R.id.tileLink); tileBattery = findViewById(R.id.tileBattery); tileGps = findViewById(R.id.tileGps)
-        tileSensors = findViewById(R.id.tileSensors); tileMode = findViewById(R.id.tileMode)
+        linkDot = findViewById(R.id.linkDot); linkText = findViewById(R.id.linkText); phase = findViewById(R.id.phase)
+        chipGps = findViewById(R.id.chipGps); chipBattery = findViewById(R.id.chipBattery); chipSensors = findViewById(R.id.chipSensors); chipWind = findViewById(R.id.chipWind)
         video = findViewById(R.id.video); mapView = findViewById(R.id.map)
-        segMap = findViewById(R.id.segMap); segVideo = findViewById(R.id.segVideo); btnCenter = findViewById(R.id.btnCenter)
-        overlay = findViewById(R.id.overlay); videoHint = findViewById(R.id.videoHint)
-        missionCard = findViewById(R.id.missionText); progress = findViewById(R.id.progress); nextAction = findViewById(R.id.nextAction)
-        statWaypoint = findViewById(R.id.statWaypoint); statHeight = findViewById(R.id.statHeight); statSpeed = findViewById(R.id.statSpeed)
-        statHome = findViewById(R.id.statHome); statBattery = findViewById(R.id.statBattery)
-        guardBuildings = findViewById(R.id.guardBuildings); guardTerrain = findViewById(R.id.guardTerrain); guardImage = findViewById(R.id.guardImage)
-        planName = findViewById(R.id.planName); planSummary = findViewById(R.id.planSummary); checklist = findViewById(R.id.checklist)
-        btnLoad = findViewById(R.id.btnLoad); btnStart = findViewById(R.id.btnStart); btnFollow = findViewById(R.id.btnFollow)
-        scroll = findViewById(R.id.scroll); log = findViewById(R.id.log)
+        btnMap = findViewById(R.id.btnMap); btnVideo = findViewById(R.id.btnVideo); btnCenter = findViewById(R.id.btnCenter)
+        videoHint = findViewById(R.id.videoHint); telemetry = findViewById(R.id.telemetry)
+        planName = findViewById(R.id.planName); planMeta = findViewById(R.id.planMeta); progress = findViewById(R.id.progress); nextAction = findViewById(R.id.nextAction)
+        checklist = findViewById(R.id.checklist); btnPrimary = findViewById(R.id.btnPrimary); btnFollow = findViewById(R.id.btnFollow); btnHome = findViewById(R.id.btnHome)
+        secondaryRow = findViewById(R.id.secondaryRow)
+    }
+
+    /** Randlos zeichnen, Systemleisten ausblenden (Wischen vom Rand holt sie kurz zurück), Notch-Bereich nutzen. */
+    private fun setupEdgeToEdge() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            hide(WindowInsetsCompat.Type.systemBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+        if (Build.VERSION.SDK_INT >= 28) window.attributes = window.attributes.apply { layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES }
+    }
+
+    /** Alle Bedienflächen bleiben außerhalb von Notch und Systemleisten; Karte und Video laufen darunter durch. */
+    private fun applyInsets() {
+        val root = findViewById<View>(R.id.overlayRoot)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val i = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            v.setPadding(i.left, i.top, i.right, i.bottom)
+            insets
+        }
     }
 
     override fun onStart() {
         super.onStart()
         DroneManager.addStateListener(stateListener)
-        logLines.clear(); log.text = ""  // Beim Wiederanmelden liefert der Manager die ganze Historie neu
+        logLines.clear()  // Beim Wiederanmelden liefert der Manager die ganze Historie neu
         DroneManager.addLogListener(logListener)
     }
 
@@ -209,6 +214,7 @@ class MainActivity : AppCompatActivity() {
         if (::mapPanel.isInitialized) mapPanel.enableMyLocation() // Handy-Position jetzt erlaubt
     }
 
+
     // ---------------------------------------------------------------- Bildfläche: Karte | Video
 
     /** null = automatisch (Video sobald verbunden, sonst Karte); true/false = von Hand gewählt. */
@@ -218,9 +224,9 @@ class MainActivity : AppCompatActivity() {
     private fun chooseView(map: Boolean, byUser: Boolean) {
         if (byUser) userWantsMap = map
         showingMap = map
-        segMap.isSelected = map; segVideo.isSelected = !map
+        btnMap.isSelected = map; btnVideo.isSelected = !map
         mapView.visibility = if (map) View.VISIBLE else View.GONE
-        btnCenter.visibility = if (map) View.VISIBLE else View.GONE
+        btnCenter.visibility = if (map) View.VISIBLE else View.INVISIBLE
         // GONE zerstört die Bildfläche; beim Zurückschalten meldet surfaceChanged das Livebild neu an.
         video.visibility = if (map) View.GONE else View.VISIBLE
         videoHint.visibility = if (map) View.GONE else View.VISIBLE
@@ -245,61 +251,72 @@ class MainActivity : AppCompatActivity() {
     private fun render(s: DroneState) {
         attachVideo()
         autoView(s)
-        renderTiles(s)
-        renderOverlay(s)
+        renderTop(s)
+        renderTelemetry(s)
         renderNow(s)
         if (showingMap) mapPanel.update(s, MissionController.currentMission ?: mission)
         val now = System.currentTimeMillis()
         if (now - lastChecklistMs > 1000) { lastChecklistMs = now; renderChecklist(preflightProblems(s), hasPlan = mission != null) }
-        btnFollow.text = if (FollowController.active) "Folgen beenden" else "Folgen"
     }
 
-    private fun tile(v: TextView, label: String, value: String, color: Int) {
+    /** Kennzahl oben: Beschriftung gedämpft, Wert fett in Statusfarbe. */
+    private fun chip(v: TextView, label: String, value: String?, color: Int) {
+        if (value == null) { v.visibility = View.GONE; return }
+        v.visibility = View.VISIBLE
         val sb = SpannableStringBuilder()
-        sb.append(label, ForegroundColorSpan(0xDDFFFFFF.toInt()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        sb.append("\n")
+        if (label.isNotEmpty()) sb.append("$label ", ForegroundColorSpan(colorMuted), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         val start = sb.length
         sb.append(value)
         sb.setSpan(StyleSpan(Typeface.BOLD), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        sb.setSpan(android.text.style.RelativeSizeSpan(1.35f), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        sb.setSpan(ForegroundColorSpan(color), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         v.text = sb
-        v.backgroundTintList = ColorStateList.valueOf(color)
     }
 
-    private fun renderTiles(s: DroneState) {
-        tile(tileLink, "Drohne", when { s.connected -> "verbunden"; s.rcConnected -> "nur Contr."; else -> "getrennt" },
-            when { s.connected -> colorOk; s.rcConnected -> colorWarn; else -> colorBad })
-        val b = s.batteryPercent
-        tile(tileBattery, "Akku", b?.let { "$it %" } ?: "–", when { b == null -> colorNeutral; b < 25 -> colorBad; b < 40 -> colorWarn; else -> colorOk })
+    private fun renderTop(s: DroneState) {
+        val (link, linkColor) = when {
+            s.registerError != null -> "SDK-Fehler" to colorBad
+            !s.registered -> "SDK startet" to colorNeutral
+            s.connected -> (s.productType?.takeIf { it.isNotBlank() } ?: "Drohne") to colorOk
+            s.rcConnected -> "Nur Controller" to colorWarn
+            else -> "Getrennt" to colorBad
+        }
+        linkText.text = link
+        linkDot.backgroundTintList = ColorStateList.valueOf(linkColor)
+
         val sat = s.satellites
         val homeOk = s.home?.latitude != null && s.home.latitude != 0.0
-        tile(tileGps, "GPS" + if (homeOk) " ⌂" else "", sat?.let { "$it Sat." } ?: "–",
-            when { sat == null -> colorNeutral; sat < minSatellites -> colorWarn; !homeOk -> colorWarn; else -> colorOk })
+        chip(chipGps, "GPS", sat?.toString() ?: "–", when { sat == null -> colorMuted; sat < minSatellites || !homeOk -> colorWarn; else -> colorText })
+        val b = s.batteryPercent
+        chip(chipBattery, "", b?.let { "$it %" } ?: "–", when { b == null -> colorMuted; b < 25 -> colorBad; b < 40 -> colorWarn; else -> colorText })
         val sens = s.sensors
-        tile(tileSensors, "Sensoren", when { sens == null -> "–"; sens.startsWith("blind") -> "blind"; else -> sens },
-            when { sens == null -> colorNeutral; s.sensorsOk -> colorOk; else -> colorWarn })
-        val mode = when { FollowController.active -> "folgt"; s.landing -> "landet"; s.flying -> "fliegt"; s.motorsOn -> "Motoren"; s.connected -> "am Boden"; else -> "–" }
-        tile(tileMode, "Status", mode, when { FollowController.active || s.flying || s.motorsOn -> colorWarn; s.connected -> colorOk; else -> colorNeutral })
+        chip(chipSensors, "Sensoren", when { !s.connected -> null; sens == null -> "–"; sens.startsWith("blind") -> "blind"; else -> sens },
+            when { s.sensorsOk -> colorText; sens == null -> colorMuted; else -> colorWarn })
+        chip(chipWind, "Wind", when (s.windWarning) { 2 -> "stark"; 1 -> "mäßig"; else -> null }, if (s.windWarning == 2) colorBad else colorWarn)
 
-        val wind = when (s.windWarning) { 2 -> "Wind: STARK"; 1 -> "Wind: mäßig"; 0 -> "Wind: ruhig"; else -> null }
-        status.text = listOfNotNull(
-            when {
-                s.registered -> "App ${BuildConfig.VERSION_NAME} · SDK ok"
-                s.registerError != null -> "SDK-FEHLER: ${s.registerError}"
-                else -> "App ${BuildConfig.VERSION_NAME} · SDK startet …"
-            },
-            "Funk " + (if (s.airLinkConnected) "ok" else "–"),
-            s.heightLimitM?.let { "Höhenlimit $it m" },
-            wind,
-        ).joinToString(" · ")
-        status.setTextColor(when { s.registerError != null || s.windWarning == 2 -> colorBad; s.windWarning == 1 -> colorWarn; else -> colorMuted })
+        val m = MissionController.currentMission
+        val idx = MissionController.currentWaypointIndex
+        val st = MissionController.executeState
+        phase.text = when {
+            !s.connected -> ""
+            FollowController.active -> "Folgt dem Handy"
+            st == WaypointMissionExecuteState.RETURN_TO_START_POINT -> "Heimflug"
+            s.landing -> "Landet"
+            MissionController.executing && m != null && idx >= 0 -> "Punkt ${idx + 1} / ${m.waypoints.size}"
+            MissionController.executing -> "Steigt auf ${MissionController.TRANSIT_HEIGHT_M.toInt()} m"
+            st == WaypointMissionExecuteState.INTERRUPTED -> "Pause"
+            s.flying -> "Fliegt"
+            s.motorsOn -> "Motoren an"
+            else -> "Am Boden"
+        }
+        phase.setTextColor(if (s.flying || s.motorsOn || FollowController.active) colorWarn else colorText)
     }
 
-    private fun renderOverlay(s: DroneState) {
+    private fun renderTelemetry(s: DroneState) {
         val loc = s.location?.takeIf { it.latitude != 0.0 }
         videoHint.visibility = if (showingMap || (s.connected && videoAttached)) View.GONE else View.VISIBLE
-        videoHint.text = if (s.connected) "Livebild kommt …" else "Kein Livebild – Drohne nicht verbunden"
-        if (loc == null) { overlay.text = "Position: –"; speedMs = null; lastLoc = null; return }
+        videoHint.text = if (s.connected) "Livebild kommt …" else "Kein Livebild"
+        if (loc == null) { telemetry.visibility = View.GONE; speedMs = null; lastLoc = null; return }
+        telemetry.visibility = View.VISIBLE
         val now = System.currentTimeMillis()
         lastLoc?.let { (la, lo, t) ->
             val dt = (now - t) / 1000.0
@@ -307,61 +324,68 @@ class MainActivity : AppCompatActivity() {
         } ?: run { lastLoc = Triple(loc.latitude, loc.longitude, now) }
         val home = s.home?.takeIf { it.latitude != 0.0 }
         val dist = home?.let { Geo.distance(LatLon(it.latitude, it.longitude), LatLon(loc.latitude, loc.longitude)) }
-        overlay.text = listOfNotNull(
-            String.format(Locale.GERMANY, "↑ %.1f m", loc.altitude ?: 0.0),
+        telemetry.text = listOfNotNull(
+            String.format(Locale.GERMANY, "↑ %.0f m", loc.altitude ?: 0.0),
             dist?.let { "⌂ ${it.toInt()} m" },
             speedMs?.let { String.format(Locale.GERMANY, "%.1f m/s", it) },
-            s.headingDeg?.let { "${it.toInt()}°" },
-            String.format(Locale.US, "%.5f, %.5f", loc.latitude, loc.longitude),
-        ).joinToString("  ·  ")
+        ).joinToString("    ")
     }
 
-    private fun stat(v: TextView, label: String, value: String, color: Int = colorText) {
-        val sb = SpannableStringBuilder()
-        sb.append(label, ForegroundColorSpan(colorMuted), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        sb.append("\n")
-        val start = sb.length
-        sb.append(value)
-        sb.setSpan(StyleSpan(Typeface.BOLD), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        sb.setSpan(android.text.style.RelativeSizeSpan(1.5f), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        sb.setSpan(ForegroundColorSpan(color), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        v.text = sb
-    }
-
-    /** „Was passiert“: Missionszustand, Fortschritt, nächste Aktion, Kennzahlen, Wächter. */
+    /** Aktionsfeld: Fortschritt, nächster Schritt, Hauptknopf je Zustand. */
     private fun renderNow(s: DroneState) {
         val m = MissionController.currentMission
         val idx = MissionController.currentWaypointIndex
         val n = m?.waypoints?.size ?: 0
         val st = MissionController.executeState
         val running = MissionController.executing || st == WaypointMissionExecuteState.RECOVERING
-        if (missionCard.text.isNullOrBlank()) missionCard.text = "Kein Plan geladen"
-        progress.visibility = if (m != null) View.VISIBLE else View.GONE
+        progress.visibility = if (running || st == WaypointMissionExecuteState.FINISHED) View.VISIBLE else View.GONE
         progress.progress = when {
             st == WaypointMissionExecuteState.FINISHED || st == WaypointMissionExecuteState.RETURN_TO_START_POINT -> 100
             running && n > 0 && idx >= 0 -> ((idx + 1) * 100 / n).coerceIn(0, 100)
             else -> 0
         }
-        nextAction.text = "Als Nächstes: " + nextActionText(s, m, idx, st)
-        stat(statWaypoint, "Wegpunkt", if (running && idx >= 0 && n > 0) "${idx + 1}/$n" else if (n > 0) "–/$n" else "–")
-        val loc = s.location?.takeIf { it.latitude != 0.0 }
-        stat(statHeight, "Höhe", loc?.let { String.format(Locale.GERMANY, "%.0f m", it.altitude ?: 0.0) } ?: "–")
-        stat(statSpeed, "Tempo", speedMs?.let { String.format(Locale.GERMANY, "%.1f", it) + " m/s" } ?: "–")
-        val home = s.home?.takeIf { it.latitude != 0.0 }
-        val dist = if (home != null && loc != null) Geo.distance(LatLon(home.latitude, home.longitude), LatLon(loc.latitude, loc.longitude)) else null
-        stat(statHome, "Zum Start", dist?.let { "${it.toInt()} m" } ?: "–")
-        val b = s.batteryPercent
-        stat(statBattery, "Akku", b?.let { "$it %" } ?: "–", when { b == null -> colorText; b < 25 -> colorBad; b < 40 -> colorWarn; else -> colorText })
+        nextAction.text = nextActionText(s, m, idx, st)
 
-        // Wächter
-        val bc = MissionController.conflicts.size
-        tile(guardBuildings, "Gebäude-Wächter", when { m == null -> "–"; bc > 0 -> "$bc Konflikte"; else -> "frei" }, when { m == null -> colorNeutral; bc > 0 -> colorBad; else -> colorOk })
-        val tc = MissionController.terrainConflicts.size
-        val terrainLoaded = com.felixos.drohne.plan.Terrain.loaded
-        tile(guardTerrain, "Oberflächen-Wächter", when { !terrainLoaded -> "kein Modell"; m == null -> "–"; tc > 0 -> "$tc Konflikte"; else -> "frei" },
-            when { !terrainLoaded || m == null -> colorNeutral; tc > 0 -> colorBad; else -> colorOk })
-        tile(guardImage, "Bildwächter", when { !ObstacleGuard.enabled -> "aus"; ObstacleGuard.armed -> "darf anhalten"; else -> "beobachtet" },
-            when { !ObstacleGuard.enabled -> colorNeutral; ObstacleGuard.armed -> colorOk; else -> colorWarn })
+        // Hauptknopf: genau eine sinnvolle Aktion je Zustand
+        val paused = st == WaypointMissionExecuteState.INTERRUPTED
+        val (label, bg) = when {
+            loading -> "Hole Plan …" to R.drawable.btn_primary
+            uploading -> "Lade auf Drohne …" to R.drawable.btn_primary
+            running -> "Pause" to R.drawable.btn_secondary
+            paused && mission != null -> "Weiter" to R.drawable.btn_go
+            mission == null -> "Plan holen" to R.drawable.btn_primary
+            !MissionController.uploaded -> "Nochmal auf Drohne" to R.drawable.btn_primary
+            else -> "Start" to R.drawable.btn_go
+        }
+        btnPrimary.text = label
+        btnPrimary.setBackgroundResource(bg)
+        btnPrimary.isEnabled = !loading && !uploading
+        secondaryRow.visibility = if (running || paused) View.GONE else View.VISIBLE
+        btnFollow.text = if (FollowController.active) "Folgen beenden" else "Folgen"
+        btnHome.alpha = if (s.flying || s.motorsOn || FollowController.active) 1f else 0.6f
+    }
+
+    private var loading = false
+    private var uploading = false
+
+    private fun primaryAction() {
+        val st = MissionController.executeState
+        when {
+            loading || uploading -> return
+            MissionController.executing -> MissionController.pause()
+            st == WaypointMissionExecuteState.INTERRUPTED && mission != null -> MissionController.resume()
+            mission == null -> loadPlan()
+            !MissionController.uploaded -> uploadCurrent()
+            else -> confirmStart()
+        }
+    }
+
+    /** Langer Text zum Plan (Strecke, Höhe, Akku, Funkabriss) auf Antippen des Plannamens. */
+    private fun showPlanDetails() {
+        if (missionText.isBlank()) return
+        AlertDialog.Builder(this).setTitle(mission?.name ?: "Plan").setMessage(missionText)
+            .setPositiveButton("OK", null)
+            .setNeutralButton("Plan neu holen") { _, _ -> loadPlan() }.show()
     }
 
     /** Was die Drohne als Nächstes tut – aus Plan, Wegpunkt-Index und Zustand abgeleitet (nur Anzeige). */
@@ -393,7 +417,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ---------------------------------------------------------------- Startprüfung als Liste
+
+    // ---------------------------------------------------------------- Startprüfung
 
     /** Eine Prüfzeile: Beschriftung und Erkennung des zugehörigen Problemtexts (die Regeln selbst stehen in preflightProblems). */
     private class Check(val label: String, val needsPlan: Boolean, val matches: (String) -> Boolean)
@@ -416,36 +441,47 @@ class MainActivity : AppCompatActivity() {
         Check("Tiefe Punkte: Hinderniserkennung aktiv", true) { it.contains("Hinderniserkennung") },
     )
 
-    private fun checkRow(ok: Boolean?, text: String): TextView = TextView(this).apply {
+
+    private fun checkRow(ok: Boolean?, text: String, detail: String? = null): TextView = TextView(this).apply {
         val sb = SpannableStringBuilder()
-        val (sym, col) = when (ok) { true -> "✓" to colorOk; false -> "✗" to colorBad; null -> "–" to colorMuted }
+        val (sym, col) = when (ok) { true -> "✓" to colorOk; false -> "✗" to colorBad; null -> "·" to colorMuted }
         sb.append("$sym  ", ForegroundColorSpan(col), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         sb.setSpan(StyleSpan(Typeface.BOLD), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         sb.append(text, ForegroundColorSpan(if (ok == null) colorMuted else colorText), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         this.text = sb
-        textSize = 15f
-        setPadding(0, 6, 0, 6)
+        textSize = 14f
+        maxLines = 2
+        ellipsize = android.text.TextUtils.TruncateAt.END
+        setPadding(0, 5, 0, 5)
+        if (detail != null) setOnClickListener { AlertDialog.Builder(this@MainActivity).setMessage(detail).setPositiveButton("OK", null).show() }
     }
 
-    /** Baut die Prüfliste: grün = in Ordnung, rot = Problem (mit Text), grau = erst mit Plan. */
-    private fun fillChecklist(container: LinearLayout, problems: List<String>, hasPlan: Boolean) {
+    /** Kurzfassung eines Problemtexts für die Liste; der volle Text kommt beim Antippen. */
+    private fun shortProblem(p: String): String = p.substringBefore(" (").substringBefore(":").substringBefore(" →").substringBefore(". ").take(60)
+
+    /**
+     * Im Cockpit stehen nur die Probleme (rot, antippen = Details). Ist alles in Ordnung, eine grüne Zeile.
+     * [full] = alle Regeln zeigen (Dialog „Start nicht möglich“).
+     */
+    private fun fillChecklist(container: LinearLayout, problems: List<String>, hasPlan: Boolean, full: Boolean = false) {
         container.removeAllViews()
         val unmatched = problems.toMutableList()
         checks.forEach { c ->
             val hit = unmatched.filter(c.matches)
             unmatched.removeAll(hit)
             when {
-                hit.isNotEmpty() -> hit.forEach { container.addView(checkRow(false, it)) }
+                hit.isNotEmpty() -> hit.forEach { container.addView(checkRow(false, if (full) it else shortProblem(it), it)) }
+                !full -> {}
                 c.needsPlan && !hasPlan -> container.addView(checkRow(null, c.label))
                 else -> container.addView(checkRow(true, c.label))
             }
         }
-        unmatched.forEach { container.addView(checkRow(false, it)) }
+        unmatched.forEach { container.addView(checkRow(false, if (full) it else shortProblem(it), it)) }
+        if (!full && problems.isEmpty() && hasPlan) container.addView(checkRow(true, "Startbereit"))
     }
 
     private fun renderChecklist(problems: List<String>, hasPlan: Boolean) {
         fillChecklist(checklist, problems, hasPlan)
-        btnStart.alpha = if (problems.isEmpty() && hasPlan) 1f else 0.55f
     }
 
     // ---------------------------------------------------------------- Aktionen
@@ -546,15 +582,21 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Abbrechen", null).show()
     }
 
+    private fun appInfo(): String {
+        val s = DroneManager.state
+        return listOfNotNull("App ${BuildConfig.VERSION_NAME} · DJI MSDK 5.20.1", if (s.registered) "SDK ok" else "SDK: ${s.registerError ?: "startet"}",
+            "Funk " + (if (s.airLinkConnected) "ok" else "–"), s.heightLimitM?.let { "Höhenlimit $it m" }, controllerText.takeIf { it.isNotBlank() }).joinToString(" · ")
+    }
+
     private fun copyLog() {
         val cm = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
-        cm.setPrimaryClip(android.content.ClipData.newPlainText("Protokoll", status.text.toString() + "\n\n" + DroneManager.logText()))
+        cm.setPrimaryClip(android.content.ClipData.newPlainText("Protokoll", appInfo() + "\n\n" + DroneManager.logText()))
         android.widget.Toast.makeText(this, "Protokoll kopiert – an Claude schicken", android.widget.Toast.LENGTH_SHORT).show()
     }
 
     /** Ganzes Protokoll groß anzeigen, mit Kopieren-Knopf. */
     private fun showLog() {
-        val text = status.text.toString() + "\n\n" + DroneManager.logText()
+        val text = appInfo() + "\n\n" + DroneManager.logText()
         AlertDialog.Builder(this).setTitle("Protokoll")
             .setMessage(text.takeLast(6000))
             .setPositiveButton("Kopieren") { _, _ -> copyLog() }
@@ -693,11 +735,22 @@ class MainActivity : AppCompatActivity() {
         }.show()
     }
 
-    private fun setPlanCard(name: String, text: String) { planName.text = name; planSummary.text = text }
+
+    /** Plan-Feld: Name fett, darunter eine Zeile Zustand; der lange Text kommt beim Antippen (showPlanDetails). */
+    private fun setPlanCard(name: String, text: String) {
+        planName.text = name.substringBefore(" – ")
+        planMeta.text = name.substringAfter(" – ", "").ifBlank { metaLine() }
+        if (text.isNotBlank()) missionText = text
+    }
+
+    private fun metaLine(): String {
+        val m = mission ?: return "Plan holen oder Testflug"
+        return "${m.waypoints.size} Punkte · ${m.waypoints.count { it.takePhoto }} Fotos · ${m.lengthM.toInt()} m · ${m.waypoints.minOf { it.heightM }.toInt()}–${m.waypoints.maxOf { it.heightM }.toInt()} m"
+    }
 
     private fun loadPlan() {
         DroneManager.log("Lade Flugplan aus der Cloud …")
-        btnLoad.isEnabled = false
+        loading = true; renderNow(DroneManager.state)
         setPlanCard("Plan holen …", "Hole plaene/aktuell.json aus der Cloud …")
         Thread {
             try {
@@ -707,10 +760,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 val text = conn.inputStream.bufferedReader().use { it.readText() }
                 val (m, beschreibung) = PlanJson.parse(text)
-                runOnUiThread { btnLoad.isEnabled = true; useMission(m, beschreibung) }
+                runOnUiThread { loading = false; useMission(m, beschreibung) }
             } catch (t: Throwable) {
                 DroneManager.log("Plan laden fehlgeschlagen: ${t.javaClass.simpleName}: ${t.message}")
-                runOnUiThread { btnLoad.isEnabled = true; setPlanCard("Plan holen fehlgeschlagen", "${t.javaClass.simpleName}: ${t.message}\nInternet prüfen, dann nochmal „Plan holen & auf Drohne“.") }
+                runOnUiThread { loading = false; setPlanCard("Plan holen fehlgeschlagen", "${t.javaClass.simpleName}: ${t.message}\nInternet prüfen, dann nochmal „Plan holen & auf Drohne“.") }
             }
         }.start()
     }
@@ -761,14 +814,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     /** Plan (nochmal) auf die Drohne laden; Ergebnis im Plan-Feld. */
+
+    /** Plan (nochmal) auf die Drohne laden; Ergebnis im Plan-Feld. */
     private fun uploadCurrent() {
-        val m = mission ?: return DroneManager.log("Kein Plan: erst „Plan holen & auf Drohne“ oder Testflug")
-        val base = planSummary.text.toString().substringBefore("\n\nAuf der Drohne").substringBefore("\n\nUpload fehlgeschlagen")
+        val m = mission ?: return DroneManager.log("Kein Plan: erst „Plan holen“ oder Testflug")
+        uploading = true; renderNow(DroneManager.state)
         MissionController.upload { ok ->
             runOnUiThread {
-                setPlanCard(if (ok) "Plan „${m.name}“ – auf der Drohne" else "Plan „${m.name}“ – Upload fehlgeschlagen",
-                    base + if (ok) "\n\nAuf der Drohne. Startprüfung unten, dann „Mission starten“." else "\n\nUpload fehlgeschlagen – Drohne verbunden? „Nochmal auf Drohne“ versuchen.")
+                uploading = false
+                setPlanCard(if (ok) "Plan „${m.name}“ – auf der Drohne" else "Plan „${m.name}“ – Upload fehlgeschlagen", "")
                 renderChecklist(preflightProblems(DroneManager.state), hasPlan = true)
+                renderNow(DroneManager.state)
             }
         }
     }
@@ -778,7 +834,7 @@ class MainActivity : AppCompatActivity() {
         renderChecklist(problems, hasPlan = mission != null)
         if (problems.isNotEmpty()) {
             val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(48, 16, 48, 8) }
-            fillChecklist(list, problems, hasPlan = mission != null)
+            fillChecklist(list, problems, hasPlan = mission != null, full = true)
             AlertDialog.Builder(this).setTitle("Start nicht möglich")
                 .setView(ScrollView(this).apply { addView(list) })
                 .setPositiveButton("OK", null).show()

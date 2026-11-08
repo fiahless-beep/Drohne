@@ -1,279 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Hochkant, eine Hand (Galaxy A16). Von oben nach unten:
-  1. Statusleiste (fest): fünf Kacheln + Kleinzeile (App-Version, SDK, Funk, Höhenlimit, Wind)
-  2. Bildfläche (fest, 240 dp): Livebild oder Karte, Umschalter oben rechts, Telemetrie-Streifen unten
-  3. Scrollbereich: „Was passiert“, Vorbereiten, Fliegen, Mehr, Protokoll
-  4. STOPP-Knopf (fest, immer sichtbar)
+  Cockpit im Querformat. Karte oder Livebild füllen den ganzen Bildschirm, darüber liegen Glasflächen:
+  - oben: Verbindung · Phase · GPS/Akku/Sensoren/Wind
+  - links: Leiste (Karte|Video, Karte einpassen, Protokoll, Mehr)
+  - unten links: Telemetrie (Höhe, Abstand, Tempo)
+  - rechts: Aktionsfeld (Plan, Startprüfung, Hauptknopf, STOPP)
+  Die Ränder (Statusleiste, Notch, Navigationsleiste) werden in MainActivity.applyInsets auf overlayRoot gelegt.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg"
-    android:orientation="vertical">
+    android:background="@color/bg">
 
-    <!-- 1. Statusleiste -->
-    <LinearLayout
+    <SurfaceView
+        android:id="@+id/video"
         android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/videoHint"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="4dp">
+        android:layout_gravity="center"
+        android:background="@drawable/pill"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/textMuted"
+        android:textSize="14sp"
+        android:text="Kein Livebild" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView android:id="@+id/tileLink" style="@style/Tile" android:text="Drohne\n–" />
-            <TextView android:id="@+id/tileBattery" style="@style/Tile" android:text="Akku\n–" />
-            <TextView android:id="@+id/tileGps" style="@style/Tile" android:text="GPS\n–" />
-            <TextView android:id="@+id/tileSensors" style="@style/Tile" android:text="Sensoren\n–" />
-            <TextView android:id="@+id/tileMode" style="@style/Tile" android:text="Status\n–" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:textColor="@color/textMuted"
-            android:textSize="12sp"
-            android:maxLines="2"
-            android:text="SDK startet …" />
-    </LinearLayout>
-
-    <!-- 2. Bildfläche: Livebild oder Karte -->
     <FrameLayout
-        android:id="@+id/viewArea"
+        android:id="@+id/overlayRoot"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/viewHeight"
-        android:background="#000000">
+        android:layout_height="match_parent">
 
-        <SurfaceView
-            android:id="@+id/video"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <org.osmdroid.views.MapView
-            android:id="@+id/map"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/videoHint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/scrim"
-            android:padding="10dp"
-            android:textColor="@color/textMuted"
-            android:textSize="15sp"
-            android:text="Kein Livebild – Drohne nicht verbunden" />
-
-        <!-- Umschalter Karte | Video, oben rechts; überlappt nichts (Telemetrie liegt unten). -->
+        <!-- Obere Leiste -->
         <LinearLayout
-            android:id="@+id/segments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:layout_margin="8dp"
-            android:padding="3dp"
-            android:background="@drawable/segment_group"
-            android:orientation="horizontal">
-            <TextView android:id="@+id/segMap" style="@style/Segment" android:text="Karte" />
-            <TextView android:id="@+id/segVideo" style="@style/Segment" android:text="Video" />
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_margin="@dimen/edge"
+            android:layout_marginEnd="@dimen/edge"
+            android:background="@drawable/pill"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingEnd="16dp">
+
+            <View
+                android:id="@+id/linkDot"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@drawable/dot" />
+
+            <TextView
+                android:id="@+id/linkText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/text"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:text="Getrennt" />
+
+            <TextView
+                android:id="@+id/phase"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="" />
+
+            <TextView android:id="@+id/chipGps" style="@style/Chip" android:text="GPS –" />
+            <TextView android:id="@+id/chipBattery" style="@style/Chip" android:text="–" />
+            <TextView android:id="@+id/chipSensors" style="@style/Chip" android:text="" />
+            <TextView android:id="@+id/chipWind" style="@style/Chip" android:text="" />
         </LinearLayout>
 
-        <!-- Karte auf Drohne, Start und Plan einpassen -->
-        <TextView
-            android:id="@+id/btnCenter"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="44dp"
-            android:background="@drawable/round_button"
-            android:gravity="center"
-            android:textColor="@color/text"
-            android:textSize="22sp"
-            android:text="⌖"
-            android:contentDescription="Karte einpassen"
-            android:visibility="gone" />
-
-        <!-- Telemetrie-Streifen unten: Höhe, Abstand zum Start, Tempo, Koordinaten -->
-        <TextView
-            android:id="@+id/overlay"
-            android:layout_width="match_parent"
+        <!-- Linke Leiste -->
+        <LinearLayout
+            android:id="@+id/rail"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/overlayScrim"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/edge"
+            android:orientation="vertical">
+            <ImageView android:id="@+id/btnMap" style="@style/RailButton" android:layout_marginTop="0dp" android:src="@drawable/ic_map" android:contentDescription="Karte" />
+            <ImageView android:id="@+id/btnVideo" style="@style/RailButton" android:src="@drawable/ic_video" android:contentDescription="Livebild" />
+            <ImageView android:id="@+id/btnCenter" style="@style/RailButton" android:layout_marginTop="22dp" android:src="@drawable/ic_center" android:contentDescription="Karte einpassen" />
+            <ImageView android:id="@+id/btnLog" style="@style/RailButton" android:src="@drawable/ic_list" android:contentDescription="Protokoll" />
+            <ImageView android:id="@+id/btnMore" style="@style/RailButton" android:src="@drawable/ic_more" android:contentDescription="Mehr" />
+        </LinearLayout>
+
+        <!-- Telemetrie unten links -->
+        <TextView
+            android:id="@+id/telemetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/edge"
+            android:background="@drawable/pill"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:textColor="@color/text"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:fontFeatureSettings="tnum"
             android:maxLines="1"
-            android:ellipsize="end"
             android:text="" />
-    </FrameLayout>
 
-    <!-- 3. Scrollbereich -->
-    <ScrollView
-        android:id="@+id/scroll"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true"
-        android:scrollbars="none">
-
+        <!-- Aktionsfeld rechts -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/panel"
+            android:layout_width="@dimen/panelWidth"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginTop="68dp"
+            android:layout_marginEnd="@dimen/edge"
+            android:layout_marginBottom="@dimen/edge"
+            android:background="@drawable/glass_panel"
             android:orientation="vertical"
-            android:paddingStart="@dimen/gutter"
-            android:paddingEnd="@dimen/gutter"
-            android:paddingBottom="8dp">
+            android:padding="14dp">
 
-            <!-- Was passiert -->
-            <LinearLayout android:id="@+id/cardNow" style="@style/Card" android:layout_marginTop="4dp">
-                <TextView
-                    android:id="@+id/missionText"
-                    style="@style/Body"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:text="Kein Plan geladen" />
-                <ProgressBar
-                    android:id="@+id/progress"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:layout_marginTop="8dp"
-                    android:max="100"
-                    android:progress="0"
-                    android:progressTint="@color/accent"
-                    android:progressBackgroundTint="@color/surface2" />
-                <TextView
-                    android:id="@+id/nextAction"
-                    style="@style/Body"
-                    android:layout_marginTop="8dp"
-                    android:text="Als Nächstes: –" />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-                    <TextView android:id="@+id/statWaypoint" style="@style/Stat" android:text="Wegpunkt\n–" />
-                    <TextView android:id="@+id/statHeight" style="@style/Stat" android:text="Höhe\n–" />
-                    <TextView android:id="@+id/statSpeed" style="@style/Stat" android:text="Tempo\n–" />
-                    <TextView android:id="@+id/statHome" style="@style/Stat" android:text="Zum Start\n–" />
-                    <TextView android:id="@+id/statBattery" style="@style/Stat" android:text="Akku\n–" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
-                    <TextView android:id="@+id/guardBuildings" style="@style/Tile" android:text="Gebäude-Wächter\n–" />
-                    <TextView android:id="@+id/guardTerrain" style="@style/Tile" android:text="Oberflächen-Wächter\n–" />
-                    <TextView android:id="@+id/guardImage" style="@style/Tile" android:text="Bildwächter\n–" />
-                </LinearLayout>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/planName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Kein Plan" />
 
-            <!-- Vorbereiten -->
-            <TextView style="@style/SectionTitle" android:text="Vorbereiten" />
+            <TextView
+                android:id="@+id/planMeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/textMuted"
+                android:textSize="13sp"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Plan holen oder Testflug" />
 
-            <LinearLayout android:id="@+id/cardPlan" style="@style/Card" android:layout_marginTop="4dp">
-                <TextView
-                    android:id="@+id/planName"
-                    style="@style/Body"
-                    android:textStyle="bold"
-                    android:text="Kein Plan" />
-                <TextView
-                    android:id="@+id/planSummary"
-                    style="@style/Muted"
-                    android:layout_marginTop="4dp"
-                    android:textSize="14sp"
-                    android:text="„Plan holen &amp; auf Drohne“ lädt Claudes Plan aus der Cloud, prüft ihn und schickt ihn an die Drohne. „Testflug wählen“ plant vor Ort." />
-                <TextView
-                    style="@style/Muted"
-                    android:layout_marginTop="10dp"
-                    android:text="Startprüfung" />
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_marginTop="10dp"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/accent"
+                android:progressBackgroundTint="@color/surface2"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/nextAction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/text"
+                android:textSize="14sp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="6dp"
+                android:scrollbars="none">
                 <LinearLayout
                     android:id="@+id/checklist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:orientation="vertical" />
-            </LinearLayout>
+            </ScrollView>
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:orientation="horizontal">
-                <Button android:id="@+id/btnLoad" style="@style/Btn.Primary" android:text="Plan holen &amp; auf Drohne" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                <Button android:id="@+id/btnPlan" style="@style/Btn" android:text="Testflug wählen" />
-                <Button android:id="@+id/btnUpload" style="@style/Btn" android:text="Nochmal auf Drohne" />
-            </LinearLayout>
-
-            <!-- Fliegen -->
-            <TextView style="@style/SectionTitle" android:text="Fliegen" />
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                <Button android:id="@+id/btnStart" style="@style/Btn.Go" android:text="▶ Mission starten" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                <Button android:id="@+id/btnPause" style="@style/Btn" android:text="Pause" />
-                <Button android:id="@+id/btnResume" style="@style/Btn" android:text="Weiter" />
-                <Button android:id="@+id/btnFollow" style="@style/Btn" android:text="Folgen" />
-            </LinearLayout>
-
-            <!-- Mehr -->
-            <TextView style="@style/SectionTitle" android:text="Mehr" />
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                <Button android:id="@+id/btnLog" style="@style/Btn" android:text="Protokoll zeigen" />
-                <Button android:id="@+id/btnPair" style="@style/Btn" android:text="Mehr …" />
-            </LinearLayout>
-
-            <LinearLayout android:id="@+id/cardLog" style="@style/Card">
-                <TextView style="@style/Muted" android:text="Protokoll (letzte Zeilen, antippen = alles)" />
-                <TextView
-                    android:id="@+id/log"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/textMuted"
-                    android:textSize="12sp"
-                    android:fontFamily="monospace" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/version"
-                style="@style/Muted"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textColor="@color/textDim"
-                android:textSize="12sp"
-                android:text="App" />
-        </LinearLayout>
-    </ScrollView>
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnPrimary" style="@style/Btn.Primary" android:text="Plan holen" />
+            </LinearLayout>
 
-    <!-- 4. STOPP: immer sichtbar, unten, Daumenhöhe -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="4dp"
-        android:background="@color/bg">
-        <Button
-            android:id="@+id/btnHome"
-            style="@style/Btn.Stop"
-            android:text="■ STOPP – Heimflug" />
-    </LinearLayout>
-</LinearLayout>
+            <LinearLayout
+                android:id="@+id/secondaryRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnPlan" style="@style/Btn" android:layout_marginEnd="4dp" android:text="Testflug" />
+                <Button android:id="@+id/btnFollow" style="@style/Btn" android:layout_marginStart="4dp" android:text="Folgen" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnHome" style="@style/Btn.Stop" android:text="STOPP · Heimflug" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</FrameLayout>

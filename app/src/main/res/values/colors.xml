@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Dunkle, kontrastreiche Farben für draußen in der Sonne. Statusfarben sind kräftig, Text fast weiß. -->
+<!-- Dunkles Cockpit über Karte/Video: Glasflächen, wenig Farbe, Statusfarben nur als Punkt/Wert. -->
 <resources>
-    <color name="bg">#0B0F14</color>
-    <color name="surface">#1A232C</color>
-    <color name="surface2">#27333E</color>
-    <color name="line">#3A4854</color>
+    <color name="bg">#000000</color>
+    <color name="glass">#CC14181E</color>
+    <color name="glassStrong">#E614181E</color>
+    <color name="glassLine">#2EFFFFFF</color>
+    <color name="surface2">#2A3038</color>
     <color name="text">#F5F7FA</color>
-    <color name="textMuted">#AEBAC6</color>
-    <color name="textDim">#7E8B97</color>
+    <color name="textMuted">#9AA6B2</color>
+    <color name="textDim">#6B7680</color>
 
-    <color name="ok">#22C55E</color>
-    <color name="warn">#FFB300</color>
-    <color name="bad">#EF4444</color>
-    <color name="neutral">#4B5B69</color>
-    <color name="accent">#2F80ED</color>
-    <color name="go">#1E9E4A</color>
-    <color name="stop">#D32F2F</color>
+    <color name="ok">#30D158</color>
+    <color name="warn">#FFD60A</color>
+    <color name="bad">#FF453A</color>
+    <color name="neutral">#5B6670</color>
+    <color name="accent">#0A84FF</color>
+    <color name="go">#30D158</color>
+    <color name="stop">#FF453A</color>
     <color name="overlayScrim">#B3000000</color>
+    <color name="line">#3A4854</color>
 </resources>
