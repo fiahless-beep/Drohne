@@ -34,7 +34,7 @@ gmp-map-3d { position: absolute; inset: 0; width: 100%; height: 100%; }
     <button type="submit">Karte laden</button>
   </form>
 </div>
-<gmp-map-3d id="map" mode="hybrid" center="38.7250,-9.1498,60" range="1200" tilt="60" heading="320" default-ui-disabled></gmp-map-3d>
+<gmp-map-3d id="map" mode="hybrid" center="38.7250,-9.1498,60" range="1200" tilt="60" heading="320" default-ui-disabled default-labels-disabled></gmp-map-3d>
 <div id="info"></div>
 <div id="label"></div>
 <div class="bar">
@@ -133,7 +133,7 @@ function showDrone(q) {
 function applyView() {
   const q = simPose(); routeVisible(camMode !== 'fpv'); showDrone(q);
   if (camMode === 'fpv') applyCam(camFrom(q, q.alt, q.yaw, q.pitch, 2));
-  else if (camMode === 'chase') { map.center = { lat: q.lat, lng: q.lon, altitude: q.alt + 2 }; map.heading = q.yaw; map.tilt = 62; map.range = 45; }
+  else if (camMode === 'chase') { map.center = { lat: q.lat, lng: q.lon, altitude: q.alt + 2 }; map.heading = q.yaw; map.tilt = 42; map.range = 38; }  // Verfolger schräg von oben hinten (Kamera ~28 m über der Drohne, kaum in Fassaden)
   else { map.center = { lat: q.lat, lng: q.lon, altitude: q.alt }; map.range = 350; map.tilt = 50; }
 }
 function step() {
@@ -178,7 +178,7 @@ window.appDrone = function (lat, lon, alt, hdg, pitch, flying) {
   if (!flying) return;
   running = false; cancelAnimationFrame(raf);
   if (camMode === 'fpv') applyCam(camFrom(drone, alt, hdg, drone.pitch, 2));
-  else if (camMode === 'chase') { map.center = { lat, lng: lon, altitude: alt }; map.heading = hdg; map.tilt = 62; map.range = 45; }
+  else if (camMode === 'chase') { map.center = { lat, lng: lon, altitude: alt }; map.heading = hdg; map.tilt = 42; map.range = 38; }
   else { map.center = { lat, lng: lon, altitude: alt }; map.range = 350; map.tilt = 50; }
 };
 window.cycleCamera = function () { $('bCam').click(); return camMode === 'top' ? 'orbit' : camMode; };
@@ -188,7 +188,7 @@ async function main() {
   if (!KEY) { $('setup').hidden = false; $('setupForm').addEventListener('submit', e => { e.preventDefault(); KEY = $('keyIn').value.trim(); try { localStorage.setItem('google-key', KEY); } catch (x) {} $('setup').hidden = true; main(); }); return; }
   try {
     if (!window.__mapsLoaded) { await loadMaps(); await google.maps.importLibrary('maps3d'); window.__mapsLoaded = true; }
-    map = $('map');
+    map = $('map'); map.defaultLabelsDisabled = true;
     await loadPlan();
     clearRoute();
     $('info').textContent = PLAN.name + ' · ' + PLAN.laenge_m + ' m · ca. ' + Math.round(PLAN.dauer_s / 60) + ' min · ' + PLAN.punkte.length + ' Punkte';

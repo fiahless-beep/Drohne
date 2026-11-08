@@ -108,7 +108,7 @@ def main(argv):
         pts.append((q, hq))
     hmax = max(hq for _, hq in pts)
     # Höhenmodell: Oberfläche + 8 relativ zum Startgelände (falls Datei da)
-    note = ""
+    note = ""; rise = 0.0
     if "hoehen" in opts and start:
         b = open(opts["hoehen"], "rb").read(); lat0, lon0, dlat, dlon, rows, cols = struct.unpack("<ddddii", b[4:44]); n = rows * cols
         g = array.array("h"); g.frombytes(b[44:44 + 2 * n]); s = array.array("h"); s.frombytes(b[44 + 2 * n:44 + 4 * n])
@@ -125,10 +125,12 @@ def main(argv):
         rise = (smp(g, loc.ll(*P)) or 0) - (g0 or 0)
         note += f" Gelände am Ziel {rise:+.0f} m gegenüber Start."
     hmax = math.ceil(hmax)
+    # Kamera auf die Fassadenmitte: Kurs = Peilung zur Front, Neigung = Winkel hinunter zur halben Gebäudehöhe
     wps = []
     for q, _ in pts:
-        la, lo = loc.ll(*q)
-        wps.append({"lat": round(la, 6), "lon": round(lo, 6), "h": hmax, "photo": True, "hover": 2})
+        la, lo = loc.ll(*q); dx = mid[0] - q[0]; dy = mid[1] - q[1]; dist = max(1.0, math.hypot(dx, dy))
+        yaw = round((math.degrees(math.atan2(dx, dy)) + 360) % 360); pitch = max(-80, min(-5, round(-math.degrees(math.atan2(hmax - (rise + H / 2), dist)))))
+        wps.append({"lat": round(la, 6), "lon": round(lo, 6), "h": hmax, "photo": True, "hover": 2, "yaw": yaw, "pitch": pitch})
     fl, fo = loc.ll(*mid)
     plan = {
         "name": name,

@@ -14,21 +14,27 @@
       "lon": -9.15753,
       "h": 32,
       "photo": true,
-      "hover": 2
+      "hover": 2,
+      "yaw": 105,
+      "pitch": -49
     },
     {
       "lat": 38.727702,
       "lon": -9.157451,
       "h": 32,
       "photo": true,
-      "hover": 2
+      "hover": 2,
+      "yaw": 55,
+      "pitch": -61
     },
     {
       "lat": 38.727613,
       "lon": -9.157372,
       "h": 32,
       "photo": true,
-      "hover": 2
+      "hover": 2,
+      "yaw": 5,
+      "pitch": -49
     }
   ]
 }
