@@ -43,6 +43,8 @@ data class DroneState(
     val rcConnected: Boolean = false,
     val airLinkConnected: Boolean = false,
     val productType: String? = null,
+    /** Seriennummer des Fluggeräts (für Polizei, Versicherung, DJI-Reparatur). */
+    val serial: String? = null,
     val landingConfirmationNeeded: Boolean = false,
     val landing: Boolean = false,
     /** Hinderniserkennung: null = unbekannt, "aktiv", "aus", oder "blind: vorn, hinten, …" (Sensoren sehen nichts, z. B. im Dunkeln). */
@@ -226,7 +228,7 @@ object DroneManager {
     /** Einmalige Momentaufnahme ins Protokoll, um Verbindungsprobleme einzugrenzen. */
     fun logSnapshot(reason: String) {
         val s = state
-        log("[$reason] Contr=${s.rcConnected} Funk=${s.airLinkConnected} Drohne=${s.connected} Typ=${s.productType} Akku=${s.batteryPercent}")
+        log("[$reason] Contr=${s.rcConnected} Funk=${s.airLinkConnected} Drohne=${s.connected} Typ=${s.productType} SN=${s.serial} Akku=${s.batteryPercent}")
     }
 
     private fun startTelemetry() {
@@ -238,6 +240,7 @@ object DroneManager {
         } catch (t: Throwable) { log("Kopplungsstatus nicht lesbar: ${t.message}") }
         watch(AirLinkKey.KeyConnection) { s, v -> s.copy(airLinkConnected = v == true) }
         watch(ProductKey.KeyProductType) { s, v -> s.copy(productType = v?.name) }
+        watch(FlightControllerKey.KeySerialNumber) { s, v -> val sn = v?.toString()?.takeIf { it.isNotBlank() }; if (sn != null && sn != s.serial) log("Seriennummer Fluggerät: $sn"); s.copy(serial = sn ?: s.serial) }
         watch(FlightControllerKey.KeyConnection) { s, v -> s.copy(connected = v == true) }
         watch(BatteryKey.KeyChargeRemainingInPercent) { s, v -> s.copy(batteryPercent = v) }
         watch(FlightControllerKey.KeyGPSSatelliteCount) { s, v -> s.copy(satellites = v) }

@@ -287,10 +287,11 @@ class MainActivity : AppCompatActivity() {
         val (link, linkColor) = when {
             s.registerError != null -> "SDK-Fehler" to colorBad
             !s.registered -> "SDK startet" to colorNeutral
-            s.connected -> (s.productType?.takeIf { it.isNotBlank() } ?: "Drohne") to colorOk
+            s.connected -> ((s.productType?.takeIf { it.isNotBlank() } ?: "Drohne") + (s.serial?.let { " · SN $it" } ?: "")) to colorOk
             s.rcConnected -> "Nur Controller" to colorWarn
             else -> "Getrennt" to colorBad
         }
+        s.serial?.let { sn -> val pr = getSharedPreferences("drohne", MODE_PRIVATE); if (pr.getString("letzte_sn", null) != sn) pr.edit().putString("letzte_sn", sn).apply() }
         linkText.text = link
         linkDot.backgroundTintList = ColorStateList.valueOf(linkColor)
 
@@ -554,7 +555,8 @@ class MainActivity : AppCompatActivity() {
             "Plan in Google Maps zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Google-Schlüssel eintragen (3D fotorealistisch)", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
             "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})",
             "Bildwächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})",
-            "Bildwächter ${if (ObstacleGuard.enabled) "ausschalten" else "einschalten"}")
+            "Bildwächter ${if (ObstacleGuard.enabled) "ausschalten" else "einschalten"}",
+            "Seriennummer der Drohne")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which - 2) {
                 -2 -> toggleSimulation()
@@ -572,6 +574,8 @@ class MainActivity : AppCompatActivity() {
                 7 -> { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }
                 8 -> ObstacleGuard.setArmed(this, !ObstacleGuard.armed)
                 9 -> ObstacleGuard.setEnabled(this, !ObstacleGuard.enabled)
+                10 -> { val sn = DroneManager.state.serial ?: getSharedPreferences("drohne", MODE_PRIVATE).getString("letzte_sn", null)
+                    AlertDialog.Builder(this).setTitle("Seriennummer").setMessage(sn?.let { "Fluggerät: $it" } ?: "Noch unbekannt – wird beim nächsten Verbinden gespeichert.").setPositiveButton("OK", null).show() }
             }
             renderNow(DroneManager.state)
         }.show()
