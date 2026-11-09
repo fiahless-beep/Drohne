@@ -252,6 +252,23 @@ object DroneManager {
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
         // Landebestätigung: DJI hält kurz über dem Boden an und wartet auf ein Ja. Das gibt die App selbst.
         watch(FlightControllerKey.KeyHeightLimit) { s, v -> s.copy(heightLimitM = v) }
+        // Felix 9.11. 17:06: „Höhenlimit noch nicht gelesen“ – der Wert kommt nicht von selbst, also aktiv bei der Drohne abfragen.
+        polls += {
+            if (state.heightLimitM == null && state.connected) try {
+                KeyManager.getInstance().getValue(KeyTools.createKey(FlightControllerKey.KeyHeightLimit),
+                    object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<Int> {
+                        override fun onSuccess(v: Int?) { if (v != null) { log("DJI-Höhenlimit gelesen: $v m"); update { it.copy(heightLimitM = v) } } }
+                        override fun onFailure(error: IDJIError) { if (pollErrors.add("HeightLimitAsync")) log("Höhenlimit abfragen fehlgeschlagen: ${error.description()}") }
+                    })
+            } catch (t: Throwable) { if (pollErrors.add("HeightLimitAsync")) log("Höhenlimit abfragen: ${t.message}") }
+            if (state.sensors == "aus" && state.connected) try {
+                dji.v5.manager.aircraft.perception.PerceptionManager.getInstance().getOverallObstacleAvoidanceEnabled(
+                    object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<Boolean> {
+                        override fun onSuccess(v: Boolean?) { if (v == true && obstacleTypeOn) update { it.copy(sensors = "aktiv") } }
+                        override fun onFailure(error: IDJIError) {}
+                    })
+            } catch (_: Throwable) {}
+        }
         watch(FlightControllerKey.KeyWindWarning) { s, v ->
             val lvl = when (v) { dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_1 -> 1; dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_2 -> 2; dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_0 -> 0; else -> null }
             if (lvl != null && lvl != s.windWarning && (lvl > 0 || s.windWarning != null)) log(when (lvl) { 0 -> "Wind: keine Warnung mehr"; 1 -> "WIND: mäßige Windwarnung, nahe Gebäuden nicht fliegen"; else -> "WIND: STARKER WIND, sofort zurück und landen" })
@@ -379,12 +396,19 @@ object DroneManager {
             })
     } }
 
+    @Volatile private var obstacleTypeOn = false
     /** DJI-Hinderniserkennung: an = Bremsen (BRAKE), aus = CLOSE. Für den Handstart vom Balkon/aus dem Auto (Felix 9.11.). */
     fun setObstacleAvoidance(on: Boolean, reason: String = "") { if (Simulator.active) { log("Simulation: Hinderniserkennung ${if (on) "an" else "aus"}"); return }; safe("Hinderniserkennung") {
         val t = if (on) dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.BRAKE else dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.CLOSE
-        dji.v5.manager.aircraft.perception.PerceptionManager.getInstance().setObstacleAvoidanceType(t,
+        val pm = dji.v5.manager.aircraft.perception.PerceptionManager.getInstance()
+        // Felix 9.11. 17:06: nur der Typ reichte nicht – DJI Fly hatte die Erkennung insgesamt ausgeschaltet.
+        if (on) pm.setOverallObstacleAvoidanceEnabled(true, object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
+            override fun onSuccess() { log("Hinderniserkennung insgesamt eingeschaltet") }
+            override fun onFailure(error: IDJIError) { log("Hinderniserkennung insgesamt einschalten fehlgeschlagen: ${error.description()}") }
+        })
+        pm.setObstacleAvoidanceType(t,
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
-                override fun onSuccess() { log(if (on) "Hinderniserkennung wieder AN (Bremsen)${if (reason.isNotBlank()) " – $reason" else ""}" else "HINDERNISERKENNUNG AUS – nur für den Handstart, vorsichtig fliegen. Geht bei „Plan holen“/„Start“ automatisch wieder an.") }
+                override fun onSuccess() { obstacleTypeOn = on; log(if (on) "Hinderniserkennung wieder AN (Bremsen)${if (reason.isNotBlank()) " – $reason" else ""}" else "HINDERNISERKENNUNG AUS – nur für den Handstart, vorsichtig fliegen. Geht bei „Plan holen“/„Start“ automatisch wieder an.") }
                 override fun onFailure(error: IDJIError) { log("Hinderniserkennung ${if (on) "einschalten" else "ausschalten"} fehlgeschlagen: ${error.description()} – in DJI Fly unter Safety → Obstacle Avoidance") }
             })
     } }
