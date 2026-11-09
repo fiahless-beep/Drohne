@@ -155,8 +155,12 @@ object MissionController {
         return (NEAR_SPEED_MIN + t * (cap - NEAR_SPEED_MIN)).coerceAtMost(cap)
     }
 
+    /** Letzter Abschnitt ist der senkrechte Abstieg vor den Balkon (Landeanflug, von Hand fortgesetzt) – nicht gegen Fassaden prüfen. */
+    private var landingTail = false
+
     fun prepare(mIn0: Mission): Boolean {
         uploaded = false
+        landingTail = false
         val h = DroneManager.state.home
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
         preparedHome = home
@@ -188,12 +192,29 @@ object MissionController {
             // Übereinanderliegende Punkte 1,5 m versetzen (DJI mag keine Punkte ohne waagerechten Abstand).
             fun beside(p: LatLon, towards: LatLon) = Geo.offset(p, 1.5, Geo.bearing(p, towards))
             val pre = buildList {
-                if (home != null) add(first.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
+                val a0 = DroneManager.state.location?.takeIf { above > 0.1 && DroneManager.state.flying && it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
+                if (a0 != null) add(first.copy(pos = a0, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
+                else if (home != null) add(first.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
                 if (first.heightM < transit - 1) add(first.copy(pos = beside(first.pos, home ?: last.pos), heightM = transit, takePhoto = false, hoverSec = 0, video = 0))
             }
+            // Balkonstart (Felix 9.11.): Felix fliegt von Hand raus und übernimmt den Plan im Flug. Die Stelle, an der die Drohne
+            // dabei schwebt (vor dem Balkon über der Straße), wird Anker: dort beginnt und endet der Plan. Am Ende schwebt sie dort
+            // auf Oberfläche (Bäume/Dächer im 8-m-Umkreis) + 8 m, Felix landet von Hand auf dem Balkon.
+            val loc = DroneManager.state.location?.takeIf { it.latitude != 0.0 }
+            val anchor = if (above > 0.1 && DroneManager.state.flying && loc != null) LatLon(loc.latitude, loc.longitude) else null
+            val anchorH = anchor?.let { a ->
+                val g = home?.let { com.felixos.drohne.plan.Terrain.groundM(it) }
+                val top = (0 until 16).mapNotNull { k -> com.felixos.drohne.plan.Terrain.surfaceM(Geo.offset(a, 8.0, k * 22.5)) } + listOfNotNull(com.felixos.drohne.plan.Terrain.surfaceM(a))
+                if (g == null || top.isEmpty()) null else (top.max() - g + com.felixos.drohne.plan.Obstacles.CLEARANCE_M - above).coerceIn(2.0, transit)
+            }
+            if (anchor != null) DroneManager.log("Balkon: Plan beginnt und endet an der jetzigen Position; Ende schwebend ${anchorH?.toInt() ?: transit.toInt()} m über dem Balkon, Landung von Hand")
             val post = buildList {
-                if (last.heightM < transit - 1) add(last.copy(pos = beside(last.pos, home ?: first.pos), heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
-                if (home != null) add(last.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
+                if (last.heightM < transit - 1) add(last.copy(pos = beside(last.pos, anchor ?: home ?: first.pos), heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
+                if (anchor != null) {
+                    add(last.copy(pos = anchor, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
+                    if (anchorH != null && anchorH < transit - 1) landingTail = true
+                    if (anchorH != null && anchorH < transit - 1) add(last.copy(pos = beside(anchor, last.pos), heightM = anchorH, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
+                } else if (home != null) add(last.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
             }
             if (home == null) DroneManager.log("ACHTUNG: Startpunkt unbekannt, Transit nur über dem Ziel. Vor dem Start Plan erneut übernehmen!")
             else DroneManager.log("Transithöhe ${transit.toInt()} m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel")
@@ -210,6 +231,12 @@ object MissionController {
         rthHeightM = maxOf(transit, (m.obstacles.maxOfOrNull { it.topM } ?: 0.0) + com.felixos.drohne.plan.Obstacles.CLEARANCE_M).coerceIn(20.0, 120.0)
         conflicts = com.felixos.drohne.plan.Obstacles.check(m, home) + (home?.let { com.felixos.drohne.plan.Obstacles.checkReturn(m, it, rthHeightM) } ?: emptyList())
         terrainConflicts = if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.check(m, home, homeAboveGroundM = above) else emptyList()
+        if (landingTail) {
+            val lastIdx = m.waypoints.size - 1 + (if (home != null) 1 else 0)
+            conflicts = conflicts.filter { it.toHome || it.to < lastIdx }
+            terrainConflicts = terrainConflicts.filter { it.to < lastIdx }
+            DroneManager.log("Balkon: letzter Abstieg (Landeanflug) von der Gebäudeprüfung ausgenommen")
+        }
         if (com.felixos.drohne.plan.Terrain.loaded && home != null) {
             val rises = m0.waypoints.mapNotNull { com.felixos.drohne.plan.Terrain.riseM(home, it.pos) }
             if (rises.isNotEmpty()) DroneManager.log("Höhenmodell: Gelände am Ziel ${if (rises.max() >= 0) "+" else ""}${rises.max().toInt()} m gegenüber dem Start")
