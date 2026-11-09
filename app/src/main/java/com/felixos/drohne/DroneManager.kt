@@ -370,6 +370,16 @@ object DroneManager {
             })
     }
 
+    private var heightLimitAskedAt = 0L
+    /** DJI-Höhenlimit (Max Altitude) anheben, wenn der Plan höher fliegt (Felix 9.11.: stand in DJI Fly auf 15 m). Höchstens alle 5 s. */
+    fun raiseHeightLimit(h: Int) { if (Simulator.active) return; val now = System.currentTimeMillis(); if (now - heightLimitAskedAt < 5000) return; heightLimitAskedAt = now; safe("Höhenlimit") {
+        KeyManager.getInstance().setValue(KeyTools.createKey(FlightControllerKey.KeyHeightLimit), h,
+            object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
+                override fun onSuccess() { log("DJI-Höhenlimit auf $h m gesetzt") }
+                override fun onFailure(error: IDJIError) { log("Höhenlimit $h m setzen fehlgeschlagen: ${error.description()} – bitte in DJI Fly unter Safety → Max Altitude") }
+            })
+    } }
+
     /** Landelampe unten: "an", "aus" oder "auto" (Standard: nur beim Landen). */
     fun setBottomLight(mode: String) { if (Simulator.active) { log("Simulation: Landelampe $mode"); return }; setBottomLightReal(mode) }
     private fun setBottomLightReal(mode: String) = safe("Licht") {

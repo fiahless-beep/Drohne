@@ -828,7 +828,7 @@ class MainActivity : AppCompatActivity() {
         MissionController.terrainConflicts.forEach { add("Oberflächen-Wächter: $it") }
         if (m != null) {
             val top = maxOf(m.waypoints.maxOf { it.heightM }, MissionController.rthHeightM)
-            s.heightLimitM?.let { if (it < top - 0.5) add("DJI-Höhenlimit $it m liegt unter der Flughöhe ${top.toInt()} m: die Drohne würde tiefer fliegen als geplant. Limit in DJI Fly anheben.") }
+            s.heightLimitM?.let { if (it < top - 0.5) { DroneManager.raiseHeightLimit(maxOf(120, Math.ceil(top).toInt()).coerceAtMost(500)); add("DJI-Höhenlimit $it m liegt unter der Flughöhe ${top.toInt()} m: die App stellt es gerade auf 120 m. Kurz warten, sonst in DJI Fly unter Safety → Max Altitude anheben.") } }
             if (s.heightLimitM == null) add("DJI-Höhenlimit noch nicht gelesen (kurz warten)")
             when (s.windWarning) {
                 2 -> add("Starke Windwarnung der Drohne: kein Start")
