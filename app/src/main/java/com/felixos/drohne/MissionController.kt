@@ -77,6 +77,7 @@ object MissionController {
         })
         if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
             if (currentMission?.light == true) DroneManager.setBottomLight("auto")
+            if (currentMission?.waypoints?.any { it.video != 0 } == true) DroneManager.stopRecording("Missionsende")
             DroneManager.landingHelper()
             if (!Simulator.active) onFinished?.invoke()
         }
@@ -181,16 +182,19 @@ object MissionController {
             // Übereinanderliegende Punkte 1,5 m versetzen (DJI mag keine Punkte ohne waagerechten Abstand).
             fun beside(p: LatLon, towards: LatLon) = Geo.offset(p, 1.5, Geo.bearing(p, towards))
             val pre = buildList {
-                if (home != null) add(first.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
-                if (first.heightM < transit - 1) add(first.copy(pos = beside(first.pos, home ?: last.pos), heightM = transit, takePhoto = false, hoverSec = 0))
+                if (home != null) add(first.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
+                if (first.heightM < transit - 1) add(first.copy(pos = beside(first.pos, home ?: last.pos), heightM = transit, takePhoto = false, hoverSec = 0, video = 0))
             }
             val post = buildList {
-                if (last.heightM < transit - 1) add(last.copy(pos = beside(last.pos, home ?: first.pos), heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
-                if (home != null) add(last.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null))
+                if (last.heightM < transit - 1) add(last.copy(pos = beside(last.pos, home ?: first.pos), heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
+                if (home != null) add(last.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
             }
             if (home == null) DroneManager.log("ACHTUNG: Startpunkt unbekannt, Transit nur über dem Ziel. Vor dem Start Plan erneut übernehmen!")
             else DroneManager.log("Transithöhe ${transit.toInt()} m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel")
-            m0.copy(waypoints = pre + m0.waypoints + post, takeOffSecurityHeightM = transit)
+            // Video, das im Plan nicht beendet wird, spätestens am ersten Rückweg-Punkt stoppen.
+            val open = m0.waypoints.lastOrNull { it.video != 0 }?.video == 1
+            val post2 = if (open && post.isNotEmpty()) listOf(post[0].copy(video = 2)) + post.drop(1) else post
+            m0.copy(waypoints = pre + m0.waypoints + post2, takeOffSecurityHeightM = transit)
         } else m0
         // Tempo je Abschnitt
         val wps = m1.waypoints.mapIndexed { i, w -> w.copy(speedMs = speedFor(w, m1.waypoints.getOrNull(i + 1), m1)) }
@@ -307,7 +311,8 @@ object MissionController {
 
     fun pause() { if (Simulator.active) return Simulator.pause(); DroneManager.safe("Pause") { WaypointMissionManager.getInstance().pauseMission(cb("Pause")) } }
     fun resume() { if (Simulator.active) return Simulator.resume(); DroneManager.safe("Weiter") { WaypointMissionManager.getInstance().resumeMission(cb("Weiter")) } }
-    fun stop() { if (Simulator.active) return; DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(missionId, cb("Abbruch")) } }
+    fun stop() { if (Simulator.active) return; DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(missionId, cb("Abbruch")) }
+        if (currentMission?.waypoints?.any { it.video != 0 } == true) DroneManager.stopRecording("Abbruch") }
 
     private fun cb(what: String) = object : CommonCallbacks.CompletionCallback {
         override fun onSuccess() { DroneManager.log("$what: ok") }

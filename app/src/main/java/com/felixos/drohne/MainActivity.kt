@@ -426,6 +426,8 @@ class MainActivity : AppCompatActivity() {
                 when {
                     away > 5 -> "Anflug Punkt ${idx + 1} (${away.toInt()} m, ${w.heightM.toInt()} m hoch)"
                     w.takePhoto -> "Foto an Punkt ${idx + 1}"
+                    w.video == 1 -> "Video läuft ab Punkt ${idx + 1}"
+                    w.video == 2 -> "Video beendet an Punkt ${idx + 1}"
                     w.hoverSec > 0 -> "schwebt ${w.hoverSec} s an Punkt ${idx + 1}"
                     next == null -> "letzter Punkt – dann Heimflug"
                     next.heightM < w.heightM - 0.5 -> "Abstieg auf ${next.heightM.toInt()} m zu Punkt ${idx + 2}"

@@ -60,7 +60,7 @@ object PlanJson {
                 val h = w.getDouble("h")
                 Waypoint(pos, h,
                     gimbalPitchDeg = if (w.has("pitch")) w.getDouble("pitch") else Missions.pitchTo(w.getDouble("abstand"), h - targetH),
-                    takePhoto = w.optBoolean("photo", true), hoverSec = w.optInt("hover", 0),
+                    takePhoto = w.optBoolean("photo", true), hoverSec = w.optInt("hover", 0), video = videoOf(w),
                     headingDeg = if (w.has("yaw")) w.getDouble("yaw") else Geo.bearing(pos, target))
             }
             val wps2 = if (wps.size == 1) wps + wps.first().copy(pos = Geo.offset(wps.first().pos, 3.0, 0.0), takePhoto = false) else wps
@@ -78,12 +78,15 @@ object PlanJson {
                 gimbalPitchDeg = if (w.has("pitch")) w.getDouble("pitch") else autoPitch,
                 takePhoto = w.optBoolean("photo", true),
                 hoverSec = w.optInt("hover", 0),
+                video = videoOf(w),
                 headingDeg = if (w.has("yaw")) w.getDouble("yaw") else target?.let { Geo.bearing(pos, it) },
             )
         }
         val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove)
         return m to o.optString("beschreibung", "")
     }
+
+    private fun videoOf(w: JSONObject) = when (w.optString("video", "").lowercase()) { "start" -> 1; "stop" -> 2; else -> 0 }
 
     fun toJson(m: Mission, beschreibung: String = ""): String {
         val o = JSONObject()
@@ -102,6 +105,7 @@ object PlanJson {
             val j = JSONObject().put("lat", w.pos.lat).put("lon", w.pos.lon).put("h", w.heightM)
                 .put("pitch", w.gimbalPitchDeg).put("photo", w.takePhoto).put("hover", w.hoverSec)
             w.headingDeg?.let { j.put("yaw", it) }
+            if (w.video == 1) j.put("video", "start") else if (w.video == 2) j.put("video", "stop")
             arr.put(j)
         }
         o.put("waypoints", arr)

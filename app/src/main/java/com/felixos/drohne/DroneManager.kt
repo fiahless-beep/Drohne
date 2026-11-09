@@ -307,6 +307,16 @@ object DroneManager {
             })
     }
 
+    /** Videoaufnahme beenden (nach Missionsende/Abbruch, falls ein Plan-Video noch läuft). Fehler = lief keine Aufnahme. */
+    fun stopRecording(reason: String) { if (Simulator.active) return; safe("Video stoppen") {
+        KeyManager.getInstance().performAction(
+            KeyTools.createKey(dji.sdk.keyvalue.key.CameraKey.KeyStopRecord),
+            object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
+                override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) { log("$reason: Videoaufnahme beendet") }
+                override fun onFailure(error: IDJIError) { }
+            })
+    } }
+
     /** Landung auslösen (falls die Drohne nach der Mission nur schwebt). */
     fun startLanding() { if (Simulator.active) return; startLandingReal() }
     private fun startLandingReal() = safe("Landen") {

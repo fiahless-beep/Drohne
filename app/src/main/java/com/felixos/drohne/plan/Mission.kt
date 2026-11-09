@@ -11,6 +11,8 @@ data class Waypoint(
     val headingDeg: Double? = null,
     /** Geschwindigkeit ab diesem Punkt bis zum nächsten in m/s; null = Missionsgeschwindigkeit. */
     val speedMs: Double? = null,
+    /** Video an diesem Punkt: 1 = Aufnahme starten, 2 = Aufnahme beenden, 0 = nichts (Planfeld "video": "start"/"stop"). */
+    val video: Int = 0,
 )
 
 /** Was tut die Drohne, wenn das Funksignal zum Controller abreißt? */

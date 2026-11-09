@@ -64,7 +64,7 @@ object Wpml {
           <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
         </wpml:waypointHeadingParam>"""
 
-    private fun passes(w: Waypoint) = opt.smooth && !w.takePhoto && w.hoverSec == 0
+    private fun passes(w: Waypoint) = opt.smooth && !w.takePhoto && w.hoverSec == 0 && w.video == 0
 
     private fun turn(w: Waypoint) = if (passes(w)) """
         <wpml:waypointTurnParam>
@@ -100,6 +100,15 @@ object Wpml {
             <wpml:actionActuatorFuncParam>
               <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
               <wpml:fileSuffix>wp$i</wpml:fileSuffix>
+            </wpml:actionActuatorFuncParam>""")
+            if (w.video == 1) add("""<wpml:actionActuatorFunc>startRecord</wpml:actionActuatorFunc>
+            <wpml:actionActuatorFuncParam>
+              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
+              <wpml:fileSuffix>video$i</wpml:fileSuffix>
+            </wpml:actionActuatorFuncParam>""")
+            if (w.video == 2) add("""<wpml:actionActuatorFunc>stopRecord</wpml:actionActuatorFunc>
+            <wpml:actionActuatorFuncParam>
+              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
             </wpml:actionActuatorFuncParam>""")
         }
         return """
