@@ -13,7 +13,9 @@ data class Waypoint(
     val speedMs: Double? = null,
     /** Video an diesem Punkt: 1 = Aufnahme starten, 2 = Aufnahme beenden, 0 = nichts (Planfeld "video": "start"/"stop"). */
     val video: Int = 0,
-)
+) {
+    companion object { /** Platzhalter für "h": "max" (so hoch wie erlaubt). */ const val MAX_HEIGHT = 10000.0 }
+}
 
 /** Was tut die Drohne, wenn das Funksignal zum Controller abreißt? */
 enum class RcLost(val wpml: String) {

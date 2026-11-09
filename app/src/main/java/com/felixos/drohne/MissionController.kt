@@ -153,20 +153,24 @@ object MissionController {
         return (NEAR_SPEED_MIN + t * (cap - NEAR_SPEED_MIN)).coerceAtMost(cap)
     }
 
-    fun prepare(mIn: Mission): Boolean {
+    fun prepare(mIn0: Mission): Boolean {
         uploaded = false
         val h = DroneManager.state.home
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
         preparedHome = home
         // Erhöhter Startplatz (Felix 8.11.: Balkon 3. Stock): Planhöhen gelten ab Boden → für die Drohne um den Versatz senken,
         // Gelände und Gebäude entsprechend tiefer relativ zur Drohne. Herkunft: Planfeld startUeberBoden, sonst Antwort im Dialog.
-        val above = (mIn.startAboveGroundM ?: startAboveOverrideM ?: 0.0).coerceIn(0.0, 60.0)
+        // "h": "max" → 2 m unter dem DJI-Höhenlimit (höchstens 120 m; GEO-Höhenzonen begrenzt DJI selbst). Gilt über dem Startpunkt der Drohne.
+        val maxH = ((DroneManager.state.heightLimitM ?: 120).coerceAtMost(120) - 2).toDouble()
+        if (mIn0.waypoints.any { it.heightM >= com.felixos.drohne.plan.Waypoint.MAX_HEIGHT }) DroneManager.log("Plan „so hoch wie möglich“: ${maxH.toInt()} m über dem Start (Höhenlimit ${DroneManager.state.heightLimitM ?: "unbekannt"} m)")
+        val above = (mIn0.startAboveGroundM ?: startAboveOverrideM ?: 0.0).coerceIn(0.0, 60.0)
         startAboveGroundM = above
-        val mB = if (above > 0.1) {
+        val mB0 = if (above > 0.1) {
             DroneManager.log("Startplatz ${String.format(java.util.Locale.GERMANY, "%.0f", above)} m über dem Boden (Balkon): alle Planhöhen um diesen Wert gesenkt")
-            mIn.copy(waypoints = mIn.waypoints.map { it.copy(heightM = (it.heightM - above).coerceAtLeast(-100.0)) }, transitHeightM = mIn.transitHeightM?.let { it - above })
-        } else mIn
+            mIn0.copy(waypoints = mIn0.waypoints.map { if (it.heightM >= com.felixos.drohne.plan.Waypoint.MAX_HEIGHT) it else it.copy(heightM = (it.heightM - above).coerceAtLeast(-100.0)) }, transitHeightM = mIn0.transitHeightM?.let { it - above })
+        } else mIn0
         // Gebäudedatenbank der Stadt dazu (alle Gebäude im Umkreis von 300 m um Strecke und Start).
+        val mB = mB0.copy(waypoints = mB0.waypoints.map { if (it.heightM >= com.felixos.drohne.plan.Waypoint.MAX_HEIGHT) it.copy(heightM = maxH) else it })
         val city0 = com.felixos.drohne.plan.Buildings.near(mB.waypoints.map { it.pos } + listOfNotNull(home), 300.0)
         // Gelände: Gebäudehöhen gelten über dem Boden des Gebäudes, Flughöhen über dem Start → Dachhöhe relativ zum Start (Lissabon: 48 m Gefälle sind normal)
         val city = if (home != null && com.felixos.drohne.plan.Terrain.loaded) city0.map { it.copy(groundRelM = (com.felixos.drohne.plan.Terrain.riseM(home, it.polygon[0]) ?: 0.0) - above) } else city0

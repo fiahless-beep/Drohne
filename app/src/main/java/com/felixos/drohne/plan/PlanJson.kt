@@ -57,7 +57,7 @@ object PlanJson {
             val wps = (0 until rel.length()).map { i ->
                 val w = rel.getJSONObject(i)
                 val pos = Geo.offset(target, w.getDouble("abstand"), w.getDouble("richtung"))
-                val h = w.getDouble("h")
+                val h = heightOf(w)
                 Waypoint(pos, h,
                     gimbalPitchDeg = if (w.has("pitch")) w.getDouble("pitch") else Missions.pitchTo(w.getDouble("abstand"), h - targetH),
                     takePhoto = w.optBoolean("photo", true), hoverSec = w.optInt("hover", 0), video = videoOf(w),
@@ -70,7 +70,7 @@ object PlanJson {
         val wps = (0 until arr.length()).map { i ->
             val w = arr.getJSONObject(i)
             val pos = LatLon(w.getDouble("lat"), w.getDouble("lon"))
-            val h = w.getDouble("h")
+            val h = heightOf(w)
             val autoPitch = target?.let { Missions.pitchTo(Geo.distance(pos, it), h - targetH) } ?: -90.0
             Waypoint(
                 pos = pos,
@@ -85,6 +85,9 @@ object PlanJson {
         val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove)
         return m to o.optString("beschreibung", "")
     }
+
+    /** "h": Zahl (m über Start) oder "max" = so hoch wie das Höhenlimit erlaubt (wird in MissionController.prepare aufgelöst). */
+    private fun heightOf(w: JSONObject) = if (w.optString("h") == "max") Waypoint.MAX_HEIGHT else w.getDouble("h")
 
     private fun videoOf(w: JSONObject) = when (w.optString("video", "").lowercase()) { "start" -> 1; "stop" -> 2; else -> 0 }
 
@@ -102,7 +105,7 @@ object PlanJson {
         m.startAboveGroundM?.let { o.put("startUeberBoden", it) }
         val arr = JSONArray()
         m.waypoints.forEach { w ->
-            val j = JSONObject().put("lat", w.pos.lat).put("lon", w.pos.lon).put("h", w.heightM)
+            val j = JSONObject().put("lat", w.pos.lat).put("lon", w.pos.lon).put("h", if (w.heightM >= Waypoint.MAX_HEIGHT) "max" else w.heightM)
                 .put("pitch", w.gimbalPitchDeg).put("photo", w.takePhoto).put("hover", w.hoverSec)
             w.headingDeg?.let { j.put("yaw", it) }
             if (w.video == 1) j.put("video", "start") else if (w.video == 2) j.put("video", "stop")

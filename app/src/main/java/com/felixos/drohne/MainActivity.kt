@@ -568,7 +568,8 @@ class MainActivity : AppCompatActivity() {
             "Seriennummer der Drohne",
             "Selbsttest (Sensoren, DJI-Meldungen)",
             "Flugaufzeichnungen sichern (SDK-Logs ins Repo)",
-            "Startplatz hier merken (Balkon/Dach)")
+            "Startplatz hier merken (Balkon/Dach)",
+            "Höhenlimit einstellen (jetzt ${DroneManager.state.heightLimitM?.let { "$it m" } ?: "unbekannt"})")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which - 2) {
                 -2 -> toggleSimulation()
@@ -597,6 +598,7 @@ class MainActivity : AppCompatActivity() {
                     } }
                 }
                 13 -> askStartPlace()
+                14 -> askHeightLimit()
             }
             renderNow(DroneManager.state)
         }.show()
@@ -606,6 +608,19 @@ class MainActivity : AppCompatActivity() {
      * Erhöhten Startplatz merken (Felix 8.11.: Balkon 3. Stock). Position = Drohne (wenn verbunden) sonst Handy;
      * Höhe über Boden vorbelegt mit der aktuellen Flughöhe der Drohne (vom Gehweg gestartet, vor dem Balkon schwebend) oder 10 m.
      */
+    /** Höhenlimit der Drohne (DJI Max Altitude) von Hand. 120 m = gesetzliches Maximum (EU, offene Kategorie); GEO-Höhenzonen begrenzt DJI zusätzlich selbst. */
+    private fun askHeightLimit() {
+        val cur = DroneManager.state.heightLimitM
+        val inp = android.widget.EditText(this).apply { hint = "Meter (20–120)"; inputType = android.text.InputType.TYPE_CLASS_NUMBER; setText((cur ?: 120).toString()) }
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 10, 40, 0); addView(inp) }
+        AlertDialog.Builder(this).setTitle("Höhenlimit")
+            .setMessage("Jetzt: ${cur?.let { "$it m" } ?: "unbekannt (Drohne verbinden)"}. Höher als 120 m ist nicht erlaubt; in Höhenzonen begrenzt DJI selbst. Pläne mit \"h\": \"max\" fliegen 2 m unter diesem Limit.")
+            .setView(box)
+            .setPositiveButton("Setzen") { _, _ -> inp.text.toString().toIntOrNull()?.coerceIn(20, 120)?.let { DroneManager.setHeightLimit(it) } }
+            .setNeutralButton("Maximum 120 m") { _, _ -> DroneManager.setHeightLimit(120) }
+            .setNegativeButton("Abbrechen", null).show()
+    }
+
     private fun askStartPlace() {
         val s = DroneManager.state
         val pos = s.location?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) } ?: homeLatLon() ?: phoneLatLon()
@@ -828,7 +843,7 @@ class MainActivity : AppCompatActivity() {
         MissionController.terrainConflicts.forEach { add("Oberflächen-Wächter: $it") }
         if (m != null) {
             val top = maxOf(m.waypoints.maxOf { it.heightM }, MissionController.rthHeightM)
-            s.heightLimitM?.let { if (it < top - 0.5) { DroneManager.raiseHeightLimit(maxOf(120, Math.ceil(top).toInt()).coerceAtMost(500)); add("DJI-Höhenlimit $it m liegt unter der Flughöhe ${top.toInt()} m: die App stellt es gerade auf 120 m. Kurz warten, sonst in DJI Fly unter Safety → Max Altitude anheben.") } }
+            s.heightLimitM?.let { if (it < top - 0.5) add("DJI-Höhenlimit $it m liegt unter der Flughöhe ${top.toInt()} m. Mehr … → Höhenlimit einstellen.") }
             if (s.heightLimitM == null) add("DJI-Höhenlimit noch nicht gelesen (kurz warten)")
             when (s.windWarning) {
                 2 -> add("Starke Windwarnung der Drohne: kein Start")
