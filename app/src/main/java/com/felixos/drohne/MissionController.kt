@@ -78,7 +78,9 @@ object MissionController {
         if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
             if (currentMission?.light == true) DroneManager.setBottomLight("auto")
             if (currentMission?.waypoints?.any { it.video != 0 } == true) DroneManager.stopRecording("Missionsende")
-            DroneManager.landingHelper()
+            // Erhöhter/überdachter Startplatz (Balkon, Felix 9.11.): kein automatischer Heimflug/Abstieg, Drohne schwebt über dem Haus, Landung von Hand.
+            if ((currentMission?.startAboveGroundM ?: 0.0) > 0.1 || startAboveGroundM > 0.1) DroneManager.log("Plan fertig: Drohne schwebt über dem Startplatz. Balkon – bitte von Hand landen.")
+            else DroneManager.landingHelper()
             if (!Simulator.active) onFinished?.invoke()
         }
     }

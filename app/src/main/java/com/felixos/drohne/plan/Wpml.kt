@@ -36,7 +36,7 @@ object Wpml {
     private fun missionConfig(m: Mission): String = """
     <wpml:missionConfig>
       <wpml:flyToWaylineMode>safely</wpml:flyToWaylineMode>
-      <wpml:finishAction>goHome</wpml:finishAction>
+      <wpml:finishAction>${if ((m.startAboveGroundM ?: 0.0) > 0.1) "noAction" else "goHome"}</wpml:finishAction>
       <wpml:exitOnRCLost>${if (m.rcLost == RcLost.CONTINUE) "goContinue" else "executeLostAction"}</wpml:exitOnRCLost>
       ${if (m.rcLost == RcLost.GO_HOME || opt.alwaysRcLostAction) "<wpml:executeRCLostAction>goBack</wpml:executeRCLostAction>" else ""}
       <wpml:takeOffSecurityHeight>${f(m.takeOffSecurityHeightM, 1)}</wpml:takeOffSecurityHeight>
