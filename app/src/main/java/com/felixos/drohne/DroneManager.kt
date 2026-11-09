@@ -379,6 +379,19 @@ object DroneManager {
             })
     } }
 
+    /** DJI-Hinderniserkennung: an = Bremsen (BRAKE), aus = CLOSE. Für den Handstart vom Balkon/aus dem Auto (Felix 9.11.). */
+    fun setObstacleAvoidance(on: Boolean, reason: String = "") { if (Simulator.active) { log("Simulation: Hinderniserkennung ${if (on) "an" else "aus"}"); return }; safe("Hinderniserkennung") {
+        val t = if (on) dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.BRAKE else dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.CLOSE
+        dji.v5.manager.aircraft.perception.PerceptionManager.getInstance().setObstacleAvoidanceType(t,
+            object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
+                override fun onSuccess() { log(if (on) "Hinderniserkennung wieder AN (Bremsen)${if (reason.isNotBlank()) " – $reason" else ""}" else "HINDERNISERKENNUNG AUS – nur für den Handstart, vorsichtig fliegen. Geht bei „Plan holen“/„Start“ automatisch wieder an.") }
+                override fun onFailure(error: IDJIError) { log("Hinderniserkennung ${if (on) "einschalten" else "ausschalten"} fehlgeschlagen: ${error.description()} – in DJI Fly unter Safety → Obstacle Avoidance") }
+            })
+    } }
+
+    /** Schaltet die Hinderniserkennung wieder ein, falls sie aus ist (vor Plan holen/Start). */
+    fun ensureObstacleAvoidance(reason: String) { if (state.sensors == "aus") setObstacleAvoidance(true, reason) }
+
     /** Landelampe unten: "an", "aus" oder "auto" (Standard: nur beim Landen). */
     fun setBottomLight(mode: String) { if (Simulator.active) { log("Simulation: Landelampe $mode"); return }; setBottomLightReal(mode) }
     private fun setBottomLightReal(mode: String) = safe("Licht") {

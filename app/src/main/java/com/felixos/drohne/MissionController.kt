@@ -327,6 +327,7 @@ object MissionController {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
         if (Simulator.active) { currentMission?.let { Simulator.fly(it, rthHeightM) }; return }
+        DroneManager.ensureObstacleAvoidance("Mission startet")
         FlightReport.startFlight(missionId)
         currentMission?.let { m ->
             val h = DroneManager.state.home

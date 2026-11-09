@@ -569,7 +569,8 @@ class MainActivity : AppCompatActivity() {
             "Selbsttest (Sensoren, DJI-Meldungen)",
             "Flugaufzeichnungen sichern (SDK-Logs ins Repo)",
             "Startplatz hier merken (Balkon/Dach)",
-            "Höhenlimit einstellen (jetzt ${DroneManager.state.heightLimitM?.let { "$it m" } ?: "unbekannt"})")
+            "Höhenlimit einstellen (jetzt ${DroneManager.state.heightLimitM?.let { "$it m" } ?: "unbekannt"})",
+            if (DroneManager.state.sensors == "aus") "Hinderniserkennung wieder EIN" else "Hinderniserkennung AUS (Handstart Balkon/Auto)")
         AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
             when (which - 2) {
                 -2 -> toggleSimulation()
@@ -599,6 +600,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 13 -> askStartPlace()
                 14 -> askHeightLimit()
+                15 -> if (DroneManager.state.sensors == "aus") DroneManager.setObstacleAvoidance(true, "von Hand") else AlertDialog.Builder(this).setTitle("Hinderniserkennung aus?")
+                    .setMessage("Nur für den Handstart unter Dach oder aus dem Auto: Die Drohne bremst dann NICHT mehr vor Hindernissen. Fliege von Hand langsam an einen freien Ort. Bei „Plan holen“ und „Start“ geht sie automatisch wieder an.")
+                    .setPositiveButton("Ausschalten") { _, _ -> DroneManager.setObstacleAvoidance(false) }
+                    .setNegativeButton("Abbrechen", null).show()
             }
             renderNow(DroneManager.state)
         }.show()
@@ -905,6 +910,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadPlan() {
+        DroneManager.ensureObstacleAvoidance("Plan holen")
         DroneManager.log("Lade Flugplan aus der Cloud …")
         loading = true; renderNow(DroneManager.state)
         setPlanCard("Plan holen …", "Hole plaene/aktuell.json aus der Cloud …")
