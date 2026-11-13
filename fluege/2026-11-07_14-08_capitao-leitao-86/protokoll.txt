@@ -1,0 +1,6 @@
+14:08:55  Flugprotokoll: 2026-11-07_14-08_capitao-leitao-86/protokoll.txt
+14:08:55  Startpunkt: 38.739842, -9.099329
+14:08:55  Karte: https://www.google.com/maps/dir/38.738110,-9.105286/38.738101,-9.105171/38.738027,-9.105299/38.739842,-9.099329/data=!4m2!4m1!3e2
+14:08:55  Rückkehrhöhe: 20 m
+14:08:56  Start: ok
+14:10:19  Verbindung getrennt (Produkt 0)
