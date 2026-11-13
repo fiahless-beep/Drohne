@@ -1,0 +1,14 @@
+13:36:38  Flugprotokoll: 2026-11-07_13-36_stufe12-kreis/protokoll.txt
+13:36:39  Start: ok
+13:38:25  Landelampe: auto
+13:46:00  Lade Flugplan aus der Cloud …
+13:46:02  KMZ erstellt: 9 Punkte, 428 m, ca. 2 min
+13:46:02  DJI-Prüfung: in Ordnung
+13:46:02  Plan übernommen, jetzt „Hochladen“
+13:46:09  Lade Mission auf die Drohne …
+13:46:09  Upload 7 %
+13:46:09  Upload 37 %
+13:46:09  Upload 53 %
+13:46:10  Upload 83 %
+13:46:10  Upload 100 %
+13:46:10  Mission ist auf der Drohne
