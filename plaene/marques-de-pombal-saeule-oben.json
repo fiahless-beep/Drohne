@@ -695,14 +695,6 @@
    "photo": false,
    "hover": 0,
    "pitch": -20
-  },
-  {
-   "lat": 38.7310968,
-   "lon": -9.1550922,
-   "h": 35,
-   "photo": false,
-   "hover": 0,
-   "pitch": -20
   }
  ]
 }
