@@ -32,3 +32,8 @@
 08:39:53  DJI-Status: NON_GPS_NONVISION – Ready to GO
 08:39:54  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
 08:40:01  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Replace SD card
+08:40:07  Aufzeichnungen hochgeladen: 47 von 30 → github.com/fiahless-beep/Drohne/tree/main/fluege/aufzeichnungen
+08:40:31  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+08:46:02  Live-Bild verbunden
+08:46:04  Live-Bild verbunden
+08:46:08  Live-Bild verbunden
