@@ -81,6 +81,7 @@ object MissionController {
         if (index != null) { currentWaypointIndex = index; if (index >= 0) lastReachedIndex = index }
         else if (state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE) { if (currentWaypointIndex < 0) currentWaypointIndex = 0 } else if (state != WaypointMissionExecuteState.RECOVERING) currentWaypointIndex = -1
         executing = state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE
+        if (state != WaypointMissionExecuteState.INTERRUPTED) interruptWhy = null
         DroneManager.log("Mission: $state")
         val m = currentMission
         val name = m?.name ?: missionId
@@ -89,7 +90,7 @@ object MissionController {
             WaypointMissionExecuteState.RECOVERING -> "$name: resuming"
             WaypointMissionExecuteState.RETURN_TO_START_POINT -> "$name: returning home"
             WaypointMissionExecuteState.FINISHED -> "✓ $name done – photos follow after landing"
-            WaypointMissionExecuteState.INTERRUPTED -> "⚠ $name paused"
+            WaypointMissionExecuteState.INTERRUPTED -> "⚠ $name paused" + (interruptWhy?.let { ": $it" } ?: "")
             null -> ""
             else -> "$name: $state"
         })
@@ -120,6 +121,9 @@ object MissionController {
     }
 
     @Volatile private var stateFromDrone = 0L
+    /** Grund, den die Drohne für die letzte Unterbrechung genannt hat (bis der Plan wieder läuft). */
+    @Volatile var interruptWhy: String? = null; private set
+
     /** Wegpunkt-Fortschritt und Unterbrechungsgrund der Drohne. */
     private val infoListener = object : WaylineExecutingInfoListener {
         override fun onWaylineExecutingInfoUpdate(info: WaylineExecutingInfo?) {
@@ -132,7 +136,7 @@ object MissionController {
             }
         }
         override fun onWaylineExecutingInterruptReasonUpdate(error: IDJIError?) {
-            error?.let { val why = "${it.errorCode() ?: ""} ${it.description() ?: ""}".trim(); DroneManager.log("Mission unterbrochen: $why"); if (why.isNotBlank()) show("⚠ Drone interrupted the plan: $why") }
+            error?.let { val why = "${it.errorCode() ?: ""} ${it.description() ?: ""}".trim(); DroneManager.log("Mission unterbrochen: $why"); if (why.isNotBlank()) { interruptWhy = if (why.contains("OBSTAC", true)) "the drone’s own obstacle sensing saw an obstacle (often a false alarm in low light)" else why; show("⚠ Drone paused the plan: $interruptWhy") } }
         }
     }
 

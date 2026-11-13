@@ -426,7 +426,7 @@ class MainActivity : AppCompatActivity() {
             MissionController.executing || st == WaypointMissionExecuteState.RECOVERING -> (if (m?.hoverAtEnd == true) "Detour: " else "Plan: ") + nextActionText(s, m, MissionController.currentWaypointIndex, st)
             st == WaypointMissionExecuteState.RETURN_TO_START_POINT -> "Returning home, then landing"
             s.landing -> "Landing"
-            s.flying && st == WaypointMissionExecuteState.INTERRUPTED -> "Paused, hovering. You have control. Tap map or live view to pick a subject, or Resume plan."
+            s.flying && st == WaypointMissionExecuteState.INTERRUPTED -> (MissionController.interruptWhy?.let { "Paused by the drone: $it. Hovering, you have control. Resume plan or fly by hand." } ?: "Paused, hovering. You have control. Tap map or live view to pick a subject, or Resume plan.")
             s.flying && waiting != null -> "Hovering, plan waits. Tap map or live view for another subject, or Resume plan."
             s.flying -> "Hovering / manual flight. You have control."
             s.motorsOn -> "Motors on"
