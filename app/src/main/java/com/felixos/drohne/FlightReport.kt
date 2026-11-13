@@ -51,6 +51,27 @@ object FlightReport {
         val stamp = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.GERMANY).format(Date(flightStartMs))
         flightDir = File(root, "${stamp}_$name").apply { mkdirs() }
         DroneManager.log("Flugprotokoll: ${flightDir!!.name}/protokoll.txt")
+        startTelemetry()
+    }
+
+    private var telemetryOn = false
+    /** Alle 2 s Position, Höhe, Akku und Missionszustand in die Protokolldatei (nicht ins Bildschirm-Log), solange die Drohne fliegt (13.11.: ohne Flugdaten war kein Stopp erklärbar). */
+    private fun startTelemetry() {
+        if (telemetryOn) return
+        telemetryOn = true
+        val h = android.os.Handler(android.os.Looper.getMainLooper())
+        var groundTicks = 0
+        h.postDelayed(object : Runnable { override fun run() {
+            val s = DroneManager.state; val d = flightDir
+            if (s.flying) groundTicks = 0 else groundTicks++
+            if (!s.flying && groundTicks == 3) MissionController.landed()
+            if (d != null && (s.flying || groundTicks < 3)) try {
+                val l = s.location
+                File(d, "protokoll.txt").appendText(String.format(Locale.US, "%s  T %.6f %.6f h=%.1f akku=%s fliegt=%s mission=%s wp=%d wind=%s\n",
+                    SimpleDateFormat("HH:mm:ss", Locale.GERMANY).format(Date()), l?.latitude ?: 0.0, l?.longitude ?: 0.0, l?.altitude ?: 0.0, s.batteryPercent, s.flying, MissionController.executeState, MissionController.currentWaypointIndex, s.windWarning))
+            } catch (_: Throwable) {}
+            h.postDelayed(this, 2000)
+        } }, 2000)
     }
 
     val currentFlightName: String? get() = flightDir?.name

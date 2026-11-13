@@ -256,7 +256,7 @@ object DroneManager {
         watch(dji.sdk.keyvalue.key.GimbalKey.KeyGimbalAttitude) { s, v -> s.copy(gimbalPitchDeg = v?.pitch ?: s.gimbalPitchDeg) }
         // Stick deflection during a plan pauses it (pilot takes over).
         listOf(RemoteControllerKey.KeyStickLeftHorizontal, RemoteControllerKey.KeyStickLeftVertical, RemoteControllerKey.KeyStickRightHorizontal, RemoteControllerKey.KeyStickRightVertical).forEach { info ->
-            try { KeyManager.getInstance().listen(KeyTools.createKey(info), holder) { _, v -> if (v != null && kotlin.math.abs(v.toInt()) > 200) MissionController.stickMoved() } }
+            try { KeyManager.getInstance().listen(KeyTools.createKey(info), holder) { _, v -> if (v != null && kotlin.math.abs(v.toInt()) > 200) { lastStickMs = System.currentTimeMillis(); MissionController.stickMoved() } } }
             catch (t: Throwable) { log("Stick watch failed: ${t.message}") }
         }
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
@@ -360,8 +360,11 @@ object DroneManager {
      * Landehelfer nach einer Mission: Schwebt die Drohne nach dem Heimflug tief und bewegt sich 8 s nicht,
      * bestätigt die App die Landung bzw. leitet sie ein. Endet, sobald die Drohne am Boden ist (max. 5 min).
      */
+    /** Letzte Stickbewegung: wer steuert, wird vom Landehelfer nicht übersteuert (Felix 13.11.: „Automatik übernimmt immer wieder“). */
+    @Volatile var lastStickMs = 0L; private set
     fun landingHelper() {
         if (Simulator.active) return
+        val helperStart = System.currentTimeMillis()
         var stableSince = 0L
         var lastAlt = Double.NaN
         var tries = 0
@@ -370,6 +373,7 @@ object DroneManager {
                 val s = state
                 if (!s.flying && !s.motorsOn) { log("Landehelfer: Drohne ist am Boden"); return }
                 if (tries++ > 150) { log("Landehelfer: aufgegeben (5 min)"); return }
+                if (lastStickMs > helperStart) { log("Landehelfer: beendet, der Pilot steuert (Sticks bewegt). Landung von Hand."); return }
                 val alt = s.location?.altitude ?: Double.NaN
                 val now = System.currentTimeMillis()
                 if (s.landingConfirmationNeeded) {

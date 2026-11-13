@@ -119,20 +119,24 @@ object MissionController {
         if (idxChanged) { currentWaypointIndex = index; lastReachedIndex = index; val n = currentMission?.waypoints?.size; DroneManager.log("Wegpunkt ${index + 1}"); show("▶ ${currentMission?.name ?: missionId}: point ${index + 1}" + (n?.let { c -> " of $c" } ?: "")) }
     }
 
+    @Volatile private var stateFromDrone = 0L
+    private val stateListener = object : WaypointMissionExecuteStateListener {
+        private var last: WaypointMissionExecuteState? = null
+        override fun onMissionStateUpdate(state: WaypointMissionExecuteState?) {
+            if (state == last) return
+            last = state
+            if (Simulator.active) return
+            stateFromDrone = System.currentTimeMillis()
+            applyState(state, null)
+        }
+    }
+
     fun init(context: Context) {
         if (initialized) return
         initialized = true
         initOffline(context)
         val mgr = WaypointMissionManager.getInstance()
-        mgr.addWaypointMissionExecuteStateListener(object : WaypointMissionExecuteStateListener {
-            private var last: WaypointMissionExecuteState? = null
-            override fun onMissionStateUpdate(state: WaypointMissionExecuteState?) {
-                if (state == last) return
-                last = state
-                if (Simulator.active) return
-                applyState(state, null)
-            }
-        })
+        mgr.addWaypointMissionExecuteStateListener(stateListener)
         mgr.addWaylineExecutingInfoListener(object : WaylineExecutingInfoListener {
             override fun onWaylineExecutingInfoUpdate(info: WaylineExecutingInfo?) {
                 if (Simulator.active) return
@@ -382,8 +386,21 @@ object MissionController {
         if (currentMission?.light == true) DroneManager.setBottomLight("an")
         DroneManager.setGoHomeHeight(rthHeightM.toInt().coerceIn(20, 120))
         DroneManager.safe("Start") {
-            val ids = WaypointMissionManager.getInstance().getAvailableWaylineIDs(f.absolutePath)
-            WaypointMissionManager.getInstance().startMission(missionId, ids, cb("Start"))
+            val mgr = WaypointMissionManager.getInstance()
+            // 13.11.: auf der echten Drohne kam nie eine Zustandsmeldung an → Listener vor jedem Start neu anmelden.
+            try { mgr.removeWaypointMissionExecuteStateListener(stateListener); mgr.addWaypointMissionExecuteStateListener(stateListener) } catch (t: Throwable) { DroneManager.log("Missions-Listener: ${t.message}") }
+            val ids = mgr.getAvailableWaylineIDs(f.absolutePath)
+            val t0 = System.currentTimeMillis()
+            mgr.startMission(missionId, ids, object : CommonCallbacks.CompletionCallback {
+                override fun onSuccess() {
+                    DroneManager.log("Start: ok")
+                    // Meldet die Drohne den Zustand nicht selbst, führt die App ihn: läuft ab jetzt, bis Abbruch oder Landung.
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        if (stateFromDrone < t0 && !executing) { DroneManager.log("Mission: keine Zustandsmeldung von der Drohne, App nimmt EXECUTING an"); assumed = true; applyState(WaypointMissionExecuteState.EXECUTING, null) }
+                    }, 3000)
+                }
+                override fun onFailure(error: IDJIError) { DroneManager.log("Start fehlgeschlagen: ${error.description()}"); show("⚠ Start failed: ${error.description()}") }
+            })
         }
     }
 
@@ -392,8 +409,12 @@ object MissionController {
     fun stop(id: String = missionId) { if (Simulator.active) return Simulator.hover(); DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(id, cb("Abbruch")) }
         if (currentMission?.waypoints?.any { it.video != 0 } == true) DroneManager.stopRecording("Abbruch") }
 
+    /** Zustand von der App angenommen (Drohne meldet nichts): Pause/Weiter/Abbruch/Landung führen ihn weiter. */
+    @Volatile private var assumed = false
+    fun landed() { if (assumed && executing) { assumed = false; applyState(WaypointMissionExecuteState.READY, null) } }
     private fun cb(what: String) = object : CommonCallbacks.CompletionCallback {
-        override fun onSuccess() { DroneManager.log("$what: ok") }
+        override fun onSuccess() { DroneManager.log("$what: ok")
+            if (assumed) when (what) { "Pause" -> applyState(WaypointMissionExecuteState.INTERRUPTED, null); "Weiter" -> applyState(WaypointMissionExecuteState.EXECUTING, null); "Abbruch" -> { assumed = false; applyState(WaypointMissionExecuteState.READY, null) } } }
         override fun onFailure(error: IDJIError) { DroneManager.log("$what fehlgeschlagen: ${error.description()}"); show("⚠ $what failed: ${error.description()}") }
     }
 
