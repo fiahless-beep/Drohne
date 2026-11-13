@@ -200,3 +200,6 @@
 09:17:14  Fotos auf der Drohne: 0, zu diesem Flug: 0
 09:17:14  T 38.731087 -9.154983 h=0.0 akku=35 fliegt=false mission=READY wp=-1 wind=0
 09:17:14  Fotos geladen: 0
+09:17:17  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-13_09-14_testkreis-wiese-2
+09:17:20  Aufzeichnungen gefunden: 50 in /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/MCDatFlightRecords/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord
+09:17:20  Davon neu: 2
