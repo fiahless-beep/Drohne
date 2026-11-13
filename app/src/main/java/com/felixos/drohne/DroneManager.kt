@@ -297,11 +297,12 @@ object DroneManager {
                     if (info.downwardObstacleAvoidanceWorking == false) add("unten")
                 }
                 val text = when {
-                    !info.isOverallObstacleAvoidanceEnabled || info.obstacleAvoidanceType == dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.CLOSE -> "aus"
+                    // Mini 4 Pro: der Hauptschalter ist über das SDK „Not supported“ und meldet dann immer aus → nur der Typ zählt (Felix 13.11., DJI Fly zeigte Brake).
+                    (!overallUnsupported && !info.isOverallObstacleAvoidanceEnabled) || info.obstacleAvoidanceType == dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.CLOSE -> "aus"
                     blind.isNotEmpty() -> "blind: " + blind.joinToString(", ")
                     else -> "aktiv"
                 }
-                if (text != state.sensors) { log("Hinderniserkennung: $text (${info.obstacleAvoidanceType})"); update { it.copy(sensors = text) } }
+                if (text != state.sensors) { log("Hinderniserkennung: $text (${info.obstacleAvoidanceType}, Hauptschalter ${info.isOverallObstacleAvoidanceEnabled}${if (overallUnsupported) ", nicht unterstützt" else ""})"); update { it.copy(sensors = text) } }
             }
         } catch (t: Throwable) { log("Hinderniserkennung nicht abfragbar: ${t.message}") }
         startPolling()
@@ -407,6 +408,7 @@ object DroneManager {
     } }
 
     @Volatile private var obstacleTypeOn = false
+    @Volatile private var overallUnsupported = false
     /** DJI-Hinderniserkennung: an = Bremsen (BRAKE), aus = CLOSE. Für den Handstart vom Balkon/aus dem Auto (Felix 9.11.). */
     fun setObstacleAvoidance(on: Boolean, reason: String = "") { if (Simulator.active) { log("Simulation: Hinderniserkennung ${if (on) "an" else "aus"}"); return }; safe("Hinderniserkennung") {
         val t = if (on) dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.BRAKE else dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.CLOSE
@@ -414,7 +416,7 @@ object DroneManager {
         // Felix 9.11. 17:06: nur der Typ reichte nicht – DJI Fly hatte die Erkennung insgesamt ausgeschaltet.
         if (on) pm.setOverallObstacleAvoidanceEnabled(true, object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
             override fun onSuccess() { log("Hinderniserkennung insgesamt eingeschaltet") }
-            override fun onFailure(error: IDJIError) { log("Hinderniserkennung insgesamt einschalten fehlgeschlagen: ${error.description()}") }
+            override fun onFailure(error: IDJIError) { if ((error.description() ?: "").contains("not supported", true)) overallUnsupported = true; log("Hinderniserkennung insgesamt einschalten fehlgeschlagen: ${error.description()}") }
         })
         pm.setObstacleAvoidanceType(t,
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
