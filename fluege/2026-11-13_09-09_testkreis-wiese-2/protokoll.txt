@@ -489,3 +489,7 @@
 09:13:31  Landehelfer: Drohne ist am Boden
 09:13:32  Fotos geladen: 0
 09:13:32  T 38.731092 -9.154983 h=0.0 akku=46 fliegt=false mission=READY wp=-1 wind=0
+09:13:34  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-13_09-09_testkreis-wiese-2
+09:14:10  Live-Bild verbunden
+09:14:29  Aufzeichnungen gefunden: 49 in /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/MCDatFlightRecords/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord
+09:14:29  Davon neu: 2
