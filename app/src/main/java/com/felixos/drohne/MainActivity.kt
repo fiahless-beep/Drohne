@@ -156,6 +156,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         btnFollow.setOnClickListener { askFollow() }
+        findViewById<Button>(R.id.btnClaude).setOnClickListener { askClaude() }
         btnHome.setOnClickListener {
             FollowController.stop()
             MissionController.stop()
@@ -568,12 +569,97 @@ class MainActivity : AppCompatActivity() {
         }, if (paused && !Simulator.active) 1500L else 0L)
     }
 
+    // ---------------------------------------------------------------- Claude: look, answer, suggest one command
+
+    private fun askClaudeKey() {
+        val input = android.widget.EditText(this).apply {
+            hint = "sk-ant-…"; setText(ClaudeLink.key(this@MainActivity) ?: "")
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+        AlertDialog.Builder(this).setTitle("Claude key")
+            .setMessage("Anthropic API key (console.anthropic.com). With it the app can send a still image and the telemetry to Claude and get an answer or a suggestion back. Stays on this phone.")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ -> ClaudeLink.saveKey(this, input.text.toString()); DroneManager.log(if (input.text.isBlank()) "Claude key deleted" else "Claude key saved") }
+            .setNegativeButton("Cancel", null).show()
+    }
+
+    private fun telemetryText(s: DroneState): String = buildString {
+        val loc = s.location?.takeIf { it.latitude != 0.0 }
+        appendLine("state: " + when { MissionController.executing -> "plan running"; MissionController.executeState == WaypointMissionExecuteState.INTERRUPTED -> "plan paused, hovering"; waiting != null && s.flying -> "hovering, a plan waits to be resumed"; s.flying -> "hovering or manual flight"; else -> "on the ground" })
+        if (loc != null) appendLine(String.format(Locale.US, "position: %.5f, %.5f, height above start: %.0f m", loc.latitude, loc.longitude, loc.altitude))
+        homeLatLon()?.let { h -> if (loc != null) appendLine("distance from start: ${Geo.distance(h, LatLon(loc.latitude, loc.longitude)).toInt()} m") }
+        s.headingDeg?.let { appendLine("heading: ${it.toInt()}° (0 = north)") }
+        s.gimbalPitchDeg?.let { appendLine("camera tilt: ${it.toInt()}° (0 = horizon, -90 = straight down)") }
+        s.batteryPercent?.let { appendLine("battery: $it %") }
+        mission?.let { appendLine("plan: ${it.name}, ${it.waypoints.size} points" + (MissionController.lastReachedIndex.takeIf { i -> i >= 0 }?.let { i -> ", at point ${i + 1}" } ?: "")) }
+        append("wind warning: " + when (s.windWarning) { 2 -> "strong"; 1 -> "moderate"; else -> "none" })
+    }
+
+    /** Still image of the live view, or null when it is not on screen. */
+    private fun grabFrame(done: (ByteArray?) -> Unit) {
+        if (mode != Mode.VIDEO || !videoAttached || video.width <= 0 || video.height <= 0 || android.os.Build.VERSION.SDK_INT < 24) return done(null)
+        try {
+            val bmp = android.graphics.Bitmap.createBitmap(video.width, video.height, android.graphics.Bitmap.Config.ARGB_8888)
+            android.view.PixelCopy.request(video, bmp, { r -> done(if (r == android.view.PixelCopy.SUCCESS) runCatching { ClaudeLink.jpeg(bmp) }.getOrNull() else null) }, ui)
+        } catch (t: Throwable) { done(null) }
+    }
+
+    private fun askClaude() {
+        val key = ClaudeLink.key(this) ?: return info("Claude key missing", "Enter the key once under Settings → Data → Enter Claude key.")
+        if (MissionController.executing) return info("Pause first", "Claude answers while the drone hovers or stands. Press Pause, then ask.")
+        if (busy != null) return
+        val input = android.widget.EditText(this).apply { hint = "What do you see? What next?"; setSingleLine(false); maxLines = 3 }
+        AlertDialog.Builder(this).setTitle("Ask Claude")
+            .setMessage("Claude gets the live image (switch to the live view first), position, height and battery. Any action it suggests is shown to you before anything happens.")
+            .setView(input)
+            .setPositiveButton("Send") { _, _ ->
+                val q = input.text.toString().ifBlank { "What do you see, and what do you suggest?" }
+                setBusy("Claude is looking …")
+                grabFrame { jpg ->
+                    val tele = telemetryText(DroneManager.state)
+                    Thread {
+                        val r = ClaudeLink.ask(key, q, tele, jpg)
+                        runOnUiThread { setBusy(null); showClaudeReply(r, jpg != null) }
+                    }.start()
+                }
+            }.setNegativeButton("Cancel", null).show()
+    }
+
+    private fun showClaudeReply(r: ClaudeLink.Reply, hadImage: Boolean) {
+        if (r.error != null) { DroneManager.log(r.error); return info("Claude", r.error) }
+        DroneManager.log("Claude: ${r.text}" + (r.command?.let { " [$it ${r.input}]" } ?: ""))
+        val inp = r.input
+        val why = inp?.optString("why").orEmpty()
+        fun point(): LatLon? = if (!hadImage || inp == null) null else groundPoint((inp.optDouble("x", 0.5) * video.width).toFloat(), (inp.optDouble("y", 0.5) * video.height).toFloat(), video.width.coerceAtLeast(1), video.height.coerceAtLeast(1))
+        val loc = DroneManager.state.location
+        val h = Math.round(loc?.altitude ?: 0.0).toDouble().coerceIn(MissionController.TRANSIT_HEIGHT_M, 118.0)
+        val action: Pair<String, () -> Unit>? = when (r.command) {
+            "look_closer" -> point()?.let { p -> "Look closer" to { if (canPick() && (loc?.altitude ?: 0.0) >= 10) flyFromHere(lookDown(p, h), "look closer", detour = true) else info("Not possible now", "The drone must hover at 10 m or higher.") } }
+            "photo_circle" -> point()?.let { p -> val rad = if ((inp?.optDouble("radius_m", 30.0) ?: 30.0) >= 40) 50.0 else 30.0
+                "Photo circle ${rad.toInt()} m" to { if (canPick() && (loc?.altitude ?: 0.0) >= 10) flyFromHere(circle(p, rad, h, surfaceRel(p)), "photo circle", detour = true) else info("Not possible now", "The drone must hover at 10 m or higher.") } }
+            "resume_plan" -> "Resume plan" to { primaryAction() }
+            "return_home" -> "Return home" to { btnHome.performClick() }
+            else -> null
+        }
+        val msg = buildString {
+            if (r.text.isNotBlank()) append(r.text)
+            if (r.command == "ask_pilot") append((if (isNotEmpty()) "\n\n" else "") + (inp?.optString("question") ?: ""))
+            else if (r.command != null) append((if (isNotEmpty()) "\n\n" else "") + "Suggestion: " + (action?.first ?: "${r.command} (no place found in the image)") + (if (why.isNotBlank()) ". $why" else ""))
+            if (isEmpty()) append("No answer.")
+        }
+        val dlg = AlertDialog.Builder(this).setTitle("Claude").setMessage(msg)
+        if (action != null) dlg.setPositiveButton(action.first) { _, _ -> action.second() }.setNegativeButton("No", null)
+        else if (r.command == "ask_pilot") dlg.setPositiveButton("Answer") { _, _ -> askClaude() }.setNegativeButton("Close", null)
+        else dlg.setPositiveButton("OK", null)
+        dlg.show()
+    }
+
     /** Overview of the use cases and what this build can do for each. */
     private fun showUseCases() = menu("Use cases", listOf(
         "1 Fly a plan · ready" to { info("Fly a plan", "Get plan, check list, Start. Pause: button, any stick, or the pause button on the controller. Resume plan continues.") },
         "2 Subject on the way · ready (untested in flight)" to { info("Subject on the way", "Pause the plan. Tap the subject on the map or in the live view. Choose a photo circle. When it is done the drone hovers; Resume plan continues the plan from the point where you paused.") },
         "3 Go and look · ready (untested in flight)" to { info("Go and look", "Same as 2, choose “Look closer”: the drone flies above the point, camera straight down, hovers 6 s, takes a photo. Loading a new plan while hovering also works: it starts where the drone is.") },
-        "4 Find a spot · not built yet" to { info("Find a spot", "Claude watches the live view and reports candidates. Needs the Claude connection from the phone. Not in this build.") },
+        "4 Ask Claude · first step (needs the Claude key)" to { info("Ask Claude", "Pause or hover, switch to the live view, press Ask Claude. Claude gets the image and telemetry, answers, and may suggest one action (look closer, photo circle, resume, return home). You confirm before anything happens. Watching in the background during the flight is not built yet.") },
         "5 Follow me / the car · tracking test first" to { info("Follow", "Run Settings → Device & test → Tracking test in flight and upload the result. It decides whether DJI tracking can be used or the app needs its own detection.") },
         "6 Plan over several batteries · not built yet" to { info("Several batteries", "Not in this build.") },
         "7 Survey a property · as a plan from Claude" to { info("Property", "Claude builds the plan from the boundary; you fly it as a plan (1). Boundary import in the app is not built.") },
@@ -910,7 +996,8 @@ class MainActivity : AppCompatActivity() {
                 info("Flight records", when { n < 0 -> "No GitHub token entered (Settings → Data → GitHub token)."; n == 0 -> "Nothing new, all records were already in the repo."; else -> "$n record(s) uploaded. Claude can read them now." })
             } } },
         "Enter GitHub token" to { askToken() },
-        "Enter Google key (photorealistic 3D)" to { askGoogleKey() }))
+        "Enter Google key (photorealistic 3D)" to { askGoogleKey() },
+        "Enter Claude key (copilot)" to { askClaudeKey() }))
 
     private fun showDeviceMenu() = menu("Device & test", listOf(
         "Self test (sensors, DJI messages)" to { showSelfTest() },

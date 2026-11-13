@@ -247,6 +247,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
+                <Button android:id="@+id/btnClaude" style="@style/Btn" android:text="Ask Claude" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
                 <Button android:id="@+id/btnHome" style="@style/Btn.Stop" android:text="STOP · Return home" />
             </LinearLayout>
         </LinearLayout>
