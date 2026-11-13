@@ -60,3 +60,194 @@
 09:10:39  Wegpunkt 1
 09:10:40  T 38.731112 -9.155007 h=40.0 akku=58 fliegt=true mission=EXECUTING wp=0 wind=0
 09:10:42  T 38.731112 -9.155006 h=40.0 akku=58 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:44  T 38.731112 -9.155006 h=40.0 akku=58 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:44  Aufzeichnungen hochgeladen: 6 von 4 → github.com/fiahless-beep/Drohne/tree/main/fluege/aufzeichnungen
+09:10:46  T 38.731112 -9.155007 h=40.0 akku=58 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:48  T 38.731113 -9.155006 h=40.0 akku=58 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:50  T 38.731111 -9.155007 h=40.0 akku=57 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:50  Wegpunkt 1
+09:10:52  T 38.731113 -9.155007 h=40.0 akku=57 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:52  Wegpunkt 1
+09:10:53  Wegpunkt 1
+09:10:53  Wegpunkt 1
+09:10:53  Wegpunkt 1
+09:10:54  T 38.731148 -9.155037 h=40.0 akku=57 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:54  Wegpunkt 1
+09:10:54  Wegpunkt 1
+09:10:54  Wegpunkt 1
+09:10:55  Wegpunkt 1
+09:10:55  Wegpunkt 1
+09:10:55  Wegpunkt 1
+09:10:55  Wegpunkt 1
+09:10:56  Wegpunkt 1
+09:10:56  T 38.731208 -9.155086 h=40.0 akku=57 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:56  Wegpunkt 1
+09:10:56  Wegpunkt 1
+09:10:56  Wegpunkt 1
+09:10:57  Wegpunkt 1
+09:10:57  Wegpunkt 1
+09:10:57  Wegpunkt 1
+09:10:57  Wegpunkt 1
+09:10:58  Wegpunkt 1
+09:10:58  T 38.731263 -9.155139 h=40.0 akku=57 fliegt=true mission=EXECUTING wp=0 wind=0
+09:10:58  Wegpunkt 1
+09:10:58  Wegpunkt 1
+09:10:58  Wegpunkt 1
+09:10:59  Wegpunkt 1
+09:10:59  Wegpunkt 1
+09:10:59  Wegpunkt 1
+09:10:59  Wegpunkt 1
+09:11:00  Wegpunkt 1
+09:11:00  T 38.731319 -9.155193 h=39.9 akku=57 fliegt=true mission=EXECUTING wp=0 wind=0
+09:11:00  Wegpunkt 1
+09:11:00  Wegpunkt 1
+09:11:00  Wegpunkt 1
+09:11:01  Wegpunkt 1
+09:11:01  Wegpunkt 1
+09:11:01  Wegpunkt 1
+09:11:01  Wegpunkt 1
+09:11:02  T 38.731375 -9.155245 h=39.9 akku=57 fliegt=true mission=EXECUTING wp=0 wind=0
+09:11:02  Wegpunkt 1
+09:11:02  Wegpunkt 1
+09:11:02  Wegpunkt 1
+09:11:03  Wegpunkt 1
+09:11:03  Wegpunkt 1
+09:11:03  Wegpunkt 1
+09:11:03  Wegpunkt 1
+09:11:04  Wegpunkt 1
+09:11:04  T 38.731430 -9.155296 h=40.0 akku=56 fliegt=true mission=EXECUTING wp=0 wind=0
+09:11:04  Wegpunkt 1
+09:11:04  Wegpunkt 1
+09:11:04  Wegpunkt 1
+09:11:05  Wegpunkt 1
+09:11:05  Wegpunkt 1
+09:11:05  Wegpunkt 1
+09:11:05  Wegpunkt 1
+09:11:06  Wegpunkt 1
+09:11:06  T 38.731486 -9.155347 h=40.0 akku=56 fliegt=true mission=EXECUTING wp=0 wind=0
+09:11:06  Wegpunkt 1
+09:11:06  Wegpunkt 1
+09:11:06  Wegpunkt 1
+09:11:07  Wegpunkt 1
+09:11:07  Wegpunkt 1
+09:11:07  Wegpunkt 1
+09:11:07  Wegpunkt 1
+09:11:08  T 38.731542 -9.155401 h=39.9 akku=56 fliegt=true mission=EXECUTING wp=0 wind=0
+09:11:08  Wegpunkt 1
+09:11:08  Wegpunkt 1
+09:11:08  Wegpunkt 1
+09:11:08  Wegpunkt 1
+09:11:09  Wegpunkt 1
+09:11:09  Wegpunkt 1
+09:11:09  Wegpunkt 1
+09:11:10  Wegpunkt 1
+09:11:10  T 38.731598 -9.155453 h=39.9 akku=56 fliegt=true mission=EXECUTING wp=0 wind=0
+09:11:10  Wegpunkt 1
+09:11:10  Wegpunkt 1
+09:11:11  Wegpunkt 1
+09:11:12  T 38.731619 -9.155471 h=39.9 akku=56 fliegt=true mission=EXECUTING wp=0 wind=0
+09:11:13  Wegpunkt 2
+09:11:14  T 38.731623 -9.155475 h=39.9 akku=56 fliegt=true mission=EXECUTING wp=1 wind=0
+09:11:16  T 38.731622 -9.155475 h=39.9 akku=56 fliegt=true mission=EXECUTING wp=1 wind=0
+09:11:17  Wegpunkt 2
+09:11:18  T 38.731623 -9.155476 h=39.9 akku=55 fliegt=true mission=EXECUTING wp=1 wind=0
+09:11:19  Wegpunkt 2
+09:11:19  Wegpunkt 2
+09:11:20  Wegpunkt 2
+09:11:20  T 38.731627 -9.155442 h=39.9 akku=55 fliegt=true mission=EXECUTING wp=1 wind=0
+09:11:20  Wegpunkt 2
+09:11:20  Wegpunkt 2
+09:11:20  Wegpunkt 2
+09:11:21  Wegpunkt 2
+09:11:21  Wegpunkt 2
+09:11:21  Wegpunkt 2
+09:11:21  Wegpunkt 2
+09:11:22  T 38.731633 -9.155353 h=39.9 akku=55 fliegt=true mission=EXECUTING wp=1 wind=0
+09:11:22  Wegpunkt 2
+09:11:22  Wegpunkt 2
+09:11:22  Wegpunkt 2
+09:11:22  Wegpunkt 2
+09:11:23  Wegpunkt 2
+09:11:23  Wegpunkt 2
+09:11:23  Wegpunkt 2
+09:11:23  Wegpunkt 2
+09:11:24  T 38.731639 -9.155262 h=39.9 akku=55 fliegt=true mission=EXECUTING wp=1 wind=0
+09:11:24  Wegpunkt 2
+09:11:24  Wegpunkt 2
+09:11:24  Wegpunkt 2
+09:11:24  Wegpunkt 2
+09:11:25  Wegpunkt 2
+09:11:25  Wegpunkt 2
+09:11:25  Wegpunkt 2
+09:11:26  Wegpunkt 2
+09:11:26  T 38.731645 -9.155174 h=39.9 akku=55 fliegt=true mission=EXECUTING wp=1 wind=0
+09:11:26  Wegpunkt 2
+09:11:26  Wegpunkt 2
+09:11:27  Wegpunkt 2
+09:11:28  T 38.731648 -9.155141 h=39.9 akku=55 fliegt=true mission=EXECUTING wp=1 wind=0
+09:11:29  Wegpunkt 3
+09:11:29  Wegpunkt 3
+09:11:30  T 38.731648 -9.155134 h=39.9 akku=55 fliegt=true mission=EXECUTING wp=2 wind=0
+09:11:31  Wegpunkt 3
+09:11:32  T 38.731637 -9.155123 h=39.9 akku=55 fliegt=true mission=EXECUTING wp=2 wind=0
+09:11:32  Wegpunkt 3
+09:11:32  Wegpunkt 3
+09:11:32  Wegpunkt 3
+09:11:33  Wegpunkt 3
+09:11:33  Wegpunkt 3
+09:11:33  Wegpunkt 3
+09:11:33  Wegpunkt 3
+09:11:34  T 38.731584 -9.155075 h=40.0 akku=54 fliegt=true mission=EXECUTING wp=2 wind=0
+09:11:34  Wegpunkt 3
+09:11:34  Wegpunkt 3
+09:11:34  Wegpunkt 3
+09:11:35  Wegpunkt 3
+09:11:35  Wegpunkt 3
+09:11:35  Wegpunkt 3
+09:11:35  Wegpunkt 3
+09:11:36  Wegpunkt 3
+09:11:36  T 38.731526 -9.155023 h=40.0 akku=54 fliegt=true mission=EXECUTING wp=2 wind=0
+09:11:36  Wegpunkt 3
+09:11:36  Wegpunkt 3
+09:11:36  Wegpunkt 3
+09:11:37  Wegpunkt 3
+09:11:37  Wegpunkt 3
+09:11:37  Wegpunkt 3
+09:11:37  Wegpunkt 3
+09:11:38  Wegpunkt 3
+09:11:38  T 38.731468 -9.154972 h=40.0 akku=54 fliegt=true mission=EXECUTING wp=2 wind=0
+09:11:38  Wegpunkt 3
+09:11:38  Wegpunkt 3
+09:11:38  Wegpunkt 3
+09:11:39  Wegpunkt 3
+09:11:40  T 38.731436 -9.154941 h=40.0 akku=54 fliegt=true mission=EXECUTING wp=2 wind=0
+09:11:40  Wegpunkt 3
+09:11:42  T 38.731429 -9.154935 h=39.9 akku=54 fliegt=true mission=EXECUTING wp=2 wind=0
+09:11:42  Wegpunkt 4
+09:11:42  Wegpunkt 4
+09:11:43  Aufzeichnungen gefunden: 49 in /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/MCDatFlightRecords/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord
+09:11:43  Davon neu: 2
+09:11:44  T 38.731425 -9.154935 h=40.0 akku=54 fliegt=true mission=EXECUTING wp=3 wind=0
+09:11:44  Wegpunkt 4
+09:11:45  Wegpunkt 4
+09:11:45  Wegpunkt 4
+09:11:46  Wegpunkt 4
+09:11:46  T 38.731389 -9.154957 h=40.0 akku=54 fliegt=true mission=EXECUTING wp=3 wind=0
+09:11:46  Wegpunkt 4
+09:11:46  Wegpunkt 4
+09:11:46  Wegpunkt 4
+09:11:47  Wegpunkt 4
+09:11:47  Wegpunkt 4
+09:11:47  Wegpunkt 4
+09:11:47  Wegpunkt 4
+09:11:48  Wegpunkt 4
+09:11:48  T 38.731327 -9.154995 h=39.9 akku=53 fliegt=true mission=EXECUTING wp=3 wind=0
+09:11:48  Wegpunkt 4
+09:11:48  Wegpunkt 4
+09:11:48  Wegpunkt 4
+09:11:49  Wegpunkt 4
+09:11:49  Wegpunkt 4
+09:11:49  Wegpunkt 4
+09:11:50  Wegpunkt 4
+09:11:50  T 38.731265 -9.155032 h=40.0 akku=53 fliegt=true mission=EXECUTING wp=3 wind=0
+09:11:50  Wegpunkt 4
