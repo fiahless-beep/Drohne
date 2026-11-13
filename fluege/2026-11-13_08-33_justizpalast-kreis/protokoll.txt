@@ -1,0 +1,11 @@
+08:33:21  Flugprotokoll: 2026-11-13_08-33_justizpalast-kreis/protokoll.txt
+08:33:21  Startpunkt: 38.731112, -9.155016
+08:33:21  Karte: https://www.google.com/maps/dir/38.731112,-9.155016/38.731739,-9.156329/38.731232,-9.157274/38.731395,-9.158402/38.732133,-9.159052/38.733013,-9.158843/38.733520,-9.157898/38.733357,-9.156770/38.732619,-9.156120/38.731739,-9.156329/data=!4m2!4m1!3e2
+08:33:21  Rückkehrhöhe: 65 m
+08:33:22  Start: ok
+08:33:30  Live-Bild verbunden
+08:33:53  Live-Bild verbunden
+08:34:14  DJI-Status: GALE_WARNING – High Wind Velocity. Fly with caution.
+08:34:15  WIND: STARKER WIND, sofort zurück und landen
+08:34:16  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+08:34:17  Wind: keine Warnung mehr
