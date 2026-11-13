@@ -1,0 +1,34 @@
+08:34:27  Flugprotokoll: 2026-11-13_08-34_justizpalast-kreis/protokoll.txt
+08:34:27  Startpunkt: 38.731103, -9.155006
+08:34:27  Karte: https://www.google.com/maps/dir/38.731112,-9.155016/38.731739,-9.156329/38.731232,-9.157274/38.731395,-9.158402/38.732133,-9.159052/38.733013,-9.158843/38.733520,-9.157898/38.733357,-9.156770/38.732619,-9.156120/38.731739,-9.156329/data=!4m2!4m1!3e2
+08:34:27  Rückkehrhöhe: 65 m
+08:34:27  Start fehlgeschlagen: Task started. Unable to restart
+08:35:56  Abbruch: ok
+08:36:00  Rückkehr zum Startpunkt ausgelöst
+08:36:27  DJI-Meldung: [Hinweis]  – Gimbal pan axis reached movement limit
+08:36:34  DJI-Meldung erledigt: 0x1D050003
+08:36:38  Landehelfer: schwebt seit 8 s auf 2,4 m
+08:36:38  Landehelfer → bestätige Landung
+08:36:38  Landung bestätigt
+08:36:38  Landung eingeleitet
+08:36:45  DJI-Meldung: [WARNUNG]  – Motor stuck. Check for objects blocking motor or contact DJI Support for assistance
+08:36:45  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+08:36:48  Landehelfer: Drohne ist am Boden
+08:36:49  DJI-Meldung erledigt: 0x1610005F
+08:36:49  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+08:37:36  Aufzeichnungen gefunden: 44 in /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/MCDatFlightRecords/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord
+08:37:36  Davon neu: 30
+08:37:48  Fotos: läuft schon
+08:38:08  Fotos: läuft schon
+08:39:02  DJI-Status: CANT_TAKEOFF – Unable to take off
+08:39:03  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+08:39:14  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+08:39:20  DJI-Status: NORMAL – Ready to Go (GPS)
+08:39:20  DJI-Meldung erledigt: 0x1C000402
+08:39:20  DJI-Meldung erledigt: 0x16100015
+08:39:20  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+08:39:53  DJI-Status: NORMAL – Ready to Go (GPS)
+08:39:53  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+08:39:53  DJI-Status: NON_GPS_NONVISION – Ready to GO
+08:39:54  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+08:40:01  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Replace SD card
