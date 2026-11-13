@@ -1,0 +1,29 @@
+08:22:07  Flugprotokoll: 2026-11-13_08-22_marques-de-pombal-saeule-oben/protokoll.txt
+08:22:07  Startpunkt: 38.731115, -9.155014
+08:22:07  Karte: https://www.google.com/maps/dir/38.731132,-9.155029/38.731400,-9.154546/38.730440,-9.153670/38.729755,-9.154060/38.729407,-9.153761/38.729059,-9.153461/38.728712,-9.153161/38.728364,-9.152861/38.728016,-9.152562/38.727669,-9.152262/data=!4m2!4m1!3e2
+08:22:07  Rückkehrhöhe: 68 m
+08:22:08  Start fehlgeschlagen: Failed to execute flight route. Waypoint turning intercept error
+08:22:18  Flugprotokoll: 2026-11-13_08-22_marques-de-pombal-saeule-oben/protokoll.txt
+08:22:18  Startpunkt: 38.731115, -9.155014
+08:22:18  Karte: https://www.google.com/maps/dir/38.731132,-9.155029/38.731400,-9.154546/38.730440,-9.153670/38.729755,-9.154060/38.729407,-9.153761/38.729059,-9.153461/38.728712,-9.153161/38.728364,-9.152861/38.728016,-9.152562/38.727669,-9.152262/data=!4m2!4m1!3e2
+08:22:18  Rückkehrhöhe: 68 m
+08:22:19  Start fehlgeschlagen: Failed to execute flight route. Waypoint turning intercept error
+08:23:22  Lade Flugplan aus der Cloud …
+08:23:22  Gelände: Gebäude -79 bis +3 m gegenüber dem Start
+08:23:22  Gebäudedatenbank: 687 Gebäude im Umkreis der Strecke
+08:23:22  Transithöhe 35 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:23:22  Tempo: max 5.0 m/s, 9 Abschnitte nahe Gebäuden gedrosselt (min 2,1 m/s)
+08:23:22  Return guard: way home clear from every point at 68 m
+08:23:22  Höhenmodell: Gelände am Ziel 0 m gegenüber dem Start
+08:23:22  Oberflächen-Wächter: Strecke frei
+08:23:22  Gebäude-Wächter: Strecke frei (691 Gebäude geprüft)
+08:23:22  KMZ erstellt: 63 Punkte, 2752 m, ca. 11 min
+08:23:22  DJI-Prüfung: in Ordnung
+08:23:22  Plan übernommen, lade auf die Drohne …
+08:23:22  Lade Mission auf die Drohne …
+08:23:23  Upload 3 %
+08:23:23  Upload 25 %
+08:23:24  Upload 52 %
+08:23:24  Upload 80 %
+08:23:25  Upload 100 %
+08:23:25  Mission ist auf der Drohne
