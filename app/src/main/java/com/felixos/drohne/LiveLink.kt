@@ -25,6 +25,7 @@ object LiveLink {
     private const val STATUS_GROUND_MS = 30_000L
     private const val STATUS_FLIGHT_MS = 10_000L
     private const val PLAN_CHECK_MS = 20_000L
+    private const val PRIVATE_RADIUS_M = 400.0
 
     private lateinit var app: Context
     private var session: File? = null
@@ -71,7 +72,14 @@ object LiveLink {
     internal fun statusLine(s: DroneState, nowMs: Long): String {
         val l = s.location
         val utc = SimpleDateFormat("HH:mm:ss", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }.format(Date(nowMs))
-        fun p(lat: Double?, lon: Double?) = if (lat == null || lon == null || lat == 0.0) "?" else String.format(Locale.US, "%.6f,%.6f", lat, lon)
+        // Das Repo ist öffentlich: rund um gemerkte Startplätze (Zuhause) keine Koordinaten, nur der Name.
+        val places = try { StartPlaces.all(app) } catch (_: Throwable) { emptyList() }
+        fun p(lat: Double?, lon: Double?): String {
+            if (lat == null || lon == null || lat == 0.0) return "?"
+            val here = com.felixos.drohne.plan.LatLon(lat, lon)
+            places.firstOrNull { com.felixos.drohne.plan.Geo.distance(it.pos, here) <= PRIVATE_RADIUS_M }?.let { return "bei:" + it.name.replace(' ', '_') }
+            return String.format(Locale.US, "%.6f,%.6f", lat, lon)
+        }
         return "S utc=$utc verbunden=${s.connected} fliegt=${s.flying} pos=${p(l?.latitude, l?.longitude)} h=${l?.altitude?.let { String.format(Locale.US, "%.1f", it) } ?: "?"}" +
             " start=${p(s.home?.latitude, s.home?.longitude)} akku=${s.batteryPercent ?: "?"} sat=${s.satellites ?: "?"} sensoren=${s.sensors ?: "?"}" +
             " hindernis=${DroneManager.obstacleSummary()} mission=${MissionController.executeState ?: "-"} wp=${MissionController.currentWaypointIndex}" +
