@@ -1,0 +1,24 @@
+{
+ "name": "justizpalast-kreis",
+ "beschreibung": "Fotokreis um das große Gebäude an der Rua Marquês de Fronteira (260 m nordwestlich vom Start auf der Wiese im Jardim Amália Rodrigues). Senkrecht auf 65 m, hinüber zum Kreis, eine Runde mit 130 m Radius in 65 m Höhe (26 m über dem Dach), 8 Fotos, zurück. Etwa 1,1 km. Nur tagsüber.",
+ "speed": 5,
+ "rcLost": "continue",
+ "transitHoehe": 65,
+ "start": {
+  "lat": 38.7310968,
+  "lon": -9.1550922
+ },
+ "ziel": {
+  "lat": 38.732376,
+  "lon": -9.157586,
+  "h": 20
+ },
+ "kreis": {
+  "radius": 130,
+  "h": 65,
+  "punkte": 8,
+  "fotos": 8,
+  "start": 123,
+  "uhrzeigersinn": true
+ }
+}
