@@ -52,17 +52,17 @@ object Terrain {
     fun surfaceM(p: LatLon): Double? = sample(mds, p)
 
     data class Conflict(val from: Int, val to: Int, val flightM: Double, val surfaceRelM: Double, val at: LatLon) {
-        override fun toString() = "Strecke ${from + 1}→${to + 1}: Flughöhe ${flightM.toInt()} m, Oberfläche dort ${surfaceRelM.toInt()} m über dem Startpunkt (Gelände/Baum/Dach)"
+        override fun toString() = "leg ${from + 1}→${to + 1}: flight height ${flightM.toInt()} m, surface there ${surfaceRelM.toInt()} m above the start point (ground/tree/roof)"
     }
 
     /**
      * Prüft alle Strecken (inkl. Start→erster Punkt) gegen die Oberfläche: Konflikt, wenn die Flughöhe
      * (relativ zum Start) tiefer als Oberfläche + [clearanceM] ist. Abtastung alle 3 m, Höhe linear interpoliert.
      */
-    fun check(m: Mission, home: LatLon?, clearanceM: Double = Obstacles.CLEARANCE_M, homeAboveGroundM: Double = 0.0): List<Conflict> {
+    fun check(m: Mission, home: LatLon?, clearanceM: Double = Obstacles.CLEARANCE_M, homeAboveGroundM: Double = 0.0, homeLeg: Boolean = true): List<Conflict> {
         val g0 = ((home ?: m.waypoints.first().pos).let { groundM(it) } ?: return emptyList()) + homeAboveGroundM  // Start auf Balkon/Dach: Nullpunkt der Drohne liegt höher
-        val pts = buildList { if (home != null) add(Waypoint(home, m.waypoints.first().heightM, takePhoto = false)); addAll(m.waypoints) }
-        val off = if (home != null) -1 else 0
+        val pts = buildList { if (home != null && homeLeg) add(Waypoint(home, m.waypoints.first().heightM, takePhoto = false)); addAll(m.waypoints) }
+        val off = if (home != null && homeLeg) -1 else 0
         val out = mutableListOf<Conflict>()
         for (i in 0 until pts.size - 1) {
             val a = pts[i]; val b = pts[i + 1]

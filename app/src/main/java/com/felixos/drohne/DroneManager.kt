@@ -93,7 +93,11 @@ object DroneManager {
     /** Echter Zustand (SDK/Drohne), auch während der Simulation weitergeführt. */
     @Volatile private var realState = DroneState()
 
+    /** Time of the last value received from the drone (for the "still alive" display). */
+    @Volatile var lastUpdateMs = 0L; private set
+
     private fun update(f: (DroneState) -> DroneState) {
+        lastUpdateMs = System.currentTimeMillis()
         realState = f(realState)
         if (Simulator.active) return  // Simulation zeigt ihren eigenen Zustand
         state = realState
@@ -249,6 +253,12 @@ object DroneManager {
         watch(FlightControllerKey.KeyHomeLocation) { s, v -> s.copy(home = v) }
         watch(FlightControllerKey.KeyCompassHeading) { s, v -> s.copy(headingDeg = v) }
         watch(FlightControllerKey.KeyIsFlying) { s, v -> s.copy(flying = v == true) }
+        watch(dji.sdk.keyvalue.key.GimbalKey.KeyGimbalAttitude) { s, v -> s.copy(gimbalPitchDeg = v?.pitch ?: s.gimbalPitchDeg) }
+        // Stick deflection during a plan pauses it (pilot takes over).
+        listOf(RemoteControllerKey.KeyStickLeftHorizontal, RemoteControllerKey.KeyStickLeftVertical, RemoteControllerKey.KeyStickRightHorizontal, RemoteControllerKey.KeyStickRightVertical).forEach { info ->
+            try { KeyManager.getInstance().listen(KeyTools.createKey(info), holder) { _, v -> if (v != null && kotlin.math.abs(v.toInt()) > 200) MissionController.stickMoved() } }
+            catch (t: Throwable) { log("Stick watch failed: ${t.message}") }
+        }
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
         // Landebestätigung: DJI hält kurz über dem Boden an und wartet auf ein Ja. Das gibt die App selbst.
         watch(FlightControllerKey.KeyHeightLimit) { s, v -> s.copy(heightLimitM = v) }

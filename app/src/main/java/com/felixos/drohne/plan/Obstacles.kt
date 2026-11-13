@@ -21,8 +21,8 @@ object Obstacles {
     const val CLEARANCE_M = 8.0
 
     data class Conflict(val from: Int, val to: Int, val obstacle: Obstacle, val heightM: Double, val toHome: Boolean = false) {
-        override fun toString() = if (toHome) "Heimflug von Punkt ${from + 1} auf ${heightM.toInt()} m trifft „${obstacle.name}“ (${obstacle.heightM.toInt()} m hoch)"
-            else "Strecke ${from + 1}→${to + 1} auf ${heightM.toInt()} m trifft „${obstacle.name}“ (${obstacle.heightM.toInt()} m hoch)"
+        override fun toString() = if (toHome) "return from point ${from + 1} at ${heightM.toInt()} m hits “${obstacle.name}” (${obstacle.heightM.toInt()} m high)"
+            else "leg ${from + 1}→${to + 1} at ${heightM.toInt()} m hits “${obstacle.name}” (${obstacle.heightM.toInt()} m high)"
     }
 
     /** Heimflug-Linien: von jedem Punkt gerade zum Startpunkt auf Heimflughöhe [rthHeightM] (so fliegt DJI bei Akku knapp oder Funkverlust). */
@@ -43,13 +43,13 @@ object Obstacles {
         obstacles.filter { heightM < it.topM + CLEARANCE_M }.minOfOrNull { if (inside(p, it.polygon)) 0.0 else distanceToPolygon(p, it.polygon) }
 
     /** Alle Konflikte der Mission inkl. Start (Steigflug am Startpunkt, dann gerade zum ersten Punkt). */
-    fun check(m: Mission, home: LatLon?, obstacles: List<Obstacle> = m.obstacles): List<Conflict> {
+    fun check(m: Mission, home: LatLon?, obstacles: List<Obstacle> = m.obstacles, homeLeg: Boolean = true): List<Conflict> {
         if (obstacles.isEmpty()) return emptyList()
         val pts = buildList {
-            if (home != null) add(Waypoint(home, m.waypoints.first().heightM, takePhoto = false))
+            if (home != null && homeLeg) add(Waypoint(home, m.waypoints.first().heightM, takePhoto = false))
             addAll(m.waypoints)
         }
-        val offset = if (home != null) -1 else 0
+        val offset = if (home != null && homeLeg) -1 else 0
         val out = mutableListOf<Conflict>()
         for (i in 0 until pts.size - 1) {
             val a = pts[i]; val b = pts[i + 1]

@@ -37,7 +37,7 @@ object Simulator {
     private var battery = 100.0
 
     // Flug
-    private enum class Phase { IDLE, TAKEOFF, ROUTE, HOLD, RTH_CLIMB, RTH_FLY, LAND }
+    private enum class Phase { IDLE, TAKEOFF, ROUTE, HOLD, HOVER, RTH_CLIMB, RTH_FLY, LAND }
     private var phase = Phase.IDLE
     private var route: List<Pair<LatLon, Double>> = emptyList() // Position, Höhe
     private var speeds: List<Double> = emptyList()               // Tempo ab Punkt i
@@ -105,7 +105,8 @@ object Simulator {
         photo = m.waypoints.map { it.takePhoto }
         yaws = m.waypoints.map { it.headingDeg }
         pitches = m.waypoints.map { it.gimbalPitchDeg }
-        pos = h; alt = 0.0; seg = 0; paused = false
+        if (phase == Phase.IDLE || !m.startFromCurrent) { pos = h; alt = 0.0 }  // in-flight plans continue from where the drone hovers
+        seg = 0; paused = false
         phase = Phase.TAKEOFF
         MissionController.simulatedState(WaypointMissionExecuteState.ENTER_WAYLINE, -1)
         DroneManager.log("Simulation: Start, steigt auf ${route.first().second.toInt()} m")
@@ -115,6 +116,9 @@ object Simulator {
 
     fun pause() { if (phase != Phase.IDLE) { paused = true; MissionController.simulatedState(WaypointMissionExecuteState.INTERRUPTED, seg); DroneManager.log("Simulation: Pause") } }
     fun resume() { if (paused) { paused = false; MissionController.simulatedState(WaypointMissionExecuteState.EXECUTING, seg); DroneManager.log("Simulation: weiter") } }
+
+    /** Plan stopped in flight: the drone hovers where it is. */
+    fun hover() { if (phase != Phase.IDLE && phase != Phase.LAND) { phase = Phase.HOVER; paused = false; DroneManager.log("Simulation: plan stopped, hovering") } }
 
     /** STOPP / Heimflug: hoch auf Rückkehrhöhe, über den Start, landen. */
     fun goHome() {
@@ -149,7 +153,7 @@ object Simulator {
                 }
             }
             Phase.ROUTE -> {
-                if (seg + 1 >= route.size) { startRth(); return }
+                if (seg + 1 >= route.size) { endRoute(); return }
                 val target = route[seg + 1]
                 if (moveTo(target.first, target.second, speeds[seg], dt)) {
                     seg += 1
@@ -159,7 +163,7 @@ object Simulator {
             }
             Phase.HOLD -> {
                 holdLeft -= dt
-                if (holdLeft <= 0) { if (seg + 1 >= route.size) startRth() else phase = Phase.ROUTE }
+                if (holdLeft <= 0) { if (seg + 1 >= route.size) endRoute() else phase = Phase.ROUTE }
             }
             Phase.RTH_CLIMB -> if (moveTo(pos ?: h, rthHeight, CLIMB_MS, dt)) phase = Phase.RTH_FLY
             Phase.RTH_FLY -> if (moveTo(h, alt, MissionController.TRANSIT_SPEED_MAX, dt)) { phase = Phase.LAND; DroneManager.log("Simulation: über dem Start, landet") }
@@ -169,7 +173,7 @@ object Simulator {
                 MissionController.simulatedState(WaypointMissionExecuteState.FINISHED, -1)
                 DroneManager.log("Simulation: gelandet")
             }
-            Phase.IDLE -> {}
+            Phase.IDLE, Phase.HOVER -> {}
         }
     }
 
@@ -180,6 +184,11 @@ object Simulator {
         pitches.getOrNull(i)?.let { gimbal = it }
         if (photo.getOrElse(i) { false }) DroneManager.log("Simulation: Foto an Punkt ${i + 1}")
         if (hold > 0) { holdLeft = hold; phase = Phase.HOLD }
+    }
+
+    private fun endRoute() {
+        if (mission?.hoverAtEnd == true) { phase = Phase.HOVER; MissionController.simulatedState(WaypointMissionExecuteState.FINISHED, -1); DroneManager.log("Simulation: detour done, hovering") }
+        else startRth()
     }
 
     private fun startRth() {

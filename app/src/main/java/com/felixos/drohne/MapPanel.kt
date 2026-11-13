@@ -40,6 +40,8 @@ class MapPanel(private val map: MapView) {
     private var lastHeadingKey = Int.MIN_VALUE
     private var routeKey: Any? = null
     private var fitted = false
+    /** Single tap on the map (picking a subject in flight). */
+    var onTap: ((com.felixos.drohne.plan.LatLon) -> Unit)? = null
 
     companion object {
         /** Muss vor dem Aufblasen des Layouts laufen (Kachel-Cache im App-Cache, kein Speicherrecht nötig). */
@@ -60,6 +62,10 @@ class MapPanel(private val map: MapView) {
         map.maxZoomLevel = 20.0
         map.controller.setZoom(16.0)
         map.controller.setCenter(GeoPoint(38.72, -9.14)) // Lissabon, bis eine Position da ist
+        map.overlays.add(0, org.osmdroid.views.overlay.MapEventsOverlay(object : org.osmdroid.events.MapEventsReceiver {
+            override fun singleTapConfirmedHelper(p: GeoPoint): Boolean { onTap?.invoke(com.felixos.drohne.plan.LatLon(p.latitude, p.longitude)); return false }
+            override fun longPressHelper(p: GeoPoint): Boolean = false
+        }))
         map.overlays.add(route)
         map.overlays.add(homeMarker); homeMarker.isEnabled = false
         map.overlays.add(droneMarker); droneMarker.isEnabled = false

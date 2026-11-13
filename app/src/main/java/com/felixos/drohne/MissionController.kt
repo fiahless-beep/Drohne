@@ -46,6 +46,24 @@ object MissionController {
     @Volatile var executeState: WaypointMissionExecuteState? = null; private set
     /** Nur Anzeige: Index des aktuellen Wegpunkts in [currentMission] (0-basiert), -1 = keiner gemeldet. */
     @Volatile var currentWaypointIndex = -1; private set
+    /** Last waypoint index DJI reported for the running plan (survives a pause; -1 = none yet). */
+    @Volatile var lastReachedIndex = -1; private set
+    /** Number of points prepare() put in front of the plan's own waypoints (climb, approach). */
+    var preCount = 0; private set
+    /** Called when an in-flight plan with hoverAtEnd has finished (drone hovers). */
+    var onHoverFinished: (() -> Unit)? = null
+    val missionIdNow: String get() = missionId
+
+    /** Everything prepare() changes, so a rejected detour leaves the paused plan untouched. */
+    class Snapshot(val kmz: File?, val mission: Mission?, val conflicts: List<com.felixos.drohne.plan.Obstacles.Conflict>, val terrain: List<com.felixos.drohne.plan.Terrain.Conflict>,
+                   val home: LatLon?, val above: Double, val uploaded: Boolean, val rth: Double, val tail: Boolean, val pre: Int, val text: String)
+    fun snapshot() = Snapshot(currentKmz, currentMission, conflicts, terrainConflicts, preparedHome, startAboveGroundM, uploaded, rthHeightM, landingTail, preCount, stateText)
+    fun restore(s: Snapshot) { currentKmz = s.kmz; currentMission = s.mission; conflicts = s.conflicts; terrainConflicts = s.terrain; preparedHome = s.home
+        startAboveGroundM = s.above; uploaded = s.uploaded; rthHeightM = s.rth; landingTail = s.tail; preCount = s.pre; show(s.text) }
+    fun say(text: String) = show(text)
+    val hasLandingTail: Boolean get() = landingTail
+    /** Return-path problems (surface between a waypoint and home higher than any allowed return height). */
+    var returnProblems: List<String> = emptyList(); private set
     private fun show(text: String) { stateText = text; onStateText?.invoke(text) }
 
     private var initialized = false
@@ -60,24 +78,28 @@ object MissionController {
     /** Zustandswechsel verarbeiten (von DJI gemeldet oder von der Simulation). */
     private fun applyState(state: WaypointMissionExecuteState?, index: Int?) {
         executeState = state
-        if (index != null) currentWaypointIndex = index
+        if (index != null) { currentWaypointIndex = index; if (index >= 0) lastReachedIndex = index }
         else if (state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE) { if (currentWaypointIndex < 0) currentWaypointIndex = 0 } else if (state != WaypointMissionExecuteState.RECOVERING) currentWaypointIndex = -1
         executing = state == WaypointMissionExecuteState.EXECUTING || state == WaypointMissionExecuteState.ENTER_WAYLINE
         DroneManager.log("Mission: $state")
         val m = currentMission
         val name = m?.name ?: missionId
         show(when (state) {
-            WaypointMissionExecuteState.EXECUTING -> "▶ $name läuft"
-            WaypointMissionExecuteState.RECOVERING -> "$name: setzt fort"
-            WaypointMissionExecuteState.RETURN_TO_START_POINT -> "$name: Heimflug"
-            WaypointMissionExecuteState.FINISHED -> "✓ $name fertig – Fotos kommen nach der Landung"
-            WaypointMissionExecuteState.INTERRUPTED -> "⚠ $name unterbrochen"
+            WaypointMissionExecuteState.EXECUTING -> "▶ $name running"
+            WaypointMissionExecuteState.RECOVERING -> "$name: resuming"
+            WaypointMissionExecuteState.RETURN_TO_START_POINT -> "$name: returning home"
+            WaypointMissionExecuteState.FINISHED -> "✓ $name done – photos follow after landing"
+            WaypointMissionExecuteState.INTERRUPTED -> "⚠ $name paused"
             null -> ""
             else -> "$name: $state"
         })
         if (state == WaypointMissionExecuteState.FINISHED || state == WaypointMissionExecuteState.RETURN_TO_START_POINT) {
             if (currentMission?.light == true) DroneManager.setBottomLight("auto")
             if (currentMission?.waypoints?.any { it.video != 0 } == true) DroneManager.stopRecording("Missionsende")
+            if (currentMission?.hoverAtEnd == true) {
+                if (state == WaypointMissionExecuteState.FINISHED) { show("✓ $name done – hovering"); DroneManager.log("Detour finished: drone hovers, main plan waits"); onHoverFinished?.invoke() }
+                return
+            }
             // Erhöhter/überdachter Startplatz (Balkon, Felix 9.11.): kein automatischer Heimflug/Abstieg, Drohne schwebt über dem Haus, Landung von Hand.
             if ((currentMission?.startAboveGroundM ?: 0.0) > 0.1 || startAboveGroundM > 0.1) DroneManager.log("Plan fertig: Drohne schwebt über dem Startplatz. Balkon – bitte von Hand landen.")
             else DroneManager.landingHelper()
@@ -94,7 +116,7 @@ object MissionController {
         val idxChanged = index != lastSimIndex && index >= 0
         lastSimState = state; lastSimIndex = index
         if (state != executeState || index < 0) applyState(state, index)
-        if (idxChanged) { currentWaypointIndex = index; val n = currentMission?.waypoints?.size; DroneManager.log("Wegpunkt ${index + 1}"); show("▶ ${currentMission?.name ?: missionId}: Wegpunkt ${index + 1}" + (n?.let { c -> " von $c" } ?: "")) }
+        if (idxChanged) { currentWaypointIndex = index; lastReachedIndex = index; val n = currentMission?.waypoints?.size; DroneManager.log("Wegpunkt ${index + 1}"); show("▶ ${currentMission?.name ?: missionId}: point ${index + 1}" + (n?.let { c -> " of $c" } ?: "")) }
     }
 
     fun init(context: Context) {
@@ -116,9 +138,9 @@ object MissionController {
                 if (Simulator.active) return
                 info?.let {
                     DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}")
-                    currentWaypointIndex = it.currentWaypointIndex
+                    currentWaypointIndex = it.currentWaypointIndex; lastReachedIndex = it.currentWaypointIndex
                     val n = currentMission?.waypoints?.size
-                    show("▶ ${currentMission?.name ?: missionId}: Wegpunkt ${it.currentWaypointIndex + 1}" + (n?.let { c -> " von $c" } ?: ""))
+                    show("▶ ${currentMission?.name ?: missionId}: point ${it.currentWaypointIndex + 1}" + (n?.let { c -> " of $c" } ?: ""))
                 }
             }
             override fun onWaylineExecutingInterruptReasonUpdate(error: IDJIError?) {
@@ -192,7 +214,7 @@ object MissionController {
             // Übereinanderliegende Punkte 1,5 m versetzen (DJI mag keine Punkte ohne waagerechten Abstand).
             fun beside(p: LatLon, towards: LatLon) = Geo.offset(p, 1.5, Geo.bearing(p, towards))
             val pre = buildList {
-                val a0 = DroneManager.state.location?.takeIf { above > 0.1 && DroneManager.state.flying && it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
+                val a0 = DroneManager.state.location?.takeIf { (above > 0.1 || mIn0.startFromCurrent) && DroneManager.state.flying && it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
                 if (a0 != null) add(first.copy(pos = a0, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
                 else if (home != null) add(first.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
                 if (first.heightM < transit - 1) add(first.copy(pos = beside(first.pos, home ?: last.pos), heightM = transit, takePhoto = false, hoverSec = 0, video = 0))
@@ -208,7 +230,8 @@ object MissionController {
                 if (g == null || top.isEmpty()) null else (top.max() - g + com.felixos.drohne.plan.Obstacles.CLEARANCE_M - above).coerceIn(2.0, transit)
             }
             if (anchor != null) DroneManager.log("Balkon: Plan beginnt und endet an der jetzigen Position; Ende schwebend ${anchorH?.toInt() ?: transit.toInt()} m über dem Balkon, Landung von Hand")
-            val post = buildList {
+            preCount = pre.size
+            val post = if (mIn0.hoverAtEnd) emptyList() else buildList {
                 if (last.heightM < transit - 1) add(last.copy(pos = beside(last.pos, anchor ?: home ?: first.pos), heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
                 if (anchor != null) {
                     add(last.copy(pos = anchor, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
@@ -229,8 +252,28 @@ object MissionController {
         val slow = wps.filter { (it.speedMs ?: 99.0) < LOW_SPEED_MAX - 0.1 }
         DroneManager.log("Tempo: max ${m.speedMs} m/s" + if (slow.isNotEmpty()) ", ${slow.size} Abschnitte nahe Gebäuden gedrosselt (min ${String.format(java.util.Locale.GERMANY, "%.1f", slow.minOf { it.speedMs!! })} m/s)" else "")
         rthHeightM = maxOf(transit, (m.obstacles.maxOfOrNull { it.topM } ?: 0.0) + com.felixos.drohne.plan.Obstacles.CLEARANCE_M).coerceIn(20.0, 120.0)
-        conflicts = com.felixos.drohne.plan.Obstacles.check(m, home) + (home?.let { com.felixos.drohne.plan.Obstacles.checkReturn(m, it, rthHeightM) } ?: emptyList())
-        terrainConflicts = if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.check(m, home, homeAboveGroundM = above) else emptyList()
+        // Return path from EVERY waypoint against the LiDAR surface (signal loss, STOP, battery turn-back mid-plan):
+        // raise the return height until the straight line home clears roofs and trees by the safety margin.
+        returnProblems = emptyList()
+        val gHome = home?.let { com.felixos.drohne.plan.Terrain.groundM(it) }
+        if (home != null && gHome != null && above <= 0.1) {
+            var need = 0.0; var worst = -1
+            m.waypoints.forEachIndexed { i, w ->
+                val n = maxOf(1, (Geo.distance(w.pos, home) / 5.0).toInt())
+                for (k in 0..n) {
+                    val t = k.toDouble() / n
+                    val surf = com.felixos.drohne.plan.Terrain.surfaceM(LatLon(w.pos.lat + (home.lat - w.pos.lat) * t, w.pos.lon + (home.lon - w.pos.lon) * t)) ?: continue
+                    val rel = surf - gHome + com.felixos.drohne.plan.Obstacles.CLEARANCE_M
+                    if (rel > need) { need = rel; worst = i }
+                }
+            }
+            if (need > 120.0) returnProblems = listOf("Return guard: the way home from point ${worst + 1} needs ${need.toInt()} m, more than the 120 m allowed")
+            else if (need > rthHeightM) { DroneManager.log("Return guard: return height raised from ${rthHeightM.toInt()} to ${Math.ceil(need).toInt()} m (surface on the way home from point ${worst + 1})"); rthHeightM = Math.ceil(need) }
+            else DroneManager.log("Return guard: way home clear from every point at ${rthHeightM.toInt()} m")
+        }
+        val homeLeg = !(mIn0.startFromCurrent && DroneManager.state.flying)  // in-flight plans begin at the drone, not at home
+        conflicts = com.felixos.drohne.plan.Obstacles.check(m, home, homeLeg = homeLeg) + (home?.let { com.felixos.drohne.plan.Obstacles.checkReturn(m, it, rthHeightM) } ?: emptyList())
+        terrainConflicts = if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.check(m, home, homeAboveGroundM = above, homeLeg = homeLeg) else emptyList()
         if (landingTail) {
             val lastIdx = m.waypoints.size - 1 + (if (home != null) 1 else 0)
             conflicts = conflicts.filter { it.toHome || it.to < lastIdx }
@@ -297,7 +340,7 @@ object MissionController {
     /** Schreibt die Variante als Datei und gibt DJIs Fehlerliste zurück (leer = in Ordnung). */
     private fun check(v: Variant, fileName: String): List<Any> {
         val f = Wpml.writeKmz(v.m, File(dir, fileName), options = v.o)
-        if (fileName != "probe.kmz") { currentKmz = f; currentMission = v.m; show("${v.m.name}: geplant (${v.m.waypoints.size} Punkte, ${v.m.lengthM.toInt()} m) → „Auf Drohne“") }
+        if (fileName != "probe.kmz") { currentKmz = f; currentMission = v.m; show("${v.m.name}: checked (${v.m.waypoints.size} points, ${v.m.lengthM.toInt()} m)") }
         if (!wpmzReady) return emptyList()
         return try {
             WPMZManager.getInstance().checkValidation(f.absolutePath)?.value ?: emptyList()
@@ -306,7 +349,7 @@ object MissionController {
 
     fun upload(onDone: (Boolean) -> Unit) {
         val f = currentKmz ?: return DroneManager.log("Erst Mission planen").also { onDone(false) }
-        if (Simulator.active) { uploaded = Simulator.upload(); show("${currentMission?.name ?: missionId}: auf der Drohne (Simulation) → „Start“"); onDone(uploaded); return }
+        if (Simulator.active) { uploaded = Simulator.upload(); show("${currentMission?.name ?: missionId}: on the drone (simulation) → Start"); onDone(uploaded); return }
         if (!DroneManager.requireSdk("Hochladen")) return onDone(false)
         DroneManager.log("Lade Mission auf die Drohne …")
         DroneManager.safe("Hochladen") { WaypointMissionManager.getInstance().pushKMZFileToAircraft(f.absolutePath,
@@ -316,7 +359,7 @@ object MissionController {
                     val pct = ((p ?: 0.0) * if ((p ?: 0.0) <= 1.0) 100 else 1).toInt()
                     if (pct / 25 != last) { last = pct / 25; DroneManager.log("Upload $pct %") }
                 }
-                override fun onSuccess() { uploaded = true; DroneManager.log("Mission ist auf der Drohne"); show("${currentMission?.name ?: missionId}: auf der Drohne → „Start“"); onDone(true) }
+                override fun onSuccess() { uploaded = true; DroneManager.log("Mission ist auf der Drohne"); show("${currentMission?.name ?: missionId}: on the drone → Start"); onDone(true) }
                 override fun onFailure(error: IDJIError) { DroneManager.log("Upload fehlgeschlagen: ${error.description()}"); onDone(false) }
             }) }
     }
@@ -326,6 +369,7 @@ object MissionController {
     fun start() {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
+        lastReachedIndex = -1; FlightGuard.alert = null
         if (Simulator.active) { currentMission?.let { Simulator.fly(it, rthHeightM) }; return }
         DroneManager.ensureObstacleAvoidance("Mission startet")
         FlightReport.startFlight(missionId)
@@ -344,12 +388,22 @@ object MissionController {
     }
 
     fun pause() { if (Simulator.active) return Simulator.pause(); DroneManager.safe("Pause") { WaypointMissionManager.getInstance().pauseMission(cb("Pause")) } }
-    fun resume() { if (Simulator.active) return Simulator.resume(); DroneManager.safe("Weiter") { WaypointMissionManager.getInstance().resumeMission(cb("Weiter")) } }
-    fun stop() { if (Simulator.active) return; DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(missionId, cb("Abbruch")) }
+    fun resume() { FlightGuard.alert = null; if (Simulator.active) return Simulator.resume(); DroneManager.safe("Weiter") { WaypointMissionManager.getInstance().resumeMission(cb("Weiter")) } }
+    fun stop(id: String = missionId) { if (Simulator.active) return Simulator.hover(); DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(id, cb("Abbruch")) }
         if (currentMission?.waypoints?.any { it.video != 0 } == true) DroneManager.stopRecording("Abbruch") }
 
     private fun cb(what: String) = object : CommonCallbacks.CompletionCallback {
         override fun onSuccess() { DroneManager.log("$what: ok") }
-        override fun onFailure(error: IDJIError) { DroneManager.log("$what fehlgeschlagen: ${error.description()}") }
+        override fun onFailure(error: IDJIError) { DroneManager.log("$what fehlgeschlagen: ${error.description()}"); show("⚠ $what failed: ${error.description()}") }
+    }
+
+    private var lastStickPause = 0L
+    /** Stick moved while a plan is running: pause at once, the pilot has control (Felix 13.11.). */
+    fun stickMoved() {
+        val now = System.currentTimeMillis()
+        if (!executing || Simulator.active || now - lastStickPause < 3000) return
+        lastStickPause = now
+        DroneManager.log("Stick moved during the plan → pause")
+        pause()
     }
 }

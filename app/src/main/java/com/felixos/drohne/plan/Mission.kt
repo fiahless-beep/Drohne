@@ -49,6 +49,10 @@ data class Mission(
     val transitHeightM: Double? = null,
     /** Startplatz liegt so viele Meter über dem Boden des Höhenmodells (Balkon, Dach, Mauer). Die App zieht den Wert von allen Planhöhen ab und prüft mit dem erhöhten Start. */
     val startAboveGroundM: Double? = null,
+    /** In-flight plan (detour, rest of a plan): begins at the drone's current position instead of the home point. */
+    val startFromCurrent: Boolean = false,
+    /** Ends hovering at the last waypoint (no return, no landing): detours while the main plan waits. */
+    val hoverAtEnd: Boolean = false,
 ) {
     init {
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }

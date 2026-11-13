@@ -41,7 +41,7 @@
         android:paddingBottom="8dp"
         android:textColor="@color/textMuted"
         android:textSize="14sp"
-        android:text="Kein Livebild" />
+        android:text="No live view" />
 
     <FrameLayout
         android:id="@+id/overlayRoot"
@@ -76,7 +76,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:maxLines="1"
-                android:text="Getrennt" />
+                android:text="Disconnected" />
 
             <TextView
                 android:id="@+id/phase"
@@ -107,10 +107,10 @@
             android:layout_marginTop="68dp"
             android:orientation="vertical">
             <!-- Ein Knopf schaltet Karte → Livebild → 3D weiter; das Symbol zeigt die aktuelle Ansicht. -->
-            <ImageView android:id="@+id/btnView" style="@style/RailButton" android:layout_marginTop="0dp" android:src="@drawable/ic_map" android:contentDescription="Ansicht wechseln" />
-            <ImageView android:id="@+id/btnCenter" style="@style/RailButton" android:src="@drawable/ic_center" android:contentDescription="Kamera / einpassen" />
-            <ImageView android:id="@+id/btnLog" style="@style/RailButton" android:src="@drawable/ic_list" android:contentDescription="Protokoll" />
-            <ImageView android:id="@+id/btnMore" style="@style/RailButton" android:src="@drawable/ic_more" android:contentDescription="Mehr" />
+            <ImageView android:id="@+id/btnView" style="@style/RailButton" android:layout_marginTop="0dp" android:src="@drawable/ic_map" android:contentDescription="Switch view" />
+            <ImageView android:id="@+id/btnCenter" style="@style/RailButton" android:src="@drawable/ic_center" android:contentDescription="Camera / fit" />
+            <ImageView android:id="@+id/btnLog" style="@style/RailButton" android:src="@drawable/ic_list" android:contentDescription="Log" />
+            <ImageView android:id="@+id/btnMore" style="@style/RailButton" android:src="@drawable/ic_more" android:contentDescription="Settings" />
         </LinearLayout>
 
         <!-- Telemetrie unten links -->
@@ -130,6 +130,26 @@
             android:textSize="15sp"
             android:fontFeatureSettings="tnum"
             android:maxLines="1"
+            android:text="" />
+
+        <!-- Status line: what the app/drone is doing right now, always visible -->
+        <TextView
+            android:id="@+id/statusLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="72dp"
+            android:layout_marginTop="68dp"
+            android:background="@drawable/pill"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:textColor="@color/text"
+            android:textSize="15sp"
+            android:fontFeatureSettings="tnum"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:text="" />
 
         <!-- Aktionsfeld rechts -->
@@ -154,7 +174,7 @@
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="Kein Plan" />
+                android:text="No plan" />
 
             <TextView
                 android:id="@+id/planMeta"
@@ -166,7 +186,7 @@
                 android:fontFeatureSettings="tnum"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="Plan holen" />
+                android:text="Get a plan" />
 
             <ProgressBar
                 android:id="@+id/progress"
@@ -209,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
-                <Button android:id="@+id/btnPrimary" style="@style/Btn.Primary" android:text="Plan holen" />
+                <Button android:id="@+id/btnPrimary" style="@style/Btn.Primary" android:text="Get plan" />
             </LinearLayout>
 
             <LinearLayout
@@ -218,8 +238,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
-                <Button android:id="@+id/btnPlan" style="@style/Btn" android:layout_marginEnd="4dp" android:text="Testflug" />
-                <Button android:id="@+id/btnFollow" style="@style/Btn" android:layout_marginStart="4dp" android:text="Folgen" />
+                <Button android:id="@+id/btnPlan" style="@style/Btn" android:layout_marginEnd="4dp" android:text="Test flight" />
+                <Button android:id="@+id/btnFollow" style="@style/Btn" android:layout_marginStart="4dp" android:text="Follow" />
             </LinearLayout>
 
             <LinearLayout
@@ -227,7 +247,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
-                <Button android:id="@+id/btnHome" style="@style/Btn.Stop" android:text="STOPP · Heimflug" />
+                <Button android:id="@+id/btnHome" style="@style/Btn.Stop" android:text="STOP · Return home" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
