@@ -388,7 +388,7 @@ object MissionController {
     }
 
     fun pause() { if (Simulator.active) return Simulator.pause(); DroneManager.safe("Pause") { WaypointMissionManager.getInstance().pauseMission(cb("Pause")) } }
-    fun resume() { FlightGuard.alert = null; if (Simulator.active) return Simulator.resume(); DroneManager.safe("Weiter") { WaypointMissionManager.getInstance().resumeMission(cb("Weiter")) } }
+    fun resume() { FlightGuard.rearm(); if (Simulator.active) return Simulator.resume(); DroneManager.safe("Weiter") { WaypointMissionManager.getInstance().resumeMission(cb("Weiter")) } }
     fun stop(id: String = missionId) { if (Simulator.active) return Simulator.hover(); DroneManager.safe("Abbruch") { WaypointMissionManager.getInstance().stopMission(id, cb("Abbruch")) }
         if (currentMission?.waypoints?.any { it.video != 0 } == true) DroneManager.stopRecording("Abbruch") }
 

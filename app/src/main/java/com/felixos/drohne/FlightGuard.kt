@@ -44,6 +44,9 @@ object FlightGuard {
         DroneManager.addStateListener { s -> try { check(s) } catch (t: Throwable) { DroneManager.log("Flight guard error: ${t.javaClass.simpleName} ${t.message}") } }
     }
 
+    /** After a resume the drone first flies back to the route: guard again only once it is back in the corridor. */
+    fun rearm() { armed = false; offRoute = 0; low = 0; alert = null }
+
     private fun check(s: DroneState) {
         val now = System.currentTimeMillis()
         if (now - lastCheck < 500) return
