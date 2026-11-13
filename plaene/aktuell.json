@@ -1,12 +1,12 @@
 {
- "name": "marques-de-pombal-saeule",
- "beschreibung": "Foto- und Video-Mission Marquês de Pombal. Start oben im Parque Eduardo VII auf der Aussichtsterrasse, Flug den Park hinunter (Oberfläche + 13 m) zur Säule. Tiefer Ring 52 m Abstand auf halber Säulenhöhe (8 Fotos), hoher Ring 8 m über der Statue (8 Fotos, Blick schräg nach unten), dann eine Video-Runde 60 m Abstand, 27 m über dem Platz, Kamera auf die Säule. Gleicher Weg zurück. Sonne um 10:30 aus Südsüdost. Nur tagsüber.",
+ "name": "marques-de-pombal-saeule-oben",
+ "beschreibung": "Säulen-Plan mit Start oben auf der Wiese nördlich der Alameda (13.11.). Erst 60 m seitlich nach Osten, dann östlich an Fahnenmast und Pfeilern vorbei den Park hinunter. Rückweg gleich. Fahnenmast und Pfeiler als Hindernisse eingetragen. Nur tagsüber.",
  "speed": 5,
  "rcLost": "continue",
- "transitHoehe": 30,
+ "transitHoehe": 35,
  "start": {
-  "lat": 38.73045,
-  "lon": -9.15466
+  "lat": 38.7310968,
+  "lon": -9.1550922
  },
  "ziel": {
   "lat": 38.72525,
@@ -51,13 +51,119 @@
      -9.149817
     ]
    ]
+  },
+  {
+   "name": "Fahnenmast (Lage geschätzt)",
+   "h": 60.0,
+   "umriss": [
+    [
+     38.730816,
+     -9.155003
+    ],
+    [
+     38.73092,
+     -9.154815
+    ],
+    [
+     38.730517,
+     -9.154448
+    ],
+    [
+     38.730413,
+     -9.154635
+    ]
+   ]
+  },
+  {
+   "name": "Pfeiler West mit Gerüst",
+   "h": 38.0,
+   "umriss": [
+    [
+     38.73027,
+     -9.154666
+    ],
+    [
+     38.730327,
+     -9.154697
+    ],
+    [
+     38.730351,
+     -9.15477
+    ],
+    [
+     38.730327,
+     -9.154843
+    ],
+    [
+     38.73027,
+     -9.154874
+    ],
+    [
+     38.730213,
+     -9.154843
+    ],
+    [
+     38.730189,
+     -9.15477
+    ],
+    [
+     38.730213,
+     -9.154697
+    ]
+   ]
+  },
+  {
+   "name": "Pfeiler Ost mit Gerüst",
+   "h": 38.0,
+   "umriss": [
+    [
+     38.73057,
+     -9.154126
+    ],
+    [
+     38.730627,
+     -9.154157
+    ],
+    [
+     38.730651,
+     -9.15423
+    ],
+    [
+     38.730627,
+     -9.154303
+    ],
+    [
+     38.73057,
+     -9.154334
+    ],
+    [
+     38.730513,
+     -9.154303
+    ],
+    [
+     38.730489,
+     -9.15423
+    ],
+    [
+     38.730513,
+     -9.154157
+    ]
+   ]
   }
  ],
  "waypoints": [
   {
-   "lat": 38.730102,
-   "lon": -9.15436,
-   "h": 16,
+   "lat": 38.7314,
+   "lon": -9.154546,
+   "h": 35,
+   "photo": false,
+   "hover": 0,
+   "pitch": -20
+  },
+  {
+   "lat": 38.73044,
+   "lon": -9.15367,
+   "h": 35,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -65,7 +171,7 @@
   {
    "lat": 38.729755,
    "lon": -9.15406,
-   "h": 8,
+   "h": 2.4,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -73,7 +179,7 @@
   {
    "lat": 38.729407,
    "lon": -9.153761,
-   "h": 5,
+   "h": -0.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -81,7 +187,7 @@
   {
    "lat": 38.729059,
    "lon": -9.153461,
-   "h": 1,
+   "h": -4.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -89,7 +195,7 @@
   {
    "lat": 38.728712,
    "lon": -9.153161,
-   "h": -2,
+   "h": -7.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -97,7 +203,7 @@
   {
    "lat": 38.728364,
    "lon": -9.152861,
-   "h": -5,
+   "h": -10.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -105,7 +211,7 @@
   {
    "lat": 38.728016,
    "lon": -9.152562,
-   "h": -9,
+   "h": -14.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -113,7 +219,7 @@
   {
    "lat": 38.727669,
    "lon": -9.152262,
-   "h": -12,
+   "h": -17.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -121,7 +227,7 @@
   {
    "lat": 38.727321,
    "lon": -9.151962,
-   "h": -15,
+   "h": -20.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -129,7 +235,7 @@
   {
    "lat": 38.726974,
    "lon": -9.151662,
-   "h": -19,
+   "h": -24.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -137,7 +243,7 @@
   {
    "lat": 38.726626,
    "lon": -9.151362,
-   "h": -22,
+   "h": -27.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -145,7 +251,7 @@
   {
    "lat": 38.726278,
    "lon": -9.151063,
-   "h": -25,
+   "h": -30.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -153,7 +259,7 @@
   {
    "lat": 38.725931,
    "lon": -9.150763,
-   "h": -27,
+   "h": -32.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -161,7 +267,7 @@
   {
    "lat": 38.725583,
    "lon": -9.150463,
-   "h": -30,
+   "h": -35.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -169,7 +275,7 @@
   {
    "lat": 38.725583,
    "lon": -9.150463,
-   "h": -25,
+   "h": -30.6,
    "photo": true,
    "hover": 2,
    "yaw": 135,
@@ -179,7 +285,7 @@
   {
    "lat": 38.72572,
    "lon": -9.15004,
-   "h": -25,
+   "h": -30.6,
    "photo": true,
    "hover": 2,
    "yaw": 180,
@@ -189,7 +295,7 @@
   {
    "lat": 38.725583,
    "lon": -9.149617,
-   "h": -25,
+   "h": -30.6,
    "photo": true,
    "hover": 2,
    "yaw": 225,
@@ -199,7 +305,7 @@
   {
    "lat": 38.72525,
    "lon": -9.149441,
-   "h": -25,
+   "h": -30.6,
    "photo": true,
    "hover": 2,
    "yaw": 270,
@@ -209,7 +315,7 @@
   {
    "lat": 38.724917,
    "lon": -9.149617,
-   "h": -25,
+   "h": -30.6,
    "photo": true,
    "hover": 2,
    "yaw": 315,
@@ -219,7 +325,7 @@
   {
    "lat": 38.72478,
    "lon": -9.15004,
-   "h": -25,
+   "h": -30.6,
    "photo": true,
    "hover": 2,
    "yaw": 0,
@@ -229,7 +335,7 @@
   {
    "lat": 38.724917,
    "lon": -9.150463,
-   "h": -25,
+   "h": -30.6,
    "photo": true,
    "hover": 2,
    "yaw": 45,
@@ -239,7 +345,7 @@
   {
    "lat": 38.72525,
    "lon": -9.150639,
-   "h": -25,
+   "h": -30.6,
    "photo": true,
    "hover": 2,
    "yaw": 90,
@@ -249,7 +355,7 @@
   {
    "lat": 38.725583,
    "lon": -9.150463,
-   "h": -25,
+   "h": -30.6,
    "photo": false,
    "hover": 0,
    "yaw": 135,
@@ -259,7 +365,7 @@
   {
    "lat": 38.72525,
    "lon": -9.150639,
-   "h": 1,
+   "h": -4.6,
    "photo": true,
    "hover": 2,
    "yaw": 90,
@@ -269,7 +375,7 @@
   {
    "lat": 38.724917,
    "lon": -9.150463,
-   "h": 1,
+   "h": -4.6,
    "photo": true,
    "hover": 2,
    "yaw": 45,
@@ -279,7 +385,7 @@
   {
    "lat": 38.72478,
    "lon": -9.15004,
-   "h": 1,
+   "h": -4.6,
    "photo": true,
    "hover": 2,
    "yaw": 0,
@@ -289,7 +395,7 @@
   {
    "lat": 38.724917,
    "lon": -9.149617,
-   "h": 1,
+   "h": -4.6,
    "photo": true,
    "hover": 2,
    "yaw": 315,
@@ -299,7 +405,7 @@
   {
    "lat": 38.72525,
    "lon": -9.149441,
-   "h": 1,
+   "h": -4.6,
    "photo": true,
    "hover": 2,
    "yaw": 270,
@@ -309,7 +415,7 @@
   {
    "lat": 38.725583,
    "lon": -9.149617,
-   "h": 1,
+   "h": -4.6,
    "photo": true,
    "hover": 2,
    "yaw": 225,
@@ -319,7 +425,7 @@
   {
    "lat": 38.72572,
    "lon": -9.15004,
-   "h": 1,
+   "h": -4.6,
    "photo": true,
    "hover": 2,
    "yaw": 180,
@@ -329,7 +435,7 @@
   {
    "lat": 38.725583,
    "lon": -9.150463,
-   "h": 1,
+   "h": -4.6,
    "photo": true,
    "hover": 2,
    "yaw": 135,
@@ -339,7 +445,7 @@
   {
    "lat": 38.72525,
    "lon": -9.150639,
-   "h": 1,
+   "h": -4.6,
    "photo": false,
    "hover": 0,
    "yaw": 90,
@@ -349,7 +455,7 @@
   {
    "lat": 38.72525,
    "lon": -9.150731,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 90,
@@ -360,7 +466,7 @@
   {
    "lat": 38.725521,
    "lon": -9.150638,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 120,
@@ -370,7 +476,7 @@
   {
    "lat": 38.72572,
    "lon": -9.150385,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 150,
@@ -380,7 +486,7 @@
   {
    "lat": 38.725793,
    "lon": -9.15004,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 180,
@@ -390,7 +496,7 @@
   {
    "lat": 38.72572,
    "lon": -9.149695,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 210,
@@ -400,7 +506,7 @@
   {
    "lat": 38.725521,
    "lon": -9.149442,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 240,
@@ -410,7 +516,7 @@
   {
    "lat": 38.72525,
    "lon": -9.149349,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 270,
@@ -420,7 +526,7 @@
   {
    "lat": 38.724979,
    "lon": -9.149442,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 300,
@@ -430,7 +536,7 @@
   {
    "lat": 38.72478,
    "lon": -9.149695,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 330,
@@ -440,7 +546,7 @@
   {
    "lat": 38.724707,
    "lon": -9.15004,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 0,
@@ -450,7 +556,7 @@
   {
    "lat": 38.72478,
    "lon": -9.150385,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 30,
@@ -460,7 +566,7 @@
   {
    "lat": 38.724979,
    "lon": -9.150638,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 60,
@@ -470,7 +576,7 @@
   {
    "lat": 38.72525,
    "lon": -9.150731,
-   "h": -20,
+   "h": -25.6,
    "photo": false,
    "hover": 0,
    "yaw": 90,
@@ -481,7 +587,7 @@
   {
    "lat": 38.725931,
    "lon": -9.150763,
-   "h": -27,
+   "h": -32.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -489,7 +595,7 @@
   {
    "lat": 38.726278,
    "lon": -9.151063,
-   "h": -25,
+   "h": -30.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -497,7 +603,7 @@
   {
    "lat": 38.726626,
    "lon": -9.151362,
-   "h": -22,
+   "h": -27.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -505,7 +611,7 @@
   {
    "lat": 38.726974,
    "lon": -9.151662,
-   "h": -19,
+   "h": -24.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -513,7 +619,7 @@
   {
    "lat": 38.727321,
    "lon": -9.151962,
-   "h": -15,
+   "h": -20.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -521,7 +627,7 @@
   {
    "lat": 38.727669,
    "lon": -9.152262,
-   "h": -12,
+   "h": -17.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -529,7 +635,7 @@
   {
    "lat": 38.728016,
    "lon": -9.152562,
-   "h": -9,
+   "h": -14.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -537,7 +643,7 @@
   {
    "lat": 38.728364,
    "lon": -9.152861,
-   "h": -5,
+   "h": -10.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -545,7 +651,7 @@
   {
    "lat": 38.728712,
    "lon": -9.153161,
-   "h": -2,
+   "h": -7.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -553,7 +659,7 @@
   {
    "lat": 38.729059,
    "lon": -9.153461,
-   "h": 1,
+   "h": -4.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -561,7 +667,7 @@
   {
    "lat": 38.729407,
    "lon": -9.153761,
-   "h": 5,
+   "h": -0.6,
    "photo": false,
    "hover": 0,
    "pitch": -20
@@ -569,23 +675,31 @@
   {
    "lat": 38.729755,
    "lon": -9.15406,
-   "h": 8,
+   "h": 2.4,
    "photo": false,
    "hover": 0,
    "pitch": -20
   },
   {
-   "lat": 38.730102,
-   "lon": -9.15436,
-   "h": 16,
+   "lat": 38.73044,
+   "lon": -9.15367,
+   "h": 35,
    "photo": false,
    "hover": 0,
    "pitch": -20
   },
   {
-   "lat": 38.73045,
-   "lon": -9.15466,
-   "h": 16,
+   "lat": 38.7314,
+   "lon": -9.154546,
+   "h": 35,
+   "photo": false,
+   "hover": 0,
+   "pitch": -20
+  },
+  {
+   "lat": 38.7310968,
+   "lon": -9.1550922,
+   "h": 35,
    "photo": false,
    "hover": 0,
    "pitch": -20
