@@ -210,3 +210,27 @@
 08:59:00  T 38.731308 -9.155156 h=40.7 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
 08:59:02  T 38.731289 -9.155145 h=40.5 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
 08:59:04  T 38.731191 -9.155067 h=31.4 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:06  T 38.731155 -9.155040 h=23.4 akku=71 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:07  Aufzeichnungen hochgeladen: 23 von 18 → github.com/fiahless-beep/Drohne/tree/main/fluege/aufzeichnungen
+08:59:09  T 38.731155 -9.155035 h=23.2 akku=71 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:11  T 38.731138 -9.155020 h=20.7 akku=71 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:13  T 38.731112 -9.155000 h=12.7 akku=71 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:15  T 38.731113 -9.154997 h=8.3 akku=71 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:17  T 38.731112 -9.154997 h=3.9 akku=71 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:19  T 38.731112 -9.154995 h=1.8 akku=71 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:21  T 38.731111 -9.154994 h=0.8 akku=71 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:23  T 38.731112 -9.154997 h=0.6 akku=70 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:25  T 38.731113 -9.154997 h=0.3 akku=70 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:27  T 38.731114 -9.154998 h=0.2 akku=70 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:29  T 38.731114 -9.154998 h=0.2 akku=70 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:29  Mission: FINISHED
+08:59:29  Mission beendet → hole Fotos und lade hoch
+08:59:29  Mission: READY
+08:59:31  T 38.731114 -9.154998 h=0.0 akku=70 fliegt=true mission=READY wp=-1 wind=0
+08:59:33  T 38.731114 -9.154997 h=-0.3 akku=70 fliegt=true mission=READY wp=-1 wind=0
+08:59:34  Hole Fotoliste von der Drohne …
+08:59:35  T 38.731113 -9.154997 h=0.0 akku=70 fliegt=false mission=READY wp=-1 wind=0
+08:59:35  Landehelfer: Drohne ist am Boden
+08:59:37  T 38.731113 -9.154997 h=0.0 akku=70 fliegt=false mission=READY wp=-1 wind=0
+08:59:38  Fotos auf der Drohne: 0, zu diesem Flug: 0
+08:59:38  Fotos geladen: 0
