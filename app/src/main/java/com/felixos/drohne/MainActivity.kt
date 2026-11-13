@@ -1,5 +1,6 @@
 package com.felixos.drohne
 
+import dji.sdk.keyvalue.key.FlightControllerKey
 import android.Manifest
 import android.app.AlertDialog
 import android.content.res.ColorStateList
@@ -555,65 +556,177 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Abbrechen", null).show()
     }
 
-    /** Mehr-Menü: Karte extern, Fotos holen, Token, Landelampe, Koppeln, Achsen, Wächter. */
-    private fun showMore() {
-        val swap = FollowController.swapAxes(this)
-        val items = arrayOf(
-            if (Simulator.active) "Simulation beenden" else "Simulation starten (ohne Drohne)",
-            "Simulation: ${if (Simulator.timeScale > 1) "Echtzeit (jetzt ${Simulator.timeScale.toInt()}×)" else "Zeitraffer 4×"}",
-            "Plan in Google Maps zeigen", "Fotos holen und hochladen", "GitHub-Token eintragen", "Google-Schlüssel eintragen (3D fotorealistisch)", "Landelampe an", "Landelampe auto (aus)", "Fernbedienung neu koppeln",
-            "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})",
-            "Bildwächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})",
-            "Bildwächter ${if (ObstacleGuard.enabled) "ausschalten" else "einschalten"}",
-            "Seriennummer der Drohne",
-            "Selbsttest (Sensoren, DJI-Meldungen)",
-            "Flugaufzeichnungen sichern (SDK-Logs ins Repo)",
-            "Startplatz hier merken (Balkon/Dach)",
-            "Höhenlimit einstellen (jetzt ${DroneManager.state.heightLimitM?.let { "$it m" } ?: "unbekannt"})",
-            if (DroneManager.state.sensors == "aus") "Hinderniserkennung wieder EIN" else "Hinderniserkennung AUS (Handstart Balkon/Auto)")
-        AlertDialog.Builder(this).setTitle("Mehr").setItems(items) { _, which ->
-            when (which - 2) {
-                -2 -> toggleSimulation()
-                -1 -> { Simulator.timeScale = if (Simulator.timeScale > 1) 1.0 else 4.0; DroneManager.log("Simulation: Zeitraffer ${Simulator.timeScale.toInt()}×") }
-                0 -> showOnMap()
-                1 -> FlightReport.collectAndUpload(applicationContext)
-                2 -> askToken()
-                3 -> askGoogleKey()
-                4 -> DroneManager.setBottomLight("an")
-                5 -> DroneManager.setBottomLight("auto")
-                6 -> AlertDialog.Builder(this).setTitle("Neu koppeln?")
-                    .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
-                    .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
-                    .setNegativeButton("Abbrechen", null).show()
-                7 -> { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }
-                8 -> ObstacleGuard.setArmed(this, !ObstacleGuard.armed)
-                9 -> ObstacleGuard.setEnabled(this, !ObstacleGuard.enabled)
-                10 -> { val sn = DroneManager.state.serial ?: getSharedPreferences("drohne", MODE_PRIVATE).getString("letzte_sn", null)
-                    AlertDialog.Builder(this).setTitle("Seriennummer").setMessage(sn?.let { "Fluggerät: $it" } ?: "Noch unbekannt – wird beim nächsten Verbinden gespeichert.").setPositiveButton("OK", null).show() }
-                11 -> showSelfTest()
-                12 -> {
-                    android.widget.Toast.makeText(this, "Flugaufzeichnungen werden gesucht und hochgeladen …", android.widget.Toast.LENGTH_SHORT).show()
-                    FlightReport.uploadFlightRecords(applicationContext) { n -> runOnUiThread {
-                        val msg = when { n < 0 -> "Kein GitHub-Token eingetragen (Mehr … → GitHub-Token)."; n == 0 -> "Nichts Neues – alle Aufzeichnungen waren schon im Repo."; else -> "$n Aufzeichnung(en) hochgeladen → Claude kann sie jetzt lesen." }
-                        AlertDialog.Builder(this).setTitle("Flugaufzeichnungen").setMessage(msg).setPositiveButton("OK", null).show()
-                    } }
-                }
-                13 -> askStartPlace()
-                14 -> askHeightLimit()
-                15 -> if (DroneManager.state.sensors == "aus") DroneManager.setObstacleAvoidance(true, "von Hand") else AlertDialog.Builder(this).setTitle("Hinderniserkennung aus?")
-                    .setMessage("Nur für den Handstart unter Dach oder aus dem Auto: Die Drohne bremst dann NICHT mehr vor Hindernissen. Fliege von Hand langsam an einen freien Ort. Bei „Plan holen“ und „Start“ geht sie automatisch wieder an.")
-                    .setPositiveButton("Ausschalten") { _, _ -> DroneManager.setObstacleAvoidance(false) }
-                    .setNegativeButton("Abbrechen", null).show()
-            }
-            renderNow(DroneManager.state)
-        }.show()
+    private fun menu(title: String, items: List<Pair<String, () -> Unit>>) {
+        AlertDialog.Builder(this).setTitle(title).setItems(items.map { it.first }.toTypedArray()) { _, i -> items[i].second(); renderNow(DroneManager.state) }
+            .setNegativeButton("Zurück", null).show()
     }
 
-    /**
-     * Erhöhten Startplatz merken (Felix 8.11.: Balkon 3. Stock). Position = Drohne (wenn verbunden) sonst Handy;
-     * Höhe über Boden vorbelegt mit der aktuellen Flughöhe der Drohne (vom Gehweg gestartet, vor dem Balkon schwebend) oder 10 m.
-     */
-    /** Höhenlimit der Drohne (DJI Max Altitude) von Hand. 120 m = gesetzliches Maximum (EU, offene Kategorie); GEO-Höhenzonen begrenzt DJI zusätzlich selbst. */
+    private fun info(title: String, msg: String) { AlertDialog.Builder(this).setTitle(title).setMessage(msg).setPositiveButton("OK", null).show() }
+
+    /** Auswahl aus festen Werten; der aktuelle Wert der Drohne wird vorher gelesen und markiert. */
+    private fun <T> choose(title: String, key: dji.sdk.keyvalue.key.DJIKeyInfo<T>, options: List<Pair<String, T>>, hint: String = "") {
+        DjiSettings.read(key) { cur -> runOnUiThread {
+            val idx = options.indexOfFirst { it.second == cur }
+            AlertDialog.Builder(this).setTitle(title + if (hint.isNotBlank()) " – $hint" else "")
+                .setSingleChoiceItems(options.map { it.first }.toTypedArray(), idx) { d, i ->
+                    DjiSettings.write(key, options[i].second, "$title: ${options[i].first}") { ok -> runOnUiThread {
+                        android.widget.Toast.makeText(this, if (ok) "$title: ${options[i].first}" else "$title: nicht übernommen (siehe Protokoll)", android.widget.Toast.LENGTH_LONG).show() } }
+                    d.dismiss()
+                }.setNegativeButton("Abbrechen", null).show()
+        } }
+    }
+
+    /** Einstellungen, sortiert (Felix 13.11.): Sicherheit, Kamera, Kalibrierung, Flug & Wächter, Daten, Gerät & Test. */
+    private fun showMore() = menu("Einstellungen", listOf(
+        "Sicherheit" to { showSafety() },
+        "Kamera" to { showCamera() },
+        "Kalibrierung" to { showCalibration() },
+        "Flug & Wächter" to { showFlightMenu() },
+        "Daten" to { showDataMenu() },
+        "Gerät & Test" to { showDeviceMenu() }))
+
+    private fun showSafety() {
+        val s = DroneManager.state
+        menu("Sicherheit", listOf(
+            "Höhenlimit (jetzt ${s.heightLimitM?.let { "$it m" } ?: "unbekannt"})" to { askHeightLimit() },
+            "Maximale Entfernung" to { askDistanceLimit() },
+            "Hinderniserkennung (jetzt ${s.sensors ?: "unbekannt"})" to { askObstacle() },
+            "Bei Signalverlust" to { choose("Bei Signalverlust", FlightControllerKey.KeyFailsafeAction, listOf(
+                "Heimflug (empfohlen)" to dji.sdk.keyvalue.value.flightcontroller.FailsafeAction.GOHOME,
+                "Schweben" to dji.sdk.keyvalue.value.flightcontroller.FailsafeAction.HOVER,
+                "Landen" to dji.sdk.keyvalue.value.flightcontroller.FailsafeAction.LANDING), "ohne laufenden Plan") }))
+    }
+
+    private fun askObstacle() = menu("Hinderniserkennung (jetzt ${DroneManager.state.sensors ?: "unbekannt"})", listOf(
+        "Bremsen (Standard)" to { DroneManager.setObstacleAvoidance(true, "von Hand") },
+        "Umfliegen" to { DroneManager.setObstacleAvoidanceBypass() },
+        "AUS (nur Handstart Balkon/Auto)" to {
+            AlertDialog.Builder(this).setTitle("Hinderniserkennung aus?")
+                .setMessage("Nur für den Handstart unter Dach oder aus dem Auto: Die Drohne bremst dann NICHT mehr vor Hindernissen. Fliege von Hand langsam an einen freien Ort. Bei „Plan holen“ und „Start“ geht sie automatisch wieder an.")
+                .setPositiveButton("Ausschalten") { _, _ -> DroneManager.setObstacleAvoidance(false) }
+                .setNegativeButton("Abbrechen", null).show() }))
+
+    private fun askDistanceLimit() {
+        DjiSettings.read(FlightControllerKey.KeyDistanceLimitEnabled) { en -> DjiSettings.read(FlightControllerKey.KeyDistanceLimit) { cur -> runOnUiThread {
+            val inp = android.widget.EditText(this).apply { hint = "Meter (15–8000)"; inputType = android.text.InputType.TYPE_CLASS_NUMBER; setText((cur ?: 1000).toString()) }
+            val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 10, 40, 0); addView(inp) }
+            AlertDialog.Builder(this).setTitle("Maximale Entfernung")
+                .setMessage("Jetzt: ${when { en == null -> "unbekannt (Drohne verbinden)"; en == false -> "kein Limit"; else -> "${cur ?: "?"} m" }}. Die Drohne fliegt nicht weiter vom Startpunkt weg als dieser Wert. Unsere Pläne bleiben ohnehin unter 1000 m.")
+                .setView(box)
+                .setPositiveButton("Setzen") { _, _ -> inp.text.toString().toIntOrNull()?.coerceIn(15, 8000)?.let { v ->
+                    DjiSettings.write(FlightControllerKey.KeyDistanceLimitEnabled, true, "Entfernungslimit an") { DjiSettings.write(FlightControllerKey.KeyDistanceLimit, v, "Entfernungslimit $v m") } } }
+                .setNeutralButton("Kein Limit") { _, _ -> DjiSettings.write(FlightControllerKey.KeyDistanceLimitEnabled, false, "Entfernungslimit aus") }
+                .setNegativeButton("Abbrechen", null).show()
+        } } }
+    }
+
+    private fun showCamera() = menu("Kamera", listOf(
+        "Videoauflösung" to { askVideoFormat() },
+        "Fotoformat" to { askPhotoFormat() }))
+
+    private fun askVideoFormat() {
+        val CK = dji.sdk.keyvalue.key.CameraKey.KeyVideoResolutionFrameRate
+        DjiSettings.read(dji.sdk.keyvalue.key.CameraKey.KeyVideoResolutionFrameRateRange) { range -> DjiSettings.read(CK) { cur -> runOnUiThread {
+            val opts = range.orEmpty()
+            if (opts.isEmpty()) { info("Videoauflösung", "Die Drohne meldet keine wählbaren Formate (verbunden? Kamera im Videomodus?). Jetzt: ${cur?.let { fmt(it) } ?: "unbekannt"}."); return@runOnUiThread }
+            val idx = opts.indexOfFirst { it.resolution == cur?.resolution && it.frameRate == cur?.frameRate }
+            AlertDialog.Builder(this).setTitle("Videoauflösung")
+                .setSingleChoiceItems(opts.map { fmt(it) }.toTypedArray(), idx) { d, i -> DjiSettings.write(CK, opts[i], "Video ${fmt(opts[i])}"); d.dismiss() }
+                .setNegativeButton("Abbrechen", null).show()
+        } } }
+    }
+
+    private fun fmt(v: dji.sdk.keyvalue.value.camera.VideoResolutionFrameRate): String =
+        "${v.resolution?.name?.removePrefix("RESOLUTION_")?.replace('x', '×') ?: "?"} · ${v.frameRate?.name?.removePrefix("RATE_")?.removeSuffix("FPS")?.replace("DOT", ",") ?: "?"} B/s"
+
+    private fun askPhotoFormat() {
+        val CK = dji.sdk.keyvalue.key.CameraKey.KeyPhotoFileFormat
+        DjiSettings.read(dji.sdk.keyvalue.key.CameraKey.KeyPhotoFileFormatRange) { range -> DjiSettings.read(CK) { cur -> runOnUiThread {
+            val opts = range.orEmpty()
+            if (opts.isEmpty()) { info("Fotoformat", "Die Drohne meldet keine wählbaren Formate (verbunden? Kamera im Fotomodus?). Jetzt: ${cur?.name ?: "unbekannt"}."); return@runOnUiThread }
+            AlertDialog.Builder(this).setTitle("Fotoformat")
+                .setSingleChoiceItems(opts.map { it.name.replace("RAW_JPEG", "RAW + JPEG") }.toTypedArray(), opts.indexOf(cur)) { d, i -> DjiSettings.write(CK, opts[i], "Fotoformat ${opts[i].name}"); d.dismiss() }
+                .setNegativeButton("Abbrechen", null).show()
+        } } }
+    }
+
+    private fun showCalibration() = menu("Kalibrierung", listOf(
+        "Kompass" to { calibrate("Kompass", "Im Freien, weg von Metall und Autos. Nach dem Start: Drohne waagerecht halten und einmal um sich selbst drehen, dann Nase nach unten und noch einmal drehen.",
+            FlightControllerKey.KeyStartCompassCalibration, FlightControllerKey.KeyStopCompassCalibration) { done ->
+                DjiSettings.read(FlightControllerKey.KeyCompassCalibrationStatus) { st -> done(when (st) {
+                    dji.sdk.keyvalue.value.flightcontroller.CompassCalibrationState.HORIZONTAL -> "Schritt 1: waagerecht halten und 360° drehen"
+                    dji.sdk.keyvalue.value.flightcontroller.CompassCalibrationState.VERTICAL -> "Schritt 2: Nase nach unten und 360° drehen"
+                    dji.sdk.keyvalue.value.flightcontroller.CompassCalibrationState.SUCCEEDED -> "FERTIG: Kompass kalibriert"
+                    dji.sdk.keyvalue.value.flightcontroller.CompassCalibrationState.FAILED -> "FEHLGESCHLAGEN: anderen Ort wählen, nochmal"
+                    dji.sdk.keyvalue.value.flightcontroller.CompassCalibrationState.IDLE -> "Wartet (nicht gestartet oder beendet)"
+                    else -> "Status unbekannt" }) } } },
+        "IMU" to { calibrate("IMU", "Drohne kalt und auf einem ebenen Tisch, Arme eingeklappt, Propeller dürfen dran bleiben. Nach dem Start die Drohne nacheinander auf die geforderten Seiten legen und jeweils ruhig liegen lassen.",
+            FlightControllerKey.KeyStartIMUCalibration, null) { done ->
+                DjiSettings.read(FlightControllerKey.KeyIMUCalibrationInfo) { i -> done(if (i == null) "Status unbekannt" else
+                    "Zustand: ${i.calibrationState?.name ?: "?"} · ${i.calibrationProgress ?: 0} %\nNoch hinlegen: ${i.orientationsToCalibrate?.joinToString { it.name }?.ifBlank { "nichts" } ?: "?"}\nErledigt: ${i.orientationsCalibrated?.joinToString { it.name }?.ifBlank { "–" } ?: "–"}") } } },
+        "Gimbal" to { calibrate("Gimbal", "Drohne auf ebenen Untergrund stellen, Gimbal-Schutz ab, nichts berührt die Kamera. Läuft etwa eine Minute von selbst.",
+            dji.sdk.keyvalue.key.GimbalKey.KeyGimbalCalibrate, null) { done ->
+                DjiSettings.read(dji.sdk.keyvalue.key.GimbalKey.KeyGimbalCalibrationStatus) { g -> done(if (g == null) "Status unbekannt" else "Zustand: ${g.status?.name ?: "?"} · ${g.progress ?: 0} %") } } }))
+
+    /** Kalibrierdialog: Anleitung, Start, dann jede Sekunde den Status der Drohne anzeigen. Nur am Boden. */
+    private fun calibrate(name: String, howTo: String,
+                          start: dji.sdk.keyvalue.key.DJIActionKeyInfo<dji.sdk.keyvalue.value.common.EmptyMsg, dji.sdk.keyvalue.value.common.EmptyMsg>,
+                          stop: dji.sdk.keyvalue.key.DJIActionKeyInfo<dji.sdk.keyvalue.value.common.EmptyMsg, dji.sdk.keyvalue.value.common.EmptyMsg>?,
+                          status: ((String) -> Unit) -> Unit) {
+        if (DroneManager.state.flying || DroneManager.state.motorsOn) { info("$name kalibrieren", "Nur am Boden mit stehenden Motoren."); return }
+        AlertDialog.Builder(this).setTitle("$name kalibrieren").setMessage(howTo)
+            .setPositiveButton("Starten") { _, _ ->
+                DjiSettings.action(start, "$name-Kalibrierung") { err -> runOnUiThread {
+                    if (err != null) { info("$name kalibrieren", "Start fehlgeschlagen: $err\n\nFalls das bei dieser Drohne nicht aus der App geht: DJI Fly → Safety → Sensors."); return@runOnUiThread }
+                    val dlg = AlertDialog.Builder(this).setTitle("$name-Kalibrierung läuft").setMessage("$howTo\n\nStatus: …")
+                        .setPositiveButton("Schließen", null).apply { if (stop != null) setNegativeButton("Abbrechen") { _, _ -> DjiSettings.action(stop, "$name-Kalibrierung abbrechen") } }.show()
+                    val h = android.os.Handler(mainLooper)
+                    var last = ""
+                    val tick = object : Runnable { override fun run() {
+                        if (!dlg.isShowing) return
+                        status { t -> runOnUiThread { if (dlg.isShowing) { dlg.setMessage("$howTo\n\nStatus: $t"); if (t != last) { last = t; DroneManager.log("$name-Kalibrierung: ${t.replace('\n', ' ')}") } } } }
+                        h.postDelayed(this, 1000)
+                    } }
+                    h.post(tick)
+                } }
+            }.setNegativeButton("Abbrechen", null).show()
+    }
+
+    private fun showFlightMenu() {
+        val swap = FollowController.swapAxes(this)
+        menu("Flug & Wächter", listOf(
+            "Bildwächter darf Mission anhalten (${if (ObstacleGuard.armed) "an" else "nur beobachten"})" to { ObstacleGuard.setArmed(this, !ObstacleGuard.armed) },
+            "Bildwächter ${if (ObstacleGuard.enabled) "ausschalten" else "einschalten"}" to { ObstacleGuard.setEnabled(this, !ObstacleGuard.enabled) },
+            "Startplatz hier merken (Balkon/Dach)" to { askStartPlace() },
+            "Landelampe an" to { DroneManager.setBottomLight("an") },
+            "Landelampe auto (aus)" to { DroneManager.setBottomLight("auto") },
+            "Plan in Google Maps zeigen" to { showOnMap() },
+            "Folgen: Achsen tauschen (${if (swap) "an" else "aus"})" to { FollowController.setSwapAxes(this, !swap); DroneManager.log("Folgen: Achsen tauschen ${if (!swap) "an" else "aus"}") }))
+    }
+
+    private fun showDataMenu() = menu("Daten", listOf(
+        "Fotos holen und hochladen" to { FlightReport.collectAndUpload(applicationContext) },
+        "Flugaufzeichnungen sichern (SDK-Logs ins Repo)" to {
+            android.widget.Toast.makeText(this, "Flugaufzeichnungen werden gesucht und hochgeladen …", android.widget.Toast.LENGTH_SHORT).show()
+            FlightReport.uploadFlightRecords(applicationContext) { n -> runOnUiThread {
+                info("Flugaufzeichnungen", when { n < 0 -> "Kein GitHub-Token eingetragen (Einstellungen → Daten → GitHub-Token)."; n == 0 -> "Nichts Neues – alle Aufzeichnungen waren schon im Repo."; else -> "$n Aufzeichnung(en) hochgeladen → Claude kann sie jetzt lesen." })
+            } } },
+        "GitHub-Token eintragen" to { askToken() },
+        "Google-Schlüssel eintragen (3D fotorealistisch)" to { askGoogleKey() }))
+
+    private fun showDeviceMenu() = menu("Gerät & Test", listOf(
+        "Selbsttest (Sensoren, DJI-Meldungen)" to { showSelfTest() },
+        "Seriennummer der Drohne" to {
+            val sn = DroneManager.state.serial ?: getSharedPreferences("drohne", MODE_PRIVATE).getString("letzte_sn", null)
+            info("Seriennummer", sn?.let { "Fluggerät: $it" } ?: "Noch unbekannt – wird beim nächsten Verbinden gespeichert.") },
+        "Fernbedienung neu koppeln" to {
+            AlertDialog.Builder(this).setTitle("Neu koppeln?")
+                .setMessage("Nur nötig, wenn die Fernbedienung die Drohne nicht findet. Die Fernbedienung piept dann, bis du den Einschaltknopf der Drohne ca. 4 s hältst.")
+                .setPositiveButton("Koppeln") { _, _ -> DroneManager.requestPairing() }
+                .setNegativeButton("Abbrechen", null).show() },
+        (if (Simulator.active) "Simulation beenden" else "Simulation starten (ohne Drohne)") to { toggleSimulation() },
+        "Simulation: ${if (Simulator.timeScale > 1) "Echtzeit (jetzt ${Simulator.timeScale.toInt()}×)" else "Zeitraffer 4×"}" to { Simulator.timeScale = if (Simulator.timeScale > 1) 1.0 else 4.0; DroneManager.log("Simulation: Zeitraffer ${Simulator.timeScale.toInt()}×") }))
+
     private fun askHeightLimit() {
         val cur = DroneManager.state.heightLimitM
         val inp = android.widget.EditText(this).apply { hint = "Meter (20–120)"; inputType = android.text.InputType.TYPE_CLASS_NUMBER; setText((cur ?: 120).toString()) }
@@ -848,7 +961,7 @@ class MainActivity : AppCompatActivity() {
         MissionController.terrainConflicts.forEach { add("Oberflächen-Wächter: $it") }
         if (m != null) {
             val top = maxOf(m.waypoints.maxOf { it.heightM }, MissionController.rthHeightM)
-            s.heightLimitM?.let { if (it < top - 0.5) add("DJI-Höhenlimit $it m liegt unter der Flughöhe ${top.toInt()} m. Mehr … → Höhenlimit einstellen.") }
+            s.heightLimitM?.let { if (it < top - 0.5) add("DJI-Höhenlimit $it m liegt unter der Flughöhe ${top.toInt()} m. Einstellungen → Sicherheit → Höhenlimit.") }
             if (s.heightLimitM == null) add("DJI-Höhenlimit noch nicht gelesen (kurz warten)")
             when (s.windWarning) {
                 2 -> add("Starke Windwarnung der Drohne: kein Start")

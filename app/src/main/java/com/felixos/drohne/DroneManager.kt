@@ -413,6 +413,19 @@ object DroneManager {
             })
     } }
 
+    /** Hinderniserkennung „Umfliegen“ (BYPASS) wie in DJI Fly. */
+    fun setObstacleAvoidanceBypass() { if (Simulator.active) { log("Simulation: Hinderniserkennung Umfliegen"); return }; safe("Hinderniserkennung") {
+        val pm = dji.v5.manager.aircraft.perception.PerceptionManager.getInstance()
+        pm.setOverallObstacleAvoidanceEnabled(true, object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
+            override fun onSuccess() {}
+            override fun onFailure(error: IDJIError) { log("Hinderniserkennung insgesamt einschalten fehlgeschlagen: ${error.description()}") }
+        })
+        pm.setObstacleAvoidanceType(dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.BYPASS, object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
+            override fun onSuccess() { obstacleTypeOn = true; log("Hinderniserkennung: Umfliegen") }
+            override fun onFailure(error: IDJIError) { log("Hinderniserkennung Umfliegen fehlgeschlagen: ${error.description()}") }
+        })
+    } }
+
     /** Schaltet die Hinderniserkennung wieder ein, falls sie aus ist (vor Plan holen/Start). */
     fun ensureObstacleAvoidance(reason: String) { if (state.sensors == "aus") setObstacleAvoidance(true, reason) }
 
