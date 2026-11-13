@@ -113,3 +113,90 @@
 09:15:58  T 38.731263 -9.155146 h=40.0 akku=40 fliegt=true mission=EXECUTING wp=0 wind=0
 09:15:58  Mission: INTERRUPTED
 09:15:59  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:00  Mission: RECOVERING
+09:16:00  Weiter: ok
+09:16:00  T 38.731265 -9.155146 h=40.0 akku=40 fliegt=true mission=RECOVERING wp=-1 wind=0
+09:16:01  Aufzeichnungen hochgeladen: 3 von 2 → github.com/fiahless-beep/Drohne/tree/main/fluege/aufzeichnungen
+09:16:01  Mission: EXECUTING
+09:16:01  Wegpunkt 1
+09:16:02  T 38.731264 -9.155146 h=40.0 akku=40 fliegt=true mission=EXECUTING wp=0 wind=0
+09:16:03  Mission: INTERRUPTED
+09:16:04  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:04  T 38.731266 -9.155145 h=40.0 akku=40 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:16:06  T 38.731266 -9.155144 h=40.0 akku=39 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:16:06  Mission: RECOVERING
+09:16:06  Weiter: ok
+09:16:08  T 38.731264 -9.155143 h=39.9 akku=39 fliegt=true mission=RECOVERING wp=-1 wind=0
+09:16:10  Mission: EXECUTING
+09:16:10  T 38.731262 -9.155143 h=39.9 akku=39 fliegt=true mission=EXECUTING wp=0 wind=0
+09:16:11  Mission: INTERRUPTED
+09:16:12  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:12  Mission: RECOVERING
+09:16:12  T 38.731264 -9.155143 h=39.9 akku=39 fliegt=true mission=RECOVERING wp=-1 wind=0
+09:16:12  Weiter: ok
+09:16:13  Mission: EXECUTING
+09:16:14  Mission: INTERRUPTED
+09:16:14  T 38.731262 -9.155144 h=40.0 akku=39 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:16:15  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:15  Mission: RECOVERING
+09:16:15  Weiter: ok
+09:16:16  Mission: EXECUTING
+09:16:16  Wegpunkt 1
+09:16:16  T 38.731263 -9.155143 h=40.0 akku=39 fliegt=true mission=EXECUTING wp=0 wind=0
+09:16:16  Mission: INTERRUPTED
+09:16:17  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:18  T 38.731261 -9.155142 h=40.1 akku=39 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:16:19  Mission: RECOVERING
+09:16:19  Weiter: ok
+09:16:19  Mission: INTERRUPTED
+09:16:19  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:20  Mission: RECOVERING
+09:16:20  Weiter: ok
+09:16:20  Mission: INTERRUPTED
+09:16:20  T 38.731261 -9.155142 h=40.1 akku=38 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:16:20  Mission: RECOVERING
+09:16:20  Weiter: ok
+09:16:20  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:20  Mission: INTERRUPTED
+09:16:21  Mission: RECOVERING
+09:16:21  Weiter: ok
+09:16:21  Mission: INTERRUPTED
+09:16:21  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:22  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:16:22  T 38.731263 -9.155141 h=40.2 akku=38 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:16:24  Abbruch: ok
+09:16:24  Mission: FINISHED
+09:16:24  Mission beendet → hole Fotos und lade hoch
+09:16:24  Mission: READY
+09:16:24  T 38.731263 -9.155139 h=40.2 akku=38 fliegt=true mission=READY wp=-1 wind=0
+09:16:26  T 38.731263 -9.155141 h=40.2 akku=38 fliegt=true mission=READY wp=-1 wind=0
+09:16:27  Rückkehr zum Startpunkt ausgelöst
+09:16:28  T 38.731260 -9.155137 h=40.2 akku=38 fliegt=true mission=READY wp=-1 wind=0
+09:16:30  T 38.731255 -9.155131 h=40.0 akku=38 fliegt=true mission=READY wp=-1 wind=0
+09:16:32  T 38.731228 -9.155107 h=38.8 akku=38 fliegt=true mission=READY wp=-1 wind=0
+09:16:34  T 38.731175 -9.155060 h=36.1 akku=37 fliegt=true mission=READY wp=-1 wind=0
+09:16:36  T 38.731130 -9.155020 h=32.9 akku=37 fliegt=true mission=READY wp=-1 wind=0
+09:16:38  T 38.731100 -9.154993 h=30.7 akku=37 fliegt=true mission=READY wp=-1 wind=0
+09:16:40  T 38.731086 -9.154985 h=30.2 akku=37 fliegt=true mission=READY wp=-1 wind=0
+09:16:42  T 38.731086 -9.154986 h=29.8 akku=37 fliegt=true mission=READY wp=-1 wind=0
+09:16:44  T 38.731087 -9.154987 h=25.4 akku=37 fliegt=true mission=READY wp=-1 wind=0
+09:16:46  T 38.731088 -9.154986 h=18.1 akku=37 fliegt=true mission=READY wp=-1 wind=0
+09:16:48  T 38.731088 -9.154984 h=13.2 akku=37 fliegt=true mission=READY wp=-1 wind=0
+09:16:50  T 38.731087 -9.154982 h=9.7 akku=36 fliegt=true mission=READY wp=-1 wind=0
+09:16:52  T 38.731087 -9.154982 h=6.6 akku=36 fliegt=true mission=READY wp=-1 wind=0
+09:16:54  T 38.731088 -9.154982 h=4.5 akku=36 fliegt=true mission=READY wp=-1 wind=0
+09:16:56  T 38.731088 -9.154984 h=3.3 akku=36 fliegt=true mission=READY wp=-1 wind=0
+09:16:58  T 38.731087 -9.154984 h=2.8 akku=36 fliegt=true mission=READY wp=-1 wind=0
+09:17:00  T 38.731088 -9.154983 h=2.4 akku=36 fliegt=true mission=READY wp=-1 wind=0
+09:17:02  T 38.731088 -9.154983 h=2.0 akku=35 fliegt=true mission=READY wp=-1 wind=0
+09:17:04  T 38.731088 -9.154983 h=1.6 akku=35 fliegt=true mission=READY wp=-1 wind=0
+09:17:06  T 38.731088 -9.154984 h=1.2 akku=35 fliegt=true mission=READY wp=-1 wind=0
+09:17:08  T 38.731088 -9.154984 h=0.8 akku=35 fliegt=true mission=READY wp=-1 wind=0
+09:17:10  T 38.731088 -9.154983 h=0.4 akku=35 fliegt=true mission=READY wp=-1 wind=0
+09:17:12  Landehelfer: Drohne ist am Boden
+09:17:12  T 38.731087 -9.154983 h=0.0 akku=35 fliegt=false mission=READY wp=-1 wind=0
+09:17:13  Landehelfer: Drohne ist am Boden
+09:17:14  Hole Fotoliste von der Drohne …
+09:17:14  Fotos auf der Drohne: 0, zu diesem Flug: 0
+09:17:14  T 38.731087 -9.154983 h=0.0 akku=35 fliegt=false mission=READY wp=-1 wind=0
+09:17:14  Fotos geladen: 0
