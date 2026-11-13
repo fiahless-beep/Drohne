@@ -251,3 +251,241 @@
 09:11:50  Wegpunkt 4
 09:11:50  T 38.731265 -9.155032 h=40.0 akku=53 fliegt=true mission=EXECUTING wp=3 wind=0
 09:11:50  Wegpunkt 4
+09:11:50  Wegpunkt 4
+09:11:50  Wegpunkt 4
+09:11:51  Wegpunkt 4
+09:11:51  Wegpunkt 4
+09:11:51  Wegpunkt 4
+09:11:51  Aufzeichnungen hochgeladen: 3 von 2 → github.com/fiahless-beep/Drohne/tree/main/fluege/aufzeichnungen
+09:11:51  Wegpunkt 4
+09:11:52  Wegpunkt 4
+09:11:52  T 38.731205 -9.155067 h=40.0 akku=53 fliegt=true mission=EXECUTING wp=3 wind=0
+09:11:52  Wegpunkt 4
+09:11:53  Wegpunkt 4
+09:11:54  T 38.731187 -9.155078 h=40.0 akku=53 fliegt=true mission=EXECUTING wp=3 wind=0
+09:11:55  Wegpunkt 5
+09:11:56  T 38.731184 -9.155080 h=40.0 akku=53 fliegt=true mission=EXECUTING wp=4 wind=0
+09:11:56  Wegpunkt 5
+09:11:58  T 38.731181 -9.155086 h=39.9 akku=53 fliegt=true mission=EXECUTING wp=4 wind=0
+09:11:58  Wegpunkt 5
+09:11:59  Wegpunkt 5
+09:11:59  Wegpunkt 5
+09:11:59  Wegpunkt 5
+09:12:00  Wegpunkt 5
+09:12:00  T 38.731179 -9.155144 h=39.9 akku=53 fliegt=true mission=EXECUTING wp=4 wind=0
+09:12:00  Wegpunkt 5
+09:12:00  Wegpunkt 5
+09:12:00  Wegpunkt 5
+09:12:01  Wegpunkt 5
+09:12:01  Wegpunkt 5
+09:12:01  Wegpunkt 5
+09:12:01  Wegpunkt 5
+09:12:02  Wegpunkt 5
+09:12:02  T 38.731172 -9.155235 h=39.9 akku=53 fliegt=true mission=EXECUTING wp=4 wind=0
+09:12:02  Wegpunkt 5
+09:12:02  Wegpunkt 5
+09:12:02  Wegpunkt 5
+09:12:03  Wegpunkt 5
+09:12:03  Wegpunkt 5
+09:12:03  Wegpunkt 5
+09:12:03  Wegpunkt 5
+09:12:04  Wegpunkt 5
+09:12:04  T 38.731166 -9.155328 h=39.9 akku=52 fliegt=true mission=EXECUTING wp=4 wind=0
+09:12:04  Wegpunkt 5
+09:12:04  Wegpunkt 5
+09:12:04  Wegpunkt 5
+09:12:05  Wegpunkt 5
+09:12:05  Wegpunkt 5
+09:12:05  Wegpunkt 5
+09:12:06  T 38.731160 -9.155400 h=39.9 akku=52 fliegt=true mission=EXECUTING wp=4 wind=0
+09:12:06  Wegpunkt 5
+09:12:07  Wegpunkt 5
+09:12:08  T 38.731159 -9.155420 h=40.0 akku=52 fliegt=true mission=EXECUTING wp=4 wind=0
+09:12:09  Wegpunkt 6
+09:12:09  Wegpunkt 6
+09:12:10  T 38.731158 -9.155424 h=39.9 akku=52 fliegt=true mission=EXECUTING wp=5 wind=0
+09:12:11  Wegpunkt 6
+09:12:12  T 38.731173 -9.155437 h=39.9 akku=52 fliegt=true mission=EXECUTING wp=5 wind=0
+09:12:12  Wegpunkt 6
+09:12:12  Wegpunkt 6
+09:12:12  Wegpunkt 6
+09:12:13  Wegpunkt 6
+09:12:13  Wegpunkt 6
+09:12:13  Wegpunkt 6
+09:12:13  Wegpunkt 6
+09:12:14  T 38.731225 -9.155485 h=39.9 akku=52 fliegt=true mission=EXECUTING wp=5 wind=0
+09:12:14  Wegpunkt 6
+09:12:14  Wegpunkt 6
+09:12:14  Wegpunkt 6
+09:12:14  Wegpunkt 6
+09:12:15  Wegpunkt 6
+09:12:15  Wegpunkt 6
+09:12:15  Wegpunkt 6
+09:12:15  Wegpunkt 6
+09:12:16  Wegpunkt 6
+09:12:16  T 38.731284 -9.155538 h=39.9 akku=51 fliegt=true mission=EXECUTING wp=5 wind=0
+09:12:16  Wegpunkt 6
+09:12:16  Wegpunkt 6
+09:12:16  Wegpunkt 6
+09:12:17  Wegpunkt 6
+09:12:17  Wegpunkt 6
+09:12:17  Wegpunkt 6
+09:12:18  Wegpunkt 6
+09:12:18  Wegpunkt 6
+09:12:18  T 38.731341 -9.155588 h=39.9 akku=51 fliegt=true mission=EXECUTING wp=5 wind=0
+09:12:18  Wegpunkt 6
+09:12:18  Wegpunkt 6
+09:12:19  Wegpunkt 6
+09:12:20  Wegpunkt 6
+09:12:20  T 38.731371 -9.155616 h=39.9 akku=51 fliegt=true mission=EXECUTING wp=5 wind=0
+09:12:21  Wegpunkt 6
+09:12:22  T 38.731378 -9.155622 h=39.9 akku=51 fliegt=true mission=EXECUTING wp=5 wind=0
+09:12:22  Wegpunkt 7
+09:12:24  T 38.731382 -9.155622 h=39.9 akku=51 fliegt=true mission=EXECUTING wp=6 wind=0
+09:12:24  Wegpunkt 7
+09:12:25  Wegpunkt 7
+09:12:25  Wegpunkt 7
+09:12:25  Wegpunkt 7
+09:12:26  Wegpunkt 7
+09:12:26  T 38.731424 -9.155596 h=39.9 akku=51 fliegt=true mission=EXECUTING wp=6 wind=0
+09:12:26  Wegpunkt 7
+09:12:26  Wegpunkt 7
+09:12:26  Wegpunkt 7
+09:12:27  Wegpunkt 7
+09:12:27  Wegpunkt 7
+09:12:27  Wegpunkt 7
+09:12:27  Wegpunkt 7
+09:12:28  Wegpunkt 7
+09:12:28  Wegpunkt 7
+09:12:28  T 38.731491 -9.155557 h=39.9 akku=51 fliegt=true mission=EXECUTING wp=6 wind=0
+09:12:28  Wegpunkt 7
+09:12:28  Wegpunkt 7
+09:12:28  Wegpunkt 7
+09:12:29  Wegpunkt 7
+09:12:29  Wegpunkt 7
+09:12:29  Wegpunkt 7
+09:12:29  Wegpunkt 7
+09:12:30  Wegpunkt 7
+09:12:30  T 38.731558 -9.155517 h=39.9 akku=51 fliegt=true mission=EXECUTING wp=6 wind=0
+09:12:30  Wegpunkt 7
+09:12:30  Wegpunkt 7
+09:12:31  Wegpunkt 7
+09:12:31  Wegpunkt 7
+09:12:31  Wegpunkt 7
+09:12:32  Wegpunkt 7
+09:12:32  T 38.731613 -9.155491 h=39.9 akku=50 fliegt=true mission=EXECUTING wp=6 wind=0
+09:12:32  Wegpunkt 7
+09:12:32  Wegpunkt 7
+09:12:33  Wegpunkt 8
+09:12:33  Wegpunkt 8
+09:12:33  Wegpunkt 8
+09:12:34  Wegpunkt 8
+09:12:34  T 38.731626 -9.155451 h=40.0 akku=50 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:34  Wegpunkt 8
+09:12:35  Wegpunkt 8
+09:12:35  Wegpunkt 8
+09:12:35  Wegpunkt 8
+09:12:35  Wegpunkt 8
+09:12:36  Wegpunkt 8
+09:12:36  T 38.731610 -9.155376 h=40.0 akku=50 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:36  Wegpunkt 8
+09:12:36  Wegpunkt 8
+09:12:36  Wegpunkt 8
+09:12:37  Wegpunkt 8
+09:12:37  Wegpunkt 8
+09:12:37  Wegpunkt 8
+09:12:37  Wegpunkt 8
+09:12:38  Wegpunkt 8
+09:12:38  T 38.731567 -9.155301 h=40.0 akku=50 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:38  Wegpunkt 8
+09:12:38  Wegpunkt 8
+09:12:38  Wegpunkt 8
+09:12:39  Wegpunkt 8
+09:12:39  Wegpunkt 8
+09:12:39  Wegpunkt 8
+09:12:39  Wegpunkt 8
+09:12:40  Wegpunkt 8
+09:12:40  Wegpunkt 8
+09:12:40  T 38.731507 -9.155246 h=40.0 akku=50 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:40  Wegpunkt 8
+09:12:40  Wegpunkt 8
+09:12:41  Wegpunkt 8
+09:12:41  Wegpunkt 8
+09:12:41  Wegpunkt 8
+09:12:41  Wegpunkt 8
+09:12:42  Wegpunkt 8
+09:12:42  Wegpunkt 8
+09:12:42  T 38.731443 -9.155203 h=40.0 akku=50 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:42  Wegpunkt 8
+09:12:42  Wegpunkt 8
+09:12:43  Wegpunkt 8
+09:12:43  Wegpunkt 8
+09:12:43  Wegpunkt 8
+09:12:43  Wegpunkt 8
+09:12:44  Wegpunkt 8
+09:12:44  Wegpunkt 8
+09:12:44  T 38.731378 -9.155166 h=40.0 akku=49 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:44  Wegpunkt 8
+09:12:44  Wegpunkt 8
+09:12:45  Wegpunkt 8
+09:12:45  Wegpunkt 8
+09:12:45  Wegpunkt 8
+09:12:45  Wegpunkt 8
+09:12:45  Wegpunkt 8
+09:12:46  Wegpunkt 8
+09:12:46  T 38.731311 -9.155132 h=40.0 akku=49 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:46  Wegpunkt 8
+09:12:46  Wegpunkt 8
+09:12:46  Wegpunkt 8
+09:12:47  Wegpunkt 8
+09:12:47  Wegpunkt 8
+09:12:47  Wegpunkt 8
+09:12:47  Wegpunkt 8
+09:12:48  Wegpunkt 8
+09:12:48  T 38.731244 -9.155096 h=40.0 akku=49 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:48  Wegpunkt 8
+09:12:48  Wegpunkt 8
+09:12:48  Wegpunkt 8
+09:12:49  Wegpunkt 8
+09:12:49  Wegpunkt 8
+09:12:49  Wegpunkt 8
+09:12:50  Wegpunkt 8
+09:12:50  T 38.731182 -9.155060 h=40.0 akku=49 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:50  Wegpunkt 8
+09:12:50  Wegpunkt 8
+09:12:51  Wegpunkt 8
+09:12:51  Wegpunkt 8
+09:12:51  Wegpunkt 8
+09:12:51  Wegpunkt 8
+09:12:52  Wegpunkt 8
+09:12:52  T 38.731129 -9.155022 h=39.9 akku=49 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:52  Wegpunkt 8
+09:12:53  Wegpunkt 8
+09:12:54  T 38.731114 -9.155009 h=40.0 akku=49 fliegt=true mission=EXECUTING wp=7 wind=0
+09:12:55  Wegpunkt 9
+09:12:55  Mission: FINISHED
+09:12:55  Mission beendet → hole Fotos und lade hoch
+09:12:55  Mission: READY
+09:12:56  T 38.731111 -9.155007 h=39.9 akku=49 fliegt=true mission=READY wp=-1 wind=0
+09:12:58  T 38.731105 -9.154996 h=36.8 akku=49 fliegt=true mission=READY wp=-1 wind=0
+09:13:00  T 38.731099 -9.154988 h=29.2 akku=48 fliegt=true mission=READY wp=-1 wind=0
+09:13:02  T 38.731098 -9.154987 h=21.3 akku=48 fliegt=true mission=READY wp=-1 wind=0
+09:13:04  T 38.731098 -9.154985 h=15.7 akku=48 fliegt=true mission=READY wp=-1 wind=0
+09:13:06  T 38.731098 -9.154985 h=11.0 akku=48 fliegt=true mission=READY wp=-1 wind=0
+09:13:08  T 38.731096 -9.154986 h=7.5 akku=48 fliegt=true mission=READY wp=-1 wind=0
+09:13:10  T 38.731096 -9.154984 h=5.1 akku=48 fliegt=true mission=READY wp=-1 wind=0
+09:13:12  T 38.731096 -9.154984 h=3.1 akku=48 fliegt=true mission=READY wp=-1 wind=0
+09:13:14  T 38.731096 -9.154984 h=2.2 akku=47 fliegt=true mission=READY wp=-1 wind=0
+09:13:16  T 38.731096 -9.154984 h=1.8 akku=47 fliegt=true mission=READY wp=-1 wind=0
+09:13:18  T 38.731095 -9.154984 h=1.4 akku=47 fliegt=true mission=READY wp=-1 wind=0
+09:13:20  T 38.731095 -9.154984 h=1.0 akku=47 fliegt=true mission=READY wp=-1 wind=0
+09:13:22  T 38.731095 -9.154985 h=0.6 akku=47 fliegt=true mission=READY wp=-1 wind=0
+09:13:24  T 38.731095 -9.154985 h=0.2 akku=47 fliegt=true mission=READY wp=-1 wind=0
+09:13:26  T 38.731094 -9.154984 h=-0.1 akku=47 fliegt=true mission=READY wp=-1 wind=0
+09:13:28  T 38.731094 -9.154984 h=-0.5 akku=46 fliegt=true mission=READY wp=-1 wind=0
+09:13:30  T 38.731092 -9.154983 h=0.0 akku=46 fliegt=false mission=READY wp=-1 wind=0
+09:13:31  Hole Fotoliste von der Drohne …
+09:13:31  Fotos auf der Drohne: 0, zu diesem Flug: 0
+09:13:31  Landehelfer: Drohne ist am Boden
+09:13:32  Fotos geladen: 0
+09:13:32  T 38.731092 -9.154983 h=0.0 akku=46 fliegt=false mission=READY wp=-1 wind=0
