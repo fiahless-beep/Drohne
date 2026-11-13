@@ -234,3 +234,4 @@
 08:59:37  T 38.731113 -9.154997 h=0.0 akku=70 fliegt=false mission=READY wp=-1 wind=0
 08:59:38  Fotos auf der Drohne: 0, zu diesem Flug: 0
 08:59:38  Fotos geladen: 0
+08:59:40  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-13_08-54_testkreis-wiese-2
