@@ -1,0 +1,406 @@
+08:52:01  Flugprotokoll: 2026-11-13_08-52_testkreis-wiese/protokoll.txt
+08:52:01  Startpunkt: 38.731130, -9.155007
+08:52:01  Karte: https://www.google.com/maps/dir/38.731130,-9.155007/38.731182,-9.155081/38.731158,-9.155425/38.731379,-9.155624/38.731624,-9.155477/38.731648,-9.155133/38.731427,-9.154934/38.731182,-9.155081/38.731130,-9.155007/data=!4m2!4m1!3e2
+08:52:01  Rückkehrhöhe: 50 m
+08:52:01  Mission: PREPARING
+08:52:01  Start fehlgeschlagen: Failed to execute flight route. Waypoint turning intercept error
+08:52:01  Mission: READY
+08:52:17  Lade Flugplan aus der Cloud …
+08:52:17  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:52:17  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:52:17  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:52:17  Tempo: max 4.0 m/s
+08:52:17  Return guard: way home clear from every point at 50 m
+08:52:17  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:52:17  Oberflächen-Wächter: Strecke frei
+08:52:17  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:52:17  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:52:17  DJI-Prüfung: in Ordnung
+08:52:17  Plan übernommen, lade auf die Drohne …
+08:52:17  Lade Mission auf die Drohne …
+08:52:17  Mission: UPLOADING
+08:52:17  Upload 9 %
+08:52:17  Upload 39 %
+08:52:17  Upload 54 %
+08:52:17  Upload 82 %
+08:52:18  Upload 100 %
+08:52:18  Mission ist auf der Drohne
+08:52:18  Mission: READY
+08:52:24  Lade Flugplan aus der Cloud …
+08:52:24  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:52:24  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:52:24  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:52:24  Tempo: max 4.0 m/s
+08:52:24  Return guard: way home clear from every point at 50 m
+08:52:24  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:52:24  Oberflächen-Wächter: Strecke frei
+08:52:24  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:52:24  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:52:24  DJI-Prüfung: in Ordnung
+08:52:24  Plan übernommen, lade auf die Drohne …
+08:52:24  Lade Mission auf die Drohne …
+08:52:24  Mission: UPLOADING
+08:52:24  Upload 9 %
+08:52:24  Upload 39 %
+08:52:25  Upload 56 %
+08:52:25  Upload 84 %
+08:52:25  Upload 100 %
+08:52:25  Mission ist auf der Drohne
+08:52:25  Mission: READY
+08:52:35  Lade Flugplan aus der Cloud …
+08:52:35  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:52:35  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:52:35  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:52:35  Tempo: max 4.0 m/s
+08:52:35  Return guard: way home clear from every point at 50 m
+08:52:35  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:52:35  Oberflächen-Wächter: Strecke frei
+08:52:35  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:52:35  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:52:35  DJI-Prüfung: in Ordnung
+08:52:35  Plan übernommen, lade auf die Drohne …
+08:52:35  Lade Mission auf die Drohne …
+08:52:35  Mission: UPLOADING
+08:52:35  Upload 7 %
+08:52:36  Upload 35 %
+08:52:36  Upload 50 %
+08:52:36  Upload 82 %
+08:52:36  Upload 100 %
+08:52:36  Mission ist auf der Drohne
+08:52:36  Mission: READY
+08:52:39  Lade Flugplan aus der Cloud …
+08:52:40  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:52:40  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:52:40  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:52:40  Tempo: max 4.0 m/s
+08:52:40  Return guard: way home clear from every point at 50 m
+08:52:40  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:52:40  Oberflächen-Wächter: Strecke frei
+08:52:40  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:52:40  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:52:40  DJI-Prüfung: in Ordnung
+08:52:40  Plan übernommen, lade auf die Drohne …
+08:52:40  Lade Mission auf die Drohne …
+08:52:40  Mission: UPLOADING
+08:52:40  Upload 9 %
+08:52:40  Upload 39 %
+08:52:40  Upload 52 %
+08:52:40  Upload 82 %
+08:52:40  Upload 100 %
+08:52:41  Mission ist auf der Drohne
+08:52:41  Mission: READY
+08:52:56  Lade Flugplan aus der Cloud …
+08:52:56  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:52:56  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:52:56  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:52:56  Tempo: max 4.0 m/s
+08:52:56  Return guard: way home clear from every point at 50 m
+08:52:56  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:52:56  Oberflächen-Wächter: Strecke frei
+08:52:56  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:52:56  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:52:56  DJI-Prüfung: in Ordnung
+08:52:56  Plan übernommen, lade auf die Drohne …
+08:52:56  Lade Mission auf die Drohne …
+08:52:56  Mission: UPLOADING
+08:52:56  Upload 7 %
+08:52:57  Upload 35 %
+08:52:57  Upload 50 %
+08:52:57  Upload 82 %
+08:52:57  Upload 100 %
+08:52:57  Mission ist auf der Drohne
+08:52:57  Mission: READY
+08:53:05  Lade Flugplan aus der Cloud …
+08:53:05  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:53:05  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:53:05  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:53:05  Tempo: max 4.0 m/s
+08:53:05  Return guard: way home clear from every point at 50 m
+08:53:05  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:53:05  Oberflächen-Wächter: Strecke frei
+08:53:05  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:53:05  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:53:05  DJI-Prüfung: in Ordnung
+08:53:05  Plan übernommen, lade auf die Drohne …
+08:53:05  Lade Mission auf die Drohne …
+08:53:05  Mission: UPLOADING
+08:53:05  Upload 9 %
+08:53:05  Upload 39 %
+08:53:05  Upload 54 %
+08:53:05  Upload 84 %
+08:53:06  Upload 100 %
+08:53:06  Mission ist auf der Drohne
+08:53:06  Mission: READY
+08:53:08  Lade Flugplan aus der Cloud …
+08:53:08  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:53:08  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:53:08  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:53:08  Tempo: max 4.0 m/s
+08:53:08  Return guard: way home clear from every point at 50 m
+08:53:08  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:53:08  Oberflächen-Wächter: Strecke frei
+08:53:08  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:53:08  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:53:08  DJI-Prüfung: in Ordnung
+08:53:08  Plan übernommen, lade auf die Drohne …
+08:53:08  Lade Mission auf die Drohne …
+08:53:08  Mission: UPLOADING
+08:53:08  Upload 5 %
+08:53:09  Upload 35 %
+08:53:09  Upload 63 %
+08:53:09  Upload 78 %
+08:53:09  Upload 100 %
+08:53:09  Mission ist auf der Drohne
+08:53:09  Mission: READY
+08:53:42  Lade Flugplan aus der Cloud …
+08:53:42  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:53:42  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:53:42  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:53:42  Tempo: max 4.0 m/s
+08:53:42  Return guard: way home clear from every point at 50 m
+08:53:42  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:53:42  Oberflächen-Wächter: Strecke frei
+08:53:42  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:53:42  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:53:42  DJI-Prüfung: in Ordnung
+08:53:42  Plan übernommen, lade auf die Drohne …
+08:53:42  Lade Mission auf die Drohne …
+08:53:42  Mission: UPLOADING
+08:53:43  Upload 5 %
+08:53:43  Upload 35 %
+08:53:43  Upload 50 %
+08:53:43  Upload 78 %
+08:53:43  Upload 100 %
+08:53:43  Mission ist auf der Drohne
+08:53:43  Mission: READY
+08:53:56  Lade Flugplan aus der Cloud …
+08:53:56  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:53:56  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:53:56  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:53:56  Tempo: max 4.0 m/s
+08:53:56  Return guard: way home clear from every point at 50 m
+08:53:56  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:53:56  Oberflächen-Wächter: Strecke frei
+08:53:56  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:53:56  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:53:56  DJI-Prüfung: in Ordnung
+08:53:56  Plan übernommen, lade auf die Drohne …
+08:53:56  Lade Mission auf die Drohne …
+08:53:56  Mission: UPLOADING
+08:53:57  Upload 7 %
+08:53:57  Upload 39 %
+08:53:57  Upload 52 %
+08:53:57  Upload 84 %
+08:53:57  Upload 100 %
+08:53:57  Mission ist auf der Drohne
+08:53:57  Mission: READY
+08:54:07  Lade Flugplan aus der Cloud …
+08:54:07  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:07  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:07  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:07  Tempo: max 4.0 m/s
+08:54:07  Return guard: way home clear from every point at 50 m
+08:54:07  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:07  Oberflächen-Wächter: Strecke frei
+08:54:07  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:07  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:54:07  DJI-Prüfung: in Ordnung
+08:54:07  Plan übernommen, lade auf die Drohne …
+08:54:07  Lade Mission auf die Drohne …
+08:54:07  Mission: UPLOADING
+08:54:07  Upload 11 %
+08:54:07  Upload 41 %
+08:54:07  Upload 54 %
+08:54:07  Upload 84 %
+08:54:08  Upload 100 %
+08:54:08  Mission ist auf der Drohne
+08:54:08  Mission: READY
+08:54:09  Lade Flugplan aus der Cloud …
+08:54:09  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:09  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:09  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:09  Tempo: max 4.0 m/s
+08:54:09  Return guard: way home clear from every point at 50 m
+08:54:09  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:09  Oberflächen-Wächter: Strecke frei
+08:54:09  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:09  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:54:09  DJI-Prüfung: in Ordnung
+08:54:09  Plan übernommen, lade auf die Drohne …
+08:54:09  Lade Mission auf die Drohne …
+08:54:09  Mission: UPLOADING
+08:54:09  Upload 7 %
+08:54:10  Upload 35 %
+08:54:10  Upload 50 %
+08:54:10  Upload 80 %
+08:54:10  Upload 100 %
+08:54:10  Mission ist auf der Drohne
+08:54:10  Mission: READY
+08:54:11  Lade Flugplan aus der Cloud …
+08:54:11  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:11  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:11  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:11  Tempo: max 4.0 m/s
+08:54:11  Return guard: way home clear from every point at 50 m
+08:54:11  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:11  Oberflächen-Wächter: Strecke frei
+08:54:11  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:11  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:54:11  DJI-Prüfung: in Ordnung
+08:54:11  Plan übernommen, lade auf die Drohne …
+08:54:11  Lade Mission auf die Drohne …
+08:54:12  Mission: UPLOADING
+08:54:12  Upload 11 %
+08:54:12  Upload 39 %
+08:54:12  Upload 54 %
+08:54:12  Upload 84 %
+08:54:12  Upload 100 %
+08:54:12  Mission ist auf der Drohne
+08:54:12  Mission: READY
+08:54:14  Lade Flugplan aus der Cloud …
+08:54:14  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:14  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:14  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:14  Tempo: max 4.0 m/s
+08:54:14  Return guard: way home clear from every point at 50 m
+08:54:14  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:14  Oberflächen-Wächter: Strecke frei
+08:54:14  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:14  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:54:14  DJI-Prüfung: in Ordnung
+08:54:14  Plan übernommen, lade auf die Drohne …
+08:54:14  Lade Mission auf die Drohne …
+08:54:14  Mission: UPLOADING
+08:54:14  Upload 9 %
+08:54:14  Upload 39 %
+08:54:14  Upload 52 %
+08:54:15  Upload 82 %
+08:54:15  Upload 100 %
+08:54:15  Mission ist auf der Drohne
+08:54:15  Mission: READY
+08:54:16  Lade Flugplan aus der Cloud …
+08:54:16  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:16  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:16  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:16  Tempo: max 4.0 m/s
+08:54:16  Return guard: way home clear from every point at 50 m
+08:54:16  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:16  Oberflächen-Wächter: Strecke frei
+08:54:16  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:16  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:54:16  DJI-Prüfung: in Ordnung
+08:54:16  Plan übernommen, lade auf die Drohne …
+08:54:16  Lade Mission auf die Drohne …
+08:54:16  Mission: UPLOADING
+08:54:16  Upload 7 %
+08:54:17  Upload 37 %
+08:54:17  Upload 52 %
+08:54:17  Upload 82 %
+08:54:17  Upload 100 %
+08:54:17  Mission ist auf der Drohne
+08:54:17  Mission: READY
+08:54:18  Lade Flugplan aus der Cloud …
+08:54:18  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:18  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:18  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:18  Tempo: max 4.0 m/s
+08:54:18  Return guard: way home clear from every point at 50 m
+08:54:18  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:18  Oberflächen-Wächter: Strecke frei
+08:54:18  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:18  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:54:18  DJI-Prüfung: in Ordnung
+08:54:18  Plan übernommen, lade auf die Drohne …
+08:54:19  Lade Mission auf die Drohne …
+08:54:19  Mission: UPLOADING
+08:54:19  Upload 11 %
+08:54:19  Upload 39 %
+08:54:19  Upload 54 %
+08:54:19  Upload 82 %
+08:54:19  Upload 100 %
+08:54:19  Mission ist auf der Drohne
+08:54:19  Mission: READY
+08:54:21  Lade Flugplan aus der Cloud …
+08:54:21  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:21  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:21  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:21  Tempo: max 4.0 m/s
+08:54:21  Return guard: way home clear from every point at 50 m
+08:54:21  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:21  Oberflächen-Wächter: Strecke frei
+08:54:21  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:21  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:54:21  DJI-Prüfung: in Ordnung
+08:54:21  Plan übernommen, lade auf die Drohne …
+08:54:21  Lade Mission auf die Drohne …
+08:54:21  Mission: UPLOADING
+08:54:21  Upload 9 %
+08:54:22  Upload 37 %
+08:54:22  Upload 52 %
+08:54:22  Upload 82 %
+08:54:22  Upload 100 %
+08:54:22  Mission ist auf der Drohne
+08:54:22  Mission: READY
+08:54:24  Lade Flugplan aus der Cloud …
+08:54:24  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:24  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:24  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:24  Tempo: max 4.0 m/s
+08:54:24  Return guard: way home clear from every point at 50 m
+08:54:24  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:24  Oberflächen-Wächter: Strecke frei
+08:54:24  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:24  KMZ erstellt: 9 Punkte, 197 m, ca. 2 min
+08:54:24  DJI-Prüfung: in Ordnung
+08:54:24  Plan übernommen, lade auf die Drohne …
+08:54:24  Lade Mission auf die Drohne …
+08:54:24  Mission: UPLOADING
+08:54:24  Upload 11 %
+08:54:24  Upload 39 %
+08:54:24  Upload 54 %
+08:54:25  Upload 82 %
+08:54:25  Upload 100 %
+08:54:25  Mission ist auf der Drohne
+08:54:25  Mission: READY
+08:54:26  Lade Flugplan aus der Cloud …
+08:54:27  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:27  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:27  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:27  Tempo: max 4.0 m/s
+08:54:27  Return guard: way home clear from every point at 50 m
+08:54:27  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:27  Oberflächen-Wächter: Strecke frei
+08:54:27  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:27  KMZ erstellt: 9 Punkte, 316 m, ca. 2 min
+08:54:27  DJI-Prüfung: in Ordnung
+08:54:27  Plan übernommen, lade auf die Drohne …
+08:54:27  Lade Mission auf die Drohne …
+08:54:27  Mission: UPLOADING
+08:54:27  Upload 11 %
+08:54:27  Upload 39 %
+08:54:27  Upload 52 %
+08:54:27  Upload 83 %
+08:54:28  Upload 100 %
+08:54:28  Mission ist auf der Drohne
+08:54:28  Mission: READY
+08:54:29  Lade Flugplan aus der Cloud …
+08:54:29  Gelände: Gebäude -32 bis +3 m gegenüber dem Start
+08:54:29  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+08:54:29  Transithöhe 40 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+08:54:29  Tempo: max 4.0 m/s
+08:54:29  Return guard: way home clear from every point at 50 m
+08:54:29  Höhenmodell: Gelände am Ziel +1 m gegenüber dem Start
+08:54:29  Oberflächen-Wächter: Strecke frei
+08:54:29  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+08:54:29  KMZ erstellt: 9 Punkte, 316 m, ca. 2 min
+08:54:29  DJI-Prüfung: in Ordnung
+08:54:29  Plan übernommen, lade auf die Drohne …
+08:54:29  Lade Mission auf die Drohne …
+08:54:30  Mission: UPLOADING
+08:54:30  Upload 7 %
+08:54:30  Upload 37 %
+08:54:30  Upload 52 %
+08:54:30  Upload 82 %
+08:54:30  Upload 100 %
+08:54:30  Mission ist auf der Drohne
+08:54:30  Mission: READY
