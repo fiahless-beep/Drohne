@@ -1,0 +1,2 @@
+13:25:28  Flugprotokoll: 2026-11-07_13-25_testquadrat/protokoll.txt
+13:25:29  Start: ok
