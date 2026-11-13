@@ -1,0 +1,11 @@
+08:21:00  Flugprotokoll: 2026-11-13_08-21_marques-de-pombal-saeule-oben/protokoll.txt
+08:21:00  Startpunkt: 38.731132, -9.155029
+08:21:00  Karte: https://www.google.com/maps/dir/38.731132,-9.155029/38.731400,-9.154546/38.730440,-9.153670/38.729755,-9.154060/38.729407,-9.153761/38.729059,-9.153461/38.728712,-9.153161/38.728364,-9.152861/38.728016,-9.152562/38.727669,-9.152262/data=!4m2!4m1!3e2
+08:21:00  Rückkehrhöhe: 68 m
+08:21:01  Start fehlgeschlagen: Failed to execute flight route. Waypoint turning intercept error
+08:21:09  Flugprotokoll: 2026-11-13_08-21_marques-de-pombal-saeule-oben/protokoll.txt
+08:21:09  Startpunkt: 38.731132, -9.155029
+08:21:09  Karte: https://www.google.com/maps/dir/38.731132,-9.155029/38.731400,-9.154546/38.730440,-9.153670/38.729755,-9.154060/38.729407,-9.153761/38.729059,-9.153461/38.728712,-9.153161/38.728364,-9.152861/38.728016,-9.152562/38.727669,-9.152262/data=!4m2!4m1!3e2
+08:21:09  Rückkehrhöhe: 68 m
+08:21:10  Start fehlgeschlagen: Failed to execute flight route. Waypoint turning intercept error
+08:22:01  Live-Bild verbunden
