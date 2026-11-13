@@ -1,5 +1,5 @@
 {
- "name": "marques-de-pombal-saeule-oben",
+ "name": "saeule-oben-2",
  "beschreibung": "Säulen-Plan mit Start oben auf der Wiese nördlich der Alameda (13.11.). Erst 60 m seitlich nach Osten, dann östlich an Fahnenmast und Pfeilern vorbei den Park hinunter. Rückweg gleich. Fahnenmast und Pfeiler als Hindernisse eingetragen. Nur tagsüber.",
  "speed": 5,
  "rcLost": "continue",
@@ -265,8 +265,8 @@
    "pitch": -20
   },
   {
-   "lat": 38.725583,
-   "lon": -9.150463,
+   "lat": 38.725598,
+   "lon": -9.150476,
    "h": -35.6,
    "photo": false,
    "hover": 1,
