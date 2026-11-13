@@ -1,0 +1,39 @@
+13:31:09  Flugprotokoll: 2026-11-07_13-31_folgen/protokoll.txt
+13:31:09  Folgen: Höhe 20 m, Abstand 10 m, max 3.0 m/s
+13:31:09  Virtual Stick an
+13:31:09  Folgen: starte Drohne
+13:31:12  Folgen: warte auf Handy-GPS (schwebe)
+13:31:14  Folgen: Ziel 4 m, Richtung 67°, v=-2,8 m/s, GPS ±8 m
+13:31:19  Folgen: Ziel 10 m, Richtung 61°, v=0,0 m/s, GPS ±4 m
+13:31:25  Folgen: Ziel 9 m, Richtung 37°, v=0,0 m/s, GPS ±3 m
+13:31:30  Folgen: Ziel 13 m, Richtung 34°, v=1,7 m/s, GPS ±3 m
+13:31:35  Folgen: Ziel 13 m, Richtung 31°, v=1,4 m/s, GPS ±3 m
+13:31:40  Folgen: Ziel 10 m, Richtung 30°, v=0,0 m/s, GPS ±2 m
+13:31:45  Folgen: Ziel 16 m, Richtung 24°, v=3,0 m/s, GPS ±3 m
+13:31:49  Landelampe: an
+13:31:50  Folgen: Ziel 9 m, Richtung 25°, v=0,0 m/s, GPS ±3 m
+13:31:55  Folgen: Ziel 13 m, Richtung 26°, v=1,5 m/s, GPS ±2 m
+13:32:00  Folgen: Ziel 11 m, Richtung 12°, v=0,0 m/s, GPS ±3 m
+13:32:05  Folgen: Ziel 10 m, Richtung 4°, v=0,0 m/s, GPS ±3 m
+13:32:10  Folgen: Ziel 4 m, Richtung 342°, v=-3,0 m/s, GPS ±3 m
+13:32:15  Folgen: Ziel 12 m, Richtung 264°, v=0,9 m/s, GPS ±3 m
+13:32:20  Folgen: Ziel 12 m, Richtung 248°, v=1,1 m/s, GPS ±2 m
+13:32:26  Folgen: Ziel 13 m, Richtung 224°, v=1,4 m/s, GPS ±2 m
+13:32:31  Folgen: Ziel 11 m, Richtung 225°, v=0,0 m/s, GPS ±2 m
+13:32:36  Folgen: Ziel 12 m, Richtung 210°, v=0,8 m/s, GPS ±2 m
+13:32:41  Folgen: Ziel 10 m, Richtung 199°, v=0,0 m/s, GPS ±2 m
+13:32:46  Folgen: Ziel 10 m, Richtung 198°, v=0,0 m/s, GPS ±2 m
+13:32:46  Folgen beendet, Drohne schwebt
+13:32:46  Abbruch: ok
+13:32:49  Rückkehr zum Startpunkt ausgelöst
+13:36:25  Lade Flugplan aus der Cloud …
+13:36:29  KMZ erstellt: 7 Punkte, 119 m, ca. 1 min
+13:36:29  DJI-Prüfung: in Ordnung
+13:36:29  Plan übernommen, jetzt „Hochladen“
+13:36:33  Lade Mission auf die Drohne …
+13:36:33  Upload 12 %
+13:36:33  Upload 29 %
+13:36:33  Upload 62 %
+13:36:33  Upload 76 %
+13:36:33  Upload 100 %
+13:36:34  Mission ist auf der Drohne
