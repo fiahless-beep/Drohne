@@ -269,7 +269,7 @@
    "lon": -9.150463,
    "h": -35.6,
    "photo": false,
-   "hover": 0,
+   "hover": 1,
    "pitch": -20
   },
   {
@@ -447,7 +447,7 @@
    "lon": -9.150639,
    "h": -4.6,
    "photo": false,
-   "hover": 0,
+   "hover": 1,
    "yaw": 90,
    "pitch": -19,
    "notiz": "Ring hoch, Sonne im Rücken"
@@ -457,7 +457,7 @@
    "lon": -9.150731,
    "h": -25.6,
    "photo": false,
-   "hover": 0,
+   "hover": 1,
    "yaw": 90,
    "pitch": -8,
    "notiz": "Video-Runde: Aufnahme startet",
