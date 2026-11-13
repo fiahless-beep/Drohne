@@ -1,0 +1,16 @@
+13:23:42  Flugprotokoll: 2026-11-07_13-23_schwebetest/protokoll.txt
+13:23:43  Start: ok
+13:24:06  Abbruch: ok
+13:24:09  Rückkehr zum Startpunkt ausgelöst
+13:25:00  Lade Flugplan aus der Cloud …
+13:25:01  Plan laden funktioniert (Beispiel, wird nicht geflogen)
+13:25:08  KMZ erstellt: 5 Punkte, 119 m, ca. 1 min
+13:25:08  DJI-Prüfung: in Ordnung
+13:25:08  Plan übernommen, jetzt „Hochladen“
+13:25:09  Lade Mission auf die Drohne …
+13:25:10  Upload 13 %
+13:25:10  Upload 32 %
+13:25:10  Upload 67 %
+13:25:10  Upload 86 %
+13:25:10  Upload 100 %
+13:25:10  Mission ist auf der Drohne
