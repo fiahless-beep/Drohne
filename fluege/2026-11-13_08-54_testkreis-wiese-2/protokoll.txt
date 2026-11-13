@@ -1,0 +1,212 @@
+08:54:35  Flugprotokoll: 2026-11-13_08-54_testkreis-wiese-2/protokoll.txt
+08:54:35  Startpunkt: 38.731130, -9.155007
+08:54:35  Karte: https://www.google.com/maps/dir/38.731130,-9.155007/38.731624,-9.155477/38.731648,-9.155133/38.731427,-9.154934/38.731182,-9.155081/38.731158,-9.155425/38.731379,-9.155624/38.731624,-9.155477/38.731130,-9.155007/data=!4m2!4m1!3e2
+08:54:35  Rückkehrhöhe: 50 m
+08:54:35  Mission: PREPARING
+08:54:36  Start: ok
+08:54:36  Mission: ENTER_WAYLINE
+08:54:38  DJI-Meldung: [WARNUNG]  – Obstacle sensing not available at night. Adjust RTH altitude to above tallest surrounding building before flying
+08:54:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:54:40  T 38.731113 -9.155006 h=0.6 akku=87 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:41  Live-Bild verbunden
+08:54:42  T 38.731114 -9.155006 h=1.2 akku=87 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:42  DJI-Meldung erledigt: 0x1B030010
+08:54:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:54:44  T 38.731114 -9.155006 h=3.7 akku=87 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:46  T 38.731114 -9.155006 h=12.1 akku=86 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:48  T 38.731114 -9.155006 h=20.4 akku=86 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:54:50  T 38.731114 -9.155006 h=28.4 akku=86 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:52  T 38.731113 -9.155006 h=36.6 akku=86 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:54  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:54:54  T 38.731114 -9.155006 h=39.3 akku=86 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:56  T 38.731114 -9.155008 h=39.8 akku=86 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:58  T 38.731119 -9.155009 h=40.0 akku=86 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+08:54:59  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:55:00  Mission: EXECUTING
+08:55:00  T 38.731129 -9.155006 h=39.9 akku=86 fliegt=true mission=EXECUTING wp=0 wind=0
+08:55:02  T 38.731129 -9.155005 h=39.9 akku=85 fliegt=true mission=EXECUTING wp=0 wind=0
+08:55:04  T 38.731130 -9.155005 h=39.9 akku=85 fliegt=true mission=EXECUTING wp=0 wind=0
+08:55:04  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:55:06  T 38.731149 -9.155023 h=39.9 akku=85 fliegt=true mission=EXECUTING wp=0 wind=0
+08:55:08  T 38.731204 -9.155076 h=39.9 akku=85 fliegt=true mission=EXECUTING wp=0 wind=0
+08:55:09  Wächter: Vergrößerung 1,03/Bild, Treffer 0
+08:55:10  Mission: INTERRUPTED
+08:55:10  T 38.731261 -9.155131 h=40.0 akku=85 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:10  DJI-Meldung: [Hinweis]  – Gimbal pan axis reached movement limit
+08:55:12  T 38.731300 -9.155164 h=40.0 akku=85 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:14  T 38.731300 -9.155159 h=40.0 akku=85 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:16  T 38.731301 -9.155159 h=40.0 akku=85 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:16  Live-Bild verbunden
+08:55:17  DJI-Meldung erledigt: 0x1D050003
+08:55:18  T 38.731301 -9.155159 h=40.1 akku=85 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:20  T 38.731301 -9.155160 h=40.1 akku=85 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:22  T 38.731302 -9.155161 h=40.1 akku=84 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:24  T 38.731301 -9.155161 h=40.1 akku=84 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:26  T 38.731301 -9.155160 h=40.1 akku=84 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:28  T 38.731301 -9.155160 h=40.1 akku=84 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:30  Mission: RECOVERING
+08:55:30  Weiter: ok
+08:55:30  T 38.731301 -9.155158 h=40.1 akku=84 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:55:32  T 38.731301 -9.155157 h=40.1 akku=84 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:55:34  T 38.731290 -9.155156 h=40.0 akku=84 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:55:34  Mission: EXECUTING
+08:55:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:55:36  Mission: INTERRUPTED
+08:55:36  T 38.731285 -9.155152 h=40.0 akku=84 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:38  T 38.731287 -9.155153 h=40.1 akku=83 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:40  T 38.731288 -9.155152 h=40.2 akku=83 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:42  T 38.731287 -9.155152 h=40.2 akku=83 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:44  Mission: RECOVERING
+08:55:44  Weiter: ok
+08:55:44  T 38.731287 -9.155153 h=40.2 akku=83 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:55:45  Mission: EXECUTING
+08:55:45  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:55:45  Mission: INTERRUPTED
+08:55:46  T 38.731286 -9.155154 h=40.1 akku=83 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:47  Mission: RECOVERING
+08:55:47  Weiter: ok
+08:55:48  T 38.731286 -9.155152 h=40.1 akku=83 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:55:50  Mission: EXECUTING
+08:55:50  T 38.731287 -9.155152 h=40.1 akku=83 fliegt=true mission=EXECUTING wp=0 wind=0
+08:55:50  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:55:51  Mission: INTERRUPTED
+08:55:52  T 38.731285 -9.155154 h=40.0 akku=83 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:54  Mission: RECOVERING
+08:55:54  Weiter: ok
+08:55:54  Mission: INTERRUPTED
+08:55:54  T 38.731285 -9.155153 h=40.1 akku=83 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:55  Mission: RECOVERING
+08:55:55  Weiter: ok
+08:55:55  Mission: INTERRUPTED
+08:55:56  T 38.731286 -9.155154 h=40.1 akku=83 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:55:56  Mission: RECOVERING
+08:55:56  Weiter: ok
+08:55:58  Mission: EXECUTING
+08:55:58  T 38.731287 -9.155154 h=40.2 akku=82 fliegt=true mission=EXECUTING wp=0 wind=0
+08:55:58  Mission: INTERRUPTED
+08:55:59  Mission: RECOVERING
+08:55:59  Weiter: ok
+08:55:59  Mission: INTERRUPTED
+08:56:00  T 38.731286 -9.155154 h=40.2 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:02  T 38.731285 -9.155153 h=40.3 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:03  Mission: RECOVERING
+08:56:03  Weiter: ok
+08:56:03  Mission: INTERRUPTED
+08:56:04  T 38.731286 -9.155153 h=40.3 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:06  T 38.731287 -9.155151 h=40.3 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:08  T 38.731286 -9.155152 h=40.4 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:10  T 38.731286 -9.155152 h=40.4 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:12  T 38.731286 -9.155152 h=40.4 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:14  Mission: RECOVERING
+08:56:14  Weiter: ok
+08:56:14  Mission: INTERRUPTED
+08:56:14  T 38.731286 -9.155152 h=40.5 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:16  T 38.731286 -9.155151 h=40.5 akku=81 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:17  Mission: RECOVERING
+08:56:17  Weiter: ok
+08:56:18  T 38.731286 -9.155151 h=40.5 akku=81 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:56:20  T 38.731287 -9.155152 h=40.5 akku=81 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:56:21  Mission: EXECUTING
+08:56:21  Mission: INTERRUPTED
+08:56:22  T 38.731286 -9.155154 h=40.2 akku=81 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:24  T 38.731285 -9.155152 h=40.1 akku=81 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:26  T 38.731285 -9.155152 h=40.1 akku=81 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:28  T 38.731285 -9.155152 h=40.1 akku=81 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:29  Mission: RECOVERING
+08:56:29  Weiter: ok
+08:56:30  Mission: EXECUTING
+08:56:30  Wächter: Vergrößerung 0,97/Bild, Treffer 0
+08:56:30  T 38.731286 -9.155153 h=40.1 akku=81 fliegt=true mission=EXECUTING wp=0 wind=0
+08:56:31  Mission: INTERRUPTED
+08:56:32  T 38.731285 -9.155154 h=40.0 akku=81 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:34  T 38.731286 -9.155153 h=40.0 akku=80 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:36  T 38.731286 -9.155153 h=40.0 akku=80 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:38  T 38.731285 -9.155154 h=40.0 akku=80 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:40  T 38.731285 -9.155154 h=40.0 akku=80 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:42  T 38.731286 -9.155155 h=40.0 akku=80 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:44  T 38.731286 -9.155155 h=40.0 akku=80 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:46  T 38.731286 -9.155155 h=40.0 akku=80 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:48  T 38.731286 -9.155156 h=40.0 akku=80 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:50  T 38.731286 -9.155156 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:52  T 38.731285 -9.155156 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:54  T 38.731286 -9.155154 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:56  T 38.731285 -9.155153 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:56:58  T 38.731285 -9.155154 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:00  T 38.731285 -9.155153 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:02  T 38.731284 -9.155153 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:04  T 38.731285 -9.155153 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:06  Flight guards OFF
+08:57:06  T 38.731285 -9.155154 h=40.0 akku=79 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:08  T 38.731285 -9.155154 h=40.0 akku=78 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:09  Mission: RECOVERING
+08:57:09  Weiter: ok
+08:57:10  Mission: EXECUTING
+08:57:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+08:57:10  T 38.731285 -9.155154 h=40.0 akku=78 fliegt=true mission=EXECUTING wp=0 wind=0
+08:57:12  T 38.731285 -9.155154 h=40.0 akku=78 fliegt=true mission=EXECUTING wp=0 wind=0
+08:57:14  Mission: INTERRUPTED
+08:57:14  T 38.731285 -9.155153 h=39.9 akku=78 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:16  T 38.731285 -9.155151 h=40.0 akku=78 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:18  T 38.731284 -9.155151 h=40.0 akku=78 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:20  T 38.731284 -9.155152 h=40.0 akku=78 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:22  T 38.731285 -9.155151 h=40.0 akku=78 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:24  T 38.731284 -9.155151 h=40.0 akku=78 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:26  T 38.731285 -9.155152 h=40.0 akku=78 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:28  T 38.731286 -9.155150 h=40.0 akku=77 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:30  T 38.731285 -9.155151 h=40.0 akku=77 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:32  T 38.731286 -9.155152 h=40.0 akku=77 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:34  T 38.731286 -9.155153 h=40.0 akku=77 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:36  T 38.731286 -9.155154 h=40.0 akku=77 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:38  T 38.731287 -9.155154 h=40.0 akku=77 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:40  T 38.731286 -9.155154 h=40.0 akku=77 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:42  Aufzeichnungen gefunden: 47 in /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/MCDatFlightRecords/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord
+08:57:42  Davon neu: 18
+08:57:42  T 38.731286 -9.155154 h=40.0 akku=77 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:44  T 38.731286 -9.155152 h=40.0 akku=76 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:46  T 38.731286 -9.155151 h=40.0 akku=76 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:48  T 38.731287 -9.155151 h=40.0 akku=76 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:50  T 38.731286 -9.155152 h=40.0 akku=76 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:52  T 38.731288 -9.155152 h=39.9 akku=76 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:54  T 38.731288 -9.155152 h=40.0 akku=76 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:56  T 38.731287 -9.155152 h=40.0 akku=76 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:57:58  T 38.731287 -9.155152 h=40.0 akku=76 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:00  T 38.731287 -9.155154 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:02  T 38.731289 -9.155153 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:03  Aufzeichnungen: Upload läuft schon
+08:58:04  T 38.731289 -9.155151 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:06  T 38.731290 -9.155152 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:08  T 38.731291 -9.155152 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:10  T 38.731291 -9.155151 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:12  T 38.731292 -9.155150 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:14  T 38.731292 -9.155149 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:16  T 38.731292 -9.155149 h=40.0 akku=75 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:18  T 38.731291 -9.155151 h=40.0 akku=74 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:20  Wächter aus
+08:58:20  T 38.731291 -9.155150 h=40.0 akku=74 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:22  Mission: RECOVERING
+08:58:22  Weiter: ok
+08:58:22  T 38.731291 -9.155149 h=40.0 akku=74 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:58:24  T 38.731287 -9.155149 h=40.0 akku=74 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:58:26  T 38.731284 -9.155150 h=39.9 akku=74 fliegt=true mission=RECOVERING wp=-1 wind=0
+08:58:28  Mission: EXECUTING
+08:58:28  Mission: INTERRUPTED
+08:58:28  T 38.731285 -9.155149 h=39.9 akku=74 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:30  T 38.731285 -9.155150 h=40.0 akku=74 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:32  T 38.731285 -9.155150 h=40.0 akku=74 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:34  T 38.731285 -9.155150 h=40.0 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:36  T 38.731284 -9.155148 h=40.0 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:38  T 38.731285 -9.155149 h=40.0 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:40  T 38.731286 -9.155148 h=40.0 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:42  T 38.731286 -9.155149 h=40.0 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:44  T 38.731287 -9.155148 h=40.0 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:46  T 38.731287 -9.155147 h=40.0 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:48  T 38.731287 -9.155147 h=40.0 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:50  T 38.731287 -9.155147 h=39.9 akku=73 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:52  T 38.731287 -9.155147 h=40.0 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:54  T 38.731286 -9.155147 h=39.9 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:56  T 38.731285 -9.155146 h=40.7 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:58:58  T 38.731284 -9.155143 h=40.7 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:00  T 38.731308 -9.155156 h=40.7 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:02  T 38.731289 -9.155145 h=40.5 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+08:59:04  T 38.731191 -9.155067 h=31.4 akku=72 fliegt=true mission=INTERRUPTED wp=-1 wind=0
