@@ -716,6 +716,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showDeviceMenu() = menu("Gerät & Test", listOf(
         "Selbsttest (Sensoren, DJI-Meldungen)" to { showSelfTest() },
+        "Tracking-Test (ActiveTrack-Werte nur lesen)" to { showTrackingProbe() },
         "Seriennummer der Drohne" to {
             val sn = DroneManager.state.serial ?: getSharedPreferences("drohne", MODE_PRIVATE).getString("letzte_sn", null)
             info("Seriennummer", sn?.let { "Fluggerät: $it" } ?: "Noch unbekannt – wird beim nächsten Verbinden gespeichert.") },
@@ -764,6 +765,25 @@ class MainActivity : AppCompatActivity() {
      * Selbsttest (Felix 8.11., nach dem Absturz): Sensoren + DJI-Gesundheitsmeldungen als Ampel-Liste.
      * Ergebnis landet auch im Protokoll (Mehr … → Fotos holen lädt es mit hoch).
      */
+    /** Tracking-Test: Kamera auf Person/Auto richten, 10 s warten, Ergebnis an Claude senden. */
+    private fun showTrackingProbe() {
+        val tv = TextView(this).apply { setPadding(40, 24, 40, 24); textSize = 13f; setTextIsSelectable(true); text = "Richte die Kamera auf eine Person oder ein Auto (5–20 m entfernt).\n\nFrage die Drohne ab … 10 s" }
+        var result: String? = null
+        val dlg = AlertDialog.Builder(this).setTitle("Tracking-Test").setView(ScrollView(this).apply { addView(tv) })
+            .setPositiveButton("OK", null).setNeutralButton("Nochmal", null).setNegativeButton("An Claude senden", null).create()
+        dlg.show()
+        fun go() { result = null; tv.text = "Frage die Drohne ab … 10 s"; TrackingProbe.run { r -> runOnUiThread { result = r; if (dlg.isShowing) tv.text = r } } }
+        dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { go() }
+        dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+            val r = result ?: run { android.widget.Toast.makeText(this, "Noch kein Ergebnis", android.widget.Toast.LENGTH_SHORT).show(); return@setOnClickListener }
+            val stamp = java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", java.util.Locale.GERMANY).format(java.util.Date())
+            val st = DroneManager.state
+            FlightReport.uploadText(applicationContext, "fluege/selbsttest/tracking-$stamp.txt", "Tracking-Test $stamp · App ${BuildConfig.VERSION_NAME} · Typ ${st.productType} · fliegt=${st.flying}\n\n$r") { ok -> runOnUiThread {
+                android.widget.Toast.makeText(this, if (ok) "An Claude gesendet" else "Senden fehlgeschlagen – GitHub-Token? Internet?", android.widget.Toast.LENGTH_LONG).show() } }
+        }
+        go()
+    }
+
     private fun showSelfTest() {
         if (!DroneManager.state.connected && !Simulator.active) {
             AlertDialog.Builder(this).setTitle("Selbsttest").setMessage("Drohne ist nicht verbunden. Drohne einschalten, Fernbedienung per USB ans Handy, DJI Fly beenden – dann erneut.")
