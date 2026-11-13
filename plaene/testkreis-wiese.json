@@ -1,5 +1,5 @@
 {
- "name": "testkreis-wiese",
+ "name": "testkreis-wiese-2",
  "beschreibung": "Kleiner Testkreis über dem Jardim Amália Rodrigues, 40 m nordwestlich vom Start (weg vom Fahnenmast): senkrecht auf 40 m, Kreis mit 30 m Radius in 40 m Höhe, 6 Fotos, zurück. Höchste Oberfläche im Umkreis 20 m über dem Start. Nur tagsüber.",
  "speed": 4,
  "rcLost": "continue",
@@ -18,7 +18,7 @@
   "h": 40,
   "punkte": 6,
   "fotos": 6,
-  "start": 145,
+  "start": 325,
   "uhrzeigersinn": true
  }
 }
