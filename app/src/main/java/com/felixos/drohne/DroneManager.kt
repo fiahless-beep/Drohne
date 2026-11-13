@@ -409,6 +409,8 @@ object DroneManager {
 
     @Volatile private var obstacleTypeOn = false
     @Volatile private var overallUnsupported = false
+    /** Meldet die Drohne den Hauptschalter nicht und hat sie den Typ BRAKE bestätigt, gilt die Erkennung als an (der Listener meldet sich nicht von selbst neu). */
+    private fun sensorsFromType() { if (overallUnsupported && obstacleTypeOn && state.sensors == "aus") { log("Hinderniserkennung: aktiv (Typ von der Drohne bestätigt, Hauptschalter nicht abfragbar)"); update { it.copy(sensors = "aktiv") } } }
     /** DJI-Hinderniserkennung: an = Bremsen (BRAKE), aus = CLOSE. Für den Handstart vom Balkon/aus dem Auto (Felix 9.11.). */
     fun setObstacleAvoidance(on: Boolean, reason: String = "") { if (Simulator.active) { log("Simulation: Hinderniserkennung ${if (on) "an" else "aus"}"); return }; safe("Hinderniserkennung") {
         val t = if (on) dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.BRAKE else dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.CLOSE
@@ -416,11 +418,11 @@ object DroneManager {
         // Felix 9.11. 17:06: nur der Typ reichte nicht – DJI Fly hatte die Erkennung insgesamt ausgeschaltet.
         if (on) pm.setOverallObstacleAvoidanceEnabled(true, object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
             override fun onSuccess() { log("Hinderniserkennung insgesamt eingeschaltet") }
-            override fun onFailure(error: IDJIError) { if ((error.description() ?: "").contains("not supported", true)) overallUnsupported = true; log("Hinderniserkennung insgesamt einschalten fehlgeschlagen: ${error.description()}") }
+            override fun onFailure(error: IDJIError) { if ((error.description() ?: "").contains("not supported", true)) { overallUnsupported = true; sensorsFromType() }; log("Hinderniserkennung insgesamt einschalten fehlgeschlagen: ${error.description()}") }
         })
         pm.setObstacleAvoidanceType(t,
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
-                override fun onSuccess() { obstacleTypeOn = on; log(if (on) "Hinderniserkennung wieder AN (Bremsen)${if (reason.isNotBlank()) " – $reason" else ""}" else "HINDERNISERKENNUNG AUS – nur für den Handstart, vorsichtig fliegen. Geht bei „Plan holen“/„Start“ automatisch wieder an.") }
+                override fun onSuccess() { obstacleTypeOn = on; sensorsFromType(); log(if (on) "Hinderniserkennung wieder AN (Bremsen)${if (reason.isNotBlank()) " – $reason" else ""}" else "HINDERNISERKENNUNG AUS – nur für den Handstart, vorsichtig fliegen. Geht bei „Plan holen“/„Start“ automatisch wieder an.") }
                 override fun onFailure(error: IDJIError) { log("Hinderniserkennung ${if (on) "einschalten" else "ausschalten"} fehlgeschlagen: ${error.description()} – in DJI Fly unter Safety → Obstacle Avoidance") }
             })
     } }
