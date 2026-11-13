@@ -66,10 +66,23 @@ object Wpml {
 
     private fun passes(w: Waypoint) = opt.smooth && !w.takePhoto && w.hoverSec == 0 && w.video == 0
 
-    private fun turn(w: Waypoint) = if (passes(w)) """
+    /**
+     * Kurvenradius am Punkt i. DJI lehnt den Start ab („Waypoint turning intercept error“), wenn sich die Kurven
+     * benachbarter Punkte überlappen: Dämpfung höchstens 45 % des kürzeren Nachbarabschnitts; unter 1 m wird angehalten.
+     */
+    internal fun damping(i: Int, m: Mission): Double {
+        val w = m.waypoints
+        if (i <= 0 || i >= w.size - 1 || !passes(w[i])) return 0.0
+        fun d(a: Waypoint, b: Waypoint) = Math.hypot(Geo.distance(a.pos, b.pos), a.heightM - b.heightM)
+        val shortest = minOf(d(w[i - 1], w[i]), d(w[i], w[i + 1]))
+        val r = minOf(5.0, Math.floor(shortest * 0.45 * 10) / 10)
+        return if (r < 1.0) 0.0 else r
+    }
+
+    private fun turn(i: Int, m: Mission) = if (damping(i, m) > 0) """
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
-          <wpml:waypointTurnDampingDist>5</wpml:waypointTurnDampingDist>
+          <wpml:waypointTurnDampingDist>${f(damping(i, m), 1)}</wpml:waypointTurnDampingDist>
         </wpml:waypointTurnParam>
         <wpml:useStraightLine>0</wpml:useStraightLine>""" else """
         <wpml:waypointTurnParam>
@@ -127,8 +140,8 @@ object Wpml {
         <Point><coordinates>${f(w.pos.lon)},${f(w.pos.lat)}</coordinates></Point>
         <wpml:index>$i</wpml:index>
         ${if (execution) "<wpml:executeHeight>${f(w.heightM, 1)}</wpml:executeHeight>"
-          else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>${if (w.speedMs != null) 0 else 1}</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>${if (w.headingDeg != null) 0 else 1}</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>${if (passes(w)) 0 else 1}</wpml:useGlobalTurnParam>" + (if (passes(w)) turn(w) else "")}
-        <wpml:waypointSpeed>${f(w.speedMs ?: m.speedMs, 1)}</wpml:waypointSpeed>${if (execution || w.headingDeg != null) heading(w) else ""}${if (execution) turn(w) else ""}${if (opt.noActions) "" else actions(i, w, i)}
+          else "<wpml:height>${f(w.heightM, 1)}</wpml:height>\n        <wpml:ellipsoidHeight>${f(w.heightM, 1)}</wpml:ellipsoidHeight>\n        <wpml:useGlobalHeight>0</wpml:useGlobalHeight>\n        <wpml:useGlobalSpeed>${if (w.speedMs != null) 0 else 1}</wpml:useGlobalSpeed>\n        <wpml:useGlobalHeadingParam>${if (w.headingDeg != null) 0 else 1}</wpml:useGlobalHeadingParam>\n        <wpml:useGlobalTurnParam>${if (damping(i, m) > 0) 0 else 1}</wpml:useGlobalTurnParam>" + (if (damping(i, m) > 0) turn(i, m) else "")}
+        <wpml:waypointSpeed>${f(w.speedMs ?: m.speedMs, 1)}</wpml:waypointSpeed>${if (execution || w.headingDeg != null) heading(w) else ""}${if (execution) turn(i, m) else ""}${if (opt.noActions) "" else actions(i, w, i)}
       </Placemark>"""
 
     fun templateKml(m: Mission, nowMs: Long): String = """<?xml version="1.0" encoding="UTF-8"?>

@@ -36,4 +36,20 @@ class WpmlTest {
         }
         assertTrue(f.length() > 0)
     }
+
+    /** 13.11.: DJI lehnte Starts ab („Waypoint turning intercept error“), wenn Kurven benachbarter Punkte sich überlappten. */
+    @Test fun turnDampingNeverOverlapsOnShortLegs() {
+        val sq = Missions.testSquare(center, sideM = 30.0, heightM = 30.0)
+        val pts = sq.waypoints.map { it.copy(takePhoto = false, hoverSec = 0) }.toMutableList()
+        pts.add(2, pts[1].copy(pos = Geo.offset(pts[1].pos, 8.0, 90.0)))   // 8-m-Abschnitt
+        pts.add(4, pts[3].copy(pos = Geo.offset(pts[3].pos, 1.5, 0.0)))    // 1,5-m-Abschnitt → anhalten
+        val m = sq.copy(waypoints = pts)
+        for (i in 0 until pts.size - 1) {
+            val leg = Geo.distance(pts[i].pos, pts[i + 1].pos)
+            assertTrue("Abschnitt $i: ${Wpml.damping(i, m)} + ${Wpml.damping(i + 1, m)} >= $leg", Wpml.damping(i, m) + Wpml.damping(i + 1, m) < leg)
+        }
+        assertEquals(3.55, Wpml.damping(1, m), 0.06)
+        assertEquals(0.0, Wpml.damping(3, m), 0.01)
+        assertEquals(0.0, Wpml.damping(0, m), 0.01)
+    }
 }

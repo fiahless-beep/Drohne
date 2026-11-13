@@ -120,6 +120,22 @@ object MissionController {
     }
 
     @Volatile private var stateFromDrone = 0L
+    /** Wegpunkt-Fortschritt und Unterbrechungsgrund der Drohne. */
+    private val infoListener = object : WaylineExecutingInfoListener {
+        override fun onWaylineExecutingInfoUpdate(info: WaylineExecutingInfo?) {
+            if (Simulator.active) return
+            info?.let {
+                DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}")
+                currentWaypointIndex = it.currentWaypointIndex; lastReachedIndex = it.currentWaypointIndex
+                val n = currentMission?.waypoints?.size
+                show("▶ ${currentMission?.name ?: missionId}: point ${it.currentWaypointIndex + 1}" + (n?.let { c -> " of $c" } ?: ""))
+            }
+        }
+        override fun onWaylineExecutingInterruptReasonUpdate(error: IDJIError?) {
+            error?.let { val why = "${it.errorCode() ?: ""} ${it.description() ?: ""}".trim(); DroneManager.log("Mission unterbrochen: $why"); if (why.isNotBlank()) show("⚠ Drone interrupted the plan: $why") }
+        }
+    }
+
     private val stateListener = object : WaypointMissionExecuteStateListener {
         private var last: WaypointMissionExecuteState? = null
         override fun onMissionStateUpdate(state: WaypointMissionExecuteState?) {
@@ -137,20 +153,7 @@ object MissionController {
         initOffline(context)
         val mgr = WaypointMissionManager.getInstance()
         mgr.addWaypointMissionExecuteStateListener(stateListener)
-        mgr.addWaylineExecutingInfoListener(object : WaylineExecutingInfoListener {
-            override fun onWaylineExecutingInfoUpdate(info: WaylineExecutingInfo?) {
-                if (Simulator.active) return
-                info?.let {
-                    DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}")
-                    currentWaypointIndex = it.currentWaypointIndex; lastReachedIndex = it.currentWaypointIndex
-                    val n = currentMission?.waypoints?.size
-                    show("▶ ${currentMission?.name ?: missionId}: point ${it.currentWaypointIndex + 1}" + (n?.let { c -> " of $c" } ?: ""))
-                }
-            }
-            override fun onWaylineExecutingInterruptReasonUpdate(error: IDJIError?) {
-                error?.let { DroneManager.log("Mission unterbrochen: ${it.description()}") }
-            }
-        })
+        mgr.addWaylineExecutingInfoListener(infoListener)
     }
 
     /** Eine Prüf-Variante: Beschreibung, abgewandelte Mission, Datei-Optionen. */
@@ -388,7 +391,7 @@ object MissionController {
         DroneManager.safe("Start") {
             val mgr = WaypointMissionManager.getInstance()
             // 13.11.: auf der echten Drohne kam nie eine Zustandsmeldung an → Listener vor jedem Start neu anmelden.
-            try { mgr.removeWaypointMissionExecuteStateListener(stateListener); mgr.addWaypointMissionExecuteStateListener(stateListener) } catch (t: Throwable) { DroneManager.log("Missions-Listener: ${t.message}") }
+            try { mgr.removeWaypointMissionExecuteStateListener(stateListener); mgr.addWaypointMissionExecuteStateListener(stateListener); mgr.removeWaylineExecutingInfoListener(infoListener); mgr.addWaylineExecutingInfoListener(infoListener) } catch (t: Throwable) { DroneManager.log("Missions-Listener: ${t.message}") }
             val ids = mgr.getAvailableWaylineIDs(f.absolutePath)
             val t0 = System.currentTimeMillis()
             mgr.startMission(missionId, ids, object : CommonCallbacks.CompletionCallback {

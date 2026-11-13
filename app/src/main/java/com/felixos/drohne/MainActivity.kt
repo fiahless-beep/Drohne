@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     /** Vom Cloud-Planer erzeugter Plan (öffentliches Repo, daher ohne Login lesbar). */
     private val planUrl = "https://raw.githubusercontent.com/fiahless-beep/Drohne/main/plaene/aktuell.json"
+    private val planApiUrl = "https://api.github.com/repos/fiahless-beep/Drohne/contents/plaene/aktuell.json?ref=main"
 
     private var mission: Mission? = null
     private var missionText: String = ""
@@ -1335,11 +1336,22 @@ class MainActivity : AppCompatActivity() {
         setPlanCard("Getting plan …", "Fetching plaene/aktuell.json from the cloud …")
         Thread {
             try {
-                val url = java.net.URL(planUrl + "?t=" + System.currentTimeMillis())
-                val conn = (url.openConnection() as java.net.HttpURLConnection).apply {
-                    connectTimeout = 10_000; readTimeout = 10_000; useCaches = false
+                // Zuerst über die GitHub-API (ohne Zwischenspeicher, Änderung nach Sekunden da), sonst die alte Adresse (bis 5 min alt).
+                val text = try {
+                    (java.net.URL(planApiUrl).openConnection() as java.net.HttpURLConnection).run {
+                        connectTimeout = 8_000; readTimeout = 8_000; useCaches = false
+                        setRequestProperty("Accept", "application/vnd.github.raw")
+                        FlightReport.token(this@MainActivity)?.let { setRequestProperty("Authorization", "Bearer $it") }
+                        if (responseCode != 200) throw java.io.IOException("HTTP $responseCode")
+                        inputStream.bufferedReader().use { it.readText() }
+                    }
+                } catch (t: Throwable) {
+                    DroneManager.log("Plan direkt nicht erreichbar (${t.message}), nehme die zwischengespeicherte Adresse")
+                    val conn = (java.net.URL(planUrl + "?t=" + System.currentTimeMillis()).openConnection() as java.net.HttpURLConnection).apply {
+                        connectTimeout = 10_000; readTimeout = 10_000; useCaches = false
+                    }
+                    conn.inputStream.bufferedReader().use { it.readText() }
                 }
-                val text = conn.inputStream.bufferedReader().use { it.readText() }
                 val (m, beschreibung) = PlanJson.parse(text)
                 runOnUiThread { loading = false; useMission(m, beschreibung) }
             } catch (t: Throwable) {
