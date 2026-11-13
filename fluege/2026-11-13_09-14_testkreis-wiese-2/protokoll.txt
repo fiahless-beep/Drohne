@@ -1,0 +1,115 @@
+09:14:38  Flugprotokoll: 2026-11-13_09-14_testkreis-wiese-2/protokoll.txt
+09:14:38  Startpunkt: 38.731100, -9.154988
+09:14:38  Karte: https://www.google.com/maps/dir/38.731112,-9.155007/38.731624,-9.155477/38.731648,-9.155133/38.731427,-9.154934/38.731182,-9.155081/38.731158,-9.155425/38.731379,-9.155624/38.731624,-9.155477/38.731112,-9.155007/data=!4m2!4m1!3e2
+09:14:38  Wegpunkt 1
+09:14:38  Rückkehrhöhe: 50 m
+09:14:38  Aufzeichnungen hochgeladen: 3 von 2 → github.com/fiahless-beep/Drohne/tree/main/fluege/aufzeichnungen
+09:14:39  Mission: PREPARING
+09:14:39  Wegpunkt 1
+09:14:39  Start: ok
+09:14:39  Mission: ENTER_WAYLINE
+09:14:42  T 38.731085 -9.154982 h=0.2 akku=45 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:14:43  ⚠ Guard paused the plan: height 0 m is more than 5 m off the plan. Hovering. You have control.
+09:14:43  Pause fehlgeschlagen: Unable to stop task. Check aircraft
+09:14:44  T 38.731085 -9.154981 h=1.2 akku=45 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:14:46  T 38.731085 -9.154981 h=2.2 akku=45 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:14:48  T 38.731085 -9.154981 h=9.6 akku=45 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:14:50  T 38.731084 -9.154982 h=18.0 akku=45 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:14:52  T 38.731084 -9.154982 h=26.1 akku=44 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:14:54  ⚠ Guard paused the plan: height 33 m is more than 5 m off the plan. Hovering. You have control.
+09:14:54  Pause: ok
+09:14:54  Mission: INTERRUPTED
+09:14:54  T 38.731083 -9.154982 h=34.6 akku=44 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:14:54  Mission unterbrochen: USER_BREAK
+09:14:56  T 38.731082 -9.154981 h=36.8 akku=44 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:14:58  T 38.731083 -9.154982 h=36.8 akku=44 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:00  T 38.731083 -9.154982 h=36.8 akku=44 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:02  Mission: PREPARING
+09:15:02  Weiter: ok
+09:15:02  Mission: ENTER_WAYLINE
+09:15:02  T 38.731083 -9.154983 h=36.8 akku=44 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:15:04  T 38.731083 -9.154982 h=38.1 akku=44 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:15:06  T 38.731083 -9.154982 h=39.5 akku=43 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:15:07  Wegpunkt 1
+09:15:08  T 38.731084 -9.154984 h=40.0 akku=43 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:15:09  Mission: INTERRUPTED
+09:15:09  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:15:10  T 38.731090 -9.154987 h=40.0 akku=43 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:12  T 38.731091 -9.154987 h=40.0 akku=43 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:14  T 38.731091 -9.154985 h=40.0 akku=43 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:15  Mission: PREPARING
+09:15:16  Weiter: ok
+09:15:16  Mission: ENTER_WAYLINE
+09:15:16  Wegpunkt 1
+09:15:16  T 38.731090 -9.154986 h=40.0 akku=43 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:15:16  Mission: INTERRUPTED
+09:15:17  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:15:18  T 38.731094 -9.154986 h=40.0 akku=43 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:18  Mission: PREPARING
+09:15:18  Weiter: ok
+09:15:18  Mission: ENTER_WAYLINE
+09:15:20  T 38.731098 -9.154992 h=40.0 akku=43 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:15:22  T 38.731109 -9.155003 h=40.0 akku=42 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0
+09:15:24  Wegpunkt 1
+09:15:24  Mission: EXECUTING
+09:15:24  Wegpunkt 1
+09:15:24  T 38.731111 -9.155005 h=40.0 akku=42 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:26  T 38.731112 -9.155007 h=40.0 akku=42 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:28  T 38.731112 -9.155007 h=40.0 akku=42 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:29  Wegpunkt 1
+09:15:30  T 38.731113 -9.155007 h=39.9 akku=42 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:31  Wegpunkt 1
+09:15:32  Wegpunkt 1
+09:15:32  Wegpunkt 1
+09:15:32  T 38.731138 -9.155030 h=39.9 akku=42 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:32  Wegpunkt 1
+09:15:32  Wegpunkt 1
+09:15:33  Wegpunkt 1
+09:15:33  Wegpunkt 1
+09:15:33  Wegpunkt 1
+09:15:34  Wegpunkt 1
+09:15:34  Wegpunkt 1
+09:15:34  Wegpunkt 1
+09:15:34  T 38.731195 -9.155082 h=40.0 akku=42 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:34  Wegpunkt 1
+09:15:35  Wegpunkt 1
+09:15:35  Wegpunkt 1
+09:15:35  Wegpunkt 1
+09:15:35  Wegpunkt 1
+09:15:36  Wegpunkt 1
+09:15:36  Wegpunkt 1
+09:15:36  Wegpunkt 1
+09:15:36  T 38.731252 -9.155136 h=40.0 akku=41 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:36  Wegpunkt 1
+09:15:36  Mission: INTERRUPTED
+09:15:37  DJI-Meldung: [Hinweis]  – Gimbal pan axis reached movement limit
+09:15:37  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:15:38  T 38.731273 -9.155152 h=40.0 akku=41 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:39  Mission: RECOVERING
+09:15:39  Weiter: ok
+09:15:39  Mission: INTERRUPTED
+09:15:40  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:15:40  T 38.731273 -9.155148 h=40.0 akku=41 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:42  T 38.731273 -9.155148 h=40.0 akku=41 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:43  Mission: EXECUTING
+09:15:43  Weiter: ok
+09:15:43  Mission: RECOVERING
+09:15:44  T 38.731273 -9.155147 h=40.0 akku=41 fliegt=true mission=RECOVERING wp=0 wind=0
+09:15:44  DJI-Meldung erledigt: 0x1D050003
+09:15:46  T 38.731264 -9.155141 h=40.0 akku=41 fliegt=true mission=RECOVERING wp=0 wind=0
+09:15:47  Mission: EXECUTING
+09:15:48  T 38.731261 -9.155143 h=40.0 akku=41 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:49  Mission: INTERRUPTED
+09:15:50  Aufzeichnungen gefunden: 50 in /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord/MCDatFlightRecords/default, /storage/emulated/0/Android/data/com.felixos.drohne/files/DJI/FlightRecord
+09:15:50  Davon neu: 2
+09:15:50  T 38.731264 -9.155142 h=40.0 akku=40 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:50  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
+09:15:52  T 38.731265 -9.155140 h=40.0 akku=40 fliegt=true mission=INTERRUPTED wp=-1 wind=0
+09:15:52  Mission: RECOVERING
+09:15:52  Weiter: ok
+09:15:54  T 38.731263 -9.155140 h=40.0 akku=40 fliegt=true mission=RECOVERING wp=-1 wind=0
+09:15:56  T 38.731261 -9.155142 h=40.0 akku=40 fliegt=true mission=RECOVERING wp=-1 wind=0
+09:15:56  Mission: EXECUTING
+09:15:58  T 38.731263 -9.155146 h=40.0 akku=40 fliegt=true mission=EXECUTING wp=0 wind=0
+09:15:58  Mission: INTERRUPTED
+09:15:59  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused
