@@ -21,6 +21,11 @@ import kotlin.math.sqrt
  */
 object FlightGuard {
     @Volatile var enabled = true
+    /**
+     * Dürfen Korridor- und Bodenabstands-Wächter den Plan anhalten? Aus (Felix 13.11.: erst saubere Fotoflüge, Extras aus dem Weg;
+     * der Korridor-Wächter hatte am selben Tag falsch ausgelöst): sie beobachten und protokollieren nur. Die Akku-Umkehr bleibt immer aktiv.
+     */
+    @Volatile var mayPause = false
     /** Last guard action, shown in the status line until the plan runs again. */
     @Volatile var alert: String? = null
     var onAlert: ((String) -> Unit)? = null
@@ -94,6 +99,7 @@ object FlightGuard {
         offRoute = 0; low = 0
         if (now - lastTrip < 10_000) return
         lastTrip = now
+        if (!mayPause) { DroneManager.log("Guard (observe only): $why. Would have paused the plan."); return }
         val text = "⚠ Guard paused the plan: $why. Hovering. You have control."
         alert = text
         DroneManager.log(text)

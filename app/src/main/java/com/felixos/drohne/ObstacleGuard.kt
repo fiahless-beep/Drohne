@@ -14,7 +14,7 @@ import java.util.Locale
 object ObstacleGuard {
     private const val PREFS = "drohne"
     private const val KEY_ON = "guard_on"
-    private const val KEY_ARMED = "guard_armed"   // armed = darf Mission anhalten; sonst nur protokollieren
+    private const val KEY_ARMED = "guard_armed_2"   // armed = darf Mission anhalten; sonst nur protokollieren
 
     @Volatile var enabled = true; private set
     @Volatile var armed = false; private set
@@ -35,7 +35,7 @@ object ObstacleGuard {
 
     fun init(c: Context) {
         val p = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        enabled = p.getBoolean(KEY_ON, true); armed = p.getBoolean(KEY_ARMED, true)
+        enabled = p.getBoolean(KEY_ON, true); armed = p.getBoolean(KEY_ARMED, false)  // 13.11.: Standard nur beobachten
         DroneManager.addStateListener { s -> if (s.connected && s.registered) start() }
     }
 

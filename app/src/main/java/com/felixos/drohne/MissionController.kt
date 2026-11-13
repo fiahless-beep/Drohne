@@ -123,20 +123,21 @@ object MissionController {
     @Volatile private var stateFromDrone = 0L
     /** Grund, den die Drohne für die letzte Unterbrechung genannt hat (bis der Plan wieder läuft). */
     @Volatile var interruptWhy: String? = null; private set
+    private var lastLoggedIndex = -99
 
     /** Wegpunkt-Fortschritt und Unterbrechungsgrund der Drohne. */
     private val infoListener = object : WaylineExecutingInfoListener {
         override fun onWaylineExecutingInfoUpdate(info: WaylineExecutingInfo?) {
             if (Simulator.active) return
             info?.let {
-                DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}")
+                if (it.currentWaypointIndex != lastLoggedIndex) { lastLoggedIndex = it.currentWaypointIndex; DroneManager.log("Wegpunkt ${it.currentWaypointIndex + 1}") }
                 currentWaypointIndex = it.currentWaypointIndex; lastReachedIndex = it.currentWaypointIndex
                 val n = currentMission?.waypoints?.size
                 show("▶ ${currentMission?.name ?: missionId}: point ${it.currentWaypointIndex + 1}" + (n?.let { c -> " of $c" } ?: ""))
             }
         }
         override fun onWaylineExecutingInterruptReasonUpdate(error: IDJIError?) {
-            error?.let { val why = "${it.errorCode() ?: ""} ${it.description() ?: ""}".trim(); DroneManager.log("Mission unterbrochen: $why"); if (why.isNotBlank()) { interruptWhy = if (why.contains("OBSTAC", true)) "the drone’s own obstacle sensing saw an obstacle (often a false alarm in low light)" else why; show("⚠ Drone paused the plan: $interruptWhy") } }
+            error?.let { val why = "${it.errorCode() ?: ""} ${it.description() ?: ""}".trim(); DroneManager.log("Mission unterbrochen: $why · Abstände ${DroneManager.obstacleSummary()}"); if (why.isNotBlank()) { interruptWhy = if (why.contains("OBSTAC", true)) "the drone’s own obstacle sensing saw an obstacle (often a false alarm in low light)" else why; show("⚠ Drone paused the plan: $interruptWhy") } }
         }
     }
 
@@ -380,7 +381,7 @@ object MissionController {
     fun start() {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
-        lastReachedIndex = -1; FlightGuard.rearm()  // auch bei erneutem Start desselben Plans: erst wieder scharf, wenn die Drohne auf der Strecke ist
+        lastReachedIndex = -1; lastLoggedIndex = -99; FlightGuard.rearm()  // auch bei erneutem Start desselben Plans: erst wieder scharf, wenn die Drohne auf der Strecke ist
         if (Simulator.active) { currentMission?.let { Simulator.fly(it, rthHeightM) }; return }
         DroneManager.ensureObstacleAvoidance("Mission startet")
         FlightReport.startFlight(missionId)

@@ -134,6 +134,7 @@ class MainActivity : AppCompatActivity() {
         planName.setOnClickListener { showPlanDetails() }
         planMeta.setOnClickListener { showPlanDetails() }
         FlightReport.init(applicationContext)
+        LiveLink.init(applicationContext)
         ObstacleGuard.init(applicationContext)
         FlightGuard.init()
         FlightGuard.onAlert = { t -> runOnUiThread { android.widget.Toast.makeText(this, t, android.widget.Toast.LENGTH_LONG).show(); renderStatus(DroneManager.state) } }
@@ -980,6 +981,7 @@ class MainActivity : AppCompatActivity() {
         val swap = FollowController.swapAxes(this)
         menu("Flight & guards", listOf(
             "Flight guards: route, ground clearance, battery turn-back (${if (FlightGuard.enabled) "on" else "OFF"})" to { FlightGuard.enabled = !FlightGuard.enabled; DroneManager.log("Flight guards ${if (FlightGuard.enabled) "on" else "OFF"}") },
+            "Route and ground guards may pause the plan (${if (FlightGuard.mayPause) "on" else "observe only"})" to { FlightGuard.mayPause = !FlightGuard.mayPause; DroneManager.log("Route and ground guards: ${if (FlightGuard.mayPause) "may pause the plan" else "observe only"}") },
             "Image guard may pause the plan (${if (ObstacleGuard.armed) "on" else "observe only"})" to { ObstacleGuard.setArmed(this, !ObstacleGuard.armed) },
             "Turn image guard ${if (ObstacleGuard.enabled) "off" else "on"}" to { ObstacleGuard.setEnabled(this, !ObstacleGuard.enabled) },
             "Remember this start place (balcony/roof)" to { askStartPlace() },
@@ -996,6 +998,7 @@ class MainActivity : AppCompatActivity() {
             FlightReport.uploadFlightRecords(applicationContext) { n -> runOnUiThread {
                 info("Flight records", when { n < 0 -> "No GitHub token entered (Settings → Data → GitHub token)."; n == 0 -> "Nothing new, all records were already in the repo."; else -> "$n record(s) uploaded. Claude can read them now." })
             } } },
+        "Live link: send the log to Claude by itself (${if (LiveLink.enabled) "on" else "OFF"})" to { LiveLink.setEnabled(this, !LiveLink.enabled) },
         "Enter GitHub token" to { askToken() },
         "Enter Google key (photorealistic 3D)" to { askGoogleKey() },
         "Enter Claude key (copilot)" to { askClaudeKey() }))
@@ -1353,6 +1356,7 @@ class MainActivity : AppCompatActivity() {
                     conn.inputStream.bufferedReader().use { it.readText() }
                 }
                 val (m, beschreibung) = PlanJson.parse(text)
+                LiveLink.planLoaded()
                 runOnUiThread { loading = false; useMission(m, beschreibung) }
             } catch (t: Throwable) {
                 DroneManager.log("Plan laden fehlgeschlagen: ${t.javaClass.simpleName}: ${t.message}")

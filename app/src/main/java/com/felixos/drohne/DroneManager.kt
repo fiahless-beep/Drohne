@@ -288,6 +288,9 @@ object DroneManager {
         watch(FlightControllerKey.KeyIsInLandingMode) { s, v -> s.copy(landing = v == true) }
         addStateListener { s -> if (s.landingConfirmationNeeded && !confirmSent) { confirmSent = true; confirmLanding("Drohne wartet auf Landebestätigung") } else if (!s.landingConfirmationNeeded) confirmSent = false }
         try {
+            dji.v5.manager.aircraft.perception.PerceptionManager.getInstance().addObstacleDataListener { d -> obstacleData = d; obstacleDataMs = System.currentTimeMillis() }
+        } catch (t: Throwable) { log("Hindernis-Abstände nicht lesbar: ${t.message}") }
+        try {
             dji.v5.manager.aircraft.perception.PerceptionManager.getInstance().addPerceptionInformationListener { info ->
                 val blind = buildList {
                     if (info.forwardObstacleAvoidanceWorking == false) add("vorn")
@@ -412,6 +415,25 @@ object DroneManager {
     } }
 
     @Volatile private var obstacleTypeOn = false
+    /** Letzte Abstandsmessung der Hinderniserkennung (Rohwerte der Drohne) und wann sie kam. */
+    @Volatile private var obstacleData: dji.v5.manager.aircraft.perception.data.ObstacleData? = null
+    @Volatile private var obstacleDataMs = 0L
+    /**
+     * Kurzfassung fürs Protokoll: nächstes Hindernis waagerecht (Rohwert und Winkel ab Flugrichtung), oben, unten.
+     * „-“ = die Drohne liefert (gerade) keine Messung. Die Einheit ist ungeprüft (vermutlich mm), deshalb Rohwerte.
+     */
+    fun obstacleSummary(): String {
+        val d = obstacleData ?: return "-"
+        if (System.currentTimeMillis() - obstacleDataMs > 3000) return "-"
+        return try {
+            val h = d.horizontalObstacleDistance ?: emptyList()
+            val step = d.horizontalAngleInterval
+            var best = -1
+            for (i in h.indices) { val v = h[i] ?: continue; if (v > 0 && (best < 0 || v < h[best])) best = i }
+            (if (best >= 0) "${h[best]}@${best * step}°" else "frei") + "/n${h.size}/o${d.upwardObstacleDistance}/u${d.downwardObstacleDistance}"
+        } catch (_: Throwable) { "?" }
+    }
+
     @Volatile private var overallUnsupported = false
     /** Meldet die Drohne den Hauptschalter nicht und hat sie den Typ BRAKE bestätigt, gilt die Erkennung als an (der Listener meldet sich nicht von selbst neu). */
     private fun sensorsFromType() { if (overallUnsupported && obstacleTypeOn && state.sensors == "aus") { log("Hinderniserkennung: aktiv (Typ von der Drohne bestätigt, Hauptschalter nicht abfragbar)"); update { it.copy(sensors = "aktiv") } } }
