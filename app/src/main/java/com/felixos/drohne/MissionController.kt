@@ -380,7 +380,7 @@ object MissionController {
     fun start() {
         val f = currentKmz ?: return DroneManager.log("Keine Mission")
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
-        lastReachedIndex = -1; FlightGuard.alert = null
+        lastReachedIndex = -1; FlightGuard.rearm()  // auch bei erneutem Start desselben Plans: erst wieder scharf, wenn die Drohne auf der Strecke ist
         if (Simulator.active) { currentMission?.let { Simulator.fly(it, rthHeightM) }; return }
         DroneManager.ensureObstacleAvoidance("Mission startet")
         FlightReport.startFlight(missionId)
