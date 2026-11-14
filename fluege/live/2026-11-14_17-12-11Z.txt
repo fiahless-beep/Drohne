@@ -137,3 +137,4 @@ Sitzung 2026-11-14_17-12-11 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:18:33  Fotos geladen: 0
 09:18:34  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-14_09-15_muehle-abendkreis
 09:19:02  S utc=17:19:02 verbunden=true fliegt=false pos=38.901374,-9.388121 h=0.0 start=38.901384,-9.388114 akku=86 sat=20 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-abendkreis wind=0
+09:19:34  S utc=17:19:34 verbunden=true fliegt=false pos=38.901372,-9.388121 h=0.0 start=38.901384,-9.388114 akku=85 sat=20 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-abendkreis wind=0
