@@ -121,3 +121,16 @@
 09:18:11  T 38.901385 -9.388120 h=2.0 akku=87 fliegt=true mission=READY wp=-1 wind=0 hind=1349@113°/n360/o60000/u2331
 09:18:13  T 38.901385 -9.388120 h=1.6 akku=87 fliegt=true mission=READY wp=-1 wind=0 hind=1004@113°/n360/o60000/u1971
 09:18:15  T 38.901384 -9.388120 h=1.2 akku=87 fliegt=true mission=READY wp=-1 wind=0 hind=1531@113°/n360/o60000/u1593
+09:18:17  T 38.901384 -9.388120 h=0.8 akku=87 fliegt=true mission=READY wp=-1 wind=0 hind=1016@58°/n360/o60000/u1221
+09:18:19  T 38.901384 -9.388120 h=0.4 akku=87 fliegt=true mission=READY wp=-1 wind=0 hind=1010@93°/n360/o60000/u827
+09:18:21  T 38.901384 -9.388121 h=0.0 akku=87 fliegt=true mission=READY wp=-1 wind=0 hind=1200@68°/n360/o60000/u415
+09:18:23  T 38.901383 -9.388122 h=-0.3 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=1470@63°/n360/o60000/u44
+09:18:25  Landehelfer: Drohne ist am Boden
+09:18:25  T 38.901382 -9.388122 h=0.0 akku=86 fliegt=false mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u100
+09:18:26  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3598 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+09:18:27  T 38.901382 -9.388123 h=0.0 akku=86 fliegt=false mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u100
+09:18:28  Hole Fotoliste von der Drohne (SD-Karte) …
+09:18:31  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+09:18:32  Hole Fotoliste von der Drohne (interner Speicher) …
+09:18:32  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+09:18:33  Fotos geladen: 0
