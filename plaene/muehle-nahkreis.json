@@ -1,0 +1,83 @@
+{
+ "name": "muehle-nahkreis",
+ "beschreibung": "Naher Kreis um die Mühle: senkrecht auf 32 m, Kreis mit 30 m Radius, acht Fotos rundum und Video, zurück. Knapp über den Eukalyptusbäumen (geschätzt 20 bis 25 m), keine Höhendaten für diesen Ort. Nur bei Tageslicht.",
+ "speed": 3,
+ "rcLost": "goHome",
+ "transitHoehe": 32,
+ "start": {
+  "lat": 38.901381,
+  "lon": -9.388113
+ },
+ "ziel": {
+  "lat": 38.901381,
+  "lon": -9.388113,
+  "h": 4
+ },
+ "waypoints": [
+  {
+   "lat": 38.901652,
+   "lon": -9.388113,
+   "h": 32,
+   "photo": true,
+   "hover": 2,
+   "video": "start"
+  },
+  {
+   "lat": 38.901573,
+   "lon": -9.387868,
+   "h": 32,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901381,
+   "lon": -9.387767,
+   "h": 32,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901189,
+   "lon": -9.387868,
+   "h": 32,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.90111,
+   "lon": -9.388113,
+   "h": 32,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901189,
+   "lon": -9.388358,
+   "h": 32,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901381,
+   "lon": -9.388459,
+   "h": 32,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901573,
+   "lon": -9.388358,
+   "h": 32,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901652,
+   "lon": -9.388113,
+   "h": 32,
+   "photo": false,
+   "hover": 2,
+   "video": "stop"
+  }
+ ]
+}
