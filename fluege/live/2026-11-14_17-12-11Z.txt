@@ -61,3 +61,4 @@ Sitzung 2026-11-14_17-12-11 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:13:33  S utc=17:13:33 verbunden=true fliegt=false pos=38.901382,-9.388118 h=0.0 start=38.901381,-9.388113 akku=99 sat=19 sensoren=aktiv hindernis=- mission=- wp=-1 plan=testkreis-wiese-2 wind=0
 09:13:38  New plan in the cloud: muehle-abendkreis. Tap the plan name → Get plan to load it.
 09:14:05  S utc=17:14:05 verbunden=true fliegt=false pos=38.901382,-9.388118 h=0.0 start=38.901381,-9.388113 akku=99 sat=19 sensoren=aktiv hindernis=- mission=- wp=-1 plan=testkreis-wiese-2 wind=0
+09:14:36  S utc=17:14:36 verbunden=true fliegt=false pos=38.901384,-9.388115 h=0.0 start=38.901381,-9.388113 akku=98 sat=19 sensoren=aktiv hindernis=- mission=- wp=-1 plan=testkreis-wiese-2 wind=0
