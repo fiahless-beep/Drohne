@@ -10,3 +10,13 @@
 09:21:14  T 38.901366 -9.388121 h=0.8 akku=84 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=1682@68°/n360/o60000/u1028
 09:21:16  T 38.901366 -9.388121 h=1.3 akku=84 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=1686@108°/n360/o60000/u1615
 09:21:16  Live-Bild verbunden
+09:21:18  T 38.901366 -9.388121 h=5.1 akku=84 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=6999@28°/n360/o60000/u6093
+09:21:20  T 38.901366 -9.388121 h=11.3 akku=84 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u14021
+09:21:22  T 38.901366 -9.388121 h=17.5 akku=84 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+09:21:24  T 38.901367 -9.388121 h=23.5 akku=83 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+09:21:26  T 38.901367 -9.388121 h=29.1 akku=83 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=-
+09:21:28  T 38.901367 -9.388121 h=31.2 akku=83 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=-
+09:21:30  T 38.901367 -9.388121 h=31.7 akku=83 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=-
+09:21:31  Mission: INTERRUPTED
+09:21:31  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 441@8°/n360/o60000/u60000
+09:21:32  T 38.901375 -9.388116 h=31.9 akku=83 fliegt=true mission=INTERRUPTED wp=-1 wind=0 hind=712@63°/n360/o60000/u60000
