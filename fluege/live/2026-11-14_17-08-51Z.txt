@@ -1,0 +1,14 @@
+Sitzung 2026-11-14_17-08-51 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Handy-Zeitzone America/Los_Angeles
+09:08:50  Gerät: arm64-v8a, armeabi-v7a, armeabi, Seitengröße 4096, 64 Bibliotheken in arm64
+09:08:50  libc++_shared geladen
+09:08:50  libCORPProtobuf geladen
+09:08:50  libcorpbase geladen
+09:08:50  libCORPCSDKCommon geladen
+09:08:50  libFlightRecordEngine geladen
+09:08:50  libcorpsdk_jni geladen
+09:08:50  SDK wird gestartet …
+09:08:51  S utc=17:08:51 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=? hindernis=- mission=- wp=-1 plan=- wind=?
+09:08:51  Gebäudedatenbank geladen: 57938 Gebäude
+09:08:52  Netz verfügbar, Registrierung erneut
+09:08:52  Netz verfügbar, Registrierung erneut
+09:08:53  Registrierung erfolgreich (App-Key gültig)
