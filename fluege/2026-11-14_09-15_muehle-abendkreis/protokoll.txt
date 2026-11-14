@@ -100,3 +100,16 @@
 09:17:37  T 38.901594 -9.388113 h=45.0 akku=89 fliegt=true mission=EXECUTING wp=13 wind=0 hind=60000@0°/n360/o60000/u60000
 09:17:39  T 38.901540 -9.388113 h=45.0 akku=89 fliegt=true mission=EXECUTING wp=13 wind=0 hind=-
 09:17:41  T 38.901486 -9.388113 h=45.0 akku=89 fliegt=true mission=EXECUTING wp=13 wind=0 hind=-
+09:17:43  T 38.901432 -9.388113 h=45.0 akku=89 fliegt=true mission=EXECUTING wp=13 wind=0 hind=-
+09:17:45  T 38.901393 -9.388112 h=45.0 akku=89 fliegt=true mission=EXECUTING wp=13 wind=0 hind=60000@0°/n360/o60000/u60000
+09:17:47  Wegpunkt 15
+09:17:47  Mission: FINISHED
+09:17:47  Mission beendet → hole Fotos und lade hoch
+09:17:47  Mission: READY
+09:17:47  T 38.901383 -9.388113 h=45.0 akku=88 fliegt=true mission=READY wp=-1 wind=0 hind=3081@83°/n360/o60000/u60000
+09:17:49  T 38.901384 -9.388111 h=44.9 akku=88 fliegt=true mission=READY wp=-1 wind=0 hind=2588@83°/n360/o60000/u60000
+09:17:51  T 38.901389 -9.388115 h=42.2 akku=88 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+09:17:53  T 38.901389 -9.388116 h=35.2 akku=88 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+09:17:55  T 38.901389 -9.388117 h=26.9 akku=88 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+09:17:57  T 38.901388 -9.388117 h=20.4 akku=88 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+09:17:59  T 38.901386 -9.388117 h=15.2 akku=88 fliegt=true mission=READY wp=-1 wind=0 hind=8371@183°/n360/o60000/u17766
