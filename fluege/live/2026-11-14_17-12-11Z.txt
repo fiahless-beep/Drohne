@@ -159,3 +159,102 @@ Sitzung 2026-11-14_17-12-11 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:20:58  Mission ist auf der Drohne
 09:20:58  Mission: READY
 09:20:58  S utc=17:20:58 verbunden=true fliegt=false pos=38.901367,-9.388121 h=0.0 start=38.901384,-9.388114 akku=84 sat=21 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-poolkreis wind=0
+09:21:08  Flugprotokoll: 2026-11-14_09-21_muehle-poolkreis/protokoll.txt
+09:21:08  Startpunkt: 38.901384, -9.388114
+09:21:08  Karte: https://www.google.com/maps/dir/38.901384,-9.388114/38.901920,-9.388355/38.901932,-9.388147/38.901862,-9.387958/38.901726,-9.387840/38.901563,-9.387824/38.901415,-9.387914/38.901322,-9.388087/38.901310,-9.388295/38.901380,-9.388484/data=!4m2!4m1!3e2
+09:21:08  Wegpunkt 1
+09:21:08  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3598 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+09:21:08  Rückkehrhöhe: 32 m
+09:21:09  Mission: PREPARING
+09:21:09  Start: ok
+09:21:09  Mission: ENTER_WAYLINE
+09:21:11  S utc=17:21:11 verbunden=true fliegt=false pos=38.901366,-9.388121 h=0.0 start=38.901384,-9.388114 akku=84 sat=21 sensoren=aktiv hindernis=60000@0°/n360/o60000/u100 mission=ENTER_WAYLINE wp=0 plan=muehle-poolkreis wind=0
+09:21:16  S utc=17:21:16 verbunden=true fliegt=true pos=38.901366,-9.388121 h=1.3 start=38.901366,-9.388121 akku=84 sat=23 sensoren=aktiv hindernis=1686@108°/n360/o60000/u1615 mission=ENTER_WAYLINE wp=0 plan=muehle-poolkreis wind=0
+09:21:16  Live-Bild verbunden
+09:21:28  S utc=17:21:28 verbunden=true fliegt=true pos=38.901367,-9.388121 h=31.2 start=38.901366,-9.388121 akku=83 sat=26 sensoren=aktiv hindernis=- mission=ENTER_WAYLINE wp=0 plan=muehle-poolkreis wind=0
+09:21:31  Mission: INTERRUPTED
+09:21:31  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 441@8°/n360/o60000/u60000
+09:21:33  S utc=17:21:33 verbunden=true fliegt=true pos=38.901374,-9.388111 h=32.0 start=38.901366,-9.388121 akku=83 sat=26 sensoren=aktiv hindernis=2435@68°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:21:37  Mission: PREPARING
+09:21:37  Weiter: ok
+09:21:37  Mission: ENTER_WAYLINE
+09:21:40  S utc=17:21:40 verbunden=true fliegt=true pos=38.901379,-9.388112 h=32.0 start=38.901366,-9.388121 akku=83 sat=26 sensoren=aktiv hindernis=739@93°/n360/o60000/u60000 mission=ENTER_WAYLINE wp=0 plan=muehle-poolkreis wind=0
+09:21:41  Mission: EXECUTING
+09:21:45  S utc=17:21:45 verbunden=true fliegt=true pos=38.901413,-9.388126 h=32.0 start=38.901366,-9.388121 akku=82 sat=26 sensoren=aktiv hindernis=2884@168°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-poolkreis wind=0
+09:21:50  Mission: INTERRUPTED
+09:21:50  S utc=17:21:50 verbunden=true fliegt=true pos=38.901512,-9.388172 h=32.0 start=38.901366,-9.388121 akku=82 sat=26 sensoren=aktiv hindernis=6248@188°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:21:51  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 6617@193°/n360/o60000/u60000
+09:21:53  Mission: RECOVERING
+09:21:53  Weiter: ok
+09:21:56  Mission: EXECUTING
+09:21:57  S utc=17:21:57 verbunden=true fliegt=true pos=38.901539,-9.388180 h=32.0 start=38.901366,-9.388121 akku=82 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-poolkreis wind=0
+09:21:57  Mission: INTERRUPTED
+09:21:58  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 804@68°/n360/o60000/u60000
+09:21:59  Mission: RECOVERING
+09:21:59  Weiter: ok
+09:22:01  Mission: EXECUTING
+09:22:05  Mission: INTERRUPTED
+09:22:06  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 1291@68°/n360/o60000/u60000
+09:22:07  S utc=17:22:07 verbunden=true fliegt=true pos=38.901538,-9.388182 h=31.9 start=38.901366,-9.388121 akku=81 sat=26 sensoren=aktiv hindernis=1569@63°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:22:08  Mission: RECOVERING
+09:22:08  Weiter: ok
+09:22:09  Mission: EXECUTING
+09:22:09  Mission: INTERRUPTED
+09:22:10  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 891@83°/n360/o60000/u60000
+09:22:18  S utc=17:22:18 verbunden=true fliegt=true pos=38.901540,-9.388183 h=32.0 start=38.901366,-9.388121 akku=80 sat=26 sensoren=aktiv hindernis=827@83°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:22:20  Mission: RECOVERING
+09:22:20  Weiter: ok
+09:22:21  Mission: EXECUTING
+09:22:21  Mission: INTERRUPTED
+09:22:22  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 922@108°/n360/o60000/u60000
+09:22:30  S utc=17:22:30 verbunden=true fliegt=true pos=38.901540,-9.388183 h=32.1 start=38.901366,-9.388121 akku=80 sat=26 sensoren=aktiv hindernis=- mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:22:33  Mission: RECOVERING
+09:22:33  Weiter: ok
+09:22:34  Mission: EXECUTING
+09:22:35  S utc=17:22:35 verbunden=true fliegt=true pos=38.901538,-9.388183 h=32.0 start=38.901366,-9.388121 akku=79 sat=27 sensoren=aktiv hindernis=4407@88°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-poolkreis wind=0
+09:22:38  Mission: INTERRUPTED
+09:22:39  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 1104@63°/n360/o60000/u60000
+09:22:40  S utc=17:22:40 verbunden=true fliegt=true pos=38.901549,-9.388187 h=32.0 start=38.901366,-9.388121 akku=79 sat=27 sensoren=aktiv hindernis=1185@53°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:22:40  Mission: RECOVERING
+09:22:40  Weiter: ok
+09:22:41  Mission: EXECUTING
+09:22:42  Mission: INTERRUPTED
+09:22:43  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 2988@68°/n360/o60000/u60000
+09:22:52  S utc=17:22:52 verbunden=true fliegt=true pos=38.901543,-9.388186 h=32.0 start=38.901366,-9.388121 akku=79 sat=27 sensoren=aktiv hindernis=1474@73°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:22:57  Mission: RECOVERING
+09:22:57  Weiter: ok
+09:22:57  Mission: INTERRUPTED
+09:22:58  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 1388@73°/n360/o60000/u60000
+09:23:03  S utc=17:23:03 verbunden=true fliegt=true pos=38.901545,-9.388185 h=32.0 start=38.901366,-9.388121 akku=78 sat=27 sensoren=aktiv hindernis=6759@78°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:23:08  Mission: RECOVERING
+09:23:08  Weiter: ok
+09:23:08  Mission: INTERRUPTED
+09:23:09  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 2928@58°/n360/o60000/u60000
+09:23:13  S utc=17:23:13 verbunden=true fliegt=true pos=38.901546,-9.388186 h=31.9 start=38.901366,-9.388121 akku=77 sat=27 sensoren=aktiv hindernis=3648@63°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-poolkreis wind=0
+09:23:16  Abbruch: ok
+09:23:16  Mission: FINISHED
+09:23:16  Mission beendet → hole Fotos und lade hoch
+09:23:16  Mission: READY
+09:23:19  Rückkehr zum Startpunkt ausgelöst
+09:23:20  S utc=17:23:20 verbunden=true fliegt=true pos=38.901545,-9.388186 h=31.9 start=38.901366,-9.388121 akku=77 sat=27 sensoren=aktiv hindernis=1833@168°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-poolkreis wind=0
+09:23:30  S utc=17:23:30 verbunden=true fliegt=true pos=38.901371,-9.388123 h=30.0 start=38.901366,-9.388121 akku=76 sat=27 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-poolkreis wind=0
+09:23:42  S utc=17:23:42 verbunden=true fliegt=true pos=38.901363,-9.388118 h=9.1 start=38.901366,-9.388121 akku=76 sat=27 sensoren=aktiv hindernis=1077@103°/n360/o60000/u9928 mission=READY wp=-1 plan=muehle-poolkreis wind=0
+09:23:52  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
+09:23:52  DJI-Meldung erledigt: 0x1C000402
+09:23:52  Verbindung getrennt (Produkt 0)
+09:23:53  S utc=17:23:53 verbunden=true fliegt=true pos=38.901364,-9.388118 h=1.9 start=38.901366,-9.388121 akku=75 sat=25 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-poolkreis wind=0
+09:23:57  Drohne/Controller verbunden (Produkt 0)
+09:23:57  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Replace SD card
+09:23:58  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+09:24:00  [3 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=75
+09:24:03  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3598 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+09:24:04  S utc=17:24:04 verbunden=true fliegt=false pos=38.901363,-9.388118 h=0.0 start=38.901366,-9.388121 akku=74 sat=21 sensoren=aktiv hindernis=60000@0°/n360/o60000/u25 mission=READY wp=-1 plan=muehle-poolkreis wind=0
+09:24:04  Hole Fotoliste von der Drohne (SD-Karte) …
+09:24:04  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+09:24:04  Landehelfer: Drohne ist am Boden
+09:24:05  Landehelfer: Drohne ist am Boden
+09:24:05  Hole Fotoliste von der Drohne (interner Speicher) …
+09:24:05  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+09:24:06  Fotos geladen: 0
+09:24:07  [10 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=74
+09:24:07  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-14_09-21_muehle-poolkreis
