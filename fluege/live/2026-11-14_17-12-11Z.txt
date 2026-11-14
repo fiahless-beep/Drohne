@@ -290,3 +290,4 @@ Sitzung 2026-11-14_17-12-11 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:33:21  S utc=17:33:21 verbunden=true fliegt=false pos=38.901358,-9.388120 h=0.0 start=38.901366,-9.388121 akku=74 sat=22 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-poolkreis wind=0
 09:33:54  S utc=17:33:54 verbunden=true fliegt=false pos=38.901358,-9.388120 h=0.0 start=38.901366,-9.388121 akku=74 sat=22 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-poolkreis wind=0
 09:34:26  S utc=17:34:26 verbunden=true fliegt=false pos=38.901358,-9.388120 h=0.0 start=38.901366,-9.388121 akku=74 sat=22 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-poolkreis wind=0
+09:35:00  S utc=17:35:00 verbunden=true fliegt=false pos=38.901358,-9.388120 h=0.0 start=38.901366,-9.388121 akku=74 sat=22 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-poolkreis wind=0
