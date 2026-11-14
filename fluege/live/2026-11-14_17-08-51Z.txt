@@ -12,3 +12,15 @@ Sitzung 2026-11-14_17-08-51 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:08:52  Netz verfügbar, Registrierung erneut
 09:08:52  Netz verfügbar, Registrierung erneut
 09:08:53  Registrierung erfolgreich (App-Key gültig)
+09:08:53  Höhenmodell geladen: 8400000 Zellen
+09:08:54  Hinderniserkennung: aus (BRAKE, Hauptschalter false)
+09:08:54  Telemetrie läuft
+09:08:54  DJI-Status: UNKNOWN – Unknown error
+09:08:54  SDK bereit, registriere App bei DJI …
+09:08:54  Registrierung erfolgreich (App-Key gültig)
+09:08:54  Telemetrie läuft
+09:08:54  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
+09:08:55  Live link: Claude reads along (fluege/live/2026-11-14_17-08-51Z.txt)
+09:08:56  Registrierung erfolgreich (App-Key gültig)
+09:08:56  Telemetrie läuft
+09:09:00  S utc=17:09:00 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=aus hindernis=- mission=- wp=-1 plan=- wind=?
