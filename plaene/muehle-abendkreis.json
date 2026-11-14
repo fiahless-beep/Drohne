@@ -1,0 +1,100 @@
+{
+ "name": "muehle-abendkreis",
+ "beschreibung": "Abendkreis um die Mühle: senkrecht auf 45 m, ein Kreis mit 40 m Radius, Kamera aufs Haus, Video läuft durch, zurück. Keine Höhen- und Gebäudedaten für diesen Ort: Höhe 45 m ist Pflicht, vorher Bäume und Leitungen prüfen. Nur bei Tageslicht.",
+ "speed": 3,
+ "rcLost": "goHome",
+ "transitHoehe": 45.0,
+ "start": {
+  "lat": 38.901381,
+  "lon": -9.388113
+ },
+ "ziel": {
+  "lat": 38.901381,
+  "lon": -9.388113,
+  "h": 4
+ },
+ "waypoints": [
+  {
+   "lat": 38.901743,
+   "lon": -9.388113,
+   "h": 45.0,
+   "photo": false,
+   "video": "start",
+   "hover": 2
+  },
+  {
+   "lat": 38.901694,
+   "lon": -9.387882,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901562,
+   "lon": -9.387713,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901381,
+   "lon": -9.387651,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.9012,
+   "lon": -9.387713,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901068,
+   "lon": -9.387882,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901019,
+   "lon": -9.388113,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901068,
+   "lon": -9.388344,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.9012,
+   "lon": -9.388513,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901381,
+   "lon": -9.388575,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901562,
+   "lon": -9.388513,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901694,
+   "lon": -9.388344,
+   "h": 45.0,
+   "photo": false
+  },
+  {
+   "lat": 38.901743,
+   "lon": -9.388113,
+   "h": 45.0,
+   "photo": false,
+   "video": "stop",
+   "hover": 2
+  }
+ ]
+}
