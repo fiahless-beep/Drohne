@@ -163,3 +163,13 @@
 09:24:06  Fotos geladen: 0
 09:24:07  [10 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=74
 09:24:07  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-14_09-21_muehle-poolkreis
+09:25:10  Live-Bild verbunden
+09:25:12  Live-Bild verbunden
+09:25:12  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
+09:25:12  DJI-Meldung erledigt: 0x1C000402
+09:25:12  Verbindung getrennt (Produkt 0)
+09:25:13  Live-Bild verbunden
+09:25:14  Live-Bild verbunden
+09:25:14  Live-Bild verbunden
+09:25:15  Live-Bild verbunden
+09:25:15  Live-Bild verbunden
