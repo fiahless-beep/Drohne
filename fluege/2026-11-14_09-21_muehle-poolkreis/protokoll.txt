@@ -136,3 +136,28 @@
 09:23:42  T 38.901363 -9.388118 h=9.1 akku=76 fliegt=true mission=READY wp=-1 wind=0 hind=1286@98°/n360/o60000/u10618
 09:23:44  T 38.901363 -9.388118 h=6.4 akku=76 fliegt=true mission=READY wp=-1 wind=0 hind=1126@108°/n360/o60000/u5283
 09:23:46  T 38.901364 -9.388117 h=4.2 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=4725@173°/n360/o60000/u4033
+09:23:48  T 38.901364 -9.388118 h=2.4 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=2444@103°/n360/o60000/u2921
+09:23:50  T 38.901364 -9.388118 h=1.9 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=1906@103°/n360/o60000/u2629
+09:23:52  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
+09:23:52  T 38.901364 -9.388118 h=1.9 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=-
+09:23:52  DJI-Meldung erledigt: 0x1C000402
+09:23:52  Verbindung getrennt (Produkt 0)
+09:23:54  T 38.901364 -9.388118 h=1.9 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=-
+09:23:56  T 38.901364 -9.388118 h=1.9 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=-
+09:23:57  Drohne/Controller verbunden (Produkt 0)
+09:23:57  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Replace SD card
+09:23:58  T 38.901364 -9.388118 h=0.1 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=1934@103°/n360/o60000/u874
+09:23:58  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+09:24:00  T 38.901364 -9.388118 h=-0.3 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=1497@83°/n360/o60000/u448
+09:24:00  [3 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=75
+09:24:02  T 38.901364 -9.388118 h=-0.7 akku=75 fliegt=true mission=READY wp=-1 wind=0 hind=1688@163°/n360/o60000/u65
+09:24:03  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3598 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+09:24:04  T 38.901363 -9.388118 h=0.0 akku=74 fliegt=false mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u25
+09:24:04  Hole Fotoliste von der Drohne (SD-Karte) …
+09:24:04  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+09:24:04  Landehelfer: Drohne ist am Boden
+09:24:05  Landehelfer: Drohne ist am Boden
+09:24:05  Hole Fotoliste von der Drohne (interner Speicher) …
+09:24:05  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+09:24:06  T 38.901363 -9.388118 h=0.0 akku=74 fliegt=false mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u25
+09:24:06  Fotos geladen: 0
