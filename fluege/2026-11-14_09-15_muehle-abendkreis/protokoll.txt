@@ -135,3 +135,21 @@
 09:18:32  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
 09:18:33  Fotos geladen: 0
 09:18:34  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-14_09-15_muehle-abendkreis
+09:20:53  New plan in the cloud: muehle-poolkreis. Tap the plan name → Get plan to load it.
+09:20:56  Lade Flugplan aus der Cloud …
+09:20:56  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+09:20:56  Transithöhe 32 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+09:20:56  Tempo: max 3.0 m/s, 15 Abschnitte nahe Gebäuden gedrosselt (min 3,0 m/s)
+09:20:56  Oberflächen-Wächter: Strecke frei
+09:20:56  KMZ erstellt: 15 Punkte, 344 m, ca. 2 min
+09:20:56  DJI-Prüfung: in Ordnung
+09:20:56  Plan übernommen, lade auf die Drohne …
+09:20:56  Lade Mission auf die Drohne …
+09:20:57  Mission: UPLOADING
+09:20:57  Upload 6 %
+09:20:57  Upload 30 %
+09:20:57  Upload 53 %
+09:20:57  Upload 77 %
+09:20:57  Upload 100 %
+09:20:58  Mission ist auf der Drohne
+09:20:58  Mission: READY
