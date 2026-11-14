@@ -258,3 +258,4 @@ Sitzung 2026-11-14_17-12-11 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:24:06  Fotos geladen: 0
 09:24:07  [10 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=74
 09:24:07  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-14_09-21_muehle-poolkreis
+09:24:37  S utc=17:24:37 verbunden=true fliegt=false pos=38.901360,-9.388118 h=0.0 start=38.901366,-9.388121 akku=74 sat=23 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-poolkreis wind=0
