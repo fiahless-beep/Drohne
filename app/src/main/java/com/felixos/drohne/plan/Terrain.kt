@@ -85,6 +85,17 @@ object Terrain {
     fun covers(m: Mission, home: LatLon?): Boolean =
         loaded && (home == null || groundM(home) != null) && m.waypoints.all { surfaceM(it.pos) != null }
 
+    /** Ist die gerade Linie a→b in Höhe [hM] (relativ zum Nullpunkt [g0] über Meer) überall mindestens [clearanceM] über der gemessenen Oberfläche? Fehlende Daten = nein. */
+    fun lineClear(g0: Double, a: LatLon, b: LatLon, hM: Double, clearanceM: Double): Boolean {
+        val n = max(1, (Geo.distance(a, b) / 3.0).toInt())
+        for (k in 0..n) {
+            val t = k.toDouble() / n
+            val surf = surfaceM(LatLon(a.lat + (b.lat - a.lat) * t, a.lon + (b.lon - a.lon) * t)) ?: return false
+            if (hM < surf - g0 + clearanceM) return false
+        }
+        return true
+    }
+
     /** Geländeunterschied Ziel minus Start in m (positiv = Ziel liegt höher), null wenn unbekannt. */
     fun riseM(home: LatLon, p: LatLon): Double? { val a = groundM(home) ?: return null; val b = groundM(p) ?: return null; return b - a }
 }

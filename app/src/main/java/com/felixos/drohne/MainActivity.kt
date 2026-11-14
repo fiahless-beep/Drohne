@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
         LiveLink.init(applicationContext)
         ObstacleGuard.init(applicationContext)
         FrameShots.init(applicationContext)
+        MissionController.duskMode = getSharedPreferences("drohne", MODE_PRIVATE).getBoolean("dusk_mode", false)
         FlightGuard.init()
         FlightGuard.onAlert = { t -> runOnUiThread { android.widget.Toast.makeText(this, t, android.widget.Toast.LENGTH_LONG).show(); renderStatus(DroneManager.state) } }
         Thread {
@@ -982,6 +983,12 @@ class MainActivity : AppCompatActivity() {
         val swap = FollowController.swapAxes(this)
         menu("Flight & guards", listOf(
             "Flight guards: route, ground clearance, battery turn-back (${if (FlightGuard.enabled) "on" else "OFF"})" to { FlightGuard.enabled = !FlightGuard.enabled; DroneManager.log("Flight guards ${if (FlightGuard.enabled) "on" else "OFF"}") },
+            "Dusk mode: obstacle sensing off during a plan flight, only where height data shows 10 m clearance (${if (MissionController.duskMode) "on" else "off"})" to {
+                MissionController.duskMode = !MissionController.duskMode
+                getSharedPreferences("drohne", MODE_PRIVATE).edit().putBoolean("dusk_mode", MissionController.duskMode).apply()
+                val why = if (MissionController.duskMode) MissionController.duskBlocker() else null
+                DroneManager.log("Dusk mode ${if (MissionController.duskMode) "on" else "off"}" + (if (MissionController.duskMode && why != null) ". For the current plan it would NOT be used: $why" else ""))
+            },
             "Route and ground guards may pause the plan (${if (FlightGuard.mayPause) "on" else "observe only"})" to { FlightGuard.mayPause = !FlightGuard.mayPause; DroneManager.log("Route and ground guards: ${if (FlightGuard.mayPause) "may pause the plan" else "observe only"}") },
             "Image guard may pause the plan (${if (ObstacleGuard.armed) "on" else "observe only"})" to { ObstacleGuard.setArmed(this, !ObstacleGuard.armed) },
             "Turn image guard ${if (ObstacleGuard.enabled) "off" else "on"}" to { ObstacleGuard.setEnabled(this, !ObstacleGuard.enabled) },

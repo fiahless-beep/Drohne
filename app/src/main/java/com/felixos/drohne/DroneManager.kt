@@ -448,7 +448,7 @@ object DroneManager {
         })
         pm.setObstacleAvoidanceType(t,
             object : dji.v5.common.callback.CommonCallbacks.CompletionCallback {
-                override fun onSuccess() { obstacleTypeOn = on; sensorsFromType(); log(if (on) "Hinderniserkennung wieder AN (Bremsen)${if (reason.isNotBlank()) " – $reason" else ""}" else "HINDERNISERKENNUNG AUS – nur für den Handstart, vorsichtig fliegen. Geht bei „Plan holen“/„Start“ automatisch wieder an.") }
+                override fun onSuccess() { obstacleTypeOn = on; sensorsFromType(); log(if (on) "Hinderniserkennung wieder AN (Bremsen)${if (reason.isNotBlank()) " – $reason" else ""}" else if (reason.isNotBlank()) "HINDERNISERKENNUNG AUS – $reason" else "HINDERNISERKENNUNG AUS – nur für den Handstart, vorsichtig fliegen. Geht bei „Plan holen“/„Start“ automatisch wieder an.") }
                 override fun onFailure(error: IDJIError) { log("Hinderniserkennung ${if (on) "einschalten" else "ausschalten"} fehlgeschlagen: ${error.description()} – in DJI Fly unter Safety → Obstacle Avoidance") }
             })
     } }

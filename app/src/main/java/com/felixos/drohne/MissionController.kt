@@ -124,6 +124,28 @@ object MissionController {
     /** Grund, den die Drohne für die letzte Unterbrechung genannt hat (bis der Plan wieder läuft). */
     /** Lag der zuletzt vorbereitete Plan ganz im Höhenmodell? Nur dann sagt „Strecke frei“ etwas aus. */
     @Volatile var terrainCovered = false; private set
+
+    /** Dämmerungsmodus (Felix 14.11.): In der Dämmerung meldet die Drohne Phantom-Hindernisse in freier Luft und pausiert den Plan.
+     *  Ist er an, schaltet die App die Hinderniserkennung nur für den Planflug aus – aber nur, wenn das Höhenmodell die ganze Strecke
+     *  abdeckt und sie überall mindestens [DUSK_CLEARANCE_M] über der gemessenen Oberfläche (Bäume, Dächer) liegt. Nach der Landung geht sie wieder an. */
+    const val DUSK_CLEARANCE_M = 10.0
+    @Volatile var duskMode = false
+    @Volatile var duskActive = false; private set
+    private var homeLegChecked = true
+    private var duskSinceMs = 0L
+
+    /** null = Dämmerungsmodus darf für den geladenen Plan gelten, sonst der Grund dagegen (englisch, für die Anzeige). */
+    fun duskBlocker(): String? {
+        val m = currentMission ?: return "no plan loaded"
+        val T = com.felixos.drohne.plan.Terrain
+        val h = DroneManager.state.home
+        val home = if (h?.latitude != null && h.latitude != 0.0) com.felixos.drohne.plan.LatLon(h.latitude, h.longitude) else return "start point unknown"
+        if (!T.covers(m, home)) return "no height data for this place, so the app cannot know the route is clear of trees and roofs"
+        T.check(m, home, clearanceM = DUSK_CLEARANCE_M, homeAboveGroundM = startAboveGroundM, homeLeg = homeLegChecked).firstOrNull()?.let { return "less than ${DUSK_CLEARANCE_M.toInt()} m above the surface on $it" }
+        val g0 = (T.groundM(home) ?: return "no height data at the start point") + startAboveGroundM
+        if (!T.lineClear(g0, m.waypoints.last().pos, home, rthHeightM, DUSK_CLEARANCE_M)) return "the way home at ${rthHeightM.toInt()} m is less than ${DUSK_CLEARANCE_M.toInt()} m above the surface"
+        return null
+    }
     @Volatile var interruptWhy: String? = null; private set
     private var lastLoggedIndex = -99
 
@@ -287,6 +309,7 @@ object MissionController {
         }
         val homeLeg = !(mIn0.startFromCurrent && DroneManager.state.flying)  // in-flight plans begin at the drone, not at home
         conflicts = com.felixos.drohne.plan.Obstacles.check(m, home, homeLeg = homeLeg) + (home?.let { com.felixos.drohne.plan.Obstacles.checkReturn(m, it, rthHeightM) } ?: emptyList())
+        homeLegChecked = homeLeg
         terrainConflicts = if (com.felixos.drohne.plan.Terrain.loaded) com.felixos.drohne.plan.Terrain.check(m, home, homeAboveGroundM = above, homeLeg = homeLeg) else emptyList()
         if (landingTail) {
             val lastIdx = m.waypoints.size - 1 + (if (home != null) 1 else 0)
@@ -388,8 +411,16 @@ object MissionController {
         if (!uploaded) return DroneManager.log("Mission erst hochladen")
         lastReachedIndex = -1; lastLoggedIndex = -99; FlightGuard.rearm()  // auch bei erneutem Start desselben Plans: erst wieder scharf, wenn die Drohne auf der Strecke ist
         if (Simulator.active) { currentMission?.let { Simulator.fly(it, rthHeightM) }; return }
-        DroneManager.ensureObstacleAvoidance("Mission startet")
         FlightReport.startFlight(missionId)
+        val dusk = if (duskMode) duskBlocker() else "off"
+        if (duskMode && dusk == null) {
+            duskActive = true; duskSinceMs = System.currentTimeMillis()
+            DroneManager.setObstacleAvoidance(false, "dusk mode")
+            DroneManager.log("Dusk mode: obstacle sensing OFF for this plan flight. The whole route is at least ${DUSK_CLEARANCE_M.toInt()} m above the measured surface. It comes back on after landing. Keep the drone in sight.")
+        } else {
+            if (duskMode) DroneManager.log("Dusk mode NOT used: $dusk. Obstacle sensing stays on.")
+            DroneManager.ensureObstacleAvoidance("Mission startet")
+        }
         currentMission?.let { m ->
             val h = DroneManager.state.home
             if (h?.latitude != null && h.latitude != 0.0) DroneManager.log(String.format(java.util.Locale.US, "Startpunkt: %.6f, %.6f", h.latitude, h.longitude))
@@ -424,7 +455,12 @@ object MissionController {
 
     /** Zustand von der App angenommen (Drohne meldet nichts): Pause/Weiter/Abbruch/Landung führen ihn weiter. */
     @Volatile private var assumed = false
-    fun landed() { if (assumed && executing) { assumed = false; applyState(WaypointMissionExecuteState.READY, null) } }
+    fun landed() {
+        // Die Landemeldung kann auch kurz nach „Start“ kommen, solange die Drohne noch am Boden steht: dann nicht zurückschalten.
+        if (duskActive && System.currentTimeMillis() - duskSinceMs > 30_000L) { duskActive = false; DroneManager.setObstacleAvoidance(true, "landed after a dusk-mode flight") }
+        landedAssumed()
+    }
+    private fun landedAssumed() { if (assumed && executing) { assumed = false; applyState(WaypointMissionExecuteState.READY, null) } }
     private fun cb(what: String) = object : CommonCallbacks.CompletionCallback {
         override fun onSuccess() { DroneManager.log("$what: ok")
             if (assumed) when (what) { "Pause" -> applyState(WaypointMissionExecuteState.INTERRUPTED, null); "Weiter" -> applyState(WaypointMissionExecuteState.EXECUTING, null); "Abbruch" -> { assumed = false; applyState(WaypointMissionExecuteState.READY, null) } } }
