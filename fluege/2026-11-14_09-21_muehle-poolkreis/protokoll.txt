@@ -34,3 +34,22 @@
 09:21:48  T 38.901462 -9.388149 h=32.0 akku=82 fliegt=true mission=EXECUTING wp=0 wind=0 hind=1886@128°/n360/o60000/u60000
 09:21:50  T 38.901512 -9.388172 h=32.0 akku=82 fliegt=true mission=EXECUTING wp=0 wind=0 hind=5075@168°/n360/o60000/u60000
 09:21:50  Mission: INTERRUPTED
+09:21:51  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 6617@193°/n360/o60000/u60000
+09:21:52  T 38.901545 -9.388184 h=31.9 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+09:21:53  Mission: RECOVERING
+09:21:53  Weiter: ok
+09:21:54  T 38.901544 -9.388181 h=32.0 akku=82 fliegt=true mission=RECOVERING wp=-1 wind=0 hind=1581@88°/n360/o60000/u60000
+09:21:56  T 38.901539 -9.388180 h=32.0 akku=82 fliegt=true mission=RECOVERING wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+09:21:56  Mission: EXECUTING
+09:21:57  Mission: INTERRUPTED
+09:21:58  T 38.901536 -9.388180 h=31.9 akku=82 fliegt=true mission=INTERRUPTED wp=-1 wind=0 hind=829@78°/n360/o60000/u60000
+09:21:58  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 804@68°/n360/o60000/u60000
+09:21:59  Mission: RECOVERING
+09:21:59  Weiter: ok
+09:22:00  T 38.901536 -9.388179 h=31.9 akku=81 fliegt=true mission=RECOVERING wp=-1 wind=0 hind=3652@108°/n360/o60000/u60000
+09:22:01  Mission: EXECUTING
+09:22:02  T 38.901536 -9.388180 h=31.9 akku=81 fliegt=true mission=EXECUTING wp=0 wind=0 hind=2590@58°/n360/o60000/u60000
+09:22:04  T 38.901536 -9.388182 h=31.9 akku=81 fliegt=true mission=EXECUTING wp=0 wind=0 hind=3245@68°/n360/o60000/u60000
+09:22:05  Mission: INTERRUPTED
+09:22:06  T 38.901538 -9.388182 h=31.9 akku=81 fliegt=true mission=INTERRUPTED wp=-1 wind=0 hind=1344@68°/n360/o60000/u60000
+09:22:06  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 1291@68°/n360/o60000/u60000
