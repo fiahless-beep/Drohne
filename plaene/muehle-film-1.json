@@ -1,6 +1,6 @@
 {
  "name": "muehle-film-1",
- "beschreibung": "Drei Kamerafahrten an der Mühle, Kamera immer auf den Pool: 1) Anflug von Osten über die Felder von 20 auf 22 m, 2) Dreiviertelkreis um den Pool mit 42 m Radius in 22 m Höhe, 3) Rückzug nach Norden mit Steigen auf 50 m. Jede Fahrt ist ein eigener Clip. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 10 m über Bäumen und Dächern. Start auf dem Parkplatz vor dem Tor. Für die goldene Stunde, Flug vor Sonnenuntergang beenden.",
+ "beschreibung": "Drei Kamerafahrten an der Mühle, Kamera immer auf den Pool: 1) Anflug von Osten über die Felder von 20 auf 22 m, 2) Dreiviertelkreis um den Pool mit 42 m Radius in 22 m Höhe, 3) Rückzug nach Nordosten über die Felder mit Steigen auf 50 m. Jede Fahrt ist ein eigener Clip. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 10 m über Bäumen und Dächern. Start auf dem Parkplatz vor dem Tor. Für die goldene Stunde, Flug vor Sonnenuntergang beenden.",
  "speed": 3,
  "rcLost": "goHome",
  "transitHoehe": 30,
@@ -94,21 +94,21 @@
    "hover": 1
   },
   {
-   "lat": 38.902228,
-   "lon": -9.388286,
+   "lat": 38.90223,
+   "lon": -9.388101,
    "h": 25,
    "photo": false,
    "video": "start"
   },
   {
-   "lat": 38.902585,
-   "lon": -9.388212,
+   "lat": 38.902442,
+   "lon": -9.387695,
    "h": 38,
    "photo": false
   },
   {
-   "lat": 38.902936,
-   "lon": -9.388091,
+   "lat": 38.902636,
+   "lon": -9.387265,
    "h": 50,
    "photo": false,
    "video": "stop",

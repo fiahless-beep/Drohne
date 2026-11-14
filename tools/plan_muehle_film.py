@@ -30,13 +30,13 @@ for i, brg in enumerate(range(90, 361, 30)):
     if i == 1: kw = dict(video="start")
     wp(off(POOL, R, brg % 360), 22, **kw)
 wps[-1].update(video="stop", hover=1)
-# 3 Rückzug nach Norden mit Steigen, Kamera bleibt auf dem Pool
-wp(off(POOL, 55, 2), 25, video="start")
-wp(off(POOL, 95, 5), 38)
-wp(off(POOL, 135, 8), 50, video="stop", hover=2)
+# 3 Rückzug nach Nordosten über die Felder mit Steigen, Kamera bleibt auf dem Pool
+wp(off(POOL, 58, 18), 25, video="start")
+wp(off(POOL, 95, 34), 38)
+wp(off(POOL, 135, 42), 50, video="stop", hover=2)
 TR = 30
 plan = {"name": "muehle-film-1",
-        "beschreibung": "Drei Kamerafahrten an der Mühle, Kamera immer auf den Pool: 1) Anflug von Osten über die Felder von 20 auf 22 m, 2) Dreiviertelkreis um den Pool mit 42 m Radius in 22 m Höhe, 3) Rückzug nach Norden mit Steigen auf 50 m. Jede Fahrt ist ein eigener Clip. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 10 m über Bäumen und Dächern. Start auf dem Parkplatz vor dem Tor. Für die goldene Stunde, Flug vor Sonnenuntergang beenden.",
+        "beschreibung": "Drei Kamerafahrten an der Mühle, Kamera immer auf den Pool: 1) Anflug von Osten über die Felder von 20 auf 22 m, 2) Dreiviertelkreis um den Pool mit 42 m Radius in 22 m Höhe, 3) Rückzug nach Nordosten über die Felder mit Steigen auf 50 m. Jede Fahrt ist ein eigener Clip. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 10 m über Bäumen und Dächern. Start auf dem Parkplatz vor dem Tor. Für die goldene Stunde, Flug vor Sonnenuntergang beenden.",
         "speed": 3, "rcLost": "goHome", "transitHoehe": TR, "start": {"lat": START[0], "lon": START[1]},
         "ziel": {"lat": POOL[0], "lon": POOL[1], "h": 0}, "waypoints": wps}
 pts = [(START, TR)] + [((w["lat"], w["lon"]), w["h"]) for w in wps] + [(START, TR)]
