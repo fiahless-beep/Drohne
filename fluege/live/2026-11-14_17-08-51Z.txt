@@ -24,3 +24,15 @@ Sitzung 2026-11-14_17-08-51 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:08:56  Registrierung erfolgreich (App-Key gültig)
 09:08:56  Telemetrie läuft
 09:09:00  S utc=17:09:00 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=aus hindernis=- mission=- wp=-1 plan=- wind=?
+09:11:39  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported by current aircraft
+09:11:39  Hinderniserkennung einschalten fehlgeschlagen: Not supported by current aircraft – in DJI Fly unter Safety → Obstacle Avoidance
+09:11:39  Lade Flugplan aus der Cloud …
+09:11:39  Gebäudedatenbank: 136 Gebäude im Umkreis der Strecke
+09:11:39  ACHTUNG: Startpunkt unbekannt, Transit nur über dem Ziel. Vor dem Start Plan erneut übernehmen!
+09:11:39  Tempo: max 4.0 m/s
+09:11:39  Gebäude-Wächter: Strecke frei (136 Gebäude geprüft)
+09:11:40  KMZ erstellt: 7 Punkte, 180 m, ca. 2 min
+09:11:40  DJI-Prüfung: in Ordnung
+09:11:40  Plan übernommen, lade auf die Drohne …
+09:11:40  Lade Mission auf die Drohne …
+09:11:40  S utc=17:11:40 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=aus hindernis=- mission=- wp=-1 plan=testkreis-wiese-2 wind=?
