@@ -146,8 +146,10 @@ class MainActivity : AppCompatActivity() {
                 DroneManager.log("Gebäudedatenbank geladen: $n Gebäude")
             } catch (t: Throwable) { DroneManager.log("Keine Gebäudedatenbank in der App (${t.javaClass.simpleName})") }
             try {
-                val n = assets.open("hoehen.bin").use { com.felixos.drohne.plan.Terrain.load(it) }
-                DroneManager.log("Höhenmodell geladen: $n Zellen")
+                // Mehrere Raster: hoehen.bin (Lissabon), hoehen_muehle.bin …; kleine zuerst, damit sie schnell da sind.
+                val files = (assets.list("") ?: emptyArray()).filter { it.startsWith("hoehen") && it.endsWith(".bin") }.sortedByDescending { it.length }
+                for (f in files) { val n = assets.open(f).use { com.felixos.drohne.plan.Terrain.load(it) }; DroneManager.log("Höhenmodell geladen: $f, $n Zellen") }
+                if (files.isEmpty()) DroneManager.log("Kein Höhenmodell in der App")
             } catch (t: Throwable) { DroneManager.log("Kein Höhenmodell in der App (${t.javaClass.simpleName})") }
         }.start()
         var collected = false
@@ -1292,9 +1294,9 @@ class MainActivity : AppCompatActivity() {
             val low = m.waypoints.filter { it.heightM < MIN_LOW_HEIGHT_M }
             val pos = s.location?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) } ?: home?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
             val sun = Geo.sunElevationDeg(pos ?: m.waypoints.first().pos, System.currentTimeMillis())
-            // Ohne Gebäudedaten und ohne ausdrücklich freie Umgebung: nichts unter Transithöhe.
+            // Ohne Gebäudedaten, ohne Höhenmodell für die ganze Strecke und ohne ausdrücklich freie Umgebung: nichts unter Transithöhe.
             val underTransit = m.waypoints.filter { it.heightM < MissionController.TRANSIT_HEIGHT_M }
-            if (underTransit.isNotEmpty() && m.obstacles.isEmpty() && !m.openArea) add("${underTransit.size} points below ${MissionController.TRANSIT_HEIGHT_M.toInt()} m, but the plan has no building data and is not marked as open area. Ask Claude to complete the plan.")
+            if (underTransit.isNotEmpty() && m.obstacles.isEmpty() && !m.openArea && !MissionController.terrainCovered) add("${underTransit.size} points below ${MissionController.TRANSIT_HEIGHT_M.toInt()} m, but the plan has no building data and is not marked as open area. Ask Claude to complete the plan.")
             if (low.isNotEmpty() && sun != null && sun < -3) add("${low.size} points below ${MIN_LOW_HEIGHT_M.toInt()} m, but it is dark: the sensors are blind at night. Daylight only.")
             if (low.isNotEmpty() && !s.sensorsOk) add("${low.size} points below ${MIN_LOW_HEIGHT_M.toInt()} m, obstacle sensing ${sensorsEn(s.sensors)}. Only once it reports on.")
         }

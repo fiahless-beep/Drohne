@@ -14,42 +14,50 @@ import kotlin.math.max
 object Terrain {
     const val NODATA = -32768
 
-    @Volatile private var mdt: ShortArray? = null
-    @Volatile private var mds: ShortArray? = null
-    private var lat0 = 0.0; private var lon0 = 0.0; private var dLat = 0.0; private var dLon = 0.0; private var rows = 0; private var cols = 0
-    val loaded: Boolean get() = mdt != null
+    /** Ein Raster; die App kann mehrere tragen (Lissabon, Mühle …), jedes aus einer eigenen assets/hoehen*.bin. */
+    private class Grid(val lat0: Double, val lon0: Double, val dLat: Double, val dLon: Double, val rows: Int, val cols: Int, val mdt: ShortArray, val mds: ShortArray) {
+        fun index(p: LatLon): Int {
+            val r = ((lat0 - p.lat) / dLat).toInt(); val c = ((p.lon - lon0) / dLon).toInt()
+            return if (p.lat > lat0 || p.lon < lon0 || r < 0 || c < 0 || r >= rows || c >= cols) -1 else r * cols + c
+        }
+    }
+    @Volatile private var grids: List<Grid> = emptyList()
+    val loaded: Boolean get() = grids.isNotEmpty()
 
+    /** Lädt ein weiteres Raster dazu (bereits geladene bleiben). */
     fun load(input: InputStream): Int {
         val bytes = input.readBytes()
         val b = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
         require(b.get() == 'H'.code.toByte() && b.get() == 'O'.code.toByte() && b.get() == 'E'.code.toByte() && b.get() == '1'.code.toByte()) { "kein HOE1" }
-        lat0 = b.double; lon0 = b.double; dLat = b.double; dLon = b.double; rows = b.int; cols = b.int
+        val lat0 = b.double; val lon0 = b.double; val dLat = b.double; val dLon = b.double; val rows = b.int; val cols = b.int
         val n = rows * cols
         val g = ShortArray(n); val s = ShortArray(n)
         b.asShortBuffer().get(g); b.position(b.position() + n * 2); b.asShortBuffer().get(s)
-        mdt = g; mds = s
+        grids = grids + Grid(lat0, lon0, dLat, dLon, rows, cols, g, s)
         return n
     }
 
-    /** Für Tests: kleines Raster direkt setzen (Meter). */
+    /** Für Tests: kleines Raster direkt setzen (Meter); ersetzt alle geladenen. */
     fun loadForTest(lat0: Double, lon0: Double, dLat: Double, dLon: Double, groundM: Array<DoubleArray>, surfaceM: Array<DoubleArray>) {
-        this.lat0 = lat0; this.lon0 = lon0; this.dLat = dLat; this.dLon = dLon; rows = groundM.size; cols = groundM[0].size
-        mdt = ShortArray(rows * cols) { (groundM[it / cols][it % cols] * 10).toInt().toShort() }
-        mds = ShortArray(rows * cols) { (surfaceM[it / cols][it % cols] * 10).toInt().toShort() }
+        val rows = groundM.size; val cols = groundM[0].size
+        grids = listOf(Grid(lat0, lon0, dLat, dLon, rows, cols,
+            ShortArray(rows * cols) { (groundM[it / cols][it % cols] * 10).toInt().toShort() },
+            ShortArray(rows * cols) { (surfaceM[it / cols][it % cols] * 10).toInt().toShort() }))
     }
 
-    private fun sample(arr: ShortArray?, p: LatLon): Double? {
-        val a = arr ?: return null
-        val r = ((lat0 - p.lat) / dLat).toInt(); val c = ((p.lon - lon0) / dLon).toInt()
-        if (r < 0 || c < 0 || r >= rows || c >= cols) return null
-        val v = a[r * cols + c].toInt()
-        return if (v == NODATA) null else v / 10.0
+    private fun sample(surface: Boolean, p: LatLon): Double? {
+        for (g in grids) {
+            val i = g.index(p); if (i < 0) continue
+            val v = (if (surface) g.mds else g.mdt)[i].toInt()
+            if (v != NODATA) return v / 10.0
+        }
+        return null
     }
 
     /** Geländehöhe über Meer in m, null = außerhalb/unbekannt. */
-    fun groundM(p: LatLon): Double? = sample(mdt, p)
+    fun groundM(p: LatLon): Double? = sample(false, p)
     /** Oberflächenhöhe über Meer in m (Dach, Baum, Kran), null = außerhalb/unbekannt. */
-    fun surfaceM(p: LatLon): Double? = sample(mds, p)
+    fun surfaceM(p: LatLon): Double? = sample(true, p)
 
     data class Conflict(val from: Int, val to: Int, val flightM: Double, val surfaceRelM: Double, val at: LatLon) {
         override fun toString() = "leg ${from + 1}→${to + 1}: flight height ${flightM.toInt()} m, surface there ${surfaceRelM.toInt()} m above the start point (ground/tree/roof)"

@@ -189,4 +189,19 @@ class TerrainTest {
         val baum = Mission("t", listOf(Waypoint(ziel, 36.0), Waypoint(ziel, 40.0)), speedMs = 3.0)
         assertTrue("36 m über Start: Ziel frei (27+8), aber Baum unterwegs (15+15+8)", Terrain.check(baum, home).any { it.surfaceRelM > 28.0 })
     }
+
+    /** Mühle: der Filmplan liegt komplett im eigenen Höhenraster und überall mindestens 10 m über der gemessenen Oberfläche (Bedingung des Dämmerungsmodus). */
+    @Test fun muehleFilmPlanIsClearOfTheMeasuredSurface() {
+        val bin = listOf(File("src/main/assets/hoehen_muehle.bin"), File("app/src/main/assets/hoehen_muehle.bin")).first { it.exists() }
+        Terrain.loadForTest(0.0, 0.0, 1.0, 1.0, arrayOf(doubleArrayOf(0.0)), arrayOf(doubleArrayOf(0.0)))  // leeren
+        bin.inputStream().use { Terrain.load(it) }
+        val f = listOf(File("../plaene/muehle-film-1.json"), File("plaene/muehle-film-1.json")).first { it.exists() }
+        val (m, _) = PlanJson.parse(f.readText())
+        val start = LatLon(38.901381, -9.388113)
+        assertEquals(88.2, Terrain.groundM(start)!!, 0.3)
+        assertTrue(Terrain.covers(m, start))
+        assertTrue(Terrain.check(m, start, clearanceM = 10.0).toString(), Terrain.check(m, start, clearanceM = 10.0).isEmpty())
+        assertTrue(Terrain.lineClear(Terrain.groundM(start)!!, m.waypoints.last().pos, start, 30.0, 10.0))
+        assertTrue(Terrain.surfaceM(LatLon(38.7311, -9.1550)) == null || Terrain.loaded)
+    }
 }
