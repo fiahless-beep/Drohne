@@ -50,3 +50,13 @@
 09:16:17  T 38.901473 -9.387666 h=45.0 akku=94 fliegt=true mission=EXECUTING wp=3 wind=0 hind=-
 09:16:19  T 38.901420 -9.387653 h=45.0 akku=94 fliegt=true mission=EXECUTING wp=3 wind=0 hind=-
 09:16:20  Wegpunkt 5
+09:16:21  T 38.901367 -9.387651 h=45.0 akku=94 fliegt=true mission=EXECUTING wp=4 wind=0 hind=-
+09:16:23  T 38.901314 -9.387659 h=45.0 akku=93 fliegt=true mission=EXECUTING wp=4 wind=0 hind=-
+09:16:25  T 38.901263 -9.387677 h=45.0 akku=93 fliegt=true mission=EXECUTING wp=4 wind=0 hind=-
+09:16:27  T 38.901215 -9.387702 h=45.0 akku=93 fliegt=true mission=EXECUTING wp=4 wind=0 hind=-
+09:16:27  Wegpunkt 6
+09:16:29  T 38.901170 -9.387737 h=45.0 akku=93 fliegt=true mission=EXECUTING wp=5 wind=0 hind=-
+09:16:31  T 38.901130 -9.387781 h=45.0 akku=93 fliegt=true mission=EXECUTING wp=5 wind=0 hind=-
+09:16:33  T 38.901095 -9.387831 h=45.0 akku=93 fliegt=true mission=EXECUTING wp=5 wind=0 hind=-
+09:16:35  Wegpunkt 7
+09:16:35  T 38.901066 -9.387885 h=45.0 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=-
