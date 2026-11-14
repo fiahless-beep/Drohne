@@ -134,3 +134,4 @@
 09:18:32  Hole Fotoliste von der Drohne (interner Speicher) …
 09:18:32  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
 09:18:33  Fotos geladen: 0
+09:18:34  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-14_09-15_muehle-abendkreis
