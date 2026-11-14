@@ -37,6 +37,7 @@ object LiveLink {
     private var lastStatusMs = 0L
     private var lastStatusKey = ""
     private var lastPlanCheckMs = 0L
+    private var lastShotUploadMs = 0L
     private var planEtag: String? = null
     private var announced = false
     private var failures = 0
@@ -100,6 +101,11 @@ object LiveLink {
         if (!enabled) return
         val token = FlightReport.token(app) ?: return
         if (now - lastPlanCheckMs >= PLAN_CHECK_MS) { lastPlanCheckMs = now; checkPlan(token) }
+        // Standbilder: im Flug alle 20 s das neueste, am Boden zügig den Rest (je Runde drei).
+        if (!s.flying || now - lastShotUploadMs >= 20_000L) {
+            lastShotUploadMs = now
+            try { FrameShots.uploadPending(token, s.flying, 3) } catch (_: Throwable) {}
+        }
         if (now - lastUploadMs < (if (s.flying) FLIGHT_UPLOAD_MS else GROUND_UPLOAD_MS)) return
         lastUploadMs = now
         // Im Flug das Flugprotokoll (enthält alle Zeilen plus Flugdaten), sonst das Sitzungsprotokoll; nach der Landung beide einmal.

@@ -76,6 +76,7 @@ object FlightReport {
     }
 
     val currentFlightName: String? get() = flightDir?.name
+    fun currentFlightDir(): File? = flightDir
     /** Protokolldatei des laufenden bzw. letzten Flugs dieser Sitzung (für den Live-Draht). */
     fun currentFlightFile(): File? = flightDir?.let { File(it, "protokoll.txt") }?.takeIf { it.isFile }
 

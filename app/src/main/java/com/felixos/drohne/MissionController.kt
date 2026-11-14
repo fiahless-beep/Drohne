@@ -122,6 +122,8 @@ object MissionController {
 
     @Volatile private var stateFromDrone = 0L
     /** Grund, den die Drohne für die letzte Unterbrechung genannt hat (bis der Plan wieder läuft). */
+    /** Lag der zuletzt vorbereitete Plan ganz im Höhenmodell? Nur dann sagt „Strecke frei“ etwas aus. */
+    @Volatile var terrainCovered = false; private set
     @Volatile var interruptWhy: String? = null; private set
     private var lastLoggedIndex = -99
 
@@ -292,7 +294,10 @@ object MissionController {
             terrainConflicts = terrainConflicts.filter { it.to < lastIdx }
             DroneManager.log("Balkon: letzter Abstieg (Landeanflug) von der Gebäudeprüfung ausgenommen")
         }
-        if (com.felixos.drohne.plan.Terrain.loaded && home != null) {
+        terrainCovered = com.felixos.drohne.plan.Terrain.covers(m0, home)
+        if (com.felixos.drohne.plan.Terrain.loaded && home != null && !terrainCovered) {
+            DroneManager.log("KEINE HÖHENDATEN für diesen Ort: Gelände, Bäume und Dächer sind NICHT geprüft. Flughöhe nach Augenmaß wählen und die Drohne im Blick behalten.")
+        } else if (com.felixos.drohne.plan.Terrain.loaded && home != null) {
             val rises = m0.waypoints.mapNotNull { com.felixos.drohne.plan.Terrain.riseM(home, it.pos) }
             if (rises.isNotEmpty()) DroneManager.log("Höhenmodell: Gelände am Ziel ${if (rises.max() >= 0) "+" else ""}${rises.max().toInt()} m gegenüber dem Start")
             if (terrainConflicts.isNotEmpty()) DroneManager.log("OBERFLÄCHEN-WÄCHTER: ${terrainConflicts.size} Konflikt(e): " + terrainConflicts.joinToString("; ")) else DroneManager.log("Oberflächen-Wächter: Strecke frei")

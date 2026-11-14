@@ -136,6 +136,7 @@ class MainActivity : AppCompatActivity() {
         FlightReport.init(applicationContext)
         LiveLink.init(applicationContext)
         ObstacleGuard.init(applicationContext)
+        FrameShots.init(applicationContext)
         FlightGuard.init()
         FlightGuard.onAlert = { t -> runOnUiThread { android.widget.Toast.makeText(this, t, android.widget.Toast.LENGTH_LONG).show(); renderStatus(DroneManager.state) } }
         Thread {
@@ -999,6 +1000,7 @@ class MainActivity : AppCompatActivity() {
                 info("Flight records", when { n < 0 -> "No GitHub token entered (Settings → Data → GitHub token)."; n == 0 -> "Nothing new, all records were already in the repo."; else -> "$n record(s) uploaded. Claude can read them now." })
             } } },
         "Live link: send the log to Claude by itself (${if (LiveLink.enabled) "on" else "OFF"})" to { LiveLink.setEnabled(this, !LiveLink.enabled) },
+        "Flight stills: a still every 4 s in flight, sent to Claude (${if (FrameShots.enabled) "on" else "OFF"})" to { FrameShots.setEnabled(this, !FrameShots.enabled) },
         "Enter GitHub token" to { askToken() },
         "Enter Google key (photorealistic 3D)" to { askGoogleKey() },
         "Enter Claude key (copilot)" to { askClaudeKey() }))

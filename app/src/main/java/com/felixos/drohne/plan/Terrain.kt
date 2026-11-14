@@ -81,6 +81,10 @@ object Terrain {
         return out
     }
 
+    /** Deckt das Höhenmodell den Start und jeden Punkt des Plans ab? Sonst ist „keine Konflikte“ keine Aussage (14.11.: Mühle außerhalb der Daten meldete „Strecke frei“). */
+    fun covers(m: Mission, home: LatLon?): Boolean =
+        loaded && (home == null || groundM(home) != null) && m.waypoints.all { surfaceM(it.pos) != null }
+
     /** Geländeunterschied Ziel minus Start in m (positiv = Ziel liegt höher), null wenn unbekannt. */
     fun riseM(home: LatLon, p: LatLon): Double? { val a = groundM(home) ?: return null; val b = groundM(p) ?: return null; return b - a }
 }
