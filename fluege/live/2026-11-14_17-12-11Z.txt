@@ -62,3 +62,77 @@ Sitzung 2026-11-14_17-12-11 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:13:38  New plan in the cloud: muehle-abendkreis. Tap the plan name → Get plan to load it.
 09:14:05  S utc=17:14:05 verbunden=true fliegt=false pos=38.901382,-9.388118 h=0.0 start=38.901381,-9.388113 akku=99 sat=19 sensoren=aktiv hindernis=- mission=- wp=-1 plan=testkreis-wiese-2 wind=0
 09:14:36  S utc=17:14:36 verbunden=true fliegt=false pos=38.901384,-9.388115 h=0.0 start=38.901381,-9.388113 akku=98 sat=19 sensoren=aktiv hindernis=- mission=- wp=-1 plan=testkreis-wiese-2 wind=0
+09:14:58  Lade Flugplan aus der Cloud …
+09:14:59  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+09:14:59  Transithöhe 45 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+09:14:59  Tempo: max 3.0 m/s, 15 Abschnitte nahe Gebäuden gedrosselt (min 3,0 m/s)
+09:14:59  Oberflächen-Wächter: Strecke frei
+09:14:59  KMZ erstellt: 15 Punkte, 329 m, ca. 2 min
+09:14:59  DJI-Prüfung: in Ordnung
+09:14:59  Plan übernommen, lade auf die Drohne …
+09:14:59  Lade Mission auf die Drohne …
+09:14:59  Upload 4 %
+09:14:59  Upload 29 %
+09:14:59  Upload 51 %
+09:14:59  Upload 76 %
+09:15:00  Upload 100 %
+09:15:00  Mission ist auf der Drohne
+09:15:03  S utc=17:15:03 verbunden=true fliegt=false pos=38.901384,-9.388114 h=0.0 start=38.901381,-9.388113 akku=98 sat=19 sensoren=aktiv hindernis=- mission=- wp=-1 plan=muehle-abendkreis wind=0
+09:15:04  Live-Bild verbunden
+09:15:07  Flugprotokoll: 2026-11-14_09-15_muehle-abendkreis/protokoll.txt
+09:15:07  Startpunkt: 38.901381, -9.388113
+09:15:07  Karte: https://www.google.com/maps/dir/38.901381,-9.388113/38.901743,-9.388113/38.901694,-9.387882/38.901562,-9.387713/38.901381,-9.387651/38.901200,-9.387713/38.901068,-9.387882/38.901019,-9.388113/38.901068,-9.388344/38.901200,-9.388513/data=!4m2!4m1!3e2
+09:15:07  Mission: READY
+09:15:07  Wegpunkt 1
+09:15:07  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 4716 MB, noch 682 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+09:15:07  Rückkehrhöhe: 45 m
+09:15:08  Mission: PREPARING
+09:15:08  Start: ok
+09:15:08  Mission: ENTER_WAYLINE
+09:15:08  S utc=17:15:08 verbunden=true fliegt=false pos=38.901384,-9.388114 h=0.0 start=38.901381,-9.388113 akku=98 sat=19 sensoren=aktiv hindernis=- mission=ENTER_WAYLINE wp=0 plan=muehle-abendkreis wind=0
+09:15:13  S utc=17:15:13 verbunden=true fliegt=true pos=38.901384,-9.388113 h=1.1 start=38.901384,-9.388114 akku=98 sat=19 sensoren=aktiv hindernis=1863@113°/n360/o60000/u1145 mission=ENTER_WAYLINE wp=0 plan=muehle-abendkreis wind=0
+09:15:25  S utc=17:15:25 verbunden=true fliegt=true pos=38.901385,-9.388113 h=41.7 start=38.901384,-9.388114 akku=97 sat=19 sensoren=aktiv hindernis=- mission=ENTER_WAYLINE wp=0 plan=muehle-abendkreis wind=0
+09:15:31  Mission: EXECUTING
+09:15:37  S utc=17:15:37 verbunden=true fliegt=true pos=38.901379,-9.388111 h=45.0 start=38.901384,-9.388114 akku=96 sat=19 sensoren=aktiv hindernis=2467@73°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-abendkreis wind=0
+09:15:47  S utc=17:15:47 verbunden=true fliegt=true pos=38.901581,-9.388112 h=44.9 start=38.901384,-9.388114 akku=96 sat=22 sensoren=aktiv hindernis=- mission=EXECUTING wp=0 plan=muehle-abendkreis wind=0
+09:15:53  Wegpunkt 2
+09:15:59  S utc=17:15:59 verbunden=true fliegt=true pos=38.901742,-9.388113 h=44.9 start=38.901384,-9.388114 akku=95 sat=24 sensoren=aktiv hindernis=2691@98°/n360/o60000/u60000 mission=EXECUTING wp=1 plan=muehle-abendkreis wind=0
+09:16:06  Wegpunkt 3
+09:16:10  S utc=17:16:10 verbunden=true fliegt=true pos=38.901651,-9.387806 h=45.0 start=38.901384,-9.388114 akku=94 sat=24 sensoren=aktiv hindernis=- mission=EXECUTING wp=2 plan=muehle-abendkreis wind=0
+09:16:11  Live-Bild verbunden
+09:16:13  Wegpunkt 4
+09:16:20  Wegpunkt 5
+09:16:20  S utc=17:16:20 verbunden=true fliegt=true pos=38.901420,-9.387653 h=45.0 start=38.901384,-9.388114 akku=94 sat=25 sensoren=aktiv hindernis=- mission=EXECUTING wp=4 plan=muehle-abendkreis wind=0
+09:16:27  Wegpunkt 6
+09:16:32  S utc=17:16:32 verbunden=true fliegt=true pos=38.901130,-9.387781 h=45.0 start=38.901384,-9.388114 akku=93 sat=25 sensoren=aktiv hindernis=- mission=EXECUTING wp=5 plan=muehle-abendkreis wind=0
+09:16:35  Wegpunkt 7
+09:16:42  Wegpunkt 8
+09:16:43  S utc=17:16:43 verbunden=true fliegt=true pos=38.901019,-9.388144 h=45.0 start=38.901384,-9.388114 akku=92 sat=26 sensoren=aktiv hindernis=- mission=EXECUTING wp=7 plan=muehle-abendkreis wind=0
+09:16:49  Wegpunkt 9
+09:16:53  S utc=17:16:53 verbunden=true fliegt=true pos=38.901133,-9.388448 h=44.9 start=38.901384,-9.388114 akku=92 sat=26 sensoren=aktiv hindernis=- mission=EXECUTING wp=8 plan=muehle-abendkreis wind=0
+09:16:56  Wegpunkt 10
+09:17:03  Wegpunkt 11
+09:17:05  S utc=17:17:05 verbunden=true fliegt=true pos=38.901434,-9.388571 h=44.9 start=38.901384,-9.388114 akku=91 sat=26 sensoren=aktiv hindernis=- mission=EXECUTING wp=10 plan=muehle-abendkreis wind=0
+09:17:10  Wegpunkt 12
+09:17:16  S utc=17:17:16 verbunden=true fliegt=true pos=38.901663,-9.388402 h=44.9 start=38.901384,-9.388114 akku=90 sat=26 sensoren=aktiv hindernis=- mission=EXECUTING wp=11 plan=muehle-abendkreis wind=0
+09:17:17  Wegpunkt 13
+09:17:26  Wegpunkt 14
+09:17:27  S utc=17:17:27 verbunden=true fliegt=true pos=38.901741,-9.388119 h=44.9 start=38.901384,-9.388114 akku=90 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=13 plan=muehle-abendkreis wind=0
+09:17:38  S utc=17:17:38 verbunden=true fliegt=true pos=38.901594,-9.388113 h=45.0 start=38.901384,-9.388114 akku=89 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=13 plan=muehle-abendkreis wind=0
+09:17:47  Wegpunkt 15
+09:17:47  Mission: FINISHED
+09:17:47  Mission beendet → hole Fotos und lade hoch
+09:17:47  Mission: READY
+09:17:50  S utc=17:17:50 verbunden=true fliegt=true pos=38.901384,-9.388111 h=44.9 start=38.901384,-9.388114 akku=88 sat=26 sensoren=aktiv hindernis=2313@83°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-abendkreis wind=0
+09:18:00  S utc=17:18:00 verbunden=true fliegt=true pos=38.901386,-9.388117 h=15.2 start=38.901384,-9.388114 akku=88 sat=26 sensoren=aktiv hindernis=8378@183°/n360/o60000/u16679 mission=READY wp=-1 plan=muehle-abendkreis wind=0
+09:18:11  S utc=17:18:11 verbunden=true fliegt=true pos=38.901385,-9.388120 h=2.0 start=38.901384,-9.388114 akku=87 sat=24 sensoren=aktiv hindernis=1540@113°/n360/o60000/u2374 mission=READY wp=-1 plan=muehle-abendkreis wind=0
+09:18:23  S utc=17:18:23 verbunden=true fliegt=true pos=38.901384,-9.388121 h=0.0 start=38.901384,-9.388114 akku=87 sat=22 sensoren=aktiv hindernis=1243@93°/n360/o60000/u196 mission=READY wp=-1 plan=muehle-abendkreis wind=0
+09:18:25  Landehelfer: Drohne ist am Boden
+09:18:26  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3598 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+09:18:28  S utc=17:18:28 verbunden=true fliegt=false pos=38.901382,-9.388123 h=0.0 start=38.901384,-9.388114 akku=86 sat=19 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-abendkreis wind=0
+09:18:28  Hole Fotoliste von der Drohne (SD-Karte) …
+09:18:31  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+09:18:32  Hole Fotoliste von der Drohne (interner Speicher) …
+09:18:32  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+09:18:33  Fotos geladen: 0
+09:18:34  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-14_09-15_muehle-abendkreis
