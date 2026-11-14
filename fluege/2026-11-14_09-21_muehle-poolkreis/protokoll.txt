@@ -176,3 +176,5 @@
 09:25:30  Live-Bild verbunden
 09:27:00  Live-Bild verbunden
 09:27:17  Live-Bild verbunden
+10:32:01  New plan in the cloud: muehle-film-1. Tap the plan name → Get plan to load it.
+10:32:22  New plan in the cloud: muehle-film-1. Tap the plan name → Get plan to load it.
