@@ -139,3 +139,23 @@ Sitzung 2026-11-14_17-12-11 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Han
 09:19:02  S utc=17:19:02 verbunden=true fliegt=false pos=38.901374,-9.388121 h=0.0 start=38.901384,-9.388114 akku=86 sat=20 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-abendkreis wind=0
 09:19:34  S utc=17:19:34 verbunden=true fliegt=false pos=38.901372,-9.388121 h=0.0 start=38.901384,-9.388114 akku=85 sat=20 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-abendkreis wind=0
 09:20:05  S utc=17:20:05 verbunden=true fliegt=false pos=38.901373,-9.388121 h=0.0 start=38.901384,-9.388114 akku=85 sat=21 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-abendkreis wind=0
+09:20:37  S utc=17:20:37 verbunden=true fliegt=false pos=38.901373,-9.388121 h=0.0 start=38.901384,-9.388114 akku=85 sat=21 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-abendkreis wind=0
+09:20:53  New plan in the cloud: muehle-poolkreis. Tap the plan name → Get plan to load it.
+09:20:56  Lade Flugplan aus der Cloud …
+09:20:56  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+09:20:56  Transithöhe 32 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+09:20:56  Tempo: max 3.0 m/s, 15 Abschnitte nahe Gebäuden gedrosselt (min 3,0 m/s)
+09:20:56  Oberflächen-Wächter: Strecke frei
+09:20:56  KMZ erstellt: 15 Punkte, 344 m, ca. 2 min
+09:20:56  DJI-Prüfung: in Ordnung
+09:20:56  Plan übernommen, lade auf die Drohne …
+09:20:56  Lade Mission auf die Drohne …
+09:20:57  Mission: UPLOADING
+09:20:57  Upload 6 %
+09:20:57  Upload 30 %
+09:20:57  Upload 53 %
+09:20:57  Upload 77 %
+09:20:57  Upload 100 %
+09:20:58  Mission ist auf der Drohne
+09:20:58  Mission: READY
+09:20:58  S utc=17:20:58 verbunden=true fliegt=false pos=38.901367,-9.388121 h=0.0 start=38.901384,-9.388114 akku=84 sat=21 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-poolkreis wind=0
