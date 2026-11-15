@@ -1,0 +1,76 @@
+{
+ "name": "strand-sao-juliao-2",
+ "beschreibung": "Strandflug Praia de São Julião, Start frei wählbar im Umkreis von etwa 100 m um die Gota d'Álcool: Bogen über dem Wasser 150 m vor der Strandmitte in 42 m Höhe über dem Start, Kamera auf den Strand, danach Rückzug aufs Meer mit Steigen auf 65 m. Zwei Clips. Keine Höhendaten und kein fester Startpunkt: Hinflug in 50 m Höhe, alle Punkte liegen über dem Wasser. Nur bei Tageslicht, Wind beachten.",
+ "speed": 4,
+ "rcLost": "goHome",
+ "transitHoehe": 50,
+ "ziel": {
+  "lat": 38.9322,
+  "lon": -9.4195,
+  "h": -20
+ },
+ "waypoints": [
+  {
+   "lat": 38.933468,
+   "lon": -9.420092,
+   "h": 42,
+   "photo": false,
+   "video": "start",
+   "hover": 2
+  },
+  {
+   "lat": 38.933202,
+   "lon": -9.420659,
+   "h": 42,
+   "photo": false
+  },
+  {
+   "lat": 38.932791,
+   "lon": -9.421057,
+   "h": 42,
+   "photo": false
+  },
+  {
+   "lat": 38.932294,
+   "lon": -9.421228,
+   "h": 42,
+   "photo": false
+  },
+  {
+   "lat": 38.931783,
+   "lon": -9.421147,
+   "h": 42,
+   "photo": false
+  },
+  {
+   "lat": 38.931333,
+   "lon": -9.420827,
+   "h": 42,
+   "photo": false,
+   "video": "stop",
+   "hover": 1
+  },
+  {
+   "lat": 38.932456,
+   "lon": -9.420727,
+   "h": 40,
+   "photo": false,
+   "video": "start",
+   "hover": 1
+  },
+  {
+   "lat": 38.932666,
+   "lon": -9.421731,
+   "h": 52,
+   "photo": false
+  },
+  {
+   "lat": 38.932898,
+   "lon": -9.422846,
+   "h": 65,
+   "photo": false,
+   "video": "stop",
+   "hover": 2
+  }
+ ]
+}
