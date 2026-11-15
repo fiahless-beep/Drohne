@@ -1,0 +1,18 @@
+Sitzung 2026-11-15_16-11-54 UTC · App 0.1.133 · SM-A166U1 · Android 16 · Handy-Zeitzone America/Los_Angeles
+08:11:53  Gerät: arm64-v8a, armeabi-v7a, armeabi, Seitengröße 4096, 64 Bibliotheken in arm64
+08:11:53  libc++_shared geladen
+08:11:53  libCORPProtobuf geladen
+08:11:53  libcorpbase geladen
+08:11:53  libCORPCSDKCommon geladen
+08:11:53  libFlightRecordEngine geladen
+08:11:54  libcorpsdk_jni geladen
+08:11:54  SDK wird gestartet …
+08:11:54  S utc=16:11:54 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=? hindernis=- mission=- wp=-1 plan=- wind=?
+08:11:54  Gebäudedatenbank geladen: 57938 Gebäude
+08:11:55  Netz verfügbar, Registrierung erneut
+08:11:55  Netz verfügbar, Registrierung erneut
+08:11:55  Registrierung erfolgreich (App-Key gültig)
+08:11:55  Höhenmodell geladen: 8400000 Zellen
+08:11:56  Hinderniserkennung: aus (BRAKE, Hauptschalter false)
+08:11:56  Telemetrie läuft
+08:11:56  DJI-Status: UNKNOWN – Unknown error
