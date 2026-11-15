@@ -1,0 +1,92 @@
+{
+ "name": "strand-sao-juliao-1",
+ "beschreibung": "Strandflug von der Klippe: Bogen über dem Wasser 150 m vor dem Strand in 35 m Höhe über dem Start, Kamera zurück auf Strand und Klippen, danach Rückzug aufs Meer hinaus mit Steigen auf 60 m. Zwei Clips. Keine Höhendaten für diesen Ort: alles seewärts und mindestens 30 m über dem Startplatz. Weiteste Entfernung etwa 380 m. Nur bei Tageslicht, Wind an der Küste beachten.",
+ "speed": 4,
+ "rcLost": "goHome",
+ "transitHoehe": 40,
+ "start": {
+  "lat": 38.9322,
+  "lon": -9.4195
+ },
+ "ziel": {
+  "lat": 38.9322,
+  "lon": -9.420424,
+  "h": -20
+ },
+ "waypoints": [
+  {
+   "lat": 38.930932,
+   "lon": -9.421016,
+   "h": 35,
+   "photo": false,
+   "video": "start",
+   "hover": 2
+  },
+  {
+   "lat": 38.931167,
+   "lon": -9.421537,
+   "h": 35,
+   "photo": false
+  },
+  {
+   "lat": 38.931526,
+   "lon": -9.421924,
+   "h": 35,
+   "photo": false
+  },
+  {
+   "lat": 38.931966,
+   "lon": -9.42213,
+   "h": 35,
+   "photo": false
+  },
+  {
+   "lat": 38.932434,
+   "lon": -9.42213,
+   "h": 35,
+   "photo": false
+  },
+  {
+   "lat": 38.932874,
+   "lon": -9.421924,
+   "h": 35,
+   "photo": false
+  },
+  {
+   "lat": 38.933233,
+   "lon": -9.421537,
+   "h": 35,
+   "photo": false
+  },
+  {
+   "lat": 38.933468,
+   "lon": -9.421016,
+   "h": 35,
+   "photo": false,
+   "video": "stop",
+   "hover": 1
+  },
+  {
+   "lat": 38.9322,
+   "lon": -9.421694,
+   "h": 32,
+   "photo": false,
+   "video": "start",
+   "hover": 1
+  },
+  {
+   "lat": 38.9322,
+   "lon": -9.422733,
+   "h": 45,
+   "photo": false
+  },
+  {
+   "lat": 38.9322,
+   "lon": -9.423888,
+   "h": 60,
+   "photo": false,
+   "video": "stop",
+   "hover": 2
+  }
+ ]
+}
