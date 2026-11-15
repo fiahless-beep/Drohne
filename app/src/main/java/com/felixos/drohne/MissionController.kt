@@ -413,7 +413,11 @@ object MissionController {
         if (Simulator.active) { currentMission?.let { Simulator.fly(it, rthHeightM) }; return }
         FlightReport.startFlight(missionId)
         val dusk = if (duskMode) duskBlocker() else "off"
-        if (duskMode && dusk == null) {
+        if (currentMission?.sensingOff == true) {
+            duskActive = true; duskSinceMs = System.currentTimeMillis()
+            DroneManager.setObstacleAvoidance(false, "the plan marks this route as free")
+            DroneManager.log("Obstacle sensing OFF for this plan flight: the plan marks the whole route as free (open water / high above everything). It comes back on after landing. Keep the drone in sight.")
+        } else if (duskMode && dusk == null) {
             duskActive = true; duskSinceMs = System.currentTimeMillis()
             DroneManager.setObstacleAvoidance(false, "dusk mode")
             DroneManager.log("Dusk mode: obstacle sensing OFF for this plan flight. The whole route is at least ${DUSK_CLEARANCE_M.toInt()} m above the measured surface. It comes back on after landing. Keep the drone in sight.")

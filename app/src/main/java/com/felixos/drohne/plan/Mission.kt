@@ -43,6 +43,8 @@ data class Mission(
     val obstacles: List<Obstacle> = emptyList(),
     /** Umgebung ausdrücklich frei (keine Gebäude/Bäume im Umkreis von 50 m, z. B. Feld, Hafenbecken). Ohne das und ohne [obstacles] verweigert die App Punkte unter 30 m. */
     val openArea: Boolean = false,
+    /** Plan-Vermerk „hinderniserkennung“: „aus“ – die Strecke ist nachweislich frei (z. B. komplett über Wasser, hoch über allem) und die Sensoren würden nur Fehlalarme liefern (tiefe Sonne, Dämmerung). Die App schaltet die Erkennung dann nur für diesen Planflug aus. */
+    val sensingOff: Boolean = false,
     /** Startpunkt, für den der Plan geprüft wurde; weicht der echte Startpunkt mehr als 50 m ab, verweigert die App den Start. */
     val plannedStart: LatLon? = null,
     /** Transithöhe aus dem Plan (Pläne mit korridorgeprüften Höhen, z. B. plan_objekt.py): sonst steigt der Transit auf die höchste Planhöhe. */

@@ -12,6 +12,7 @@ import org.json.JSONObject
  *   "speed": 5,                       // m/s
  *   "rcLost": "continue" | "goHome",
  *   "umgebung": "frei",               // nur wenn im Umkreis von 50 m wirklich nichts höher als 2 m steht; sonst braucht jeder Punkt unter 30 m "hindernisse"
+ *   "hinderniserkennung": "aus",      // nur wenn die ganze Strecke nachweislich frei ist (über Wasser, hoch über allem): Erkennung für diesen Planflug aus, nach der Landung wieder an
  *   "start": {"lat": 39.05, "lon": -8.17},   // Startpunkt, für den die Strecke geprüft wurde; steht die Drohne > 50 m weg, verweigert die App den Start
  *   "licht": true,                    // optional: Landelampe unten während der Mission an (kleine LED, hilft nur aus wenigen Metern)
  *   "hindernisse": [ {"name": "LMSI", "h": 15, "umriss": [[lat, lon], [lat, lon], ...]} ],  // Gebäude aus den Kartendaten; die App prüft die Strecke dagegen
@@ -40,6 +41,7 @@ object PlanJson {
         } ?: emptyList()
         val targetH = o.optJSONObject("ziel")?.optDouble("h", 0.0) ?: 0.0
         val openArea = o.optString("umgebung", "") == "frei"
+        val sensingOff = o.optString("hinderniserkennung", "") == "aus"
         val plannedStart = o.optJSONObject("start")?.let { LatLon(it.getDouble("lat"), it.getDouble("lon")) }
         val transitH = if (o.has("transitHoehe")) o.getDouble("transitHoehe") else null
         val startAbove = if (o.has("startUeberBoden")) o.getDouble("startUeberBoden") else null
@@ -48,7 +50,7 @@ object PlanJson {
             requireNotNull(target) { "kreis braucht ziel" }
             val m = Missions.orbit(target, kreis.getDouble("radius"), kreis.getDouble("h"), kreis.optInt("punkte", 8),
                 kreis.optDouble("start", 0.0), targetH, speed, name, kreis.optBoolean("uhrzeigersinn", true), kreis.optInt("fotos", kreis.optInt("punkte", 8)))
-            return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove) to o.optString("beschreibung", "")
+            return m.copy(rcLost = rcLost, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, sensingOff = sensingOff, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove) to o.optString("beschreibung", "")
         }
         // "relativ": Punkte als Richtung/Abstand vom Ziel (z. B. Fassadenfoto: richtung = von wo aus man schaut).
         val rel = o.optJSONArray("relativ")
@@ -64,7 +66,7 @@ object PlanJson {
                     headingDeg = if (w.has("yaw")) w.getDouble("yaw") else Geo.bearing(pos, target))
             }
             val wps2 = if (wps.size == 1) wps + wps.first().copy(pos = Geo.offset(wps.first().pos, 3.0, 0.0), takePhoto = false) else wps
-            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove) to o.optString("beschreibung", "")
+            return Mission(name = name, waypoints = wps2, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, sensingOff = sensingOff, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove) to o.optString("beschreibung", "")
         }
         val arr: JSONArray = o.getJSONArray("waypoints")
         val wps = (0 until arr.length()).map { i ->
@@ -82,7 +84,7 @@ object PlanJson {
                 headingDeg = if (w.has("yaw")) w.getDouble("yaw") else target?.let { Geo.bearing(pos, it) },
             )
         }
-        val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove)
+        val m = Mission(name = name, waypoints = wps, speedMs = speed, rcLost = rcLost, target = target, light = o.optBoolean("licht", false), obstacles = obstacles, openArea = openArea, sensingOff = sensingOff, plannedStart = plannedStart, transitHeightM = transitH, startAboveGroundM = startAbove)
         return m to o.optString("beschreibung", "")
     }
 

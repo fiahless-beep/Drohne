@@ -3,6 +3,7 @@
  "beschreibung": "Strandflug Praia de São Julião, Start frei wählbar im Umkreis von etwa 100 m um die Gota d'Álcool: Bogen über dem Wasser 150 m vor der Strandmitte in 42 m Höhe über dem Start, Kamera auf den Strand, danach Rückzug aufs Meer mit Steigen auf 65 m. Zwei Clips. Keine Höhendaten und kein fester Startpunkt: Hinflug in 50 m Höhe, alle Punkte liegen über dem Wasser. Nur bei Tageslicht, Wind beachten.",
  "speed": 4,
  "rcLost": "goHome",
+ "hinderniserkennung": "aus",
  "transitHoehe": 50,
  "ziel": {
   "lat": 38.9322,
