@@ -37,6 +37,9 @@ object LiveLink {
     private var lastStatusMs = 0L
     private var lastStatusKey = ""
     private var lastPlanCheckMs = 0L
+    private var warnedNoToken = false
+    private var warnedNoTokenFlight = false
+    private var backfillDone = false
     private var lastShotUploadMs = 0L
     private var planEtag: String? = null
     private var announced = false
@@ -99,7 +102,15 @@ object LiveLink {
             try { f.appendText(SimpleDateFormat("HH:mm:ss", Locale.GERMANY).format(Date(now)) + "  " + statusLine(s, now) + "\n") } catch (_: Throwable) {}
         }
         if (!enabled) return
-        val token = FlightReport.token(app) ?: return
+        val token = FlightReport.token(app) ?: run {
+            // 15.11.: Token war nach einer Neuinstallation weg, niemand merkte es, Claude sah den ganzen Tag nichts.
+            if (!warnedNoToken || (s.flying && !warnedNoTokenFlight)) {
+                warnedNoToken = true; if (s.flying) warnedNoTokenFlight = true
+                DroneManager.log("⚠ NO GitHub token: nothing is sent to Claude (logs and stills stay on the phone). Settings → Data → Enter GitHub token.")
+            }
+            return
+        }
+        if (!s.flying) try { backfill(token) } catch (_: Throwable) {}
         if (now - lastPlanCheckMs >= PLAN_CHECK_MS) { lastPlanCheckMs = now; checkPlan(token) }
         // Standbilder: im Flug alle 20 s das neueste, am Boden zügig den Rest (je Runde drei).
         if (!s.flying || now - lastShotUploadMs >= 20_000L) {
@@ -123,6 +134,29 @@ object LiveLink {
                 if (!announced) { announced = true; DroneManager.log("Live link: Claude reads along (fluege/live/${f.name})") }
             } else if (++failures == 3) DroneManager.log("Live link: no upload right now (no network?). The flight is not affected; the log stays on the phone.")
         }
+    }
+
+    /**
+     * Nachladen: Protokolle und Standbilder der letzten Flüge, die noch nicht im Repo sind (Tag ohne Token oder ohne Netz).
+     * Je Runde wenige Dateien, damit der Live-Draht nicht hängt; Merker je Ordner in „protokoll.hochgeladen“ bzw. bilder/hochgeladen.txt.
+     */
+    private fun backfill(token: String) {
+        if (backfillDone) return
+        val current = FlightReport.currentFlightDir()
+        for (dir in FlightReport.recentFlightDirs(8)) {
+            if (dir == current) continue
+            val log = File(dir, "protokoll.txt"); val mark = File(dir, "protokoll.hochgeladen")
+            if (log.isFile && log.length() > 0 && (try { mark.readText().trim() } catch (_: Throwable) { "" }) != log.length().toString()) {
+                if (!FlightReport.uploadFile(token, "fluege/${dir.name}/protokoll.txt", log, quiet = true)) return   // kein Netz: nächste Runde
+                try { mark.writeText(log.length().toString()) } catch (_: Throwable) {}
+                DroneManager.log("Live link: sent the log of an earlier flight (${dir.name})")
+                return
+            }
+            if (FrameShots.uploadPending(token, false, 3, dir) > 0) return
+            val stills = File(dir, "bilder")
+            if (stills.isDirectory && (stills.listFiles { f -> f.name.endsWith(".jpg") }?.size ?: 0) > (try { File(stills, "hochgeladen.txt").readLines().size } catch (_: Throwable) { 0 })) return  // Upload scheiterte: später weiter
+        }
+        backfillDone = true
     }
 
     /** Liegt in der Cloud ein anderer Plan als beim letzten Blick? Bedingte Abfrage (304 kostet nichts). */

@@ -77,6 +77,8 @@ object FlightReport {
 
     val currentFlightName: String? get() = flightDir?.name
     fun currentFlightDir(): File? = flightDir
+    /** Die letzten Flugordner auf dem Handy, neueste zuerst (für das Nachladen nach einem Tag ohne Token/Netz). */
+    fun recentFlightDirs(n: Int): List<File> = root.listFiles { f -> f.isDirectory }?.sortedByDescending { it.lastModified() }?.take(n) ?: emptyList()
     /** Protokolldatei des laufenden bzw. letzten Flugs dieser Sitzung (für den Live-Draht). */
     fun currentFlightFile(): File? = flightDir?.let { File(it, "protokoll.txt") }?.takeIf { it.isFile }
 

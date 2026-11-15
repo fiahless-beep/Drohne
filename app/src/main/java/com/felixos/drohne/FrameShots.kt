@@ -121,9 +121,9 @@ object FrameShots {
      * Lädt Bilder des laufenden bzw. letzten Flugs hoch: im Flug nur das neueste (damit Claude mitsehen kann),
      * am Boden bis zu [max] noch fehlende je Aufruf, älteste zuerst, danach die Indexdatei. Gibt die Zahl der hochgeladenen Bilder zurück.
      */
-    fun uploadPending(token: String, flying: Boolean, max: Int): Int {
+    fun uploadPending(token: String, flying: Boolean, max: Int, flightDir: File? = null): Int {
         if (!enabled) return 0
-        val flight = FlightReport.currentFlightDir() ?: return 0
+        val flight = flightDir ?: FlightReport.currentFlightDir() ?: return 0
         val dir = File(flight, "bilder")
         val all = dir.listFiles { f -> f.name.endsWith(".jpg") }?.sortedBy { it.name } ?: return 0
         val sent = sentNames(dir)
@@ -139,7 +139,7 @@ object FrameShots {
         val left = todo.size - n
         if (n > 0 && (flying || left == 0)) {
             FlightReport.uploadFile(token, "fluege/${flight.name}/bilder/index.txt", File(dir, "index.txt"), quiet = true)
-            if (!flying) DroneManager.log("Flight stills: all ${all.size} sent to Claude")
+            if (!flying) DroneManager.log("Flight stills: all ${all.size} of ${flight.name} sent to Claude")
         }
         return n
     }
