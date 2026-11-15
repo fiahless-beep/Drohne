@@ -1,6 +1,6 @@
 {
- "name": "klippen-sao-juliao-2",
- "beschreibung": "Langer Küstenflug Praia de São Julião: 1) an Strand und Klippen entlang 500 m nach Süden, über dem Wasser und unterhalb der Klippenkante, Kamera auf die Klippen; 2) Steigen auf 75 m und hoch über dem Wasser zurück mit Blick auf die ganze Küste; 3) Bogen vor dem Strand, Kamera auf die Strandmitte. Drei Clips, weiteste Entfernung etwa 670 m. Gegen DGT-LiDAR geprüft: alle Punkte über dem Wasser, mindestens 40 m vom Land. Hinderniserkennung für diesen Flug aus. Nur bei Tageslicht.",
+ "name": "klippen-sao-juliao-3",
+ "beschreibung": "Langer Küstenflug Praia de São Julião: 1) an Strand und Klippen entlang 360 m nach Süden, über dem Wasser und unterhalb der Klippenkante, Kamera auf die Klippen; 2) Steigen auf 60 m und hoch über dem Wasser zurück mit Blick auf die ganze Küste; 3) Bogen vor dem Strand, Kamera auf die Strandmitte. Drei Clips, weiteste Entfernung etwa 480 m. Gegen DGT-LiDAR geprüft: alle Punkte über dem Wasser, mindestens 40 m vom Land. Hinderniserkennung für diesen Flug aus. Nur bei Tageslicht.",
  "speed": 5,
  "rcLost": "goHome",
  "hinderniserkennung": "aus",
@@ -41,27 +41,19 @@
    "pitch": -6
   },
   {
-   "lat": 38.929199,
-   "lon": -9.422466,
+   "lat": 38.929559,
+   "lon": -9.422258,
    "h": 36,
-   "photo": false,
-   "yaw": 150,
-   "pitch": -6
-  },
-  {
-   "lat": 38.9283,
-   "lon": -9.422927,
-   "h": 38,
    "photo": false,
    "video": "stop",
    "hover": 1,
-   "yaw": 140,
+   "yaw": 145,
    "pitch": -6
   },
   {
-   "lat": 38.92812,
-   "lon": -9.424082,
-   "h": 75,
+   "lat": 38.929514,
+   "lon": -9.42287,
+   "h": 60,
    "photo": false,
    "video": "start",
    "hover": 2,
@@ -69,9 +61,9 @@
    "pitch": -18
   },
   {
-   "lat": 38.929649,
-   "lon": -9.423389,
-   "h": 75,
+   "lat": 38.930368,
+   "lon": -9.422927,
+   "h": 60,
    "photo": false,
    "yaw": 50,
    "pitch": -18
@@ -79,7 +71,7 @@
   {
    "lat": 38.931268,
    "lon": -9.422697,
-   "h": 70,
+   "h": 60,
    "photo": false,
    "video": "stop",
    "hover": 1,
