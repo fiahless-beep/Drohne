@@ -1,77 +1,66 @@
 {
- "name": "strand-sao-juliao-2",
- "beschreibung": "Strandflug Praia de São Julião, Start frei wählbar im Umkreis von etwa 100 m um die Gota d'Álcool: Bogen über dem Wasser 150 m vor der Strandmitte in 42 m Höhe über dem Start, Kamera auf den Strand, danach Rückzug aufs Meer mit Steigen auf 65 m. Zwei Clips. Keine Höhendaten und kein fester Startpunkt: Hinflug in 50 m Höhe, alle Punkte liegen über dem Wasser. Nur bei Tageslicht, Wind beachten.",
+ "name": "klippen-sao-juliao-1",
+ "beschreibung": "Klippenflug Praia de São Julião nach Süden: von der Bar aufs Wasser, dann etwa 70 m vor der Küste 340 m nach Südsüdwest an Strand und Klippen entlang in 30 bis 35 m Höhe über dem Start, Kamera schräg voraus auf die Klippen. Rückweg weiter draußen in 60 m Höhe mit Blick zurück auf Küste und Strand, Sonne im Rücken. Zwei Clips, weiteste Entfernung etwa 430 m. Alle Punkte über dem Wasser, Hinderniserkennung für diesen Flug aus. Nur bei Tageslicht.",
  "speed": 4,
  "rcLost": "goHome",
  "hinderniserkennung": "aus",
  "transitHoehe": 50,
- "ziel": {
-  "lat": 38.9322,
-  "lon": -9.4195,
-  "h": -20
- },
  "waypoints": [
   {
-   "lat": 38.933468,
-   "lon": -9.420092,
-   "h": 42,
+   "lat": 38.932591,
+   "lon": -9.420536,
+   "h": 35,
    "photo": false,
    "video": "start",
-   "hover": 2
+   "hover": 2,
+   "yaw": 150,
+   "pitch": -15
   },
   {
-   "lat": 38.933202,
-   "lon": -9.420659,
-   "h": 42,
-   "photo": false
+   "lat": 38.931475,
+   "lon": -9.421218,
+   "h": 30,
+   "photo": false,
+   "yaw": 150,
+   "pitch": -12
   },
   {
-   "lat": 38.932791,
-   "lon": -9.421057,
-   "h": 42,
-   "photo": false
-  },
-  {
-   "lat": 38.932294,
-   "lon": -9.421228,
-   "h": 42,
-   "photo": false
-  },
-  {
-   "lat": 38.931783,
-   "lon": -9.421147,
-   "h": 42,
-   "photo": false
-  },
-  {
-   "lat": 38.931333,
-   "lon": -9.420827,
-   "h": 42,
+   "lat": 38.929717,
+   "lon": -9.421791,
+   "h": 30,
    "photo": false,
    "video": "stop",
-   "hover": 1
+   "hover": 1,
+   "yaw": 150,
+   "pitch": -12
   },
   {
-   "lat": 38.932456,
-   "lon": -9.420727,
-   "h": 40,
+   "lat": 38.929921,
+   "lon": -9.422559,
+   "h": 60,
    "photo": false,
    "video": "start",
-   "hover": 1
+   "hover": 2,
+   "yaw": 55,
+   "pitch": -22
   },
   {
-   "lat": 38.932666,
-   "lon": -9.421731,
-   "h": 52,
-   "photo": false
+   "lat": 38.931408,
+   "lon": -9.421888,
+   "h": 60,
+   "photo": false,
+   "yaw": 60,
+   "pitch": -22
   },
   {
-   "lat": 38.932898,
-   "lon": -9.422846,
-   "h": 65,
+   "lat": 38.932794,
+   "lon": -9.421304,
+   "h": 60,
    "photo": false,
    "video": "stop",
-   "hover": 2
+   "hover": 2,
+   "yaw": 75,
+   "pitch": -25
   }
  ]
 }

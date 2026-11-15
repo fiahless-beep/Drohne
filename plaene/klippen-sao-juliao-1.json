@@ -1,0 +1,66 @@
+{
+ "name": "klippen-sao-juliao-1",
+ "beschreibung": "Klippenflug Praia de São Julião nach Süden: von der Bar aufs Wasser, dann etwa 70 m vor der Küste 340 m nach Südsüdwest an Strand und Klippen entlang in 30 bis 35 m Höhe über dem Start, Kamera schräg voraus auf die Klippen. Rückweg weiter draußen in 60 m Höhe mit Blick zurück auf Küste und Strand, Sonne im Rücken. Zwei Clips, weiteste Entfernung etwa 430 m. Alle Punkte über dem Wasser, Hinderniserkennung für diesen Flug aus. Nur bei Tageslicht.",
+ "speed": 4,
+ "rcLost": "goHome",
+ "hinderniserkennung": "aus",
+ "transitHoehe": 50,
+ "waypoints": [
+  {
+   "lat": 38.932591,
+   "lon": -9.420536,
+   "h": 35,
+   "photo": false,
+   "video": "start",
+   "hover": 2,
+   "yaw": 150,
+   "pitch": -15
+  },
+  {
+   "lat": 38.931475,
+   "lon": -9.421218,
+   "h": 30,
+   "photo": false,
+   "yaw": 150,
+   "pitch": -12
+  },
+  {
+   "lat": 38.929717,
+   "lon": -9.421791,
+   "h": 30,
+   "photo": false,
+   "video": "stop",
+   "hover": 1,
+   "yaw": 150,
+   "pitch": -12
+  },
+  {
+   "lat": 38.929921,
+   "lon": -9.422559,
+   "h": 60,
+   "photo": false,
+   "video": "start",
+   "hover": 2,
+   "yaw": 55,
+   "pitch": -22
+  },
+  {
+   "lat": 38.931408,
+   "lon": -9.421888,
+   "h": 60,
+   "photo": false,
+   "yaw": 60,
+   "pitch": -22
+  },
+  {
+   "lat": 38.932794,
+   "lon": -9.421304,
+   "h": 60,
+   "photo": false,
+   "video": "stop",
+   "hover": 2,
+   "yaw": 75,
+   "pitch": -25
+  }
+ ]
+}
