@@ -1,0 +1,142 @@
+{
+ "name": "klippen-sao-juliao-2",
+ "beschreibung": "Langer Küstenflug Praia de São Julião: 1) an Strand und Klippen entlang 500 m nach Süden, über dem Wasser und unterhalb der Klippenkante, Kamera auf die Klippen; 2) Steigen auf 75 m und hoch über dem Wasser zurück mit Blick auf die ganze Küste; 3) Bogen vor dem Strand, Kamera auf die Strandmitte. Drei Clips, weiteste Entfernung etwa 670 m. Gegen DGT-LiDAR geprüft: alle Punkte über dem Wasser, mindestens 40 m vom Land. Hinderniserkennung für diesen Flug aus. Nur bei Tageslicht.",
+ "speed": 5,
+ "rcLost": "goHome",
+ "hinderniserkennung": "aus",
+ "transitHoehe": 50,
+ "waypoints": [
+  {
+   "lat": 38.932796,
+   "lon": -9.420572,
+   "h": 35,
+   "photo": false,
+   "video": "start",
+   "hover": 2,
+   "yaw": 160,
+   "pitch": -12
+  },
+  {
+   "lat": 38.931897,
+   "lon": -9.420964,
+   "h": 32,
+   "photo": false,
+   "yaw": 160,
+   "pitch": -10
+  },
+  {
+   "lat": 38.930998,
+   "lon": -9.421426,
+   "h": 32,
+   "photo": false,
+   "yaw": 155,
+   "pitch": -8
+  },
+  {
+   "lat": 38.930098,
+   "lon": -9.422004,
+   "h": 34,
+   "photo": false,
+   "yaw": 150,
+   "pitch": -6
+  },
+  {
+   "lat": 38.929199,
+   "lon": -9.422466,
+   "h": 36,
+   "photo": false,
+   "yaw": 150,
+   "pitch": -6
+  },
+  {
+   "lat": 38.9283,
+   "lon": -9.422927,
+   "h": 38,
+   "photo": false,
+   "video": "stop",
+   "hover": 1,
+   "yaw": 140,
+   "pitch": -6
+  },
+  {
+   "lat": 38.92812,
+   "lon": -9.424082,
+   "h": 75,
+   "photo": false,
+   "video": "start",
+   "hover": 2,
+   "yaw": 50,
+   "pitch": -18
+  },
+  {
+   "lat": 38.929649,
+   "lon": -9.423389,
+   "h": 75,
+   "photo": false,
+   "yaw": 50,
+   "pitch": -18
+  },
+  {
+   "lat": 38.931268,
+   "lon": -9.422697,
+   "h": 70,
+   "photo": false,
+   "video": "stop",
+   "hover": 1,
+   "yaw": 60,
+   "pitch": -20
+  },
+  {
+   "lat": 38.931333,
+   "lon": -9.420827,
+   "h": 42,
+   "photo": false,
+   "yaw": 50,
+   "pitch": -17,
+   "video": "start",
+   "hover": 1
+  },
+  {
+   "lat": 38.931783,
+   "lon": -9.421147,
+   "h": 42,
+   "photo": false,
+   "yaw": 72,
+   "pitch": -17
+  },
+  {
+   "lat": 38.932294,
+   "lon": -9.421228,
+   "h": 42,
+   "photo": false,
+   "yaw": 94,
+   "pitch": -17
+  },
+  {
+   "lat": 38.932791,
+   "lon": -9.421057,
+   "h": 42,
+   "photo": false,
+   "yaw": 116,
+   "pitch": -17
+  },
+  {
+   "lat": 38.933202,
+   "lon": -9.420659,
+   "h": 42,
+   "photo": false,
+   "yaw": 138,
+   "pitch": -17
+  },
+  {
+   "lat": 38.933468,
+   "lon": -9.420092,
+   "h": 42,
+   "photo": false,
+   "yaw": 160,
+   "pitch": -17,
+   "video": "stop",
+   "hover": 2
+  }
+ ]
+}
