@@ -1129,3 +1129,7 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 10:34:52  S utc=18:34:52 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=62 sat=5 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
 10:35:24  S utc=18:35:24 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=62 sat=6 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
 10:35:56  S utc=18:35:56 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=61 sat=5 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:36:21  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
+10:36:22  DJI-Status: NORMAL – Ready to Go (GPS)
+10:36:23  DJI-Meldung erledigt: 0x16200101
+10:36:28  S utc=18:36:28 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=61 sat=5 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
