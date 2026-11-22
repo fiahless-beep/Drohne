@@ -1,3 +1,9 @@
 b_140708.jpg utc=14:07:08 pos=38.901391,-9.388107 h=1.1 kurs=143 neigung=0 wp=0 mission=READY plan=muehle-scan-v5
 b_140713.jpg utc=14:07:13 pos=38.901391,-9.388107 h=1.5 kurs=142 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
 b_140717.jpg utc=14:07:17 pos=38.901389,-9.388107 h=17.4 kurs=143 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
+b_140721.jpg utc=14:07:21 pos=38.901390,-9.388111 h=36.8 kurs=143 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
+b_140725.jpg utc=14:07:25 pos=38.901389,-9.388110 h=48.9 kurs=143 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
+b_140729.jpg utc=14:07:29 pos=38.901391,-9.388113 h=50.0 kurs=-77 neigung=0 wp=-1 mission=INTERRUPTED plan=muehle-scan-v5
+b_140733.jpg utc=14:07:33 pos=38.901396,-9.388111 h=50.1 kurs=-98 neigung=0 wp=-1 mission=INTERRUPTED plan=muehle-scan-v5
+b_140737.jpg utc=14:07:37 pos=38.901398,-9.388113 h=50.1 kurs=-100 neigung=0 wp=-1 mission=RECOVERING plan=muehle-scan-v5
+b_140741.jpg utc=14:07:41 pos=38.901394,-9.388112 h=50.0 kurs=-101 neigung=0 wp=0 mission=EXECUTING plan=muehle-scan-v5
