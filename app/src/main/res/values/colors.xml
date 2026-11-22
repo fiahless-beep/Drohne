@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Dunkles Cockpit über Karte/Video: Glasflächen, wenig Farbe, Statusfarben nur als Punkt/Wert. -->
+<!--
+  Farbtokens der Art-Direction „Military Tactical“ (22.11.2026): fast schwarzer Grund, ein Teal als Akzent,
+  Orange nur für Warnung, Rot nur für Stopp. Dieselben Werte stehen für Canvas in cockpit/Stil.kt (Farbe).
+-->
 <resources>
-    <color name="bg">#000000</color>
-    <color name="glass">#CC14181E</color>
-    <color name="glassStrong">#E614181E</color>
-    <color name="glassLine">#2EFFFFFF</color>
-    <color name="surface2">#2A3038</color>
-    <color name="text">#F5F7FA</color>
-    <color name="textMuted">#9AA6B2</color>
-    <color name="textDim">#6B7680</color>
-
-    <color name="ok">#30D158</color>
-    <color name="warn">#FFD60A</color>
-    <color name="bad">#FF453A</color>
-    <color name="neutral">#5B6670</color>
-    <color name="accent">#0A84FF</color>
-    <color name="go">#30D158</color>
-    <color name="stop">#FF453A</color>
-    <color name="overlayScrim">#B3000000</color>
-    <color name="line">#3A4854</color>
+    <color name="bg">#05080A</color>
+    <color name="panel">#0B1012</color>
+    <color name="panelA">#E00B1012</color>
+    <color name="panelLine">#1C262B</color>
+    <color name="gridLine">#121A1E</color>
+    <color name="accent">#1EE8B0</color>
+    <color name="accentDim">#15826A</color>
+    <color name="text">#D7E2DC</color>
+    <color name="textMuted">#6E7E78</color>
+    <color name="textDim">#8A9A93</color>
+    <color name="decoDim">#2E3A36</color>
+    <color name="warn">#FF7A1A</color>
+    <color name="warnText">#FFB27A</color>
+    <color name="stop">#FF3B30</color>
 </resources>

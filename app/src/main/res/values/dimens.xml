@@ -3,5 +3,5 @@
     <dimen name="edge">12dp</dimen>
     <dimen name="radius">16dp</dimen>
     <dimen name="rail">48dp</dimen>
-    <dimen name="panelWidth">300dp</dimen>
+    <dimen name="panelWidth">232dp</dimen>
 </resources>
