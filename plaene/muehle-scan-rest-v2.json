@@ -1,0 +1,163 @@
+{
+ "name": "muehle-scan-rest-v2",
+ "beschreibung": "Vermessungsflug Mühle, Rest V2 (Felix 22.11.2026): nur der innere schräge Ring, der bei V5 fehlte (16 Fotos auf 32 m, Kamera etwa 45° auf die Mitte). Daraus entsteht das 3D-Modell für die späteren Film- und Fotopläne. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 19 m über Bäumen und Dächern, auch auf dem Heimweg. Etwa 3 min, mit vollem Akku starten. Bei hohem Sonnenstand oder bedecktem Himmel fliegen, nicht in der Dämmerung.",
+ "speed": 3.0,
+ "rcLost": "continue",
+ "transitHoehe": 45.0,
+ "start": {
+  "lat": 38.901381,
+  "lon": -9.388113
+ },
+ "waypoints": [
+  {
+   "lat": 38.901458,
+   "lon": -9.388167,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 331.7,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.90143,
+   "lon": -9.388287,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 354.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901439,
+   "lon": -9.388413,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 16.7,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901485,
+   "lon": -9.388524,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 39.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.90156,
+   "lon": -9.388604,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 61.7,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901654,
+   "lon": -9.388642,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 84.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901752,
+   "lon": -9.38863,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 106.7,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901839,
+   "lon": -9.388571,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 129.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901902,
+   "lon": -9.388473,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 151.7,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.90193,
+   "lon": -9.388353,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 174.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901921,
+   "lon": -9.388227,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 196.7,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901875,
+   "lon": -9.388116,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 219.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.9018,
+   "lon": -9.388036,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 241.7,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901706,
+   "lon": -9.387998,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 264.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901608,
+   "lon": -9.38801,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 286.7,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.901521,
+   "lon": -9.388069,
+   "h": 32.0,
+   "pitch": -45.0,
+   "yaw": 309.2,
+   "photo": true,
+   "hover": 0
+  }
+ ],
+ "hinderniserkennung": "aus",
+ "ziel": {
+  "lat": 38.90168,
+  "lon": -9.38832,
+  "h": 4.0
+ }
+}
