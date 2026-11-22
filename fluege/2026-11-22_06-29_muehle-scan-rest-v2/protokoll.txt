@@ -238,3 +238,4 @@
 10:36:23  DJI-Meldung erledigt: 0x16200101
 10:42:05  DJI-Meldung erledigt: 0x19000810
 10:42:05  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+10:50:54  Live-Bild verbunden
