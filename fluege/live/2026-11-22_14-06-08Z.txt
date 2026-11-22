@@ -1,0 +1,23 @@
+Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Handy-Zeitzone America/Los_Angeles
+06:06:07  Gerät: arm64-v8a, armeabi-v7a, armeabi, Seitengröße 4096, 64 Bibliotheken in arm64
+06:06:07  libc++_shared geladen
+06:06:07  libCORPProtobuf geladen
+06:06:07  libcorpbase geladen
+06:06:07  libCORPCSDKCommon geladen
+06:06:07  libFlightRecordEngine geladen
+06:06:07  libcorpsdk_jni geladen
+06:06:07  SDK wird gestartet …
+06:06:08  S utc=14:06:08 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=? hindernis=- mission=- wp=-1 plan=- wind=? windms=? windrichtung=?
+06:06:08  Gebäudedatenbank geladen: 57938 Gebäude
+06:06:08  Höhenmodell geladen: hoehen_muehle.bin, 74513 Zellen
+06:06:09  Netz verfügbar, Registrierung erneut
+06:06:09  Netz verfügbar, Registrierung erneut
+06:06:09  Registrierung erfolgreich (App-Key gültig)
+06:06:09  Höhenmodell geladen: hoehen.bin, 8400000 Zellen
+06:06:09  Hinderniserkennung: aus (BRAKE, Hauptschalter false)
+06:06:09  Telemetrie läuft
+06:06:09  DJI-Status: UNKNOWN – Unknown error
+06:06:09  SDK bereit, registriere App bei DJI …
+06:06:09  Registrierung erfolgreich (App-Key gültig)
+06:06:09  Telemetrie läuft
+06:06:09  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
