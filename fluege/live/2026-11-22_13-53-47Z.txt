@@ -26,3 +26,4 @@ Sitzung 2026-11-22_13-53-47 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 05:54:02  Registrierung erfolgreich (App-Key gültig)
 05:54:02  Telemetrie läuft
 05:55:47  Token gespeichert (per Link)
+05:55:57  Live link: Claude reads along (fluege/live/2026-11-22_13-53-47Z.txt)
