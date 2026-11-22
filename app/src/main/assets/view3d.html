@@ -99,7 +99,7 @@ function buildRelief() {
   const geo = new THREE.PlaneGeometry((t.nx - 1) * t.dx, (t.ny - 1) * t.dy, t.nx - 1, t.ny - 1); geo.rotateX(-Math.PI / 2);
   const pos = geo.attributes.position, col = new Float32Array(pos.count * 3);
   // Boden dunkel, alles was darauf steht (Baum, Dach) heller, je höher desto heller; zum Rand hin läuft das Modell ins Schwarz aus
-  const lo = [0.085, 0.105, 0.115], hi = [0.40, 0.45, 0.46], bg = [0.02, 0.031, 0.039];
+  const lo = [0.112, 0.138, 0.150], hi = [0.43, 0.48, 0.49], bg = [0.02, 0.031, 0.039];
   for (let j = 0; j < t.ny; j++) for (let i = 0; i < t.nx; i++) {
     const k = j * t.nx + i, src = (t.ny - 1 - j) * t.nx + i, c = t.c ? (t.c[src] || 0) : 0;
     pos.setY(k, (t.z[src] || 0) + c);
@@ -188,6 +188,12 @@ function spanFor(w, pts, el, aspect) {
   const mid = (lo + hi) / 2; w.x += ux * mid; w.y += uy * mid; w.z += uz * mid;
   return Math.max(hi - lo, 2 * sx / aspect) * 1.2 + 16;
 }
+/** Bildhöhe in Metern, bei der Punkt p um die feste Mitte w herum noch mit Rand im Bild liegt. */
+function reachFor(w, p, el, aspect) {
+  const e = el * Math.PI / 180, dx = p.x - w.x, dy = p.y - w.y, dz = p.z - w.z;
+  const sx = Math.abs(dx * Math.cos(azimuth) + dz * Math.sin(azimuth)), sy = Math.abs(dx * Math.sin(azimuth) * Math.sin(e) + dy * Math.cos(e) - dz * Math.cos(azimuth) * Math.sin(e));
+  return Math.max(2 * sy, 2 * sx / aspect) * 1.25 + 10;
+}
 function planPoints() { const pts = route.slice(); pts.push({ x: 0, y: groundAt(0, 0), z: 0 }); runs.forEach(r => { const p = route[r.from]; pts.push({ x: p.x, y: surfaceAt(p.x, p.z), z: p.z }); }); return pts; }
 function wantView() {
   const f = free(), tanHalf = Math.tan(FOV * Math.PI / 360), m = mode();
@@ -196,7 +202,9 @@ function wantView() {
     const gy = groundAt(drone.x, drone.z), agl = Math.max(0, drone.y - gy);
     w = { x: drone.x, y: drone.y - agl * 0.36, z: drone.z };
     const pts = planPoints(); pts.push({ x: drone.x, y: gy, z: drone.z }, drone);
-    const spanV = m === 'wide' ? Math.max(90, spanFor(w, pts, view.el, f.w / f.h)) : Math.max(74, agl * 0.87 / 0.40);
+    let spanV = m === 'wide' ? Math.max(90, spanFor(w, pts, view.el, f.w / f.h)) : Math.max(74, agl * 0.87 / 0.40);
+    // NEAR: der nächste Punkt soll mit ins Bild (bis zum 2,2-Fachen des normalen Ausschnitts), ohne die Drohne zu verschieben
+    if (m === 'near' && passed < route.length) spanV = Math.min(spanV * 2.2, Math.max(spanV, reachFor(w, route[passed], view.el, f.w / f.h)));
     w.d = spanV * (H / f.h) / (2 * tanHalf);
     w.foot = { x: drone.x, y: gy, z: drone.z };
   } else {
@@ -227,18 +235,18 @@ const tmp = window.THREE ? new THREE.Vector3() : null;
 function P(x, y, z) { tmp.set(x, y, z).project(cam); return { x: (tmp.x + 1) / 2 * W, y: (1 - tmp.y) / 2 * H, ok: tmp.z > -1 && tmp.z < 1 }; }
 
 // ---------------------------------------------------------------- Zeichnung über dem Relief
-let boxes = [];
+let boxes = [], lastPts = null;
 function hits(b) { return boxes.some(o => b.x < o.x + o.w && b.x + b.w > o.x && b.y < o.y + o.h && b.y + b.h > o.y); }
 function font(weight, px) { g.font = weight + ' ' + px + 'px ' + MONO; }
 function seg(a, b, color, width, dash) { if (!a.ok || !b.ok) return; g.strokeStyle = color; g.lineWidth = width; g.setLineDash(dash || []); g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); g.setLineDash([]); }
 /** Kleine Marke mit Kasten. ax/ay = Ankerpunkt; side: -1 links davon, 1 rechts davon. Gibt false zurück, wenn kein Platz ist. */
-function tag(text, ax, ay, side, color, must) {
-  font(700, 11); const w = Math.ceil(g.measureText(text).width) + 10, h = 17, f = free();
+function tag(text, ax, ay, side, color, must, dimTag) {
+  font(dimTag ? 500 : 700, 12); const w = Math.ceil(g.measureText(text).width) + 10, h = 19, f = free();
   const b = { x: side < 0 ? ax - w - 7 : ax + 7, y: ay - h / 2, w, h };
   if (b.x < f.x0 + 2 || b.x + b.w > f.x1 - 2 || b.y < f.y0 + 2 || b.y + b.h > f.y1 - 2) { if (!must) return false; b.x = Math.max(f.x0 + 2, Math.min(f.x1 - 2 - w, b.x)); b.y = Math.max(f.y0 + 2, Math.min(f.y1 - 2 - h, b.y)); }
   if (!must && hits(b)) return false;
   boxes.push(b);
-  g.fillStyle = C.panel; g.fillRect(b.x, b.y, b.w, b.h); g.strokeStyle = color === C.warnText ? C.warn : C.line; g.lineWidth = 1; g.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h - 1);
+  g.fillStyle = C.panel; g.fillRect(b.x, b.y, b.w, b.h); if (!dimTag) { g.strokeStyle = C.line; g.lineWidth = 1; g.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h - 1); }
   g.fillStyle = color; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(text, b.x + 5, b.y + h / 2 + 0.5);
   return true;
 }
@@ -248,31 +256,37 @@ function drawRoute() {
   if (!route.length) return;
   const pts = route.map(p => P(p.x, p.y, p.z));
   // Stützen an den Enden jedes Höhenabschnitts: zeigen, wo die Linie über dem Boden hängt
-  runs.forEach(r => [r.from, r.to].forEach((i, n) => { if (n && r.to === r.from) return; const p = route[i]; const foot = P(p.x, surfaceAt(p.x, p.z), p.z); seg(pts[i], foot, 'rgba(21,130,106,0.75)', 1, [2, 4]); if (foot.ok) { g.fillStyle = C.dim; g.fillRect(foot.x - 3, foot.y - 0.5, 6, 1.5); } }));
-  // geflogen: blass · offen: gedämpft · die nächsten drei Strecken: hell
-  for (let pass = 0; pass < 3; pass++) for (let i = 0; i < route.length - 1; i++) {
-    const done = i + 1 < passed, next = !done && !!drone && i >= passed && i < passed + 2, kind = done ? 0 : (next ? 2 : 1);
+  runs.forEach(r => [r.from, r.to].forEach((i, n) => { if (n && r.to === r.from) return; const p = route[i]; const foot = P(p.x, surfaceAt(p.x, p.z), p.z); seg(pts[i], foot, 'rgba(21,130,106,0.8)', 2, [3, 5]); if (foot.ok) { g.fillStyle = C.dim; g.fillRect(foot.x - 4, foot.y - 1, 8, 2); } }));
+  // geflogen: blass · offen: dünn und gedämpft. Hell ist nur das Stück von der Drohne zum nächsten Punkt (drawNext).
+  for (let pass = 0; pass < 2; pass++) for (let i = 0; i < route.length - 1; i++) {
+    const done = i + 1 < passed + (drone ? 1 : 0), kind = done ? 0 : 1;
     if (kind !== pass) continue;
     const low = lowSeg[i];
-    if (kind === 2) seg(pts[i], pts[i + 1], 'rgba(5,8,10,0.85)', 5);
     if (kind === 1) seg(pts[i], pts[i + 1], 'rgba(5,8,10,0.55)', 3.5);
-    seg(pts[i], pts[i + 1], low ? (done ? 'rgba(255,122,26,0.4)' : C.warn) : (kind === 0 ? 'rgba(21,130,106,0.5)' : kind === 1 ? '#1AAE88' : C.accent), kind === 2 ? 2.5 : (kind === 1 ? 1.5 : 1));
+    seg(pts[i], pts[i + 1], low ? (done ? 'rgba(255,122,26,0.4)' : C.warn) : (kind === 0 ? 'rgba(21,130,106,0.45)' : '#17A17F'), kind === 1 ? 1.5 : 1);
   }
   return pts;
 }
 function drawRunTags(pts) {
-  // Höhenmarken: lange Abschnitte zuerst; was keinen Platz hat, fällt weg
-  runs.slice().sort((a, b) => (b.to - b.from) - (a.to - a.from)).forEach(r => {
+  // Höhenmarken der Route = Höhe über dem Startpunkt („START +45 m“), bewusst gedämpft und ohne Rahmen: die große Zahl
+  // an der Drohne ist etwas anderes (Abstand nach unten). Beschriftet sind höchstens zwei Abschnitte, der laufende und der
+  // nächste; alle weiteren zeigen nur die kleine Marke.
+  const cur = Math.max(0, runs.findIndex(r => r.to >= Math.max(0, passed - 1)));
+  runs.forEach((r, n) => {
     if (r.to < passed - 1) return;
-    const cands = [r.from, r.to, Math.round((r.from + r.to) / 2)];
-    for (const i of cands) { const p = pts[i]; if (!p.ok) continue; if (tag('ALT ' + m0(r.h), p.x, p.y - 12, -1, C.text, false) || tag('ALT ' + m0(r.h), p.x, p.y - 12, 1, C.text, false)) { g.fillStyle = C.text; g.fillRect(p.x - 2.5, p.y - 2.5, 5, 5); break; } }
+    const cands = [r.from, r.to, Math.round((r.from + r.to) / 2)].filter(i => pts[i].ok);
+    if (!cands.length) return;
+    let at = cands[0];
+    if (n === cur || n === cur + 1) { const t = 'START +' + m0(r.h) + ' m';
+      for (const i of cands) { const p = pts[i]; if (tag(t, p.x, p.y - 13, -1, C.textDim, false, true) || tag(t, p.x, p.y - 13, 1, C.textDim, false, true)) { at = i; break; } } }
+    g.fillStyle = C.textDim; g.fillRect(pts[at].x - 2.5, pts[at].y - 2.5, 5, 5);
   });
 }
 function drawHome() {
   const gy = groundAt(0, 0), h = P(0, gy, 0); if (!h.ok) return;
-  g.fillStyle = C.bg; g.strokeStyle = C.text; g.lineWidth = 1.5; g.fillRect(h.x - 7, h.y - 7, 14, 14); g.strokeRect(h.x - 6.5, h.y - 6.5, 13, 13);
-  font(700, 10); g.fillStyle = C.text; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('H', h.x, h.y + 0.5);
-  boxes.push({ x: h.x - 9, y: h.y - 9, w: 18, h: 18 });
+  g.fillStyle = C.bg; g.strokeStyle = C.text; g.lineWidth = 1.5; g.fillRect(h.x - 9, h.y - 9, 18, 18); g.strokeRect(h.x - 8.5, h.y - 8.5, 17, 17);
+  font(700, 12); g.fillStyle = C.text; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('H', h.x, h.y + 0.5);
+  boxes.push({ x: h.x - 11, y: h.y - 11, w: 22, h: 22 });
   return h;
 }
 function drawNext(pts) {
@@ -280,10 +294,10 @@ function drawNext(pts) {
   const d = P(drone.x, drone.y, drone.z);
   if (passed < route.length) {
     const i = passed, p = route[i], q = pts[i]; if (!q.ok) return;
-    if (flying || i > 0) { seg(d, q, 'rgba(5,8,10,0.85)', 5); seg(d, q, C.accent, 2.5); }
+    seg(d, q, 'rgba(5,8,10,0.85)', 6); seg(d, q, C.accent, 3);
     g.strokeStyle = C.accent; g.lineWidth = 2; g.beginPath(); g.moveTo(q.x, q.y - 7); g.lineTo(q.x + 7, q.y); g.lineTo(q.x, q.y + 7); g.lineTo(q.x - 7, q.y); g.closePath(); g.fillStyle = C.bg; g.fill(); g.stroke();
     const dh = p.y - drone.y, overHome = Math.hypot(p.x, p.z) < 4;
-    const t = 'NEXT ' + (overHome ? 'HOME ' : '') + 'ALT ' + m0(p.y) + (Math.abs(dh) >= 1.5 ? (dh > 0 ? ' ▲' : ' ▼') + m0(Math.abs(dh)) : '');
+    const t = 'NEXT ' + (overHome ? 'HOME ' : '') + (Math.abs(dh) >= 1.5 ? (dh > 0 ? '▲ ' : '▼ ') + m0(Math.abs(dh)) + ' m' : 'LEVEL');
     if (Math.hypot(q.x - d.x, q.y - d.y) > 26) { tag(t, q.x, q.y, q.x >= d.x ? 1 : -1, C.accent, false) || tag(t, q.x, q.y - 16, q.x >= d.x ? -1 : 1, C.accent, false) || tag(t, q.x, q.y + 16, 1, C.accent, true); }
   } else if (flying && Math.hypot(drone.x, drone.z) > 6) {
     // Plan fertig: Heimweg auf der jetzigen Höhe bis über den Startplatz, dann hinunter
@@ -311,9 +325,9 @@ function drawDrone() {
     if (hasObst) seg(foot, top, C.obst, 4);
     seg(top, d, col, 2.5);
     const pxPer10 = Math.hypot(d.x - foot.x, d.y - foot.y) / agl * 10;
-    font(500, 10); g.textAlign = 'right'; g.textBaseline = 'middle';
+    font(500, 12); g.textAlign = 'right'; g.textBaseline = 'middle';
     for (let h = 10; h < agl - 2; h += 10) { const q = P(drone.x, gy + h, drone.z); g.fillStyle = h <= obst && hasObst ? C.bg : col; g.fillRect(q.x - 5, q.y - 1, 10, 2);
-      if (pxPer10 >= 16 && Math.hypot(q.x - d.x, q.y - d.y) > 26 && !hits({ x: q.x - 24, y: q.y - 6, w: 16, h: 12 })) { g.fillStyle = C.textDim; g.lineWidth = 3; g.strokeStyle = 'rgba(5,8,10,0.9)'; g.strokeText(String(h), q.x - 9, q.y + 0.5); g.fillText(String(h), q.x - 9, q.y + 0.5); } }
+      if (h % 20 === 0 && pxPer10 >= 11 && Math.hypot(q.x - d.x, q.y - d.y) > 28 && !hits({ x: q.x - 28, y: q.y - 8, w: 20, h: 16 })) { g.fillStyle = C.textDim; g.lineWidth = 3; g.strokeStyle = 'rgba(5,8,10,0.9)'; g.strokeText(String(h), q.x - 9, q.y + 0.5); g.fillText(String(h), q.x - 9, q.y + 0.5); } }
     g.fillStyle = col; g.fillRect(top.x - 8, top.y - 1.5, 16, 3);
   }
   // Drohne: X mit vier Rotoren und Bugstrich, nach Kurs gedreht, feste Größe auf dem Bildschirm
@@ -326,41 +340,46 @@ function drawDrone() {
   if (agl < 1) { tag('ON GROUND', d.x, d.y - 26, 1, C.text, true); return; }
   // Die eine Zahl: Abstand zu dem, was unter der Drohne ist
   const cap = (low ? 'LOW · ' : '') + (!terrain ? 'OVER START LEVEL' : hasObst ? 'OVER TREE / ROOF' : 'OVER GROUND');
-  const num = m0(clr), sub = hasObst ? 'GROUND ' + m0(agl) + ' m' : (under ? 'UNDER TREES / NEXT TO WALL' : '');
-  font(700, 30); const wn = g.measureText(num).width; font(500, 11); const wc = Math.max(g.measureText(cap).width, sub ? g.measureText(sub).width : 0);
+  const num = m0(clr), sub = hasObst ? 'TERRAIN BELOW ' + m0(agl) + ' m' : (under ? 'UNDER TREES / NEXT TO WALL' : '');
+  font(700, 30); const wn = g.measureText(num).width; font(500, 12); const wc = Math.max(g.measureText(cap).width, sub ? g.measureText(sub).width : 0);
   const bw = Math.ceil(Math.max(wn + 24, wc)) + 16, bh = sub ? 70 : 54;
-  let bx = d.x + 30, by = (d.y + top.y) / 2 - bh / 2; if (agl < 12) by = d.y - bh - 18;
-  if (bx + bw > f.x1 - 4) bx = d.x - 30 - bw;
-  bx = Math.max(f.x0 + 4, bx); by = Math.max(f.y0 + 4, Math.min(f.y1 - bh - 4, by));
-  boxes.push({ x: bx, y: by, w: bw, h: bh });
+  // Kasten auf die Seite, auf der die nächste Strecke nicht liegt; passt er dort nicht in die freie Fläche, auf die andere
+  const nq = lastPts && passed < route.length ? lastPts[passed] : null;
+  let by = (d.y + top.y) / 2 - bh / 2; if (agl < 12) by = d.y - bh - 18;
+  by = Math.max(f.y0 + 4, Math.min(f.y1 - bh - 4, by));
+  const right = d.x + 30, left = d.x - 30 - bw, fits = x => x >= f.x0 + 4 && x + bw <= f.x1 - 4 && !hits({ x, y: by, w: bw, h: bh });
+  const order = nq && nq.ok && nq.x > d.x + 8 ? [left, right] : [right, left];
+  let bx = fits(order[0]) ? order[0] : (fits(order[1]) ? order[1] : order[0]);
+  bx = Math.max(f.x0 + 4, Math.min(f.x1 - bw - 4, bx));
+  boxes.push({ x: bx - 28, y: by - 24, w: bw + 56, h: bh + 48 });           // mit Abstand: Routenmarken stehen nie direkt daneben
   g.fillStyle = low ? 'rgba(42,23,8,0.94)' : C.panel; g.fillRect(bx, by, bw, bh); g.strokeStyle = low ? C.warn : C.line; g.lineWidth = 1; g.strokeRect(bx + 0.5, by + 0.5, bw - 1, bh - 1);
   g.fillStyle = col; g.fillRect(bx, by, 3, bh);
   g.textAlign = 'left'; g.textBaseline = 'alphabetic';
-  font(500, 11); g.fillStyle = low ? C.warnText : C.text; g.fillText(cap, bx + 10, by + 16);
+  font(500, 12); g.fillStyle = low ? C.warnText : C.text; g.fillText(cap, bx + 10, by + 17);
   font(700, 30); g.fillStyle = low ? C.warnText : C.accent; g.fillText(num, bx + 10, by + 46);
   font(500, 13); g.fillStyle = C.text; g.fillText('m', bx + 14 + wn, by + 46);
-  if (sub) { font(500, 11); g.fillStyle = C.textDim; g.fillText(sub, bx + 10, by + 62); }
+  if (sub) { font(500, 12); g.fillStyle = C.text; g.fillText(sub, bx + 10, by + 63); }
 }
 /** Oben rechts: wohin Norden zeigt und welche Stufe der Umschalter gerade hat. */
 function drawCorner() {
   const f = free(), cx = f.x1 - 24, cy = f.y0 + 26;
   const a = P(view.x, view.y, view.z), b = P(view.x, view.y, view.z - 30), ang = Math.atan2(b.x - a.x, -(b.y - a.y));
-  boxes.push({ x: cx - 44, y: cy - 20, w: 66, h: 56 });
-  g.fillStyle = C.panel; g.fillRect(cx - 18, cy - 18, 36, 36); g.strokeStyle = C.line; g.lineWidth = 1; g.strokeRect(cx - 17.5, cy - 17.5, 35, 35);
-  g.save(); g.translate(cx, cy); g.rotate(ang); g.fillStyle = C.text; g.beginPath(); g.moveTo(0, -12); g.lineTo(5, 3); g.lineTo(0, 0); g.lineTo(-5, 3); g.closePath(); g.fill(); g.restore();
-  font(700, 9); g.fillStyle = C.textDim; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('N', cx, cy + 12);
-  font(700, 10); g.textAlign = 'right'; g.fillStyle = C.text; g.fillText(mode() === 'near' ? 'NEAR' : 'WIDE', f.x1 - 6, cy + 28);
+  boxes.push({ x: cx - 62, y: cy - 22, w: 86, h: 62 });
+  g.fillStyle = C.panel; g.fillRect(cx - 58, cy - 18, 76, 36); g.strokeStyle = C.line; g.lineWidth = 1; g.strokeRect(cx - 57.5, cy - 17.5, 75, 35);
+  g.save(); g.translate(cx, cy); g.rotate(ang); g.fillStyle = C.text; g.beginPath(); g.moveTo(0, -13); g.lineTo(6, 8); g.lineTo(0, 4); g.lineTo(-6, 8); g.closePath(); g.fill(); g.restore();
+  font(700, 12); g.fillStyle = C.text; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('N', cx - 38, cy + 0.5);
+  font(700, 12); g.textAlign = 'right'; g.fillStyle = C.text; g.fillText(mode() === 'near' ? 'NEAR' : 'WIDE', f.x1 - 6, cy + 30);
 }
 /** Unten links: was die hellen Körper im Relief sind (das Modell kennt nur „etwas steht hier“, nicht Baum oder Dach). */
 function drawLegend() {
   if (!terrain || !terrain.c) return;
   const f = free(), x = f.x0 + 8, y = f.y1 - 14;
-  font(500, 10); const w = g.measureText('TREES / ROOFS').width + 26;
-  g.fillStyle = C.panel; g.fillRect(x - 4, y - 9, w, 18); g.fillStyle = '#737f80'; g.fillRect(x, y - 4, 9, 9);
-  g.fillStyle = C.textDim; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText('TREES / ROOFS', x + 15, y + 0.5);
-  boxes.push({ x: x - 4, y: y - 9, w, h: 18 });
+  font(500, 12); const w = g.measureText('TREES / ROOFS').width + 28;
+  g.fillStyle = C.panel; g.fillRect(x - 4, y - 10, w, 20); g.fillStyle = '#7b8788'; g.fillRect(x, y - 5, 10, 10);
+  g.fillStyle = C.text; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText('TREES / ROOFS', x + 16, y + 0.5);
+  boxes.push({ x: x - 4, y: y - 10, w, h: 20 });
 }
-function note(text) { const f = free(); font(500, 11); g.textAlign = 'center'; g.textBaseline = 'middle'; const w = g.measureText(text).width + 16; g.fillStyle = C.panel; g.fillRect(f.cx - w / 2, f.y1 - 30, w, 20); g.fillStyle = C.textDim; g.fillText(text, f.cx, f.y1 - 19.5); }
+function note(text) { const f = free(); font(500, 12); g.textAlign = 'center'; g.textBaseline = 'middle'; const w = g.measureText(text).width + 16; g.fillStyle = C.panel; g.fillRect(f.cx - w / 2, f.y1 - 30, w, 20); g.fillStyle = C.text; g.fillText(text, f.cx, f.y1 - 19.5); }
 
 function frame() {
   placeCamera();
@@ -370,7 +389,7 @@ function frame() {
   g.clearRect(0, 0, W, H); boxes = [];
   if (!renderer) { note('3D NOT AVAILABLE ON THIS DEVICE'); return; }
   renderer.render(scene, cam);
-  const pts = drawRoute();
+  const pts = drawRoute(); lastPts = pts || null;
   drawHome(); drawCorner(); drawLegend();
   if (pts) drawNext(pts);
   drawDrone();
