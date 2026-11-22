@@ -53,3 +53,6 @@ Sitzung 2026-11-22_13-53-47 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:03:56  DJI-Höhenlimit gelesen: 120 m
 06:03:56  DJI-Höhenlimit gelesen: 120 m
 06:03:56  S utc=14:03:56 verbunden=true fliegt=false pos=38.901394,-9.388113 h=0.0 start=38.901394,-9.388113 akku=94 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=frei/n0/o0/u0 mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:04:03  [10 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=94
+06:04:11  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:04:28  S utc=14:04:28 verbunden=true fliegt=false pos=38.901394,-9.388113 h=0.0 start=38.901394,-9.388113 akku=94 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
