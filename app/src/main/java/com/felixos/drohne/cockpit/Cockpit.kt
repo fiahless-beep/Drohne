@@ -27,6 +27,8 @@ interface Gastgeber {
     fun einpassen()
     /** Was das Cockpit von der Bildfläche überdeckt (Pixel je Rand); die 3D-Ansicht hält Drohne und Zahlen im freien Teil. */
     fun bildRaender(links: Int, oben: Int, rechts: Int, unten: Int)
+    /** Vollbild: Leiste, Aktionsfeld und HUD ausblenden, die Ansicht füllt den Bildschirm; false = zurück. */
+    fun vollbild(an: Boolean)
     fun protokoll()
     fun protokollKopieren()
     fun einstellungen()
@@ -38,18 +40,22 @@ interface Gastgeber {
  * Das neue Cockpit („Military Tactical“, freigegeben 22.11.2026): Leiste links, Live/HUD-Bildschirm und System-Bildschirm.
  * Kennt vom Flugkern nur den Vertrag: liest [CockpitZustand] aus der [FlugSitzung] und ruft [Aktionen].
  */
-class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: FrameLayout, private val liveWurzel: View, private val systemWurzel: FrameLayout, private val gast: Gastgeber) {
+class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: FrameLayout, private val liveWurzel: View, private val systemWurzel: FrameLayout, vollbildWurzel: FrameLayout, private val gast: Gastgeber) {
     private val stil = Stil(c)
     private val aktionen: Aktionen = FlugSitzung
     private val live = LiveSchirm(stil, aktionen, buehne, feld)
     private val system = SystemSchirm(stil, systemWurzel, gast)
     private val ui = Handler(Looper.getMainLooper())
+    private val vollSchirm = VollbildSchirm(stil, vollbildWurzel, verlassen = { vollbildSetzen(false) }, stoppen = { vollbildSetzen(false); live.stoppen() })
     private var systemAn = false
+    /** Vollbild der gerade gezeigten Ansicht; wird nicht gespeichert, nach dem App-Start immer aus. */
+    var vollbild = false; private set
     private var hell = true
     private var laeuft = false
 
     private val kAnsicht = LeistenKnopf(stil, "Switch view: map, live view, 3D") { gast.ansichtWechseln(); leisteZeigen() }
     private val kEinpassen = LeistenKnopf(stil, "Fit map / 3D view near or wide") { gast.einpassen() }
+    private val kVoll = LeistenKnopf(stil, "Full screen") { vollbildSetzen(true) }
     private val kSystem = LeistenKnopf(stil, "System status") { systemAn = !systemAn; leisteZeigen(); zeige(aktionen.zustand()) }
     private val kCopilot = LeistenKnopf(stil, "Ask Claude") { gast.copilot() }
     private val kProtokoll = LeistenKnopf(stil, "Log (hold to copy)") { gast.protokoll() }
@@ -64,7 +70,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
 
     init {
         kProtokoll.setOnLongClickListener { gast.protokollKopieren(); true }
-        listOf(kAnsicht, kEinpassen, kSystem, kCopilot, kProtokoll, kMehr).forEachIndexed { i, k ->
+        listOf(kAnsicht, kEinpassen, kVoll, kSystem, kCopilot, kProtokoll, kMehr).forEachIndexed { i, k ->
             leiste.addView(k, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { if (i > 0) topMargin = stil.dp(4) })
         }
         kCopilot.setze("AI", false); kProtokoll.setze("Log", false); kMehr.setze("Set", false)
@@ -82,6 +88,8 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         kEinpassen.setze(if (a == Ansicht.DREI_D) "Zoom" else "Fit", false)
         kEinpassen.isEnabled = a != Ansicht.LIVEBILD && !systemAn
         kEinpassen.alpha = if (kEinpassen.isEnabled) 1f else 0.35f
+        kVoll.setze("Full", false)
+        vollKnopfZeigen(aktionen.zustand())
         kSystem.setze("Sys", systemAn)
         systemWurzel.sichtbar(systemAn)
         // Livebild-Fläche bleibt darunter bestehen; nur die Bedienflächen des Live-Bildschirms werden verdeckt.
@@ -93,7 +101,25 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     }
 
     /** Links die Flugwerte (wie im HUD 150 dp), oben Status-, Warnzeile und Kompassband. */
-    private fun raenderMelden() = gast.bildRaender(stil.dp(150), live.hud.obenPx + stil.dp(46), 0, 0)
+    private fun raenderMelden() = if (vollbild) gast.bildRaender(0, 0, 0, 0) else gast.bildRaender(stil.dp(150), live.hud.obenPx + stil.dp(46), 0, 0)
+
+    private fun vollKnopfZeigen(z: CockpitZustand) {
+        kVoll.isEnabled = !systemAn && vollbildErlaubt(z)
+        kVoll.alpha = if (kVoll.isEnabled) 1f else 0.35f
+    }
+
+    /** Vollbild ein oder aus. Ein geht nur, solange [vollbildErlaubt]; der Grund steht sonst in der Warnzeile. */
+    private fun vollbildSetzen(an: Boolean) {
+        val neu = an && !systemAn && vollbildErlaubt(aktionen.zustand())
+        if (neu == vollbild) return
+        vollbild = neu
+        gast.vollbild(neu)
+        raenderMelden()
+        if (neu) vollSchirm.zeige(aktionen.zustand(), live.stoppFrei)
+    }
+
+    /** Für die Zurück-Taste: verlässt das Vollbild; false = es war keins an. */
+    fun vollbildVerlassen(): Boolean { if (!vollbild) return false; vollbildSetzen(false); return true }
 
     private fun zeige(z: CockpitZustand) {
         val jetzt = System.currentTimeMillis()
@@ -102,6 +128,9 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             System.arraycopy(hoehen, 1, hoehen, 0, hoehen.size - 1)
             hoehen[hoehen.size - 1] = if (z.datenDa) z.hoeheM?.toFloat() ?: Float.NaN else Float.NaN
         }
+        if (vollbild && !vollbildErlaubt(z)) vollbildSetzen(false)
+        vollKnopfZeigen(z)
+        if (vollbild) vollSchirm.zeige(z, live.stoppFrei)
         live.zeige(z)
         if (systemAn) system.zeige(z, hoehen, windText(z))
     }

@@ -306,8 +306,11 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         zeige(aktionen.zustand())
     }
 
+    /** Der STOP im Vollbild teilt sich die Sperre mit dem großen. */
+    val stoppFrei: Boolean get() = System.currentTimeMillis() >= stoppGesperrtBis
+
     /** Ein Druck löst aus; danach ist die Stelle 1,5 s gesperrt, damit ein Doppeltipp nichts Zweites trifft. */
-    private fun stoppen() {
+    fun stoppen() {
         if (System.currentTimeMillis() < stoppGesperrtBis) return
         stoppGesperrtBis = System.currentTimeMillis() + 1500
         aktionen.stoppUndHeim()

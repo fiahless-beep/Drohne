@@ -92,7 +92,10 @@ class MainActivity : AppCompatActivity() {
         setupVideo(video)
         mapPanel = MapPanel(mapView)
         view3d.init()
-        cockpit = Cockpit(this, findViewById(R.id.rail), findViewById(R.id.hudHost), findViewById(R.id.panel), findViewById(R.id.liveRoot), findViewById(R.id.systemRoot), gastgeber)
+        cockpit = Cockpit(this, findViewById(R.id.rail), findViewById(R.id.hudHost), findViewById(R.id.panel), findViewById(R.id.liveRoot), findViewById(R.id.systemRoot), findViewById(R.id.vollbildHost), gastgeber)
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() { if (cockpit.vollbildVerlassen()) return; isEnabled = false; onBackPressedDispatcher.onBackPressed(); isEnabled = true }
+        })
 
         // Startplätze: Kopie im Handyspeicher (überlebt eine Deinstallation). Ohne die Erlaubnis einmal je Installation fragen.
         if (StartPlaces.canMirror()) StartPlaces.syncMirror(this)
@@ -208,6 +211,16 @@ class MainActivity : AppCompatActivity() {
         override fun ansichtWechseln() = chooseView(when (mode) { Mode.MAP -> Mode.VIDEO; Mode.VIDEO -> Mode.THREE; Mode.THREE -> Mode.MAP }, byUser = true)
         override fun einpassen() { if (mode == Mode.THREE) view3d.cycleCamera {} else mapPanel.fit() }
         override fun bildRaender(links: Int, oben: Int, rechts: Int, unten: Int) = view3d.raender(links, oben, rechts, unten)
+        /** Vollbild: nur die Ansicht samt den drei kleinen Bedienteilen (vollbildHost); Ränder des Rahmens fallen weg. */
+        override fun vollbild(an: Boolean) {
+            val weg = if (an) View.GONE else View.VISIBLE
+            findViewById<View>(R.id.rail).visibility = weg; findViewById<View>(R.id.panel).visibility = weg; findViewById<View>(R.id.hudHost).visibility = weg
+            findViewById<View>(R.id.vollbildHost).visibility = if (an) View.VISIBLE else View.GONE
+            val d = resources.displayMetrics.density; val rand = if (an) 0 else Math.round(6 * d)
+            findViewById<View>(R.id.rahmen).setPadding(rand, rand, rand, rand)
+            findViewById<View>(R.id.mitte).let { v -> (v.layoutParams as android.view.ViewGroup.MarginLayoutParams).marginStart = rand; v.requestLayout() }
+            if (mode == Mode.MAP) mapView.post { mapView.invalidate() }
+        }
         override fun protokoll() = showLog()
         override fun protokollKopieren() = copyLog()
         override fun einstellungen() = showMore()
