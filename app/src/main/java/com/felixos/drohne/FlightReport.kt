@@ -217,6 +217,20 @@ object FlightReport {
         }
     }
 
+    /** Freier Platz des aktiven Kameraspeichers in MB, zuletzt gelesen; null = noch nicht gelesen. Für die Startprüfung. */
+    @Volatile var activeFreeMb: Int? = null; private set
+    @Volatile private var storageReadMs = 0L
+
+    /** Liest den freien Platz höchstens alle 10 s neu (die Startprüfung läuft bei jeder Anzeige). */
+    fun refreshStorage() {
+        val now = System.currentTimeMillis()
+        if (now - storageReadMs < 10_000) return
+        storageReadMs = now
+        DjiSettings.read(dji.sdk.keyvalue.key.CameraKey.KeyCameraStorageInfos) { v ->
+            activeFreeMb = try { v?.cameraStorageInfoList?.firstOrNull { it.storageType == v.currentStorageType }?.storageLeftCapacity?.toInt() } catch (_: Throwable) { null }
+        }
+    }
+
     private fun fileTimeMs(mf: MediaFile): Long = try {
         val d = mf.date
         java.util.GregorianCalendar(d.year, d.month - 1, d.day, d.hour, d.minute, d.second).timeInMillis

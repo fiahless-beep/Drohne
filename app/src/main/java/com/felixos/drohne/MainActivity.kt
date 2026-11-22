@@ -1355,6 +1355,11 @@ class MainActivity : AppCompatActivity() {
         MissionController.conflicts.forEach { add("Building guard: $it") }
         MissionController.terrainConflicts.forEach { add("Surface guard: $it") }
         addAll(MissionController.returnProblems)
+        // Flug 22.11.2026: Karte war nach 50 von 124 Fotos voll, der Rest flog ohne Bild. Vor dem Start prüfen.
+        if (m != null && s.connected) {
+            FlightReport.refreshStorage()
+            com.felixos.drohne.plan.Storage.problem(m.waypoints.count { it.takePhoto }, FlightReport.activeFreeMb)?.let { add(it) }
+        }
         if (m != null) {
             val top = maxOf(m.waypoints.maxOf { it.heightM }, MissionController.rthHeightM)
             s.heightLimitM?.let { if (it < top - 0.5) add("DJI height limit $it m is below the flight height ${top.toInt()} m. Settings → Safety → Height limit.") }
