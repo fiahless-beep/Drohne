@@ -215,3 +215,6 @@
 06:56:44  DJI-Meldung erledigt: 0x161000A4
 06:57:39  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
 06:57:43  DJI-Meldung erledigt: 0x16100015
+06:59:52  DJI-Status: NORMAL – Ready to Go (GPS)
+06:59:52  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
+06:59:54  DJI-Meldung erledigt: 0x16200101
