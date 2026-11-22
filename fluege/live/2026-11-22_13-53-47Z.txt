@@ -1,0 +1,28 @@
+Sitzung 2026-11-22_13-53-47 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Handy-Zeitzone America/Los_Angeles
+05:53:46  Gerät: arm64-v8a, armeabi-v7a, armeabi, Seitengröße 4096, 64 Bibliotheken in arm64
+05:53:46  libc++_shared geladen
+05:53:46  libCORPProtobuf geladen
+05:53:46  libcorpbase geladen
+05:53:46  libCORPCSDKCommon geladen
+05:53:46  libFlightRecordEngine geladen
+05:53:46  libcorpsdk_jni geladen
+05:53:46  SDK wird gestartet …
+05:53:47  S utc=13:53:47 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=? hindernis=- mission=- wp=-1 plan=- wind=? windms=? windrichtung=?
+05:53:47  ⚠ NO GitHub token: nothing is sent to Claude (logs and stills stay on the phone). Settings → Data → Enter GitHub token.
+05:53:47  Gebäudedatenbank geladen: 57938 Gebäude
+05:53:48  Höhenmodell geladen: hoehen_muehle.bin, 74513 Zellen
+05:53:49  Netz verfügbar, Registrierung erneut
+05:53:49  Netz verfügbar, Registrierung erneut
+05:53:50  Höhenmodell geladen: hoehen.bin, 8400000 Zellen
+05:53:50  SDK bereit, registriere App bei DJI …
+05:53:53  Registrierung erfolgreich (App-Key gültig)
+05:53:53  Hinderniserkennung: aus (BRAKE, Hauptschalter false)
+05:53:53  Telemetrie läuft
+05:53:53  DJI-Status: UNKNOWN – Unknown error
+05:53:53  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
+05:53:54  Registrierung erfolgreich (App-Key gültig)
+05:53:54  Telemetrie läuft
+05:53:57  S utc=13:53:57 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=aus hindernis=frei/n0/o0/u0 mission=- wp=-1 plan=- wind=? windms=? windrichtung=?
+05:54:02  Registrierung erfolgreich (App-Key gültig)
+05:54:02  Telemetrie läuft
+05:55:47  Token gespeichert (per Link)
