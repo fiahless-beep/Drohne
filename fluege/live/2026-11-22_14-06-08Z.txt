@@ -721,3 +721,4 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:33:33  DJI-Meldung erledigt: 0x16100015
 06:33:35  S utc=14:33:35 verbunden=true fliegt=false pos=38.901439,-9.388131 h=0.0 start=38.901389,-9.388127 akku=84 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
 06:33:35  DJI-Meldung erledigt: 0x1C00040A
+06:34:09  S utc=14:34:09 verbunden=true fliegt=false pos=38.901443,-9.388133 h=0.0 start=38.901389,-9.388127 akku=83 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
