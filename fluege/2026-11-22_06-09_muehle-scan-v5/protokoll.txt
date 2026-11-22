@@ -1,0 +1,14 @@
+06:09:03  Flugprotokoll: 2026-11-22_06-09_muehle-scan-v5/protokoll.txt
+06:09:03  Startpunkt: 38.901391, -9.388107
+06:09:03  Karte: https://www.google.com/maps/dir/38.901394,-9.388113/38.901237,-9.387781/38.901230,-9.387766/38.901320,-9.387766/38.901410,-9.387766/38.901500,-9.387766/38.901590,-9.387766/38.901680,-9.387766/38.901770,-9.387766/38.901860,-9.387766/data=!4m2!4m1!3e2
+06:09:03  Wegpunkt 1
+06:09:03  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 515 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+06:09:03  Rückkehrhöhe: 50 m
+06:09:03  Start fehlgeschlagen: null
+06:09:05  T 38.901393 -9.388105 h=2.6 akku=85 fliegt=true mission=READY wp=0 wind=0 hind=1427@83°/n360/o60000/u2228
+06:09:05  Flight stills: saving a still every 4 s (1920x1080)
+06:09:07  T 38.901393 -9.388105 h=2.1 akku=85 fliegt=true mission=READY wp=0 wind=0 hind=2173@68°/n360/o60000/u1820
+06:09:09  T 38.901392 -9.388106 h=1.7 akku=85 fliegt=true mission=READY wp=0 wind=0 hind=1253@68°/n360/o60000/u1399
+06:09:11  T 38.901392 -9.388106 h=1.3 akku=84 fliegt=true mission=READY wp=0 wind=0 hind=1249@78°/n360/o60000/u977
+06:09:13  T 38.901392 -9.388106 h=0.9 akku=84 fliegt=true mission=READY wp=0 wind=0 hind=2043@168°/n360/o60000/u544
+06:09:15  T 38.901393 -9.388106 h=0.5 akku=84 fliegt=true mission=READY wp=0 wind=0 hind=2025@183°/n360/o60000/u137
