@@ -469,6 +469,7 @@ class MainActivity : AppCompatActivity() {
 
     private var loading = false
     private var uploading = false
+    private var uploadRun = 0
 
     // ---------------------------------------------------------------- Status line (always visible feedback)
 
@@ -1549,9 +1550,19 @@ class MainActivity : AppCompatActivity() {
     private fun uploadCurrent() {
         val m = mission ?: return DroneManager.log("Kein Plan: erst „Plan holen“ oder Testflug")
         uploading = true; renderNow(DroneManager.state)
+        // Zeitgrenze (Feld 22.11.2026: „Uploading“ blieb minutenlang stehen): meldet die Drohne nach 45 s nichts, ist der Knopf wieder frei.
+        val run = ++uploadRun
+        window.decorView.postDelayed({
+            if (uploading && run == uploadRun) {
+                uploading = false
+                DroneManager.log("Upload: nach 45 s keine Rückmeldung der Drohne")
+                setPlanCard("Plan “${m.name}” – upload did not finish", "The drone did not answer within 45 s. Check the connection, then press “Upload again”.")
+                renderNow(DroneManager.state)
+            }
+        }, 45_000)
         MissionController.upload { ok ->
             runOnUiThread {
-                uploading = false
+                uploading = false; uploadRun++
                 setPlanCard(if (ok) "Plan “${m.name}” – on the drone" else "Plan “${m.name}” – upload failed", "")
                 renderChecklist(preflightProblems(DroneManager.state), hasPlan = true)
                 renderNow(DroneManager.state)
