@@ -132,6 +132,21 @@ class PreflightTest {
             p.map { full -> listOf("SDK not", "Drone not", "No plan", "Battery 1", "GPS too weak", "Building guard: b", "Surface guard: s", "Return guard: r", "Strong wind", "2 points below 25 m, obstacle").first { full.startsWith(it) } })
     }
 
+    /** Starttür am Boden: jedes Problem verweigert den Start. */
+    @Test fun groundDoorRefusesOnAnyProblem() {
+        assertEquals(emptyList<String>(), Preflight.startGate(ok()))
+        assertEquals(1, Preflight.startGate(ok().copy(satellites = 3)).size)
+        assertEquals(1, Preflight.startGate(ok().copy(uploaded = false)).size)
+    }
+
+    /** Starttür im Flug (Umweg, Planrest): nur „noch nicht hochgeladen“ zählt nicht, alles andere verweigert. */
+    @Test fun inFlightDoorIgnoresOnlyTheMissingUpload() {
+        assertEquals(emptyList<String>(), Preflight.startGate(ok().copy(uploaded = false), inFlight = true))
+        assertEquals(listOf("GPS too weak (at least 10 satellites)"), Preflight.startGate(ok().copy(uploaded = false, satellites = 3), inFlight = true))
+        assertEquals(1, Preflight.startGate(ok().copy(uploaded = false, buildingConflicts = listOf("x")), inFlight = true).size)
+        assertTrue(Preflight.startGate(ok().copy(uploaded = false, batteryPercent = 5), inFlight = true).single().startsWith("Battery 5 %"))
+    }
+
     @Test fun followNeedsAPosition() = assertEquals("No drone position", Preflight.followProblem(null, 20.0, true, "on", noon))
 
     @Test fun followBelow25mOnlyInDaylightAndWithSensing() {

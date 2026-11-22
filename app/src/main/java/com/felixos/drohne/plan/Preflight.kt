@@ -88,6 +88,14 @@ object Preflight {
     }
 
     /**
+     * Die Starttür: was einen Start jetzt verhindert; leer = Start erlaubt.
+     * [inFlight] = Start eines Umwegs oder Planrests aus dem Schweben: der Plan wird erst nach dieser Prüfung
+     * hochgeladen, deshalb zählt dort nur „kein Plan auf der Drohne“ nicht. Alle anderen Regeln gelten gleich.
+     */
+    fun startGate(l: Lage, inFlight: Boolean = false): List<String> =
+        if (inFlight) problems(l).filterNot { it.startsWith("No plan on the drone") } else problems(l)
+
+    /**
      * Sperren für „Folgen“ (das Handy als Ziel): [pos] = Drohne oder Startpunkt, null = keine Position.
      * null = erlaubt, sonst der Grund.
      */
