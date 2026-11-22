@@ -189,3 +189,6 @@
 06:33:03  Hole Fotoliste von der Drohne (interner Speicher) …
 06:33:04  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
 06:33:04  Fotos geladen: 0
+06:33:06  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-29_muehle-scan-rest-v2
+06:33:06  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:33:08  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
