@@ -1116,3 +1116,4 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 10:28:05  DJI-Meldung: [WARNUNG]  – Unable to take off. Disconnect aircraft from USB and try again
 10:28:06  S utc=18:28:06 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=67 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
 10:28:40  S utc=18:28:40 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=67 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:29:13  S utc=18:29:13 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=66 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
