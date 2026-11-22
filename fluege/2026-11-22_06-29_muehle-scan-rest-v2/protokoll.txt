@@ -218,3 +218,11 @@
 06:59:52  DJI-Status: NORMAL – Ready to Go (GPS)
 06:59:52  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
 06:59:54  DJI-Meldung erledigt: 0x16200101
+07:43:24  Live link: no upload right now (no network?). The flight is not affected; the log stays on the phone.
+08:43:05  DJI-Meldung: [WARNUNG]  – Critical low battery. Recharge promptly
+08:57:44  DJI-Meldung: [WARNUNG]  – Critical low battery voltage. Recharge promptly
+09:11:52  Mission: IDLE
+09:11:52  DJI-Meldung erledigt: 0x1610000F
+09:11:52  DJI-Meldung erledigt: 0x1610000E
+09:11:52  DJI-Meldung erledigt: 0x19000810
+09:11:52  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
