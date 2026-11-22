@@ -237,8 +237,8 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         pruefliste(z)
 
         // Knöpfe
-        // Funkabriss: Hauptknopf und Abheben weg, STOP bleibt (die Erkennung kann irren, dann muss er erreichbar sein).
-        haupt.sichtbar(!z.funkabriss); abheben.visibility = if (z.funkabriss) View.GONE else View.VISIBLE
+        // Funkabriss: Hauptknopf weg (Abheben ist ohne Verbindung ohnehin aus), STOP bleibt (die Erkennung kann irren, dann muss er erreichbar sein).
+        haupt.sichtbar(!z.funkabriss)
         keinFunk.sichtbar(z.funkabriss)
         if (z.funkabriss) keinFunkText.zeige(if (z.plan.aufDrohne && z.plan.beiFunkabriss != null) "If the plan was running, the drone will ${z.plan.beiFunkabriss}. Check controller and cable." else "Check controller and cable.")
         haupt.setze(z.hauptaktion.text, when (z.hauptaktion) { Hauptaktion.PAUSE -> Zeichen.Art.PAUSE; Hauptaktion.FORTSETZEN, Hauptaktion.START -> Zeichen.Art.PLAY; else -> null }, z.hauptaktionFrei)

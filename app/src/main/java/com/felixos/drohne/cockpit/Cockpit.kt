@@ -51,7 +51,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private var systemAn = false
     /** Kleiner STOP über dem System-Bildschirm, solange die Drohne fliegt oder die Motoren laufen: er verdeckt sonst den großen. */
     private val systemStopp = Knopf(stil, Knopf.Stilart.STOPP) { live.stoppen() }
-    private var ruhigVorher = true
+    private var lageVorher: String? = null
     /** Vollbild der gerade gezeigten Ansicht; wird nicht gespeichert, nach dem App-Start immer aus. */
     var vollbild = false; private set
     private var hell = true
@@ -136,18 +136,16 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             hoehen[hoehen.size - 1] = if (z.datenDa) z.hoeheM?.toFloat() ?: Float.NaN else Float.NaN
         }
         if (vollbild && !vollbildErlaubt(z)) vollbildSetzen(false)
-        // Kommt eine Warnung, Pause oder ein Funkabriss, während der System-Bildschirm offen ist: zurück zum Live-Bildschirm
-        // mit Warnzeile und Knöpfen. Nur beim Wechsel, damit man ihn danach bewusst wieder öffnen kann.
-        val ruhig = vollbildErlaubt(z)
-        if (systemAn && ruhigVorher && !ruhig) { systemAn = false; leisteZeigen() }
-        ruhigVorher = ruhig
+        // Kommt eine neue Warnung, Pause oder ein Funkabriss, während der System-Bildschirm offen ist: zurück zum Live-Bildschirm
+        // mit Warnzeile und Knöpfen. Nur beim Wechsel der Art (Ziffern zählen nicht), damit man ihn danach bewusst wieder öffnen kann.
+        val lage = if (vollbildErlaubt(z)) null else (z.warnung?.titel?.filterNot { it.isDigit() } ?: "") + "|" + z.funkabriss + "|" + (z.phase == CockpitZustand.Phase.PAUSIERT)
+        if (systemAn && lage != null && lage != lageVorher) { systemAn = false; leisteZeigen() }
+        lageVorher = lage
         if (systemAn) {
-            systemStopp.visibility = if (z.fliegt || z.motorenAn) View.VISIBLE else View.GONE
+            systemStopp.visibility = if (z.fliegt || z.motorenAn || z.funkabriss) View.VISIBLE else View.GONE
             systemStopp.setze("Stop", Zeichen.Art.STOP, live.stoppFrei)
             systemStopp.contentDescription = "Stop and return home"
         }
-        vollKnopfZeigen(z)
-        if (vollbild) vollSchirm.zeige(z, live.stoppFrei)
         live.zeige(z)
         if (systemAn) system.zeige(z, hoehen, windText(z))
     }
