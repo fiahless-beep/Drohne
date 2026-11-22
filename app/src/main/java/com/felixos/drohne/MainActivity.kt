@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         view3d.init()
         cockpit = Cockpit(this, findViewById(R.id.rail), findViewById(R.id.hudHost), findViewById(R.id.panel), findViewById(R.id.liveRoot), findViewById(R.id.systemRoot), findViewById(R.id.vollbildHost), gastgeber)
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() { if (cockpit.vollbildVerlassen()) return; isEnabled = false; onBackPressedDispatcher.onBackPressed(); isEnabled = true }
+            override fun handleOnBackPressed() { if (cockpit.vollbildVerlassen() || cockpit.tafelZurueck()) return; isEnabled = false; onBackPressedDispatcher.onBackPressed(); isEnabled = true }
         })
 
         // Startplätze: Kopie im Handyspeicher (überlebt eine Deinstallation). Ohne die Erlaubnis einmal je Installation fragen.
@@ -221,10 +221,11 @@ class MainActivity : AppCompatActivity() {
             findViewById<View>(R.id.mitte).let { v -> (v.layoutParams as android.view.ViewGroup.MarginLayoutParams).marginStart = rand; v.requestLayout() }
             if (mode == Mode.MAP) mapView.post { mapView.invalidate() }
         }
-        override fun protokoll() = showLog()
+        override fun protokollText(): Pair<String, List<String>> = appInfo() to DroneManager.logText().lines().filter { it.isNotEmpty() }
         override fun protokollKopieren() = copyLog()
         override fun einstellungen() = showMore()
-        override fun copilot() = askClaude()
+        override fun ccGesperrt(): String? = ccBlocked()
+        override fun ccFragen(frage: String, antwort: (String, Boolean, Pair<String, () -> Unit>?) -> Unit) = askCc(frage, antwort)
         override fun selbsttest() = showSelfTest()
     }
 
@@ -282,7 +283,7 @@ class MainActivity : AppCompatActivity() {
             "Photo circle · radius 50 m · ${h.toInt()} m high · 8 photos" to { FlugSitzung.umwegKreis(p, 50.0, h, s.oberkanteM) },
             "Look closer · hover above, camera straight down, photo" to { FlugSitzung.umwegNahsicht(p, h) },
             "Cancel" to { },
-        ))
+        ), dialog = true)
     }
 
 
@@ -311,30 +312,30 @@ class MainActivity : AppCompatActivity() {
         } catch (t: Throwable) { done(null) }
     }
 
-    private fun askClaude() {
-        val key = ClaudeLink.key(this) ?: return info("Claude key missing", "Enter the key once under Settings → Data → Enter Claude key.")
-        if (MissionController.executing) return info("Pause first", "Claude answers while the drone hovers or stands. Press Pause, then ask.")
-        if (busy != null) return
-        val input = android.widget.EditText(this).apply { hint = "What do you see? What next?"; setSingleLine(false); maxLines = 3 }
-        AlertDialog.Builder(this).setTitle("Ask Claude")
-            .setMessage("Claude gets the live image (switch to the live view first), position, height and battery. Any action it suggests is shown to you before anything happens.")
-            .setView(input)
-            .setPositiveButton("Send") { _, _ ->
-                val q = input.text.toString().ifBlank { "What do you see, and what do you suggest?" }
-                setBusy("Claude is looking …")
-                grabFrame { jpg ->
-                    val tele = telemetryText(DroneManager.state)
-                    Thread {
-                        val r = ClaudeLink.ask(key, q, tele, jpg)
-                        runOnUiThread { setBusy(null); showClaudeReply(r, jpg != null) }
-                    }.start()
-                }
-            }.setNegativeButton("Cancel", null).show()
+    /** Central Command (früher „Ask Claude“): warum gerade keine Frage geht; null = bereit. */
+    private fun ccBlocked(): String? = when {
+        ClaudeLink.key(this) == null -> "Key missing. Enter it once under Set → Data → Enter Claude key."
+        MissionController.executing -> "Pause first. Central Command answers while the drone hovers or stands."
+        busy != null -> "The app is busy. Try again in a moment."
+        else -> null
     }
 
-    private fun showClaudeReply(r: ClaudeLink.Reply, hadImage: Boolean) {
-        if (r.error != null) { DroneManager.log(r.error); return info("Claude", r.error) }
-        DroneManager.log("Claude: ${r.text}" + (r.command?.let { " [$it ${r.input}]" } ?: ""))
+    private fun askCc(q: String, done: (String, Boolean, Pair<String, () -> Unit>?) -> Unit) {
+        ccBlocked()?.let { return done(it, true, null) }
+        val key = ClaudeLink.key(this) ?: return
+        setBusy("Central Command is looking …")
+        grabFrame { jpg ->
+            val tele = telemetryText(DroneManager.state)
+            Thread {
+                val r = ClaudeLink.ask(key, q, tele, jpg)
+                runOnUiThread { setBusy(null); ccReply(r, jpg != null, done) }
+            }.start()
+        }
+    }
+
+    private fun ccReply(r: ClaudeLink.Reply, hadImage: Boolean, done: (String, Boolean, Pair<String, () -> Unit>?) -> Unit) {
+        if (r.error != null) { DroneManager.log(r.error); return done(r.error, true, null) }
+        DroneManager.log("Central Command: ${r.text}" + (r.command?.let { " [$it ${r.input}]" } ?: ""))
         val inp = r.input
         val why = inp?.optString("why").orEmpty()
         fun point(): LatLon? = if (!hadImage || inp == null) null else groundPoint((inp.optDouble("x", 0.5) * video.width).toFloat(), (inp.optDouble("y", 0.5) * video.height).toFloat(), video.width.coerceAtLeast(1), video.height.coerceAtLeast(1))
@@ -354,11 +355,7 @@ class MainActivity : AppCompatActivity() {
             else if (r.command != null) append((if (isNotEmpty()) "\n\n" else "") + "Suggestion: " + (action?.first ?: "${r.command} (no place found in the image)") + (if (why.isNotBlank()) ". $why" else ""))
             if (isEmpty()) append("No answer.")
         }
-        val dlg = AlertDialog.Builder(this).setTitle("Claude").setMessage(msg)
-        if (action != null) dlg.setPositiveButton(action.first) { _, _ -> action.second() }.setNegativeButton("No", null)
-        else if (r.command == "ask_pilot") dlg.setPositiveButton("Answer") { _, _ -> askClaude() }.setNegativeButton("Close", null)
-        else dlg.setPositiveButton("OK", null)
-        dlg.show()
+        done(msg, false, action)
     }
 
     /** Overview of the use cases and what this build can do for each. */
@@ -366,7 +363,7 @@ class MainActivity : AppCompatActivity() {
         "1 Fly a plan · ready" to { info("Fly a plan", "Get plan, check list, Start. Pause: button, any stick, or the pause button on the controller. Resume plan continues.") },
         "2 Subject on the way · ready (untested in flight)" to { info("Subject on the way", "Pause the plan. Tap the subject on the map or in the live view. Choose a photo circle. When it is done the drone hovers; Resume plan continues the plan from the point where you paused.") },
         "3 Go and look · ready (untested in flight)" to { info("Go and look", "Same as 2, choose “Look closer”: the drone flies above the point, camera straight down, hovers 6 s, takes a photo. Loading a new plan while hovering also works: it starts where the drone is.") },
-        "4 Ask Claude · first step (needs the Claude key)" to { info("Ask Claude", "Pause or hover, switch to the live view, press Ask Claude. Claude gets the image and telemetry, answers, and may suggest one action (look closer, photo circle, resume, return home). You confirm before anything happens. Watching in the background during the flight is not built yet.") },
+        "4 Central Command · first step (needs the Claude key)" to { info("Central Command", "Pause or hover, switch to the live view, press CC. Central Command (Claude) gets the image and telemetry, answers, and may suggest one action (look closer, photo circle, resume, return home). You confirm before anything happens. Watching in the background during the flight is not built yet.") },
         "5 Follow me / the car · tracking test first" to { info("Follow", "Run Settings → Device & test → Tracking test in flight and upload the result. It decides whether DJI tracking can be used or the app needs its own detection.") },
         "6 Plan over several batteries · not built yet" to { info("Several batteries", "Not in this build.") },
         "7 Survey a property · as a plan from Claude" to { info("Property", "Claude builds the plan from the boundary; you fly it as a plan (1). Boundary import in the app is not built.") },
@@ -377,7 +374,9 @@ class MainActivity : AppCompatActivity() {
     // ---------------------------------------------------------------- Menüs und Dialoge des Gastgebers
 
 
-    private fun menu(title: String, items: List<Pair<String, () -> Unit>>) {
+    /** Menüs wohnen in der Set-Fläche des Cockpits; [dialog] = als Pop-up (Auswahl mitten im Flug, die zur Karte gehört). */
+    private fun menu(title: String, items: List<Pair<String, () -> Unit>>, dialog: Boolean = false) {
+        if (!dialog && ::cockpit.isInitialized) return cockpit.menue(title, items)
         AlertDialog.Builder(this).setTitle(title).setItems(items.map { it.first }.toTypedArray()) { _, i -> items[i].second() }
             .setNegativeButton("Back", null).show()
     }
@@ -400,11 +399,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /** Einstellungen, sortiert (Felix 13.11.): Sicherheit, Kamera, Kalibrierung, Flug & Wächter, Daten, Gerät & Test. */
-    private fun showMore() = menu("Settings", listOf(
+    private fun showMore(): Unit = menu("Settings", listOf(
         "Use cases (what works in this build)" to { showUseCases() },
         "Safety" to { showSafety() },
         "Camera" to { showCamera() },
-        (if (MapPanel.satellit(this)) "Map: satellite (tap for drawn map)" else "Map: drawn map (tap for satellite)") to { mapPanel.satellitSetzen(!MapPanel.satellit(this)) },
+        (if (MapPanel.satellit(this)) "Map: satellite (tap for drawn map)" else "Map: drawn map (tap for satellite)") to { mapPanel.satellitSetzen(!MapPanel.satellit(this)); showMore() },
         "Calibration" to { showCalibration() },
         "Flight & guards" to { showFlightMenu() },
         "Data" to { showDataMenu() },
@@ -712,15 +711,6 @@ class MainActivity : AppCompatActivity() {
         val cm = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
         cm.setPrimaryClip(android.content.ClipData.newPlainText("Protokoll", appInfo() + "\n\n" + DroneManager.logText()))
         android.widget.Toast.makeText(this, "Log copied. Send it to Claude.", android.widget.Toast.LENGTH_SHORT).show()
-    }
-
-    /** Ganzes Protokoll groß anzeigen, mit Kopieren-Knopf. */
-    private fun showLog() {
-        val text = appInfo() + "\n\n" + DroneManager.logText()
-        AlertDialog.Builder(this).setTitle("Log")
-            .setMessage(text.takeLast(6000))
-            .setPositiveButton("Copy") { _, _ -> copyLog() }
-            .setNegativeButton("Close", null).show()
     }
 
     private fun showCrash(report: String) {

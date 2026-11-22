@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>3D</title>
 <style>
   /* Schriften des Cockpits; View3D.kt liefert sie unter dieser Adresse aus res/font (ohne Netz). Fehlen sie, gilt monospace. */
   @font-face { font-family: "JetBrains Mono"; font-weight: 500; src: url("https://appassets.androidplatform.net/font/jetbrains_mono_medium.ttf"); }
   @font-face { font-family: "JetBrains Mono"; font-weight: 700; src: url("https://appassets.androidplatform.net/font/jetbrains_mono_bold.ttf"); }
-  html, body { margin: 0; height: 100%; background: #05080A; overflow: hidden; }
+  html, body { margin: 0; height: 100%; background: #05080A; overflow: hidden; touch-action: none; }
   canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
   #marks { pointer-events: none; }
 </style>
@@ -40,10 +40,12 @@ let W = 1, H = 1, inset = { l: 0, t: 0, r: 0, b: 0 };
 let terrain = null, route = [], runs = [], lowSeg = [], clearM = 8;
 let azimuth = 0, planCenter = null, planRadius = 60;       // azimuth: Blickrichtung als Kurs (0 = nach Norden schauen)
 let drone = null, droneTarget = null, heading = 0, flying = false, passed = 0;
+let zoomUser = 1, azAuto = 0;                               // Zwei-Finger-Geste: Abstand mal zoomUser; azAuto = von der App gewählte Blickrichtung
 let userView = null, view = { x: 0, y: 0, z: 0, d: 400, el: EL_MIN }, snap = true, dirty = true, lastSig = '';
 
 function init() {
   window.addEventListener('resize', resize);
+  gestures();
   if (document.fonts && document.fonts.load) { document.fonts.load('700 12px "JetBrains Mono"').then(() => dirty = true, () => {}); document.fonts.load('500 12px "JetBrains Mono"').then(() => dirty = true, () => {}); }
   if (window.THREE) {
     try {
@@ -152,6 +154,7 @@ function setScene(D) {
     planRadius = Math.max(40, route.reduce((m, p) => Math.max(m, Math.hypot(p.x - planCenter.x, p.z - planCenter.z)), Math.hypot(planCenter.x, planCenter.z)));
     azimuth = Math.hypot(planCenter.x, planCenter.z) > 25 ? Math.atan2(planCenter.x, -planCenter.z) : 0;
   } else { planCenter = null; planRadius = 60; azimuth = 0; }
+  azAuto = azimuth; zoomUser = 1;
   buildRelief(); buildBlocks(D.b);
   if (light) { const a = azimuth - 0.9; light.position.set(-Math.sin(a) * 300, 420, Math.cos(a) * 300); light.target.position.set(0, 0, 0); }
 }
@@ -167,7 +170,26 @@ function setDrone(x, y, n, hdg) {
 function clearDrone() { if (drone) { drone = null; droneTarget = null; snap = true; dirty = true; } }
 function mode() { return userView || (flying ? 'near' : 'wide'); }
 /** Der eine Umschalter: NEAR (Abstand zur Oberfläche ablesen) ↔ WIDE (ganzer Plan). Gilt bis zum nächsten Abheben oder Landen. */
-function cycleCamera() { userView = mode() === 'near' ? 'wide' : 'near'; dirty = true; return userView; }
+function cycleCamera() { userView = mode() === 'near' ? 'wide' : 'near'; zoomUser = 1; azimuth = azAuto; dirty = true; return userView; }
+/**
+ * Zwei Finger (Felix 22.11.2026): auseinander und zusammen = näher und weiter, gegeneinander drehen = die Ansicht um die
+ * Drohne drehen. Keine Knöpfe dafür. Der Umschalter NEAR/WIDE und ein neuer Plan stellen den Blick der App wieder her.
+ */
+function gestures() {
+  let d0 = 0, a0 = 0;
+  const read = t => ({ d: Math.hypot(t[1].clientX - t[0].clientX, t[1].clientY - t[0].clientY), a: Math.atan2(t[1].clientY - t[0].clientY, t[1].clientX - t[0].clientX) });
+  window.addEventListener('touchstart', e => { if (e.touches.length === 2) { const r = read(e.touches); d0 = r.d; a0 = r.a; } e.preventDefault(); }, { passive: false });
+  window.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length !== 2 || d0 <= 0) return;
+    const r = read(e.touches);
+    if (r.d > 10) zoomUser = Math.max(0.3, Math.min(3.5, zoomUser * d0 / r.d));
+    let da = r.a - a0; if (da > Math.PI) da -= 2 * Math.PI; if (da < -Math.PI) da += 2 * Math.PI;
+    azimuth -= da;
+    d0 = r.d; a0 = r.a; dirty = true;
+  }, { passive: false });
+  window.addEventListener('touchend', e => { if (e.touches.length < 2) d0 = 0; }, { passive: false });
+}
 function setFollow() {}
 
 // ---------------------------------------------------------------- Kamera
@@ -213,6 +235,7 @@ function wantView() {
     w.d = Math.max(90, spanFor(w, planPoints(), view.el, f.w / f.h)) * (H / f.h) / (2 * tanHalf);
     w.foot = { x: c.x, y: groundAt(c.x, c.z), z: c.z };
   }
+  w.d *= zoomUser;
   // Neigung: die flachste, bei der der Fußpunkt frei zu sehen ist; wieder flacher erst mit Reserve, damit nichts pendelt
   let el = EL_MAX;
   for (let e = EL_MIN; e <= EL_MAX; e += 4) { w.el = e; if (footVisible(w, w.foot, e < view.el - 1 ? 4 : 0.5)) { el = e; break; } }

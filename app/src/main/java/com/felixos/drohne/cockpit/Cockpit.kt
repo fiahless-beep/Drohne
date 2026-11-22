@@ -30,10 +30,15 @@ interface Gastgeber {
     fun bildRaender(links: Int, oben: Int, rechts: Int, unten: Int)
     /** Vollbild: Leiste, Aktionsfeld und HUD ausblenden, die Ansicht füllt den Bildschirm; false = zurück. */
     fun vollbild(an: Boolean)
-    fun protokoll()
+    /** Kopfzeilen (App, Gerät) und die Zeilen des Protokolls, älteste zuerst. */
+    fun protokollText(): Pair<String, List<String>>
     fun protokollKopieren()
+    /** Öffnet das Hauptmenü der Einstellungen; es kommt über [Cockpit.menue] zurück in die Set-Fläche. */
     fun einstellungen()
-    fun copilot()
+    /** Central Command: Grund, warum gerade keine Frage geht (Schlüssel fehlt, Plan läuft); null = bereit. */
+    fun ccGesperrt(): String?
+    /** Frage an Central Command; [antwort] bekommt Text, ob es ein Fehler ist, und höchstens einen Vorschlag (Name, Handlung). */
+    fun ccFragen(frage: String, antwort: (String, Boolean, Pair<String, () -> Unit>?) -> Unit)
     fun selbsttest()
 }
 
@@ -45,11 +50,20 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private val stil = Stil(c)
     private val aktionen: Aktionen = FlugSitzung
     private val live = LiveSchirm(stil, aktionen, buehne, feld)
-    private val system = SystemSchirm(stil, systemWurzel, gast)
+    /** Bühne der Flächen (System, CC, Log, Set); darunter im Flug die Fußzeile mit STOP. */
+    private val tafelFlaeche = FrameLayout(c)
+    private val system = SystemSchirm(stil, tafelFlaeche, gast)
+    private val logTafel = LogTafel(stil, tafelFlaeche, gast)
+    private val setTafel = SetTafel(stil, tafelFlaeche)
+    private val ccTafel = CcTafel(stil, tafelFlaeche, gast)
+    private enum class Tafel { KEINE, SYSTEM, CC, LOG, SET }
+    private var tafel = Tafel.KEINE
+    private val systemAn: Boolean get() = tafel != Tafel.KEINE
+    private val fuss = stil.zeile()
+    private val fussWerte = stil.text(13f, stil.monoMittel, Farbe.TEXT, versalien = true, sperrung = 0.04f)
     private val ui = Handler(Looper.getMainLooper())
     private val vollSchirm = VollbildSchirm(stil, vollbildWurzel, verlassen = { vollbildSetzen(false) }, stoppen = { vollbildSetzen(false); live.stoppen() })
-    private var systemAn = false
-    /** Kleiner STOP über dem System-Bildschirm, solange die Drohne fliegt oder die Motoren laufen: er verdeckt sonst den großen. */
+    /** STOP in der Fußzeile unter den Flächen, solange die Drohne fliegt oder die Motoren laufen: die Flächen verdecken den großen. */
     private val systemStopp = Knopf(stil, Knopf.Stilart.STOPP) { live.stoppen() }
     private var lageVorher: String? = null
     /** Vollbild der gerade gezeigten Ansicht; wird nicht gespeichert, nach dem App-Start immer aus. */
@@ -60,10 +74,10 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private val kAnsicht = LeistenKnopf(stil, "Switch view: map, live view, 3D") { gast.ansichtWechseln(); leisteZeigen() }
     private val kEinpassen = LeistenKnopf(stil, "Fit map / 3D view near or wide") { gast.einpassen() }
     private val kVoll = LeistenKnopf(stil, "Full screen") { vollbildSetzen(true) }
-    private val kSystem = LeistenKnopf(stil, "System status") { systemAn = !systemAn; leisteZeigen(); zeige(aktionen.zustand()) }
-    private val kCopilot = LeistenKnopf(stil, "Ask Claude") { gast.copilot() }
-    private val kProtokoll = LeistenKnopf(stil, "Log (hold to copy)") { gast.protokoll() }
-    private val kMehr = LeistenKnopf(stil, "Settings") { gast.einstellungen() }
+    private val kSystem = LeistenKnopf(stil, "System status") { tafelSchalten(Tafel.SYSTEM) }
+    private val kCopilot = LeistenKnopf(stil, "Central Command") { tafelSchalten(Tafel.CC) }
+    private val kProtokoll = LeistenKnopf(stil, "Log (hold to copy)") { tafelSchalten(Tafel.LOG) }
+    private val kMehr = LeistenKnopf(stil, "Settings") { tafelSchalten(Tafel.SET) }
 
     /** Höhe über Start je Sekunde für den Verlauf im System-Bildschirm; NaN = kein Wert. */
     private val hoehen = FloatArray(60) { Float.NaN }
@@ -77,11 +91,16 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         listOf(kAnsicht, kEinpassen, kVoll, kSystem, kCopilot, kProtokoll, kMehr).forEachIndexed { i, k ->
             leiste.addView(k, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { if (i > 0) topMargin = stil.dp(4) })
         }
-        kCopilot.setze("AI", false); kProtokoll.setze("Log", false); kMehr.setze("Set", false)
         live.beiLeistenhoehe = { raenderMelden() }
+        systemWurzel.setBackgroundColor(Farbe.BG)
+        systemWurzel.addView(tafelFlaeche, FrameLayout.LayoutParams(-1, -1))
+        // Fußzeile: eigene Zeile unter den Flächen, damit STOP nichts verdeckt (Felix 22.11.2026: Environment war verdeckt).
         systemStopp.contentDescription = "Stop and return home"
-        systemStopp.visibility = View.GONE
-        systemWurzel.addView(systemStopp, FrameLayout.LayoutParams(stil.dp(112), stil.dp(52), Gravity.BOTTOM or Gravity.END).apply { rightMargin = stil.dp(8); bottomMargin = stil.dp(8) })
+        fuss.setBackgroundColor(Farbe.BG)
+        fuss.addView(fussWerte, stil.lp(0, Stil.WRAP, 1f, links = 10))
+        fuss.addView(systemStopp, LinearLayout.LayoutParams(stil.dp(190), stil.dp(52)))
+        fuss.visibility = View.GONE
+        systemWurzel.addView(fuss, FrameLayout.LayoutParams(-1, stil.dp(58), Gravity.BOTTOM))
         leisteZeigen()
     }
 
@@ -97,14 +116,48 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         kEinpassen.alpha = if (kEinpassen.isEnabled) 1f else 0.35f
         kVoll.setze("Full", false)
         vollKnopfZeigen(aktionen.zustand())
-        kSystem.setze("Sys", systemAn)
+        kSystem.setze("Sys", tafel == Tafel.SYSTEM)
+        kCopilot.setze("CC", tafel == Tafel.CC); kProtokoll.setze("Log", tafel == Tafel.LOG); kMehr.setze("Set", tafel == Tafel.SET)
         systemWurzel.sichtbar(systemAn)
+        system.wurzel.sichtbar(tafel == Tafel.SYSTEM); ccTafel.rahmen.sichtbar(tafel == Tafel.CC)
+        logTafel.rahmen.sichtbar(tafel == Tafel.LOG); setTafel.rahmen.sichtbar(tafel == Tafel.SET)
         // Livebild-Fläche bleibt darunter bestehen; nur die Bedienflächen des Live-Bildschirms werden verdeckt.
         liveWurzel.importantForAccessibility = if (systemAn) View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS else View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
         live.hud.mitFadenkreuz = a == Ansicht.LIVEBILD
         // Die kleine Bahnkarte nur über dem Livebild: Karte und 3D-Ansicht zeigen den Weg selbst.
         live.hud.mitBahn = a == Ansicht.LIVEBILD
         raenderMelden()
+    }
+
+    /** Leistenknopf: dieselbe Fläche noch einmal = zu, eine andere = wechseln. */
+    private fun tafelSchalten(t: Tafel) = tafelSetzen(if (tafel == t) Tafel.KEINE else t)
+
+    private fun tafelSetzen(t: Tafel) {
+        if (t == tafel) return
+        if (tafel == Tafel.CC) ccTafel.geschlossen()
+        if (t != Tafel.KEINE && vollbild) vollbildSetzen(false)
+        tafel = t
+        when (t) {
+            Tafel.SET -> { setTafel.leeren(); gast.einstellungen() }
+            Tafel.LOG -> logTafel.geoeffnet()
+            Tafel.CC -> ccTafel.geoeffnet()
+            else -> {}
+        }
+        leisteZeigen(); zeige(aktionen.zustand())
+    }
+
+    /** Ein Menü des Gastgebers in der Set-Fläche zeigen (statt als Pop-up); öffnet die Fläche, wenn sie zu ist. */
+    fun menue(titel: String, eintraege: List<Pair<String, () -> Unit>>) {
+        if (tafel != Tafel.SET) { if (tafel == Tafel.CC) ccTafel.geschlossen(); if (vollbild) vollbildSetzen(false); tafel = Tafel.SET; setTafel.leeren() }
+        setTafel.ebene(titel, eintraege)
+        leisteZeigen(); zeige(aktionen.zustand())
+    }
+
+    /** Für die Zurück-Taste: in Set eine Ebene zurück, sonst die offene Fläche schließen; false = es war keine offen. */
+    fun tafelZurueck(): Boolean {
+        if (tafel == Tafel.KEINE) return false
+        if (tafel == Tafel.SET && setTafel.zurueck()) return true
+        tafelSetzen(Tafel.KEINE); return true
     }
 
     /** Links die Flugwerte (wie im HUD 150 dp), oben Status-, Warnzeile und Kompassband. */
@@ -139,15 +192,27 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         // Kommt eine neue Warnung, Pause oder ein Funkabriss, während der System-Bildschirm offen ist: zurück zum Live-Bildschirm
         // mit Warnzeile und Knöpfen. Nur beim Wechsel der Art (Ziffern zählen nicht), damit man ihn danach bewusst wieder öffnen kann.
         val lage = if (vollbildErlaubt(z)) null else (z.warnung?.titel?.filterNot { it.isDigit() } ?: "") + "|" + z.funkabriss + "|" + (z.phase == CockpitZustand.Phase.PAUSIERT)
-        if (systemAn && lage != null && lage != lageVorher) { systemAn = false; leisteZeigen() }
+        if (systemAn && lage != null && lage != lageVorher) { if (tafel == Tafel.CC) ccTafel.geschlossen(); tafel = Tafel.KEINE; leisteZeigen() }
         lageVorher = lage
         if (systemAn) {
-            systemStopp.visibility = if (z.fliegt || z.motorenAn || z.funkabriss) View.VISIBLE else View.GONE
-            systemStopp.setze("Stop", Zeichen.Art.STOP, live.stoppFrei)
-            systemStopp.contentDescription = "Stop and return home"
+            val imFlug = z.fliegt || z.motorenAn || z.funkabriss
+            if (fuss.visibility != (if (imFlug) View.VISIBLE else View.GONE)) {
+                fuss.sichtbar(imFlug)
+                (tafelFlaeche.layoutParams as FrameLayout.LayoutParams).bottomMargin = if (imFlug) stil.dp(58) else 0
+                tafelFlaeche.requestLayout()
+            }
+            if (imFlug) {
+                systemStopp.setze("Stop · Return home", Zeichen.Art.STOP, live.stoppFrei)
+                systemStopp.contentDescription = "Stop and return home"
+                val hoehe = if (z.datenDa) z.hoeheM?.let { "ALT ${Math.round(it)} m" } else null
+                val akku = if (z.datenDa) z.akkuProzent?.let { "BAT $it %" } else null
+                fussWerte.zeige(listOfNotNull(hoehe, akku, z.warnung?.titel).joinToString("  ·  "))
+                fussWerte.farbe(if (z.warnung != null) Farbe.WARN_TEXT else Farbe.TEXT)
+            }
+            if (tafel == Tafel.LOG) logTafel.zeige()
         }
         live.zeige(z)
-        if (systemAn) system.zeige(z, hoehen, windText(z))
+        if (tafel == Tafel.SYSTEM) system.zeige(z, hoehen, windText(z))
     }
 }
 

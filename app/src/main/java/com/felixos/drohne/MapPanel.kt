@@ -43,6 +43,7 @@ class MapPanel(private val map: MapView) {
     private var lastHeadingKey = Int.MIN_VALUE
     private var routeKey: Any? = null
     private var fitted = false
+    private var fitOffen = false
     /** Single tap on the map (picking a subject in flight). */
     var onTap: ((com.felixos.drohne.plan.LatLon) -> Unit)? = null
 
@@ -71,6 +72,7 @@ class MapPanel(private val map: MapView) {
 
     init {
         quelleSetzen()
+        map.addOnLayoutChangeListener { _, l, t, r, b, _, _, _, _ -> if (fitOffen && r > l && b > t) fit() }
         map.setMultiTouchControls(true)
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
         map.minZoomLevel = 3.0
@@ -164,6 +166,10 @@ class MapPanel(private val map: MapView) {
         if (homeMarker.isEnabled) pts += homeMarker.position
         pts += route.actualPoints
         if (pts.isEmpty()) return
+        // Karte noch ohne Größe (eine andere Ansicht liegt vorn): das Einpassen liefe ins Leere und es bliebe die
+        // Weltkarte stehen (Felix 22.11.2026). Nachholen, sobald die Karte ihre Größe hat.
+        if (map.width == 0 || map.height == 0) { fitOffen = true; return }
+        fitOffen = false
         map.post {
             try {
                 if (pts.size == 1) { map.controller.setZoom(17.5); map.controller.setCenter(pts[0]) }

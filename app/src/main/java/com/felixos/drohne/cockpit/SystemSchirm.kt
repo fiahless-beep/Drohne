@@ -49,6 +49,9 @@ internal class SystemSchirm(private val stil: Stil, wurzel: FrameLayout, private
     private val rueck = umwelt.zeile("Return height")
     private val vorhersage = stil.text(11f, stil.sans, Farbe.TEXT_DIM, zeilen = 3)
 
+    /** Die Fläche selbst, zum Ein- und Ausblenden neben CC, Log und Set. */
+    lateinit var wurzel: View; private set
+
     private fun akku_zeile(name: String) = WertZeile(stil, name)
 
     init {
@@ -79,6 +82,7 @@ internal class SystemSchirm(private val stil: Stil, wurzel: FrameLayout, private
         reihe.addView(l, stil.lp(stil.dp(204), Stil.MATCH))
         reihe.addView(m, LinearLayout.LayoutParams(0, Stil.MATCH, 1f).apply { leftMargin = stil.dp(6); rightMargin = stil.dp(6) })
         reihe.addView(r, stil.lp(stil.dp(212), Stil.MATCH))
+        this.wurzel = reihe
         wurzel.addView(reihe, FrameLayout.LayoutParams(-1, -1))
     }
 
