@@ -198,3 +198,4 @@
 06:33:33  DJI-Meldung erledigt: 0x16100015
 06:33:35  DJI-Meldung erledigt: 0x1C00040A
 06:36:55  Flight stills: all 53 of 2026-11-22_06-29_muehle-scan-rest-v2 sent to Claude
+06:52:38  New plan in the cloud: muehle-scan-rest-v3. Tap the plan name → Get plan to load it.
