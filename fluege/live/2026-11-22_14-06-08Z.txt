@@ -60,3 +60,7 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:06:21  S utc=14:06:21 verbunden=true fliegt=false pos=38.901391,-9.388109 h=0.0 start=38.901394,-9.388113 akku=92 sat=23 sensoren=aktiv hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
 06:06:21  [10 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=92
 06:06:31  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:06:51  Abheben per Knopf: Motoren an, steigt auf etwa 1,2 m und schwebt
+06:06:51  Abheben eingeleitet
+06:06:53  S utc=14:06:53 verbunden=true fliegt=false pos=38.901391,-9.388107 h=0.0 start=38.901394,-9.388113 akku=92 sat=23 sensoren=aktiv hindernis=60000@0°/n360/o60000/u100 mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:06:58  S utc=14:06:58 verbunden=true fliegt=true pos=38.901391,-9.388106 h=1.1 start=38.901391,-9.388107 akku=92 sat=23 sensoren=aktiv hindernis=1719@108°/n360/o60000/u1131 mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=1.2 windrichtung=SOUTH
