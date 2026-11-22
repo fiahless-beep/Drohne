@@ -207,3 +207,9 @@
 06:55:08  DJI-Meldung erledigt: 0x16100015
 06:55:10  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
 06:55:14  DJI-Meldung erledigt: 0x16100015
+06:56:38  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:56:39  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:56:39  DJI-Meldung: [WARNUNG]  – Aircraft movement detected
+06:56:39  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:56:39  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:56:44  DJI-Meldung erledigt: 0x161000A4
