@@ -5,3 +5,8 @@ b_140917.jpg utc=14:09:17 pos=38.901392,-9.388106 h=0.1 kurs=136 neigung=0 wp=0 
 b_140923.jpg utc=14:09:23 pos=38.901391,-9.388105 h=0.3 kurs=134 neigung=0 wp=0 mission=READY plan=muehle-scan-v5
 b_140927.jpg utc=14:09:27 pos=38.901392,-9.388105 h=1.0 kurs=134 neigung=0 wp=0 mission=READY plan=muehle-scan-v5
 b_140931.jpg utc=14:09:31 pos=38.901393,-9.388105 h=2.0 kurs=134 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
+b_140935.jpg utc=14:09:35 pos=38.901392,-9.388106 h=19.7 kurs=134 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
+b_140939.jpg utc=14:09:39 pos=38.901393,-9.388106 h=39.2 kurs=134 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
+b_140943.jpg utc=14:09:43 pos=38.901393,-9.388106 h=49.2 kurs=134 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
+b_140947.jpg utc=14:09:47 pos=38.901393,-9.388107 h=50.0 kurs=-88 neigung=0 wp=0 mission=ENTER_WAYLINE plan=muehle-scan-v5
+b_140951.jpg utc=14:09:51 pos=38.901392,-9.388111 h=50.0 kurs=125 neigung=0 wp=0 mission=EXECUTING plan=muehle-scan-v5
