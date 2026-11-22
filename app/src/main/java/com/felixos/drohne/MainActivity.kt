@@ -1328,6 +1328,15 @@ class MainActivity : AppCompatActivity() {
 
     private val MIN_LOW_HEIGHT_M = 25.0
 
+    /** Hinweis im Startdialog, wenn der Akku nicht für den ganzen Plan reicht (sperrt nicht). */
+    private fun batteryNote(): String {
+        val s = DroneManager.state; val m = mission ?: return ""; val home = s.home ?: return ""
+        val lat = home.latitude ?: return ""
+        if (lat == 0.0) return ""
+        val est = Budget.estimate(m, LatLon(lat, home.longitude)); val have = s.batteryPercent ?: return ""
+        return if (have < est.neededPercent) "\n\nBattery $have %: the whole plan needs about ${est.neededPercent} %. The drone will turn back early at the ${Budget.RESERVE_PERCENT} % reserve; the rest is flown later as a rest plan." else ""
+    }
+
     private fun preflightProblems(s: DroneState): List<String> = buildList {
         if (!s.registered) add("SDK not registered (app key missing?)")
         if (!s.connected) add("Drone not connected")
@@ -1337,7 +1346,9 @@ class MainActivity : AppCompatActivity() {
         if (m != null && home?.latitude != null && home.latitude != 0.0) {
             val est = Budget.estimate(m, LatLon(home.latitude, home.longitude))
             val have = s.batteryPercent ?: 0
-            if (have < est.neededPercent) add("Battery $have %, the plan needs about ${est.neededPercent} % (incl. ${Budget.RESERVE_PERCENT} % reserve)")
+            // Felix 22.11.2026: Akku sperrt den Start nicht mehr; reicht er nicht, kehrt die Drohne im Flug um und der Rest wird als Restplan geflogen.
+            // Gesperrt bleibt nur, wenn die Umkehr-Grenze schon am Boden erreicht ist (er würde sofort wieder landen).
+            if (have <= Budget.RESERVE_PERCENT + 3) add("Battery $have %: at the return limit (${Budget.RESERVE_PERCENT} % reserve), the drone would turn back right away")
             if (est.maxDistanceFromHomeM > 1000) add("One point is ${est.maxDistanceFromHomeM.toInt()} m from the home point (max. 1000 m)")
         }
         if ((s.satellites ?: 0) < minSatellites) add("GPS too weak (at least $minSatellites satellites)")
@@ -1582,7 +1593,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         AlertDialog.Builder(this).setTitle("Start the plan?")
-            .setMessage(missionText + "\n\nSurroundings clear? Thumbs on the sticks. Pause: button, any stick, or the pause button on the controller.")
+            .setMessage(missionText + batteryNote() + "\n\nSurroundings clear? Thumbs on the sticks. Pause: button, any stick, or the pause button on the controller.")
             .setPositiveButton("Start") { _, _ -> MissionController.start() }
             .setNegativeButton("Cancel", null).show()
     }
