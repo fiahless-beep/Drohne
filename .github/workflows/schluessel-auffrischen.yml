@@ -1,0 +1,32 @@
+name: Signierschlüssel auffrischen
+
+# Der Signierschlüssel der App liegt nur im Actions-Cache (drohne-signing-v2). GitHub löscht Caches,
+# die 7 Tage nicht gelesen wurden. Dieser Lauf liest ihn zweimal pro Woche, ohne zu bauen und ohne Release.
+# Schlägt er fehl, ist der Schlüssel weg: dann KEINEN Build anstoßen, bevor das geklärt ist
+# (ein Build würde stillschweigend einen neuen Schlüssel erzeugen, Updates über die installierte App gingen nicht mehr).
+
+on:
+  schedule:
+    - cron: "17 5 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  auffrischen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Signierschlüssel aus Cache lesen
+        id: signing
+        uses: actions/cache/restore@v4
+        with:
+          path: keystore/drohne.keystore
+          key: drohne-signing-v2
+      - name: "Prüfen: Schlüssel vorhanden"
+        run: |
+          if [ "${{ steps.signing.outputs.cache-hit }}" != "true" ] || [ ! -s keystore/drohne.keystore ]; then
+            echo "::error::Signierschlüssel nicht im Cache. Keinen Build anstoßen, bevor das geklärt ist."
+            exit 1
+          fi
+          echo "Signierschlüssel gelesen, Frist läuft wieder 7 Tage."
