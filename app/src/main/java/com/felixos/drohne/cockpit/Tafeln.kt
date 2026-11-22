@@ -194,9 +194,10 @@ internal class CcTafel(private val stil: Stil, wurzel: FrameLayout, private val 
     /** Der große Knopf: drücken, sprechen; nach der Sprechpause geht die Frage von selbst ab. Noch einmal drücken = sofort ab. */
     private val sprechen = Knopf(stil, Knopf.Stilart.HAUPT) { sprechKnopf() }
     private val gehoert = stil.text(14f, stil.sans, Farbe.TEXT, zeilen = 2)
-    private var vorlesen = true
+    /** Vorlesen ist aus (Felix 22.11.2026: „Antwort muss nicht vorgelesen werden“); der Knopf schaltet es bei Bedarf ein. */
+    private var vorlesen = false
     private val sprachKnopf: LeistenKnopf = rahmen.kopfKnopf("Lang " + sprache.kuerzel, "Language for speaking and reading aloud: German or English") { sprachKnopf.setze("Lang " + sprache.wechseln(), false) }
-    private val stimmKnopf = rahmen.kopfKnopf("Voice on", "Read answers aloud: on or off") { vorlesenSchalten() }
+    private val stimmKnopf = rahmen.kopfKnopf("Voice off", "Read answers aloud: on or off") { vorlesenSchalten() }
     private val verlauf = stil.text(13f, stil.sans, Farbe.TEXT, zeilen = Int.MAX_VALUE)
     private val rolle = ScrollView(stil.c)
     private val vorschlag = Knopf(stil, Knopf.Stilart.HAUPT) { val t = aktion; vorschlagZeigen(null); t?.second?.invoke() }
