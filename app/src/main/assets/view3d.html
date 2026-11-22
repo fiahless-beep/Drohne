@@ -185,7 +185,7 @@ function gestures() {
     const r = read(e.touches);
     if (r.d > 10) zoomUser = Math.max(0.3, Math.min(3.5, zoomUser * d0 / r.d));
     let da = r.a - a0; if (da > Math.PI) da -= 2 * Math.PI; if (da < -Math.PI) da += 2 * Math.PI;
-    azimuth -= da;
+    if (r.d > 40) azimuth -= da;   // Finger dicht beieinander: der Winkel springt, dann nicht drehen
     d0 = r.d; a0 = r.a; dirty = true;
   }, { passive: false });
   window.addEventListener('touchend', e => { if (e.touches.length < 2) d0 = 0; }, { passive: false });

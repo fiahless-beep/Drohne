@@ -97,6 +97,8 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         // Fußzeile: eigene Zeile unter den Flächen, damit STOP nichts verdeckt (Felix 22.11.2026: Environment war verdeckt).
         systemStopp.contentDescription = "Stop and return home"
         fuss.setBackgroundColor(Farbe.BG)
+        // Berührungen nicht zum verdeckten Live-Bildschirm durchlassen.
+        fuss.isClickable = true; systemWurzel.isClickable = true
         fuss.addView(fussWerte, stil.lp(0, Stil.WRAP, 1f, links = 10))
         fuss.addView(systemStopp, LinearLayout.LayoutParams(stil.dp(190), stil.dp(52)))
         fuss.visibility = View.GONE
@@ -138,7 +140,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         if (t != Tafel.KEINE && vollbild) vollbildSetzen(false)
         tafel = t
         when (t) {
-            Tafel.SET -> { setTafel.leeren(); gast.einstellungen() }
+            Tafel.SET -> setTafel.oeffnen { gast.einstellungen() }
             Tafel.LOG -> logTafel.geoeffnet()
             Tafel.CC -> ccTafel.geoeffnet()
             else -> {}

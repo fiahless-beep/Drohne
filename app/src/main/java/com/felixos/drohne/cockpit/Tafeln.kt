@@ -107,11 +107,13 @@ internal class LogTafel(private val stil: Stil, wurzel: FrameLayout, private val
 /** Einstellungen als Liste im Fenster. Untermenüs ersetzen die Liste; „Back“ geht eine Ebene zurück. */
 internal class SetTafel(private val stil: Stil, wurzel: FrameLayout) {
     val rahmen = TafelRahmen(stil, "Settings")
-    private class Ebene(val titel: String, val eintraege: List<Pair<String, () -> Unit>>)
+    /** [oeffner] = die Handlung, die diese Ebene geöffnet hat; mit ihr wird die Liste nach einer Änderung frisch geholt. */
+    private class Ebene(val titel: String, val eintraege: List<Pair<String, () -> Unit>>, val oeffner: (() -> Unit)?)
     private val stapel = ArrayList<Ebene>()
     private val liste = stil.spalte()
     private val zurueck = rahmen.kopfKnopf("Back", "One level back") { zurueck() }
     private val jetzt = Regex("^(.*?) \\((now|jetzt) (.*)\\)$")
+    private var naechsterOeffner: (() -> Unit)? = null
 
     init {
         val rolle = ScrollView(stil.c).apply { addView(liste, FrameLayout.LayoutParams(-1, -2)) }
@@ -120,18 +122,33 @@ internal class SetTafel(private val stil: Stil, wurzel: FrameLayout) {
         wurzel.addView(rahmen, FrameLayout.LayoutParams(-1, -1))
     }
 
-    val leer: Boolean get() = stapel.isEmpty()
+    /** Die Fläche neu füllen: [oeffner] ruft das Hauptmenü des Gastgebers, das über [ebene] zurückkommt. */
+    fun oeffnen(oeffner: () -> Unit) { stapel.clear(); liste.removeAllViews(); naechsterOeffner = oeffner; oeffner(); naechsterOeffner = null }
 
-    /** Neue Ebene; dieselbe Überschrift wie die oberste ersetzt sie (frische Werte nach einer Änderung). */
     fun ebene(titel: String, eintraege: List<Pair<String, () -> Unit>>) {
-        val e = Ebene(titel, eintraege.filter { it.first != "Cancel" })
-        if (stapel.lastOrNull()?.titel == titel) stapel[stapel.size - 1] = e else stapel.add(e)
+        stapel.add(Ebene(titel, eintraege.filter { it.first != "Cancel" }, naechsterOeffner)); naechsterOeffner = null
         zeichnen()
     }
 
     /** false = es gab nichts zurückzugehen (oberste Ebene). */
-    fun zurueck(): Boolean { if (stapel.size <= 1) return false; stapel.removeAt(stapel.size - 1); zeichnen(); return true }
+    fun zurueck(): Boolean { if (stapel.size <= 1) return false; stapel.removeAt(stapel.size - 1); auffrischen(); return true }
     fun leeren() { stapel.clear(); liste.removeAllViews() }
+
+    /** Oberste Ebene mit ihrer Öffner-Handlung neu holen, damit Werte wie „(now …)“ und „(on)“ stimmen. */
+    private fun auffrischen() {
+        if (stapel.isEmpty()) return
+        val e = stapel.removeAt(stapel.size - 1); val n = stapel.size
+        val o = e.oeffner
+        if (o != null) { naechsterOeffner = o; o(); naechsterOeffner = null }
+        if (stapel.size == n) { stapel.add(e); zeichnen() }
+    }
+
+    /** Ein Eintrag wurde gedrückt: öffnet er keine neue Ebene, hat er etwas geschaltet, also die Liste frisch holen. */
+    private fun druck(tun: () -> Unit) {
+        val n = stapel.size; val oben = stapel.lastOrNull()
+        naechsterOeffner = tun; tun(); naechsterOeffner = null
+        if (stapel.size == n && stapel.lastOrNull() === oben) auffrischen()
+    }
 
     private fun zeichnen() {
         rahmen.titel.zeige(stapel.joinToString(" / ") { it.titel.substringBefore(" (") })
@@ -143,7 +160,7 @@ internal class SetTafel(private val stil: Stil, wurzel: FrameLayout) {
                 background = stil.flaeche(Farbe.PANEL); isClickable = true; isFocusable = true
                 setPadding(stil.dp(10), 0, stil.dp(10), 0); minimumHeight = stil.dp(46)
                 contentDescription = text
-                setOnClickListener { tun() }
+                setOnClickListener { druck(tun) }
             }
             val m = jetzt.find(text)
             z.addView(stil.text(11f, stil.monoMittel, Farbe.ACCENT_DIM).apply { this.text = String.format("%02d", i + 1) })
