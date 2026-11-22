@@ -874,3 +874,7 @@
 06:27:04  Upload 100 %
 06:27:05  Mission ist auf der Drohne
 06:27:05  Mission: READY
+06:28:05  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:28:10  Mission: IDLE
+06:28:10  DJI-Meldung erledigt: 0x1C00040A
+06:28:10  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
