@@ -596,3 +596,14 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:28:10  Mission: IDLE
 06:28:10  DJI-Meldung erledigt: 0x1C00040A
 06:28:10  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+06:28:25  S utc=14:28:25 verbunden=true fliegt=false pos=38.901393,-9.388103 h=1.2 start=38.901392,-9.388106 akku=19 sat=21 sensoren=aktiv hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:28:36  DJI-Status: NORMAL – Ready to Go (GPS)
+06:28:36  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:28:36  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:28:37  DJI-Meldung: [WARNUNG]  – Remote controller not bound/still confirming binding status
+06:28:37  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:28:37  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+06:28:39  S utc=14:28:39 verbunden=true fliegt=false pos=38.901393,-9.388103 h=1.2 start=? akku=99 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:28:41  DJI-Meldung: [Hinweis]  – SD card full. Change card or delete files
+06:28:42  DJI-Meldung erledigt: 0x16100089
+06:28:42  DJI-Status: NON_GPS_NONVISION – Ready to GO
