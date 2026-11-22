@@ -625,3 +625,93 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:29:23  Start: ok
 06:29:23  Mission: ENTER_WAYLINE
 06:29:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:25  Flight stills: saving a still every 4 s (1920x1080)
+06:29:28  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:30  S utc=14:29:30 verbunden=true fliegt=true pos=38.901390,-9.388125 h=17.4 start=38.901389,-9.388127 akku=97 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=ENTER_WAYLINE wp=0 plan=muehle-scan-rest-v2 wind=0 windms=1.7 windrichtung=SOUTH_EAST
+06:29:33  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:38  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:29:42  Mission: EXECUTING
+06:29:43  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:29:48  S utc=14:29:48 verbunden=true fliegt=true pos=38.901392,-9.388104 h=45.0 start=38.901389,-9.388127 akku=96 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=634@93°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-scan-rest-v2 wind=0 windms=3.3 windrichtung=NORTH
+06:29:48  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:52  Wegpunkt 2
+06:29:53  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:58  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:59  S utc=14:29:59 verbunden=true fliegt=true pos=38.901457,-9.388167 h=32.3 start=38.901389,-9.388127 akku=96 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=632@83°/n360/o60000/u60000 mission=EXECUTING wp=1 plan=muehle-scan-rest-v2 wind=0 windms=1.4 windrichtung=NORTH
+06:30:00  Wegpunkt 3
+06:30:03  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:08  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:09  Wegpunkt 4
+06:30:10  S utc=14:30:10 verbunden=true fliegt=true pos=38.901431,-9.388283 h=32.0 start=38.901389,-9.388127 akku=95 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=2527@68°/n360/o60000/u60000 mission=EXECUTING wp=3 plan=muehle-scan-rest-v2 wind=0 windms=2.3 windrichtung=NORTH_WEST
+06:30:13  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:18  Wegpunkt 5
+06:30:18  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:21  S utc=14:30:21 verbunden=true fliegt=true pos=38.901448,-9.388435 h=32.0 start=38.901389,-9.388127 akku=94 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=3439@88°/n360/o60000/u60000 mission=EXECUTING wp=4 plan=muehle-scan-rest-v2 wind=0 windms=2.4 windrichtung=NORTH_WEST
+06:30:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:27  Wegpunkt 6
+06:30:29  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:31  S utc=14:30:31 verbunden=true fliegt=true pos=38.901524,-9.388565 h=31.9 start=38.901389,-9.388127 akku=94 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=5 plan=muehle-scan-rest-v2 wind=0 windms=2.7 windrichtung=WEST
+06:30:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:35  Wegpunkt 7
+06:30:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:43  S utc=14:30:43 verbunden=true fliegt=true pos=38.901650,-9.388640 h=31.9 start=38.901389,-9.388127 akku=93 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=6 plan=muehle-scan-rest-v2 wind=0 windms=2.9 windrichtung=SOUTH
+06:30:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:44  Wegpunkt 8
+06:30:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:53  Wegpunkt 9
+06:30:54  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:54  S utc=14:30:54 verbunden=true fliegt=true pos=38.901749,-9.388631 h=31.9 start=38.901389,-9.388127 akku=92 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=3881@73°/n360/o60000/u60000 mission=EXECUTING wp=8 plan=muehle-scan-rest-v2 wind=0 windms=3.4 windrichtung=SOUTH_WEST
+06:30:59  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:02  Wegpunkt 10
+06:31:04  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:06  S utc=14:31:06 verbunden=true fliegt=true pos=38.901854,-9.388547 h=32.0 start=38.901389,-9.388127 akku=91 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=9 plan=muehle-scan-rest-v2 wind=0 windms=4.7 windrichtung=SOUTH
+06:31:09  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:10  Wegpunkt 11
+06:31:14  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:17  Wegpunkt 12
+06:31:20  Wächter: Vergrößerung 1,03/Bild, Treffer 0
+06:31:22  S utc=14:31:22 verbunden=true fliegt=true pos=38.901927,-9.388308 h=32.0 start=38.901389,-9.388127 akku=90 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=12041@73°/n360/o60000/u60000 mission=EXECUTING wp=11 plan=muehle-scan-rest-v2 wind=0 windms=5.1 windrichtung=SOUTH_EAST
+06:31:25  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:25  Wegpunkt 13
+06:31:30  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:33  Wegpunkt 14
+06:31:35  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:38  S utc=14:31:38 verbunden=true fliegt=true pos=38.901845,-9.388084 h=31.9 start=38.901389,-9.388127 akku=89 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=13 plan=muehle-scan-rest-v2 wind=0 windms=5.8 windrichtung=EAST
+06:31:40  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:41  Wegpunkt 15
+06:31:45  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:49  Wegpunkt 16
+06:31:49  S utc=14:31:49 verbunden=true fliegt=true pos=38.901709,-9.387999 h=32.0 start=38.901389,-9.388127 akku=89 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=3393@63°/n360/o60000/u60000 mission=EXECUTING wp=15 plan=muehle-scan-rest-v2 wind=0 windms=5.3 windrichtung=NORTH_EAST
+06:31:50  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:55  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:57  Wegpunkt 17
+06:31:59  S utc=14:31:59 verbunden=true fliegt=true pos=38.901606,-9.388011 h=32.0 start=38.901389,-9.388127 akku=88 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=2294@88°/n360/o60000/u60000 mission=EXECUTING wp=16 plan=muehle-scan-rest-v2 wind=0 windms=4.8 windrichtung=NORTH_EAST
+06:32:00  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:05  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:05  Wegpunkt 18
+06:32:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:11  S utc=14:32:11 verbunden=true fliegt=true pos=38.901512,-9.388072 h=42.3 start=38.901389,-9.388127 akku=87 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=EXECUTING wp=17 plan=muehle-scan-rest-v2 wind=0 windms=5.4 windrichtung=EAST
+06:32:12  Wegpunkt 19
+06:32:13  DJI-Meldung: [Hinweis]  – Gimbal pan axis reached movement limit
+06:32:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:19  Wegpunkt 20
+06:32:19  Mission: FINISHED
+06:32:19  Mission beendet → hole Fotos und lade hoch
+06:32:19  Mission: READY
+06:32:19  DJI-Meldung erledigt: 0x1D050003
+06:32:21  S utc=14:32:21 verbunden=true fliegt=true pos=38.901389,-9.388106 h=45.0 start=38.901389,-9.388127 akku=87 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=2469@118°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=7.2 windrichtung=SOUTH
+06:32:33  S utc=14:32:33 verbunden=true fliegt=true pos=38.901388,-9.388126 h=9.7 start=38.901389,-9.388127 akku=86 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=5322@223°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=3.0 windrichtung=SOUTH
+06:32:50  S utc=14:32:50 verbunden=true fliegt=true pos=38.901388,-9.388127 h=1.5 start=38.901389,-9.388127 akku=85 sat=24 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=1154@63°/n360/o60000/u928 mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=3.5 windrichtung=SOUTH_EAST
+06:32:57  Landehelfer: Drohne ist am Boden
+06:32:58  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:32:59  Hole Fotoliste von der Drohne (SD-Karte) …
+06:33:02  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+06:33:02  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported.
+06:33:02  Hinderniserkennung wieder AN (Bremsen) – landed after a dusk-mode flight
+06:33:03  Hole Fotoliste von der Drohne (interner Speicher) …
+06:33:04  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+06:33:04  Fotos geladen: 0
+06:33:05  S utc=14:33:05 verbunden=true fliegt=false pos=38.901388,-9.388124 h=0.0 start=38.901389,-9.388127 akku=84 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:33:06  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-29_muehle-scan-rest-v2
+06:33:06  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:33:08  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
