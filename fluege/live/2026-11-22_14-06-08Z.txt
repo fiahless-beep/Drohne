@@ -591,3 +591,8 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:27:05  Mission ist auf der Drohne
 06:27:05  Mission: READY
 06:27:14  S utc=14:27:14 verbunden=true fliegt=false pos=38.901390,-9.388101 h=0.0 start=38.901392,-9.388106 akku=20 sat=23 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:27:52  S utc=14:27:52 verbunden=true fliegt=false pos=38.901391,-9.388103 h=0.0 start=38.901392,-9.388106 akku=19 sat=23 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:28:05  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:28:10  Mission: IDLE
+06:28:10  DJI-Meldung erledigt: 0x1C00040A
+06:28:10  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
