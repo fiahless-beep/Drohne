@@ -213,3 +213,5 @@
 06:56:39  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
 06:56:39  DJI-Status: CANT_TAKEOFF – Unable to take off
 06:56:44  DJI-Meldung erledigt: 0x161000A4
+06:57:39  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:57:43  DJI-Meldung erledigt: 0x16100015
