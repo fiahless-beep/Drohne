@@ -226,3 +226,10 @@
 09:11:52  DJI-Meldung erledigt: 0x1610000E
 09:11:52  DJI-Meldung erledigt: 0x19000810
 09:11:52  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+10:28:02  DJI-Status: NORMAL – Ready to Go (GPS)
+10:28:02  Hinderniserkennung: aktiv (BRAKE, Hauptschalter false, nicht unterstützt)
+10:28:02  DJI-Status: CANT_TAKEOFF – Unable to take off
+10:28:02  DJI-Status: LOW_RC_POWER – Remote Controller Battery Low
+10:28:03  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+10:28:04  DJI-Status: CANT_TAKEOFF – Unable to take off
+10:28:05  DJI-Meldung: [WARNUNG]  – Unable to take off. Disconnect aircraft from USB and try again
