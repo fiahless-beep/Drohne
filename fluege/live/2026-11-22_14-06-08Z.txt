@@ -771,3 +771,4 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:55:10  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
 06:55:14  DJI-Meldung erledigt: 0x16100015
 06:55:36  S utc=14:55:36 verbunden=true fliegt=false pos=38.901434,-9.388129 h=0.0 start=38.901389,-9.388127 akku=67 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:56:10  S utc=14:56:10 verbunden=true fliegt=false pos=38.901429,-9.388144 h=0.0 start=38.901389,-9.388127 akku=66 sat=19 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
