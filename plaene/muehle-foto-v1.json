@@ -1,0 +1,151 @@
+{
+ "name": "muehle-foto-v1",
+ "beschreibung": "Fotoflug Mühle V1, 19 Fotos, Kamera immer auf die Mitte des Grundstücks: naher Ring mit 30 m Radius so tief wie möglich (16 bis 24 m), drei Standpunkte aus Südwesten mit der Sonne im Rücken, weiter Ring mit 62 m Radius auf 36 m für die Umgebung. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 10 m über Bäumen und Dächern. Für den Nachmittag gerechnet (Sonne im Südwesten). Etwa 7 min.",
+ "speed": 3,
+ "rcLost": "continue",
+ "transitHoehe": 35.0,
+ "start": {
+  "lat": 38.901381,
+  "lon": -9.388113
+ },
+ "ziel": {
+  "lat": 38.90168,
+  "lon": -9.38832,
+  "h": 3.0
+ },
+ "waypoints": [
+  {
+   "lat": 38.901459,
+   "lon": -9.388519,
+   "h": 20,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901633,
+   "lon": -9.388661,
+   "h": 20,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901835,
+   "lon": -9.388604,
+   "h": 16,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901946,
+   "lon": -9.38838,
+   "h": 24,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901901,
+   "lon": -9.388121,
+   "h": 24,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901727,
+   "lon": -9.387979,
+   "h": 24,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901525,
+   "lon": -9.388036,
+   "h": 23,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901414,
+   "lon": -9.38826,
+   "h": 21,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901443,
+   "lon": -9.388755,
+   "h": 21,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901312,
+   "lon": -9.388651,
+   "h": 21,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.90128,
+   "lon": -9.388457,
+   "h": 21,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901141,
+   "lon": -9.388505,
+   "h": 36,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901401,
+   "lon": -9.38894,
+   "h": 36,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901824,
+   "lon": -9.389011,
+   "h": 36,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.902163,
+   "lon": -9.388678,
+   "h": 36,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.902219,
+   "lon": -9.388135,
+   "h": 36,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901959,
+   "lon": -9.3877,
+   "h": 36,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901536,
+   "lon": -9.387629,
+   "h": 36,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.901197,
+   "lon": -9.387962,
+   "h": 36,
+   "photo": true,
+   "hover": 2
+  }
+ ]
+}
