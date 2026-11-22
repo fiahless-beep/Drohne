@@ -1,8 +1,8 @@
 {
- "name": "muehle-scan-v2-raster",
- "beschreibung": "Vermessungsflug Mühle V2, Teil 1 von 2: 88 Fotos senkrecht von oben im Raster auf 45 m. Aus beiden Teilen entsteht das 3D-Modell für die späteren Film- und Fotopläne. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 32 m über Bäumen und Dächern, auch auf dem Heimweg. Etwa 15 min, mit vollem Akku starten. Bei hohem Sonnenstand oder bedecktem Himmel fliegen, nicht in der Dämmerung.",
+ "name": "muehle-scan-v3-raster",
+ "beschreibung": "Vermessungsflug Mühle V3, Teil 1 von 2: 88 Fotos senkrecht von oben im Raster auf 45 m. Aus beiden Teilen entsteht das 3D-Modell für die späteren Film- und Fotopläne. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 32 m über Bäumen und Dächern, auch auf dem Heimweg. Etwa 15 min, mit vollem Akku starten. Bei hohem Sonnenstand oder bedecktem Himmel fliegen, nicht in der Dämmerung.",
  "speed": 3.0,
- "rcLost": "goHome",
+ "rcLost": "continue",
  "transitHoehe": 45.0,
  "start": {
   "lat": 38.901381,

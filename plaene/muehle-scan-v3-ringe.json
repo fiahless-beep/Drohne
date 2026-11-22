@@ -1,8 +1,8 @@
 {
- "name": "muehle-scan-v2-ringe",
- "beschreibung": "Vermessungsflug Mühle V2, Teil 2 von 2: zwei schräge Ringe um das Grundstück (20 Fotos auf 50 m, 16 auf 32 m), Kamera etwa 45° auf die Mitte. Aus beiden Teilen entsteht das 3D-Modell für die späteren Film- und Fotopläne. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 19 m über Bäumen und Dächern, auch auf dem Heimweg. Etwa 7 min, mit vollem Akku starten. Bei hohem Sonnenstand oder bedecktem Himmel fliegen, nicht in der Dämmerung.",
+ "name": "muehle-scan-v3-ringe",
+ "beschreibung": "Vermessungsflug Mühle V3, Teil 2 von 2: zwei schräge Ringe um das Grundstück (20 Fotos auf 50 m, 16 auf 32 m), Kamera etwa 45° auf die Mitte. Aus beiden Teilen entsteht das 3D-Modell für die späteren Film- und Fotopläne. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 19 m über Bäumen und Dächern, auch auf dem Heimweg. Etwa 7 min, mit vollem Akku starten. Bei hohem Sonnenstand oder bedecktem Himmel fliegen, nicht in der Dämmerung.",
  "speed": 3.0,
- "rcLost": "goHome",
+ "rcLost": "continue",
  "transitHoehe": 50.0,
  "start": {
   "lat": 38.901381,

@@ -6,15 +6,15 @@ und geradem Heimflug von jedem Punkt wird gegen das Höhenmodell geprüft.
 
 Zwei Flüge, weil 100 Fotostopps mit Bremsen und Anfahren für einen Akku mit 20 % Reserve zu knapp sind (Gegenprüfung 22.11.2026):
 
-  python3 tools/plan_scan.py raster plaene/muehle-scan-v2-raster.json
-  python3 tools/plan_scan.py ringe  plaene/muehle-scan-v2-ringe.json
+  python3 tools/plan_scan.py raster plaene/muehle-scan-v3-raster.json
+  python3 tools/plan_scan.py ringe  plaene/muehle-scan-v3-ringe.json
 """
 import json, math, struct, sys
 import numpy as np
 
 # ---- Ort: Mühle (Koordinaten wie tools/plan_muehle_film.py) ----
 MODE = sys.argv[1]; assert MODE in ("raster", "ringe")
-NAME = "muehle-scan-v2-" + MODE
+NAME = "muehle-scan-v3-" + MODE
 GRID = "app/src/main/assets/hoehen_muehle.bin"
 START = (38.901381, -9.388113)          # Parkplatz vor dem Tor
 CENTER = (38.901680, -9.388320)         # Mitte zwischen Pool, Rundbau und Haupthaus
@@ -101,12 +101,12 @@ assert len(wps) <= 195, "zu viele Wegpunkte"
 assert worst >= MIN_CLEAR and home_worst >= MIN_CLEAR, "zu tief"
 assert used <= 80.0, "Akku reicht nicht mit 20 % Reserve"
 
-text = (f"Vermessungsflug Mühle V2, Teil 1 von 2: {n_grid} Fotos senkrecht von oben im Raster auf {H_GRID:.0f} m." if MODE == "raster" else
-        f"Vermessungsflug Mühle V2, Teil 2 von 2: zwei schräge Ringe um das Grundstück ({RINGS[0][2]} Fotos auf {RINGS[0][1]:.0f} m, {RINGS[1][2]} auf {RINGS[1][1]:.0f} m), Kamera etwa 45° auf die Mitte.")
+text = (f"Vermessungsflug Mühle V3, Teil 1 von 2: {n_grid} Fotos senkrecht von oben im Raster auf {H_GRID:.0f} m." if MODE == "raster" else
+        f"Vermessungsflug Mühle V3, Teil 2 von 2: zwei schräge Ringe um das Grundstück ({RINGS[0][2]} Fotos auf {RINGS[0][1]:.0f} m, {RINGS[1][2]} auf {RINGS[1][1]:.0f} m), Kamera etwa 45° auf die Mitte.")
 plan = {"name": NAME,
         "beschreibung": text + f" Aus beiden Teilen entsteht das 3D-Modell für die späteren Film- und Fotopläne. Gegen DGT-LiDAR 2024 geprüft: überall mindestens "
                         f"{min(worst, home_worst):.0f} m über Bäumen und Dächern, auch auf dem Heimweg. Etwa {secs / 60:.0f} min, mit vollem Akku starten. "
                         f"Bei hohem Sonnenstand oder bedecktem Himmel fliegen, nicht in der Dämmerung.",
-        "speed": SPEED, "rcLost": "goHome", "transitHoehe": TR, "start": {"lat": START[0], "lon": START[1]}, "waypoints": wps}
+        "speed": SPEED, "rcLost": "continue", "transitHoehe": TR, "start": {"lat": START[0], "lon": START[1]}, "waypoints": wps}
 if MODE == "ringe": plan["ziel"] = {"lat": CENTER[0], "lon": CENTER[1], "h": TARGET_H}
 json.dump(plan, open(sys.argv[2], "w"), ensure_ascii=False, indent=1)
