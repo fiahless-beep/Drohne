@@ -165,6 +165,18 @@ class MainActivity : AppCompatActivity() {
         }
         btnFollow.setOnClickListener { askFollow() }
         findViewById<Button>(R.id.btnClaude).setOnClickListener { askClaude() }
+        // Startplätze: Kopie im Handyspeicher (überlebt eine Deinstallation). Ohne die Erlaubnis einmal je Installation fragen.
+        if (StartPlaces.canMirror()) StartPlaces.syncMirror(this)
+        else if (Build.VERSION.SDK_INT >= 30 && !StartPlaces.askedForMirror(this)) {
+            StartPlaces.markAsked(this)
+            AlertDialog.Builder(this).setTitle("Keep start places safe?")
+                .setMessage("Remembered start places can be kept in the phone storage (Documents/FelixDrohne), so they survive a reinstall and come back by themselves. Android needs “All files access” for that: switch it on in the next screen, then go back.")
+                .setPositiveButton("Open setting") { _, _ ->
+                    try { startActivity(android.content.Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, android.net.Uri.parse("package:$packageName"))) }
+                    catch (_: Throwable) { try { startActivity(android.content.Intent(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)) } catch (_: Throwable) {} }
+                }
+                .setNegativeButton("Not now", null).show()
+        }
         // Abheben ohne Plan: 1,5 s halten (kein versehentlicher Start), Loslassen vorher bricht ab.
         btnTakeoff = findViewById(R.id.btnTakeoff)
         val takeoffRun = Runnable {
@@ -235,7 +247,11 @@ class MainActivity : AppCompatActivity() {
         DroneManager.addLogListener(logListener)
     }
 
-    override fun onResume() { super.onResume(); mapPanel.onResume() }
+    override fun onResume() {
+        super.onResume(); mapPanel.onResume()
+        // Nach dem Erlauben von „All files access“ kommt man hierher zurück: Kopie abgleichen bzw. Plätze zurückholen.
+        try { StartPlaces.syncMirror(this)?.let { n -> if (n > 0) info("Start places restored", "$n remembered start place(s) came back from the phone storage.") } } catch (_: Throwable) {}
+    }
     override fun onNewIntent(intent: android.content.Intent) { super.onNewIntent(intent); setIntent(intent); handleTokenLink(intent) }
 
     /**
