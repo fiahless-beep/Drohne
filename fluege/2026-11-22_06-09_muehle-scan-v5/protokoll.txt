@@ -414,3 +414,21 @@
 06:17:01  T 38.901737 -9.388366 h=45.0 akku=56 fliegt=true mission=EXECUTING wp=51 wind=0 hind=2359@83°/n360/o60000/u60000
 06:17:03  T 38.901763 -9.388366 h=45.0 akku=56 fliegt=true mission=EXECUTING wp=51 wind=0 hind=696@108°/n360/o60000/u60000
 06:17:04  Wegpunkt 53
+06:17:05  DJI-Meldung: [Hinweis]  – SD card full. Change card or delete files
+06:17:05  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:05  T 38.901768 -9.388367 h=44.9 akku=56 fliegt=true mission=EXECUTING wp=52 wind=0 hind=516@48°/n360/o60000/u60000
+06:17:07  T 38.901772 -9.388366 h=45.0 akku=56 fliegt=true mission=EXECUTING wp=52 wind=0 hind=1454@148°/n360/o60000/u60000
+06:17:09  T 38.901815 -9.388367 h=45.0 akku=56 fliegt=true mission=EXECUTING wp=52 wind=0 hind=2224@93°/n360/o60000/u60000
+06:17:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:11  DJI-Meldung erledigt: 0x1C00040F
+06:17:11  T 38.901850 -9.388366 h=45.0 akku=56 fliegt=true mission=EXECUTING wp=52 wind=0 hind=600@103°/n360/o60000/u60000
+06:17:13  Wegpunkt 54
+06:17:13  T 38.901857 -9.388366 h=45.0 akku=56 fliegt=true mission=EXECUTING wp=53 wind=0 hind=477@138°/n360/o60000/u60000
+06:17:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:15  T 38.901861 -9.388366 h=45.0 akku=56 fliegt=true mission=EXECUTING wp=53 wind=0 hind=1203@138°/n360/o60000/u60000
+06:17:17  T 38.901898 -9.388366 h=45.0 akku=55 fliegt=true mission=EXECUTING wp=53 wind=0 hind=2497@88°/n360/o60000/u60000
+06:17:19  T 38.901938 -9.388366 h=45.0 akku=55 fliegt=true mission=EXECUTING wp=53 wind=0 hind=696@103°/n360/o60000/u60000
+06:17:20  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:21  T 38.901946 -9.388367 h=45.0 akku=55 fliegt=true mission=EXECUTING wp=53 wind=0 hind=561@138°/n360/o60000/u60000
+06:17:21  Wegpunkt 55
+06:17:23  T 38.901949 -9.388367 h=45.0 akku=55 fliegt=true mission=EXECUTING wp=54 wind=0 hind=843@98°/n360/o60000/u60000
