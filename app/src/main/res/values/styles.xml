@@ -8,5 +8,40 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
+        <item name="android:alertDialogTheme">@style/DrohneDialog</item>
+    </style>
+
+    <!-- Rückfragen und Eingaben (AlertDialog) im Stil des Cockpits (Felix 22.11.2026: keine fremd aussehenden Pop-ups). -->
+    <style name="DrohneDialog" parent="android:Theme.Material.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/dialog_frame</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorControlNormal">@color/accentDim</item>
+        <item name="android:colorControlActivated">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text</item>
+        <item name="android:textColorSecondary">@color/textDim</item>
+        <item name="android:textColorHint">@color/textMuted</item>
+        <item name="android:textColorAlertDialogListItem">@color/text</item>
+        <item name="android:windowTitleStyle">@style/DrohneDialogTitel</item>
+        <item name="android:buttonBarButtonStyle">@style/DrohneDialogKnopf</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DrohneDialogKnopf</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DrohneDialogKnopf</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/DrohneDialogKnopf</item>
+    </style>
+    <style name="DrohneDialogTitel" parent="android:Widget.Material.Light.ActionBar.TabText">
+        <item name="android:textAppearance">@style/DrohneDialogTitelSchrift</item>
+        <item name="android:maxLines">2</item>
+    </style>
+    <style name="DrohneDialogTitelSchrift" parent="android:TextAppearance.Material.Title">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
+    <style name="DrohneDialogKnopf" parent="android:Widget.Material.Button.Borderless.Colored">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:fontFamily">monospace</item>
     </style>
 </resources>

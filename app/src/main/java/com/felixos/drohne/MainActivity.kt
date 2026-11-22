@@ -383,12 +383,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun sensorsEn(v: String?): String = FlugSitzung.sensorenText(v)
 
-    private fun info(title: String, msg: String) { AlertDialog.Builder(this).setTitle(title).setMessage(msg).setPositiveButton("OK", null).show() }
+    private fun info(title: String, msg: String) {
+        if (::cockpit.isInitialized && cockpit.setOffen) return cockpit.setText(title, msg)
+        AlertDialog.Builder(this).setTitle(title).setMessage(msg).setPositiveButton("OK", null).show()
+    }
 
     /** Auswahl aus festen Werten; der aktuelle Wert der Drohne wird vorher gelesen und markiert. */
     private fun <T> choose(title: String, key: dji.sdk.keyvalue.key.DJIKeyInfo<T>, options: List<Pair<String, T>>, hint: String = "") {
         DjiSettings.read(key) { cur -> runOnUiThread {
             val idx = options.indexOfFirst { it.second == cur }
+            if (::cockpit.isInitialized && cockpit.setOffen) {
+                cockpit.menue(title + if (hint.isNotBlank()) " – $hint" else "", options.mapIndexed { i, o -> (if (i == idx) o.first + " (now active)" else o.first) to {
+                    DjiSettings.write(key, o.second, "$title: ${o.first}") { ok -> runOnUiThread {
+                        android.widget.Toast.makeText(this, if (ok) "$title: ${o.first}" else "$title: not applied (see log)", android.widget.Toast.LENGTH_LONG).show() } }
+                    cockpit.setZurueck()
+                } })
+                return@runOnUiThread
+            }
             AlertDialog.Builder(this).setTitle(title + if (hint.isNotBlank()) " – $hint" else "")
                 .setSingleChoiceItems(options.map { it.first }.toTypedArray(), idx) { d, i ->
                     DjiSettings.write(key, options[i].second, "$title: ${options[i].first}") { ok -> runOnUiThread {

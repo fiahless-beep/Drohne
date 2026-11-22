@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rahmen der Rückfragen und Eingaben im Stil des Cockpits: Panel-Fläche, Teal-Linie, harte Kanten. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android" android:insetLeft="24dp" android:insetRight="24dp" android:insetTop="12dp" android:insetBottom="12dp">
+    <shape android:shape="rectangle">
+        <solid android:color="@color/panel" />
+        <stroke android:width="1dp" android:color="@color/accentDim" />
+        <corners android:radius="2dp" />
+    </shape>
+</inset>

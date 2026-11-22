@@ -155,6 +155,11 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         leisteZeigen(); zeige(aktionen.zustand())
     }
 
+    /** Die Set-Fläche ist offen: Erklärungen und Auswahlen des Gastgebers gehören dann dorthin statt in ein Pop-up. */
+    val setOffen: Boolean get() = tafel == Tafel.SET
+    fun setText(titel: String, text: String) { if (setOffen) setTafel.text(titel, text) }
+    fun setZurueck() { if (setOffen) setTafel.zurueck() }
+
     /** Für die Zurück-Taste: in Set eine Ebene zurück, sonst die offene Fläche schließen; false = es war keine offen. */
     fun tafelZurueck(): Boolean {
         if (tafel == Tafel.KEINE) return false

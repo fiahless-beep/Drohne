@@ -1,0 +1,16 @@
+<resources>
+    <!-- Ab Android 8 die Schriften des Cockpits auch in den Rückfragen. -->
+    <style name="DrohneDialogTitelSchrift" parent="android:TextAppearance.Material.Title">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:fontFamily">@font/jetbrains_mono_bold</item>
+    </style>
+    <style name="DrohneDialogKnopf" parent="android:Widget.Material.Button.Borderless.Colored">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:fontFamily">@font/jetbrains_mono_bold</item>
+    </style>
+</resources>

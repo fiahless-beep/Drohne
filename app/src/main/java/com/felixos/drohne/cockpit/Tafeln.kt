@@ -108,7 +108,7 @@ internal class LogTafel(private val stil: Stil, wurzel: FrameLayout, private val
 internal class SetTafel(private val stil: Stil, wurzel: FrameLayout) {
     val rahmen = TafelRahmen(stil, "Settings")
     /** [oeffner] = die Handlung, die diese Ebene geöffnet hat; mit ihr wird die Liste nach einer Änderung frisch geholt. */
-    private class Ebene(val titel: String, val eintraege: List<Pair<String, () -> Unit>>, val oeffner: (() -> Unit)?)
+    private class Ebene(val titel: String, val eintraege: List<Pair<String, () -> Unit>>, val oeffner: (() -> Unit)?, val text: String? = null)
     private val stapel = ArrayList<Ebene>()
     private val liste = stil.spalte()
     private val zurueck = rahmen.kopfKnopf("Back", "One level back") { zurueck() }
@@ -129,6 +129,9 @@ internal class SetTafel(private val stil: Stil, wurzel: FrameLayout) {
         stapel.add(Ebene(titel, eintraege.filter { it.first != "Cancel" }, naechsterOeffner)); naechsterOeffner = null
         zeichnen()
     }
+
+    /** Eine Ebene nur mit Text (Erklärung, Ergebnis). */
+    fun text(titel: String, text: String) { stapel.add(Ebene(titel, emptyList(), null, text)); naechsterOeffner = null; zeichnen() }
 
     /** false = es gab nichts zurückzugehen (oberste Ebene). */
     fun zurueck(): Boolean { if (stapel.size <= 1) return false; stapel.removeAt(stapel.size - 1); auffrischen(); return true }
@@ -155,6 +158,12 @@ internal class SetTafel(private val stil: Stil, wurzel: FrameLayout) {
         rahmen.zusatz.zeige("")
         zurueck.visibility = if (stapel.size > 1) View.VISIBLE else View.INVISIBLE
         liste.removeAllViews()
+        stapel.last().text?.let { t ->
+            liste.addView(stil.text(14f, stil.sans, Farbe.TEXT, zeilen = Int.MAX_VALUE).apply {
+                text = t; ellipsize = null; setLineSpacing(0f, 1.35f)
+                background = stil.flaeche(Farbe.PANEL); setPadding(stil.dp(12), stil.dp(10), stil.dp(12), stil.dp(10))
+            }, stil.lp(Stil.MATCH, Stil.WRAP))
+        }
         stapel.last().eintraege.forEachIndexed { i, (text, tun) ->
             val z = stil.zeile().apply {
                 background = stil.flaeche(Farbe.PANEL); isClickable = true; isFocusable = true
