@@ -887,3 +887,7 @@
 06:28:41  DJI-Meldung: [Hinweis]  – SD card full. Change card or delete files
 06:28:42  DJI-Meldung erledigt: 0x16100089
 06:28:42  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:28:57  Live-Bild verbunden
+06:29:15  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:29:17  Abheben per Knopf: Motoren an, steigt auf etwa 1,2 m und schwebt
+06:29:17  Abheben eingeleitet
