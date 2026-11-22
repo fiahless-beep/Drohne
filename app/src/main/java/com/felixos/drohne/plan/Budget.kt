@@ -3,12 +3,12 @@ package com.felixos.drohne.plan
 import kotlin.math.ceil
 
 /**
- * Akku-Budget (Felix 6.11.): sicher mit mindestens 20 % zurück; bestätigt von Felix am 22.11.2026.
+ * Akku-Budget: Felix 22.11.2026 nach dem Vermessungsflug: „macht die Grenze dann bei 15 %“ (vorher 20 %).
  * Mini 4 Pro: DJI nennt 34 min, realistisch rechnen wir mit 25 min für 100 % (Wind, Kälte, Steigen).
  */
 object Budget {
     const val MINUTES_PER_FULL_BATTERY = 25.0
-    const val RESERVE_PERCENT = 20
+    const val RESERVE_PERCENT = 15
     private const val CLIMB_MS = 3.0
     private const val CRUISE_MS = 8.0
 
