@@ -190,9 +190,12 @@ object FlugSitzung : Aktionen {
         return StartErgebnis.Gestartet
     }
 
-    /** Am Boden, verbunden, nichts läuft und nichts wird gerade gestartet: nur dann gibt es das Abheben per Knopf. */
+    /**
+     * Am Boden, nichts läuft und nichts wird gerade gestartet: dann steht der Abhebe-Knopf da. Auch ohne Verbindung
+     * (Felix 22.11.2026: „es gibt keinen Abhebe-Button mehr“); der Druck nennt dann den Grund, statt dass der Knopf fehlt.
+     */
     private fun abhebenMoeglich(s: DroneState): Boolean =
-        s.connected && !s.flying && !s.motorsOn && !MissionController.executing && !Simulator.active && !uploading && !loading && busy == null && !FollowController.active
+        !s.flying && !s.motorsOn && !MissionController.executing && !Simulator.active && !uploading && !loading && busy == null && !FollowController.active
 
     /** Abheben ohne Plan (Knopf 1,5 s gehalten). Verweigert mit leerer Liste = gerade nicht angeboten, nichts tun. */
     override fun abheben(): StartErgebnis {
