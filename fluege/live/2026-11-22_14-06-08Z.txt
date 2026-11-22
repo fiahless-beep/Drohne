@@ -607,3 +607,21 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:28:41  DJI-Meldung: [Hinweis]  – SD card full. Change card or delete files
 06:28:42  DJI-Meldung erledigt: 0x16100089
 06:28:42  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:28:57  Live-Bild verbunden
+06:29:11  S utc=14:29:11 verbunden=true fliegt=false pos=38.901393,-9.388103 h=1.2 start=? akku=98 sat=8 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:29:15  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:29:17  Abheben per Knopf: Motoren an, steigt auf etwa 1,2 m und schwebt
+06:29:17  Abheben eingeleitet
+06:29:23  Flugprotokoll: 2026-11-22_06-29_muehle-scan-rest-v2/protokoll.txt
+06:29:23  Obstacle sensing OFF for this plan flight: the plan marks the whole route as free (open water / high above everything). It comes back on after landing. Keep the drone in sight.
+06:29:23  Startpunkt: 38.901389, -9.388127
+06:29:23  Karte: https://www.google.com/maps/dir/38.901392,-9.388106/38.901447,-9.388157/38.901458,-9.388167/38.901430,-9.388287/38.901439,-9.388413/38.901485,-9.388524/38.901560,-9.388604/38.901654,-9.388642/38.901752,-9.388630/38.901839,-9.388571/data=!4m2!4m1!3e2
+06:29:23  Mission: READY
+06:29:23  Wegpunkt 1
+06:29:23  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:29:23  HINDERNISERKENNUNG AUS – the plan marks this route as free
+06:29:23  Rückkehrhöhe: 45 m
+06:29:23  Mission: PREPARING
+06:29:23  Start: ok
+06:29:23  Mission: ENTER_WAYLINE
+06:29:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
