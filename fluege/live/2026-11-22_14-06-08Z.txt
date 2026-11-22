@@ -790,3 +790,4 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:59:52  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
 06:59:54  DJI-Meldung erledigt: 0x16200101
 07:00:01  S utc=15:00:01 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=63 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:00:32  S utc=15:00:32 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=63 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
