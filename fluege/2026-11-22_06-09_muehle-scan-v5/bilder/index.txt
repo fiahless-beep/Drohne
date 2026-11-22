@@ -31,3 +31,8 @@ b_141104.jpg utc=14:11:04 pos=38.901769,-9.387766 h=45.0 kurs=0 neigung=-90 wp=8
 b_141108.jpg utc=14:11:08 pos=38.901833,-9.387766 h=45.0 kurs=-0 neigung=-90 wp=8 mission=EXECUTING plan=muehle-scan-v5
 b_141112.jpg utc=14:11:12 pos=38.901858,-9.387765 h=45.0 kurs=-0 neigung=-90 wp=9 mission=EXECUTING plan=muehle-scan-v5
 b_141116.jpg utc=14:11:16 pos=38.901914,-9.387765 h=45.0 kurs=-0 neigung=-90 wp=9 mission=EXECUTING plan=muehle-scan-v5
+b_141120.jpg utc=14:11:20 pos=38.901949,-9.387766 h=45.0 kurs=0 neigung=-90 wp=10 mission=EXECUTING plan=muehle-scan-v5
+b_141124.jpg utc=14:11:24 pos=38.901995,-9.387766 h=45.0 kurs=-0 neigung=-90 wp=10 mission=EXECUTING plan=muehle-scan-v5
+b_141129.jpg utc=14:11:29 pos=38.902037,-9.387766 h=45.0 kurs=0 neigung=-90 wp=11 mission=EXECUTING plan=muehle-scan-v5
+b_141133.jpg utc=14:11:33 pos=38.902066,-9.387766 h=44.9 kurs=-0 neigung=-90 wp=11 mission=EXECUTING plan=muehle-scan-v5
+b_141137.jpg utc=14:11:37 pos=38.902126,-9.387766 h=45.0 kurs=0 neigung=-90 wp=11 mission=EXECUTING plan=muehle-scan-v5
