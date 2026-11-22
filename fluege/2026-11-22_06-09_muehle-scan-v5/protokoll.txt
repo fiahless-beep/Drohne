@@ -44,3 +44,20 @@
 06:09:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
 06:09:35  T 38.901393 -9.388106 h=9.4 akku=83 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u17352
 06:09:37  T 38.901392 -9.388106 h=19.7 akku=83 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+06:09:39  T 38.901393 -9.388106 h=29.5 akku=83 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=-
+06:09:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:09:41  T 38.901393 -9.388106 h=39.2 akku=83 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=-
+06:09:43  T 38.901393 -9.388106 h=46.8 akku=82 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=-
+06:09:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:09:45  T 38.901393 -9.388106 h=49.2 akku=82 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+06:09:47  T 38.901394 -9.388106 h=49.8 akku=82 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+06:09:47  WÄCHTER (nur beobachten): Fläche kommt schnell näher – hätte angehalten
+06:09:49  T 38.901393 -9.388107 h=50.0 akku=82 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=952@98°/n360/o60000/u60000
+06:09:49  Mission: EXECUTING
+06:09:50  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:09:51  T 38.901393 -9.388112 h=50.0 akku=82 fliegt=true mission=EXECUTING wp=0 wind=0 hind=1838@153°/n360/o60000/u60000
+06:09:53  T 38.901392 -9.388111 h=50.0 akku=82 fliegt=true mission=EXECUTING wp=0 wind=0 hind=1742@73°/n360/o60000/u60000
+06:09:55  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:09:55  T 38.901391 -9.388107 h=50.0 akku=82 fliegt=true mission=EXECUTING wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+06:09:57  T 38.901388 -9.388102 h=50.0 akku=82 fliegt=true mission=EXECUTING wp=0 wind=0 hind=-
+06:09:59  T 38.901364 -9.388050 h=50.0 akku=81 fliegt=true mission=EXECUTING wp=0 wind=0 hind=-
