@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnPrimary: Button
     private lateinit var btnFollow: Button
     private lateinit var btnHome: Button
+    private lateinit var btnTakeoff: Button
     private lateinit var secondaryRow: View
     private val logLines = ArrayDeque<String>()
 
@@ -164,6 +165,21 @@ class MainActivity : AppCompatActivity() {
         }
         btnFollow.setOnClickListener { askFollow() }
         findViewById<Button>(R.id.btnClaude).setOnClickListener { askClaude() }
+        // Abheben ohne Plan: 1,5 s halten (kein versehentlicher Start), Loslassen vorher bricht ab.
+        btnTakeoff = findViewById(R.id.btnTakeoff)
+        val takeoffRun = Runnable {
+            btnTakeoff.text = "Taking off …"
+            val s = DroneManager.state
+            val why = com.felixos.drohne.plan.Takeoff.problem(s.connected, s.flying, s.motorsOn, s.satellites, s.home?.latitude?.let { it != 0.0 } == true, s.batteryPercent, s.windWarning)
+            if (why != null) info("No takeoff", why) else DroneManager.takeOff()
+        }
+        btnTakeoff.setOnTouchListener { v, e ->
+            when (e.actionMasked) {
+                android.view.MotionEvent.ACTION_DOWN -> { btnTakeoff.text = "Keep holding …"; v.postDelayed(takeoffRun, com.felixos.drohne.plan.Takeoff.HOLD_MS) }
+                android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> { v.removeCallbacks(takeoffRun); if (btnTakeoff.text == "Keep holding …") btnTakeoff.text = "Hold to take off" }
+            }
+            true
+        }
         btnHome.setOnClickListener {
             FollowController.stop()
             MissionController.stop()
@@ -426,6 +442,10 @@ class MainActivity : AppCompatActivity() {
         secondaryRow.visibility = View.GONE // Testflug/Folgen vorerst raus (Felix 8.11.)
         btnFollow.text = if (FollowController.active) "Stop following" else "Follow"
         btnHome.alpha = if (s.flying || s.motorsOn || FollowController.active) 1f else 0.6f
+        // Abheben-Knopf nur am Boden mit verbundener Drohne und nicht, während ein Plan läuft oder gestartet wird.
+        val ground = s.connected && !s.flying && !s.motorsOn && !MissionController.executing && !Simulator.active
+        if (ground && btnTakeoff.visibility != View.VISIBLE) btnTakeoff.text = "Hold to take off"
+        btnTakeoff.visibility = if (ground) View.VISIBLE else View.GONE
     }
 
     private var loading = false
