@@ -772,3 +772,10 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:55:14  DJI-Meldung erledigt: 0x16100015
 06:55:36  S utc=14:55:36 verbunden=true fliegt=false pos=38.901434,-9.388129 h=0.0 start=38.901389,-9.388127 akku=67 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
 06:56:10  S utc=14:56:10 verbunden=true fliegt=false pos=38.901429,-9.388144 h=0.0 start=38.901389,-9.388127 akku=66 sat=19 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:56:38  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:56:39  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:56:39  DJI-Meldung: [WARNUNG]  – Aircraft movement detected
+06:56:39  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:56:39  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:56:43  S utc=14:56:43 verbunden=true fliegt=false pos=38.901518,-9.388289 h=0.0 start=38.901389,-9.388127 akku=66 sat=10 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:56:44  DJI-Meldung erledigt: 0x161000A4
