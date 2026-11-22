@@ -108,4 +108,54 @@ object Preflight {
             else -> null
         }
     }
+
+    // ---------------------------------------------------------------- Prüfliste (Anzeige der Regeln oben)
+
+    /** Eine Zeile der Prüfliste: [ok] true = erfüllt, false = Problem, null = noch nicht prüfbar (kein Plan). */
+    data class Row(val ok: Boolean?, val text: String, val detail: String? = null)
+
+    /** Eine Prüfzeile: Beschriftung und Erkennung des zugehörigen Problemtexts (die Regeln selbst stehen in [problems]). */
+    private class Check(val label: String, val needsPlan: Boolean, val matches: (String) -> Boolean)
+
+    private val checks = listOf(
+        Check("SDK registered", false) { it.startsWith("SDK not registered") },
+        Check("Drone connected", false) { it.startsWith("Drone not connected") },
+        Check("Home point set", false) { it.startsWith("Home point") },
+        Check("GPS: at least $MIN_SATELLITES satellites", false) { it.startsWith("GPS too weak") },
+        Check("Plan on the drone", false) { it.startsWith("No plan on the drone") },
+        Check("Plan matches the home point", true) { it.contains("prepared without this home point") || it.contains("checked for a start point") },
+        Check("Battery sufficient (incl. reserve)", true) { it.startsWith("Battery ") },
+        Check("All points within $MAX_DISTANCE_M m", true) { it.contains("from the home point") },
+        Check("Building guard: route clear", true) { it.startsWith("Building guard") },
+        Check("Surface guard: route clear", true) { it.startsWith("Surface guard") },
+        Check("Way home clear from every point", true) { it.startsWith("Return guard") },
+        Check("DJI height limit sufficient", true) { it.startsWith("DJI height limit") },
+        Check("No wind warning", true) { it.contains("ind warning") },
+        Check("Low points: building data", true) { it.contains("no building data") },
+        Check("Low points: daylight", true) { it.contains("it is dark") },
+        Check("Low points: obstacle sensing on", true) { it.contains("obstacle sensing") },
+    )
+
+    /** Kurzfassung eines Problemtexts für die Liste; der volle Text steht in [Row.detail]. */
+    fun shortProblem(p: String): String = p.substringBefore(" (").substringBefore(":").substringBefore(" →").substringBefore(". ").take(60)
+
+    /**
+     * Prüfliste aus den [problems]. Kurzform ([full] = false): nur die Probleme, und „Ready for takeoff“, wenn es keine gibt
+     * und ein Plan geladen ist. [full] = jede Regel mit Haken, Kreuz oder (ohne Plan) offen; so im Dialog „Cannot start“.
+     */
+    fun checklist(problems: List<String>, hasPlan: Boolean, full: Boolean = false): List<Row> = buildList {
+        val unmatched = problems.toMutableList()
+        checks.forEach { c ->
+            val hit = unmatched.filter(c.matches)
+            unmatched.removeAll(hit)
+            when {
+                hit.isNotEmpty() -> hit.forEach { add(Row(false, if (full) it else shortProblem(it), it)) }
+                !full -> {}
+                c.needsPlan && !hasPlan -> add(Row(null, c.label))
+                else -> add(Row(true, c.label))
+            }
+        }
+        unmatched.forEach { add(Row(false, if (full) it else shortProblem(it), it)) }
+        if (!full && problems.isEmpty() && hasPlan) add(Row(true, "Ready for takeoff"))
+    }
 }

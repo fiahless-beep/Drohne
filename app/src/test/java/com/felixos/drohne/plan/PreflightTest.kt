@@ -155,4 +155,27 @@ class PreflightTest {
         assertTrue(Preflight.followProblem(home, 20.0, false, "OFF", noon)!!.contains("only with obstacle sensing on (now: OFF)"))
         assertNull(Preflight.followProblem(home, 25.0, false, "OFF", night))
     }
+
+    @Test fun shortChecklistShowsOnlyProblemsOrReady() {
+        assertEquals(listOf(Preflight.Row(true, "Ready for takeoff")), Preflight.checklist(emptyList(), hasPlan = true))
+        assertEquals(emptyList<Preflight.Row>(), Preflight.checklist(emptyList(), hasPlan = false))
+        val p = "GPS too weak (at least 10 satellites)"
+        assertEquals(listOf(Preflight.Row(false, "GPS too weak", p)), Preflight.checklist(listOf(p), hasPlan = true))
+    }
+
+    @Test fun fullChecklistNamesEveryRuleAndKeepsUnknownProblems() {
+        val rows = Preflight.checklist(listOf("Drone not connected", "Something new"), hasPlan = false, full = true)
+        assertEquals(17, rows.size)
+        assertEquals(Preflight.Row(false, "Drone not connected", "Drone not connected"), rows[1])
+        assertEquals(Preflight.Row(true, "SDK registered"), rows[0])
+        assertEquals("Ohne Plan sind planabhängige Regeln offen", null, rows.first { it.text.startsWith("Battery") }.ok)
+        assertEquals(Preflight.Row(false, "Something new", "Something new"), rows.last())
+    }
+
+    /** Jeder Problemtext der Startprüfung findet seine Zeile; keiner fällt in „unbekannt“ ans Ende. */
+    @Test fun everyRuleTextHasItsChecklistRow() {
+        val bad = ok().copy(registered = false, connected = false, uploaded = false, batteryPercent = 1, satellites = 3, home = null)
+        val rows = Preflight.checklist(Preflight.problems(bad), hasPlan = true, full = true)
+        assertEquals(16, rows.size)
+    }
 }

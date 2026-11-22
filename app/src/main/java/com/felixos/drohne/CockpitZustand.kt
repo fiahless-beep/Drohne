@@ -53,6 +53,10 @@ data class CockpitZustand(
     val folgenAktiv: Boolean = false,
     /** Abheben per Knopf wird angeboten: am Boden, verbunden, kein Plan läuft oder startet gerade. */
     val abhebenMoeglich: Boolean = false,
+    /** So lange muss der Abheben-Knopf gehalten werden. */
+    val abhebenHalteMs: Long = 1500,
+    /** Startprüfung als Liste für die Anzeige: nur Probleme, oder „Ready for takeoff“. */
+    val pruefliste: List<Pruefzeile> = emptyList(),
     val waechter: Waechter = Waechter(),
     val bahn: Bahn? = null,
 ) {

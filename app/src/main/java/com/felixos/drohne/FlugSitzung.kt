@@ -58,7 +58,11 @@ object FlugSitzung : Aktionen {
     val planWartet: Boolean get() = waiting != null
 
     private fun aufUi(block: () -> Unit) { if (Looper.myLooper() == Looper.getMainLooper()) block() else ui.post(block) }
-    private fun melden() { anzeige?.aktualisieren(); if (zuhoerer.isNotEmpty()) { val z = zustand(); zuhoerer.forEach { it(z) } } }
+    private fun melden() { anzeige?.aktualisieren(); verteilen() }
+    private fun verteilen() { if (zuhoerer.isNotEmpty()) { val z = zustand(); zuhoerer.forEach { it(z) } } }
+    @Volatile private var angestossen = false
+    /** Werte der Drohne kommen in dichter Folge: den Zustand höchstens zehnmal je Sekunde neu rechnen und verteilen, auf dem UI-Thread. */
+    private fun anstossen() { if (angestossen || zuhoerer.isEmpty()) return; angestossen = true; ui.postDelayed({ angestossen = false; verteilen() }, 100) }
     private fun info(titel: String, text: String) { anzeige?.meldung(titel, text) }
 
     fun addZuhoerer(l: (CockpitZustand) -> Unit) { zuhoerer += l; l(zustand()) }
@@ -99,8 +103,8 @@ object FlugSitzung : Aktionen {
             }
         }
         MissionController.onHoverFinished = { aufUi { melden() } }
-        DroneManager.addStateListener { s -> pflegen(s); if (zuhoerer.isNotEmpty()) { val z = zustand(); zuhoerer.forEach { it(z) } } }
-        ui.post(object : Runnable { override fun run() { if (zuhoerer.isNotEmpty()) { val z = zustand(); zuhoerer.forEach { it(z) } }; ui.postDelayed(this, 1000) } })
+        DroneManager.addStateListener { s -> pflegen(s); anstossen() }
+        ui.post(object : Runnable { override fun run() { verteilen(); ui.postDelayed(this, 1000) } })
     }
 
     /** Wartet, bis die Drohne am Boden ist (Motoren aus), dann [block]. */
@@ -169,6 +173,9 @@ object FlugSitzung : Aktionen {
     }
 
     override fun startProbleme(): List<String> = Preflight.startGate(lage(DroneManager.state))
+
+    override fun pruefliste(voll: Boolean): List<Pruefzeile> = pruefliste(startProbleme(), voll)
+    private fun pruefliste(probleme: List<String>, voll: Boolean) = Preflight.checklist(probleme, hasPlan = mission != null, full = voll).map { Pruefzeile(it.ok, it.text, it.detail) }
 
     /** Starttür am Boden. Die Prüfung läuft hier, im Augenblick des Starts, nicht in der Oberfläche. */
     override fun starten(): StartErgebnis {
@@ -721,6 +728,7 @@ object FlugSitzung : Aktionen {
             CockpitZustand.Bahn(bahnPunkte, if (running || paused) MissionController.lastReachedIndex else -1, home?.let { ostNord(o, it) }, here?.let { ostNord(o, it) })
         }
         val fliegtPlan = MissionController.executing || FollowController.active
+        val startProbleme = if (fliegtPlan) emptyList() else Preflight.problems(lage(s))
 
         return CockpitZustand(
             verbindung = verbindung,
@@ -768,10 +776,12 @@ object FlugSitzung : Aktionen {
             ),
             hauptaktion = haupt,
             hauptaktionFrei = !loading && !uploading && busy == null,
-            startProbleme = if (fliegtPlan) emptyList() else Preflight.problems(lage(s)),
+            startProbleme = startProbleme,
+            pruefliste = if (fliegtPlan) emptyList() else pruefliste(startProbleme, voll = false),
             startpruefungZeigen = !fliegtPlan,
             folgenAktiv = FollowController.active,
             abhebenMoeglich = abhebenMoeglich(s),
+            abhebenHalteMs = Takeoff.HOLD_MS,
             waechter = CockpitZustand.Waechter(FlightGuard.enabled, FlightGuard.mayPause, ObstacleGuard.enabled, ObstacleGuard.armed, MissionController.duskMode),
             bahn = bahn,
         )

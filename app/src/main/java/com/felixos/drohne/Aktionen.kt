@@ -13,6 +13,8 @@ interface Aktionen {
     fun hochladen()
     /** Startprüfung jetzt; leer = startklar. */
     fun startProbleme(): List<String>
+    /** Prüfliste zur Startprüfung jetzt; [voll] = jede Regel mit Ergebnis, sonst nur die Probleme. */
+    fun pruefliste(voll: Boolean): List<Pruefzeile>
     /** Start vom Boden. Rechnet die Startprüfung selbst und verweigert, solange ein Problem besteht. */
     fun starten(): StartErgebnis
     /** Abheben ohne Plan: Motoren an, gut einen Meter steigen, schweben. Prüft plan.Takeoff selbst. */
@@ -26,6 +28,9 @@ interface Aktionen {
     fun hauptaktionWaehlen(): CockpitZustand.Hauptaktion?
     fun zustand(): CockpitZustand
 }
+
+/** Eine Zeile der Prüfliste: [ok] true = erfüllt, false = Problem, null = ohne Plan noch nicht prüfbar. */
+class Pruefzeile(val ok: Boolean?, val text: String, val detail: String?)
 
 sealed class StartErgebnis {
     object Gestartet : StartErgebnis()
