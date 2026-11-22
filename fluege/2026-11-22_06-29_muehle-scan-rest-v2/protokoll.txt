@@ -1,0 +1,19 @@
+06:29:23  Flugprotokoll: 2026-11-22_06-29_muehle-scan-rest-v2/protokoll.txt
+06:29:23  Obstacle sensing OFF for this plan flight: the plan marks the whole route as free (open water / high above everything). It comes back on after landing. Keep the drone in sight.
+06:29:23  Startpunkt: 38.901389, -9.388127
+06:29:23  Karte: https://www.google.com/maps/dir/38.901392,-9.388106/38.901447,-9.388157/38.901458,-9.388167/38.901430,-9.388287/38.901439,-9.388413/38.901485,-9.388524/38.901560,-9.388604/38.901654,-9.388642/38.901752,-9.388630/38.901839,-9.388571/data=!4m2!4m1!3e2
+06:29:23  Mission: READY
+06:29:23  Wegpunkt 1
+06:29:23  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:29:23  HINDERNISERKENNUNG AUS – the plan marks this route as free
+06:29:23  Rückkehrhöhe: 45 m
+06:29:23  Mission: PREPARING
+06:29:23  Start: ok
+06:29:23  Mission: ENTER_WAYLINE
+06:29:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:24  T 38.901389 -9.388125 h=1.1 akku=98 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=3339@73°/n360/o60000/u1203
+06:29:25  Flight stills: saving a still every 4 s (1920x1080)
+06:29:26  T 38.901390 -9.388125 h=1.6 akku=98 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=5679@238°/n360/o60000/u4727
+06:29:28  T 38.901390 -9.388125 h=8.0 akku=98 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u14506
+06:29:28  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:30  T 38.901390 -9.388125 h=17.4 akku=97 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
