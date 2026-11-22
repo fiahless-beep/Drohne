@@ -171,3 +171,21 @@
 06:32:38  T 38.901389 -9.388127 h=4.5 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=1383@68°/n360/o60000/u3192
 06:32:40  T 38.901388 -9.388129 h=3.5 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=1932@73°/n360/o60000/u2813
 06:32:42  T 38.901388 -9.388128 h=3.1 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=2100@73°/n360/o60000/u2383
+06:32:44  T 38.901390 -9.388127 h=2.7 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1525@68°/n360/o60000/u1964
+06:32:46  T 38.901389 -9.388127 h=2.3 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1146@63°/n360/o60000/u1628
+06:32:48  T 38.901387 -9.388126 h=1.9 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1084@68°/n360/o60000/u1205
+06:32:50  T 38.901388 -9.388127 h=1.5 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1498@68°/n360/o60000/u798
+06:32:52  T 38.901388 -9.388127 h=1.1 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1700@68°/n360/o60000/u398
+06:32:54  T 38.901387 -9.388127 h=0.7 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=2158@188°/n360/o60000/u30
+06:32:56  T 38.901387 -9.388127 h=0.4 akku=84 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u100
+06:32:57  Landehelfer: Drohne ist am Boden
+06:32:58  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:32:58  T 38.901387 -9.388126 h=0.0 akku=84 fliegt=false mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u100
+06:32:59  Hole Fotoliste von der Drohne (SD-Karte) …
+06:33:00  T 38.901387 -9.388126 h=0.0 akku=84 fliegt=false mission=READY wp=-1 wind=0 hind=-
+06:33:02  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+06:33:02  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported.
+06:33:02  Hinderniserkennung wieder AN (Bremsen) – landed after a dusk-mode flight
+06:33:03  Hole Fotoliste von der Drohne (interner Speicher) …
+06:33:04  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+06:33:04  Fotos geladen: 0
