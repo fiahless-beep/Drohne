@@ -168,15 +168,16 @@ class MainActivity : AppCompatActivity() {
         // Abheben ohne Plan: 1,5 s halten (kein versehentlicher Start), Loslassen vorher bricht ab.
         btnTakeoff = findViewById(R.id.btnTakeoff)
         val takeoffRun = Runnable {
-            btnTakeoff.text = "Taking off …"
             val s = DroneManager.state
+            // Knopf inzwischen weg (Plan gestartet, Upload läuft …): nichts tun.
+            if (btnTakeoff.visibility != View.VISIBLE || MissionController.executing || uploading || busy != null) { btnTakeoff.text = "Hold: take off"; return@Runnable }
             val why = com.felixos.drohne.plan.Takeoff.problem(s.connected, s.flying, s.motorsOn, s.satellites, s.home?.latitude?.let { it != 0.0 } == true, s.batteryPercent, s.windWarning)
-            if (why != null) info("No takeoff", why) else DroneManager.takeOff()
+            if (why != null) { btnTakeoff.text = "Hold: take off"; info("No takeoff", why) } else { btnTakeoff.text = "Taking off …"; DroneManager.takeOff() }
         }
         btnTakeoff.setOnTouchListener { v, e ->
             when (e.actionMasked) {
                 android.view.MotionEvent.ACTION_DOWN -> { btnTakeoff.text = "Keep holding …"; v.postDelayed(takeoffRun, com.felixos.drohne.plan.Takeoff.HOLD_MS) }
-                android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> { v.removeCallbacks(takeoffRun); if (btnTakeoff.text == "Keep holding …") btnTakeoff.text = "Hold to take off" }
+                android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> { v.removeCallbacks(takeoffRun); if (btnTakeoff.text == "Keep holding …") btnTakeoff.text = "Hold: take off" }
             }
             true
         }
@@ -443,9 +444,11 @@ class MainActivity : AppCompatActivity() {
         btnFollow.text = if (FollowController.active) "Stop following" else "Follow"
         btnHome.alpha = if (s.flying || s.motorsOn || FollowController.active) 1f else 0.6f
         // Abheben-Knopf nur am Boden mit verbundener Drohne und nicht, während ein Plan läuft oder gestartet wird.
-        val ground = s.connected && !s.flying && !s.motorsOn && !MissionController.executing && !Simulator.active
-        if (ground && btnTakeoff.visibility != View.VISIBLE) btnTakeoff.text = "Hold to take off"
+        // Auch nicht während Upload, einer laufenden Aktion (Plan-Start) oder Folgen: kein zweiter Startbefehl neben dem des Plans.
+        val ground = s.connected && !s.flying && !s.motorsOn && !MissionController.executing && !Simulator.active && !uploading && !loading && busy == null && !FollowController.active
+        if (ground && btnTakeoff.visibility != View.VISIBLE) btnTakeoff.text = "Hold: take off"
         btnTakeoff.visibility = if (ground) View.VISIBLE else View.GONE
+        btnHome.text = if (ground) "STOP · Home" else "STOP · Return home"
     }
 
     private var loading = false
