@@ -65,3 +65,23 @@
 06:30:28  T 38.901484 -9.388522 h=32.0 akku=94 fliegt=true mission=EXECUTING wp=5 wind=0 hind=2152@83°/n360/o60000/u60000
 06:30:29  Wächter: Vergrößerung 1,00/Bild, Treffer 0
 06:30:30  T 38.901489 -9.388529 h=32.0 akku=94 fliegt=true mission=EXECUTING wp=5 wind=0 hind=12959@303°/n360/o60000/u60000
+06:30:32  T 38.901524 -9.388565 h=31.9 akku=94 fliegt=true mission=EXECUTING wp=5 wind=0 hind=3850@68°/n360/o60000/u60000
+06:30:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:34  T 38.901551 -9.388595 h=31.9 akku=94 fliegt=true mission=EXECUTING wp=5 wind=0 hind=3383@63°/n360/o60000/u60000
+06:30:35  Wegpunkt 7
+06:30:36  T 38.901558 -9.388602 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=2780@63°/n360/o60000/u60000
+06:30:38  T 38.901562 -9.388604 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=5467@83°/n360/o60000/u60000
+06:30:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:40  T 38.901601 -9.388619 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=11327@73°/n360/o60000/u60000
+06:30:42  T 38.901641 -9.388636 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=60000@0°/n360/o60000/u60000
+06:30:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:44  T 38.901650 -9.388640 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=-
+06:30:44  Wegpunkt 8
+06:30:46  T 38.901652 -9.388641 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=7 wind=0 hind=2643@73°/n360/o60000/u60000
+06:30:48  T 38.901664 -9.388639 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=7 wind=0 hind=60000@0°/n360/o60000/u60000
+06:30:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:50  T 38.901713 -9.388634 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=7 wind=0 hind=3009@63°/n360/o60000/u60000
+06:30:52  T 38.901743 -9.388631 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=7 wind=0 hind=2900@73°/n360/o60000/u60000
+06:30:53  Wegpunkt 9
+06:30:54  T 38.901749 -9.388631 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=8 wind=0 hind=3029@73°/n360/o60000/u60000
+06:30:54  Wächter: Vergrößerung 1,00/Bild, Treffer 0
