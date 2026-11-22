@@ -15,6 +15,8 @@ interface Aktionen {
     fun startProbleme(): List<String>
     /** Prüfliste zur Startprüfung jetzt; [voll] = jede Regel mit Ergebnis, sonst nur die Probleme. */
     fun pruefliste(voll: Boolean): List<Pruefzeile>
+    /** Hinweis, wenn der Akku jetzt nicht für den ganzen Plan reicht (der Start bleibt erlaubt); sonst null. */
+    fun akkuHinweis(): String?
     /** Start vom Boden. Rechnet die Startprüfung selbst und verweigert, solange ein Problem besteht. */
     fun starten(): StartErgebnis
     /** Abheben ohne Plan: Motoren an, gut einen Meter steigen, schweben. Prüft plan.Takeoff selbst. */

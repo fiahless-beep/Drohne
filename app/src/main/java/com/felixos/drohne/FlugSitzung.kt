@@ -381,6 +381,7 @@ object FlugSitzung : Aktionen {
     override fun planLaden() {
         DroneManager.ensureObstacleAvoidance("Plan holen")
         DroneManager.log("Lade Flugplan aus der Cloud …")
+        askedStartPlace = false // eine unbeantwortete Frage (Bildschirm neu aufgebaut) darf die nächste nicht überspringen
         loading = true
         setPlanCard("Getting plan …", "Fetching plaene/aktuell.json from the cloud …")
         melden()
@@ -439,7 +440,6 @@ object FlugSitzung : Aktionen {
         if (home?.latitude != null && home.latitude != 0.0) {
             val e = Budget.estimate(m, LatLon(home.latitude, home.longitude))
             appendLine(String.format(Locale.US, "Flight time about %.1f min, battery needed about %d %%", e.totalMin, e.neededPercent))
-            DroneManager.state.batteryPercent?.let { have -> if (have < e.neededPercent) appendLine("Battery $have %: not enough for the whole plan. The drone will turn back early at the ${Budget.RESERVE_PERCENT} % reserve; the rest is flown later as a rest plan.") }
             appendLine("Farthest point ${e.maxDistanceFromHomeM.toInt()} m from the start")
         } else {
             appendLine(String.format(Locale.US, "Plan about %.1f min (without approach and return)", m.durationSec / 60))
@@ -449,6 +449,15 @@ object FlugSitzung : Aktionen {
         if (m.obstacles.isNotEmpty()) appendLine("${m.obstacles.size} buildings known, the route is checked against them")
         if (m.light) appendLine("Landing light on")
         append("Signal loss: " + rcLostText(m))
+    }
+
+    /** Akku-Hinweis mit dem Stand von jetzt (nicht vom Laden des Plans): reicht der Akku nicht für den ganzen Plan? */
+    override fun akkuHinweis(): String? {
+        val m = mission ?: return null
+        val have = DroneManager.state.batteryPercent ?: return null
+        val home = homeLatLon() ?: dronePos(DroneManager.state) ?: return null
+        val need = Budget.estimate(m, home).neededPercent
+        return if (have < need) "Battery $have %: not enough for the whole plan (about $need % needed). The drone will turn back early at the ${Budget.RESERVE_PERCENT} % reserve; the rest is flown later as a rest plan." else null
     }
 
     private var askedStartPlace = false
@@ -522,14 +531,27 @@ object FlugSitzung : Aktionen {
     override fun hochladen() {
         val m = mission ?: return DroneManager.log("Kein Plan: erst „Plan holen“ oder Testflug")
         uploading = true; melden()
+        // Antwortet die Drohne nicht, bliebe „Uploading“ für immer stehen und sperrte Start und Plan holen: nach 45 s freigeben.
+        val run = ++uploadRun
+        ui.postDelayed({
+            if (uploading && run == uploadRun) {
+                uploading = false
+                DroneManager.log("Upload: nach 45 s keine Rückmeldung der Drohne")
+                setPlanCard("Plan “${m.name}” – upload did not finish", "The drone did not answer within 45 s. Check the connection, then press “Upload again”.")
+                melden()
+            }
+        }, 45_000)
         MissionController.upload { ok ->
             aufUi {
-                uploading = false
+                // Eine Antwort auf einen älteren, schon abgelaufenen Versuch darf den laufenden nicht beenden.
+                if (run != uploadRun) return@aufUi
+                uploading = false; uploadRun++
                 setPlanCard(if (ok) "Plan “${m.name}” – on the drone" else "Plan “${m.name}” – upload failed", "")
                 melden()
             }
         }
     }
+    private var uploadRun = 0
 
     // ---------------------------------------------------------------- Simulation
 

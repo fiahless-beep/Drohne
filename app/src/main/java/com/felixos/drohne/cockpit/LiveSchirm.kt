@@ -146,7 +146,7 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         keinFunk.gravity = Gravity.TOP
         keinFunk.background = stil.flaeche(Farbe.WARN_PANEL, Farbe.WARN)
         keinFunk.setPadding(stil.dp(8), stil.dp(8), stil.dp(8), stil.dp(8))
-        keinFunk.minimumHeight = stil.dp(114)
+        keinFunk.minimumHeight = stil.dp(64)
         keinFunk.addView(ImageView(stil.c).apply { setImageDrawable(Zeichen(Zeichen.Art.WARN, Farbe.WARN, aussparung = Farbe.WARN_PANEL, groessePx = stil.dp(20))) }, stil.lp(stil.dp(20), stil.dp(20)))
         val kf = stil.spalte()
         kf.addView(stil.text(14f, stil.monoFett, Farbe.WARN_TEXT, versalien = true, sperrung = 0.04f, zeilen = 3).apply { text = "No link · Use RTH button on RC" }, stil.lp(Stil.MATCH, Stil.WRAP))
@@ -237,7 +237,9 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         pruefliste(z)
 
         // Knöpfe
-        knoepfe.sichtbar(!z.funkabriss); keinFunk.sichtbar(z.funkabriss)
+        // Funkabriss: Hauptknopf und Abheben weg, STOP bleibt (die Erkennung kann irren, dann muss er erreichbar sein).
+        haupt.sichtbar(!z.funkabriss); abheben.visibility = if (z.funkabriss) View.GONE else View.VISIBLE
+        keinFunk.sichtbar(z.funkabriss)
         if (z.funkabriss) keinFunkText.zeige(if (z.plan.aufDrohne && z.plan.beiFunkabriss != null) "If the plan was running, the drone will ${z.plan.beiFunkabriss}. Check controller and cable." else "Check controller and cable.")
         haupt.setze(z.hauptaktion.text, when (z.hauptaktion) { Hauptaktion.PAUSE -> Zeichen.Art.PAUSE; Hauptaktion.FORTSETZEN, Hauptaktion.START -> Zeichen.Art.PLAY; else -> null }, z.hauptaktionFrei)
         abheben.sichtbar(z.abhebenMoeglich)
@@ -285,7 +287,7 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
     private fun startFragen() {
         if (aktionen.startProbleme().isNotEmpty()) return startNichtMoeglich()
         AlertDialog.Builder(stil.c).setTitle("Start the plan?")
-            .setMessage(letzter.plan.text + "\n\nSurroundings clear? Thumbs on the sticks. Pause: button, any stick, or the pause button on the controller.")
+            .setMessage(letzter.plan.text + (aktionen.akkuHinweis()?.let { "\n\n" + it } ?: "") + "\n\nSurroundings clear? Thumbs on the sticks. Pause: button, any stick, or the pause button on the controller.")
             .setPositiveButton("Start") { _, _ -> if (aktionen.starten() is StartErgebnis.Verweigert) startNichtMoeglich() }
             .setNegativeButton("Cancel", null).show()
     }
