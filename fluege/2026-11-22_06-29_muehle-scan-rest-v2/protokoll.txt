@@ -192,3 +192,8 @@
 06:33:06  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-29_muehle-scan-rest-v2
 06:33:06  DJI-Status: CANT_TAKEOFF – Unable to take off
 06:33:08  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:33:29  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:33:30  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:33:31  DJI-Meldung: [WARNUNG]  – Unable to take off. Disconnect aircraft from USB and try again
+06:33:33  DJI-Meldung erledigt: 0x16100015
+06:33:35  DJI-Meldung erledigt: 0x1C00040A
