@@ -349,7 +349,9 @@ class MainActivity : AppCompatActivity() {
         val sens = s.sensors
         chip(chipSensors, "Sensors", when { !s.connected -> null; sens == null -> "–"; sens.startsWith("blind") -> "blind"; sens == "aktiv" -> "on"; sens == "aus" -> "OFF"; else -> sens },
             when { s.sensorsOk -> colorText; sens == null -> colorMuted; else -> colorWarn })
-        chip(chipWind, "Wind", when (s.windWarning) { 2 -> "strong"; 1 -> "moderate"; else -> null }, if (s.windWarning == 2) colorBad else colorWarn)
+        // Warnung der Drohne geht vor; sonst im Flug die gemessene Windstärke (Richtung als DJI-Kürzel), am Boden nichts.
+        val windShort = s.windMs?.takeIf { s.flying }?.let { String.format(Locale.US, "%.0f m/s", it) + (s.windDir?.takeIf { d -> d != "WINDLESS" }?.let { d -> " " + d.split('_').joinToString("") { p -> p.take(1) } } ?: "") }
+        chip(chipWind, "Wind", when (s.windWarning) { 2 -> "strong"; 1 -> "moderate"; else -> windShort }, when (s.windWarning) { 2 -> colorBad; 1 -> colorWarn; else -> colorText })
 
         val m = MissionController.currentMission
         val idx = MissionController.currentWaypointIndex
@@ -1390,12 +1392,32 @@ class MainActivity : AppCompatActivity() {
                 }
                 val (m, beschreibung) = PlanJson.parse(text)
                 LiveLink.planLoaded()
+                fetchForecast(m)
                 runOnUiThread { loading = false; useMission(m, beschreibung) }
             } catch (t: Throwable) {
                 DroneManager.log("Plan laden fehlgeschlagen: ${t.javaClass.simpleName}: ${t.message}")
                 runOnUiThread { loading = false; setPlanCard("Getting the plan failed", "${t.javaClass.simpleName}: ${t.message}\nCheck the internet connection, then Get plan again.") }
             }
         }.start()
+    }
+
+    /** Windvorhersage zum zuletzt geladenen Plan (Weather.line), null = nicht geholt oder Dienst nicht erreichbar. */
+    @Volatile private var forecastLine: String? = null
+
+    /** Holt die Vorhersage für den Startplatz des Plans; scheitert still (kein Netz am Feld ist normal). Läuft im Lade-Thread. */
+    private fun fetchForecast(m: Mission) {
+        forecastLine = null
+        val pos = m.plannedStart ?: homeLatLon() ?: m.waypoints.first().pos
+        try {
+            val text = (java.net.URL(com.felixos.drohne.plan.Weather.url(pos)).openConnection() as java.net.HttpURLConnection).run {
+                connectTimeout = 4_000; readTimeout = 4_000; useCaches = false
+                if (responseCode != 200) throw java.io.IOException("HTTP $responseCode")
+                inputStream.bufferedReader().use { it.readText() }
+            }
+            val r = com.felixos.drohne.plan.Weather.parse(text)
+            if (r == null) DroneManager.log("Wettervorhersage: Antwort nicht lesbar")
+            else { forecastLine = r.line(); DroneManager.log("Wetter am Start (Vorhersage, 10 m Höhe, grob): " + r.line()) }
+        } catch (t: Throwable) { DroneManager.log("Wettervorhersage nicht erreichbar (${t.javaClass.simpleName})") }
     }
 
     private fun summary(m: Mission, beschreibung: String): String = buildString {
@@ -1410,6 +1432,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             appendLine(String.format(Locale.US, "Plan about %.1f min (without approach and return)", m.durationSec / 60))
         }
+        forecastLine?.let { appendLine(it) }
         m.target?.let { appendLine("Camera points at the target (${String.format(Locale.US, "%.5f, %.5f", it.lat, it.lon)})") }
         if (m.obstacles.isNotEmpty()) appendLine("${m.obstacles.size} buildings known, the route is checked against them")
         if (m.light) appendLine("Landing light on")

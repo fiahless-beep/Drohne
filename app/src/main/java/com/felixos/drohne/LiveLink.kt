@@ -90,7 +90,8 @@ object LiveLink {
         return "S utc=$utc verbunden=${s.connected} fliegt=${s.flying} pos=${p(l?.latitude, l?.longitude)} h=${l?.altitude?.let { String.format(Locale.US, "%.1f", it) } ?: "?"}" +
             " start=${p(s.home?.latitude, s.home?.longitude)} akku=${s.batteryPercent ?: "?"} sat=${s.satellites ?: "?"} sensoren=${s.sensors ?: "?"}" +
             " hindernis=${DroneManager.obstacleSummary()} mission=${MissionController.executeState ?: "-"} wp=${MissionController.currentWaypointIndex}" +
-            " plan=${MissionController.currentMission?.name ?: "-"} wind=${s.windWarning ?: "?"}"
+            " plan=${MissionController.currentMission?.name ?: "-"} wind=${s.windWarning ?: "?"}" +
+            " windms=${s.windMs?.let { String.format(Locale.US, "%.1f", it) } ?: "?"} windrichtung=${s.windDir ?: "?"}"
     }
 
     private fun tick() {

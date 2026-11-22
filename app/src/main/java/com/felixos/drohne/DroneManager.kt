@@ -53,6 +53,10 @@ data class DroneState(
     val heightLimitM: Int? = null,
     /** Windwarnung der Drohne: 0 = keine, 1 = mäßig, 2 = stark. */
     val windWarning: Int? = null,
+    /** Wind, wie ihn die Drohne selbst aus ihrer Schräglage schätzt (nur im Flug sinnvoll): Stärke in m/s; null = kein Wert. */
+    val windMs: Double? = null,
+    /** Windrichtung laut Drohne als DJI-Name (NORTH, SOUTH_WEST, WINDLESS …). Ob DJI „Wind aus“ oder „Wind nach“ meint, ist am Gerät noch nicht gegengeprüft. */
+    val windDir: String? = null,
     /** Kameraneigung (Gimbal) in Grad, −90 = senkrecht nach unten; null = unbekannt (nur Simulation gesetzt). */
     val gimbalPitchDeg: Double? = null,
 ) {
@@ -283,6 +287,11 @@ object DroneManager {
             val lvl = when (v) { dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_1 -> 1; dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_2 -> 2; dji.sdk.keyvalue.value.flightcontroller.WindWarning.LEVEL_0 -> 0; else -> null }
             if (lvl != null && lvl != s.windWarning && (lvl > 0 || s.windWarning != null)) log(when (lvl) { 0 -> "Wind: keine Warnung mehr"; 1 -> "WIND: mäßige Windwarnung, nahe Gebäuden nicht fliegen"; else -> "WIND: STARKER WIND, sofort zurück und landen" })
             s.copy(windWarning = lvl ?: s.windWarning)
+        }
+        // Felix 22.11.2026: Windstärke und Richtung, die die Drohne selbst misst (DJI: Dezimeter pro Sekunde). Nur Anzeige und Protokoll.
+        watch(FlightControllerKey.KeyWindSpeed) { s, v -> if (v == null || v < 0 || v > 500) s else s.copy(windMs = v / 10.0) }
+        watch(FlightControllerKey.KeyWindDirection) { s, v ->
+            if (v == null || v == dji.sdk.keyvalue.value.flightcontroller.WindDirection.UNKNOWN) s else s.copy(windDir = v.name)
         }
         watch(FlightControllerKey.KeyIsLandingConfirmationNeeded) { s, v -> s.copy(landingConfirmationNeeded = v == true) }
         watch(FlightControllerKey.KeyIsInLandingMode) { s, v -> s.copy(landing = v == true) }
