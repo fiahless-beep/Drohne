@@ -10,7 +10,10 @@ import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import com.felixos.drohne.plan.Mission
 import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.tilesource.TileSourcePolicy
+import org.osmdroid.util.MapTileIndex
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
@@ -22,7 +25,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
 
 /**
- * Kleine Karte (OpenStreetMap über osmdroid): Drohne mit Kurs, Startpunkt, geplante Wegpunkte als
+ * Kleine Karte (osmdroid; Luftbild von Esri World Imagery oder die gezeichnete OpenStreetMap-Karte): Drohne mit Kurs, Startpunkt, geplante Wegpunkte als
  * nummerierte Linie und – wenn erlaubt – die Position des Handys (Felix).
  * Reine Anzeige, greift nicht in Drohne oder Mission ein.
  */
@@ -44,6 +47,18 @@ class MapPanel(private val map: MapView) {
     var onTap: ((com.felixos.drohne.plan.LatLon) -> Unit)? = null
 
     companion object {
+        private const val PREFS = "karte"
+        private const val KEY_SAT = "satellit"
+
+        /** Luftbild (Felix 22.11.2026: Kartenansicht mit Satellitenbildern). Esri liefert die Kacheln als z/y/x; unter Zoom 19 gibt es auf dem Land oft nichts Schärferes, darüber vergrößert osmdroid. */
+        private val LUFTBILD = object : OnlineTileSourceBase("EsriWorldImagery", 0, 19, 256, ".jpg",
+            arrayOf("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"),
+            "Imagery © Esri, Maxar, Earthstar Geographics",
+            TileSourcePolicy(4, TileSourcePolicy.FLAG_NO_BULK or TileSourcePolicy.FLAG_NO_PREVENTIVE or TileSourcePolicy.FLAG_USER_AGENT_MEANINGFUL or TileSourcePolicy.FLAG_USER_AGENT_NORMALIZED)) {
+            override fun getTileURLString(i: Long): String = baseUrl + MapTileIndex.getZoom(i) + "/" + MapTileIndex.getY(i) + "/" + MapTileIndex.getX(i)
+        }
+
+        fun satellit(c: Context): Boolean = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_SAT, true)
         /** Muss vor dem Aufblasen des Layouts laufen (Kachel-Cache im App-Cache, kein Speicherrecht nötig). */
         fun configure(c: Context) {
             val cfg = Configuration.getInstance()
@@ -55,7 +70,7 @@ class MapPanel(private val map: MapView) {
     }
 
     init {
-        map.setTileSource(TileSourceFactory.MAPNIK)
+        quelleSetzen()
         map.setMultiTouchControls(true)
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
         map.minZoomLevel = 3.0
@@ -69,6 +84,20 @@ class MapPanel(private val map: MapView) {
         map.overlays.add(route)
         map.overlays.add(homeMarker); homeMarker.isEnabled = false
         map.overlays.add(droneMarker); droneMarker.isEnabled = false
+    }
+
+    private fun quelleSetzen() {
+        val sat = satellit(ctx)
+        map.setTileSource(if (sat) LUFTBILD else TileSourceFactory.MAPNIK)
+        // Auf dem Luftbild braucht die blaue Route mehr Kontrast.
+        route.outlinePaint.color = if (sat) 0xFF35E0D0.toInt() else 0xFF2F80ED.toInt()
+        map.invalidate()
+    }
+
+    /** Zwischen Luftbild und gezeichneter Karte wechseln; die Wahl bleibt gespeichert. */
+    fun satellitSetzen(an: Boolean) {
+        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_SAT, an).apply()
+        quelleSetzen()
     }
 
     fun onResume() { map.onResume(); enableMyLocation() }

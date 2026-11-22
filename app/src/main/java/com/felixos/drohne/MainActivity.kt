@@ -404,6 +404,7 @@ class MainActivity : AppCompatActivity() {
         "Use cases (what works in this build)" to { showUseCases() },
         "Safety" to { showSafety() },
         "Camera" to { showCamera() },
+        (if (MapPanel.satellit(this)) "Map: satellite (tap for drawn map)" else "Map: drawn map (tap for satellite)") to { mapPanel.satellitSetzen(!MapPanel.satellit(this)) },
         "Calibration" to { showCalibration() },
         "Flight & guards" to { showFlightMenu() },
         "Data" to { showDataMenu() },
