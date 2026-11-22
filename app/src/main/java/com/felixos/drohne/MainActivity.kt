@@ -225,6 +225,7 @@ class MainActivity : AppCompatActivity() {
         override fun protokollKopieren() = copyLog()
         override fun einstellungen() = showMore()
         override fun ccGesperrt(): String? = ccBlocked()
+        override fun mikrofonErlauben() = ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.RECORD_AUDIO), 2)
         override fun ccFragen(frage: String, antwort: (String, Boolean, Pair<String, () -> Unit>?) -> Unit) = askCc(frage, antwort)
         override fun selbsttest() = showSelfTest()
     }

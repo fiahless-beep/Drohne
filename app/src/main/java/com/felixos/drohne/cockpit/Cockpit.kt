@@ -37,6 +37,8 @@ interface Gastgeber {
     fun einstellungen()
     /** Central Command: Grund, warum gerade keine Frage geht (Schlüssel fehlt, Plan läuft); null = bereit. */
     fun ccGesperrt(): String?
+    /** Android nach dem Mikrofon fragen (für das Sprechen mit Central Command). */
+    fun mikrofonErlauben()
     /** Frage an Central Command; [antwort] bekommt Text, ob es ein Fehler ist, und höchstens einen Vorschlag (Name, Handlung). */
     fun ccFragen(frage: String, antwort: (String, Boolean, Pair<String, () -> Unit>?) -> Unit)
     fun selbsttest()

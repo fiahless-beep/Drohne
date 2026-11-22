@@ -190,6 +190,13 @@ internal class CcTafel(private val stil: Stil, wurzel: FrameLayout, private val 
     val rahmen = TafelRahmen(stil, "Central Command")
     private val eingabe = EditText(stil.c)
     private val senden = Knopf(stil, Knopf.Stilart.HAUPT) { abschicken() }
+    private val sprache = Sprache(stil.c)
+    /** Der große Knopf: drücken, sprechen; nach der Sprechpause geht die Frage von selbst ab. Noch einmal drücken = sofort ab. */
+    private val sprechen = Knopf(stil, Knopf.Stilart.HAUPT) { sprechKnopf() }
+    private val gehoert = stil.text(14f, stil.sans, Farbe.TEXT, zeilen = 2)
+    private var vorlesen = true
+    private val sprachKnopf: LeistenKnopf = rahmen.kopfKnopf("Lang " + sprache.kuerzel, "Language for speaking and reading aloud: German or English") { sprachKnopf.setze("Lang " + sprache.wechseln(), false) }
+    private val stimmKnopf = rahmen.kopfKnopf("Voice on", "Read answers aloud: on or off") { vorlesenSchalten() }
     private val verlauf = stil.text(13f, stil.sans, Farbe.TEXT, zeilen = Int.MAX_VALUE)
     private val rolle = ScrollView(stil.c)
     private val vorschlag = Knopf(stil, Knopf.Stilart.HAUPT) { val t = aktion; vorschlagZeigen(null); t?.second?.invoke() }
@@ -209,7 +216,11 @@ internal class CcTafel(private val stil: Stil, wurzel: FrameLayout, private val 
             imeOptions = EditorInfo.IME_ACTION_SEND or EditorInfo.IME_FLAG_NO_EXTRACT_UI or EditorInfo.IME_FLAG_NO_FULLSCREEN
             setOnEditorActionListener { _, id, _ -> if (id == EditorInfo.IME_ACTION_SEND) { abschicken(); true } else false }
         }
-        // Eingabe oben, damit die Tastatur sie im Querformat nicht verdeckt.
+        // Sprechen zuerst (Felix: im Flug wird nicht getippt); die Zeile zum Tippen bleibt darunter als Ersatz.
+        val sprechZeile = stil.zeile()
+        sprechZeile.addView(sprechen, stil.lp(stil.dp(220), stil.dp(56)))
+        sprechZeile.addView(gehoert, stil.lp(0, Stil.WRAP, 1f, links = 12))
+        rahmen.addView(sprechZeile, stil.lp(Stil.MATCH, Stil.WRAP, oben = 8))
         val zeile = stil.zeile()
         zeile.addView(eingabe, stil.lp(0, stil.dp(44), 1f))
         zeile.addView(senden, stil.lp(stil.dp(120), stil.dp(44), links = 8))
@@ -223,7 +234,7 @@ internal class CcTafel(private val stil: Stil, wurzel: FrameLayout, private val 
         vorschlag.visibility = View.GONE
         rahmen.visibility = View.GONE
         wurzel.addView(rahmen, FrameLayout.LayoutParams(-1, -1))
-        zeile("//", "Central Command gets a still of the live view (switch to the live view first), position, height and battery. It answers and may suggest one action. Nothing happens until you press the suggestion.", Farbe.TEXT_MUTED)
+        zeile("//", "Press Speak and ask. Central Command gets a still of the live view (switch to the live view first), position, height and battery. It answers and may suggest one action. Nothing happens until you press the suggestion.", Farbe.TEXT_MUTED)
         knopfZeigen()
     }
 
@@ -238,7 +249,31 @@ internal class CcTafel(private val stil: Stil, wurzel: FrameLayout, private val 
         rolle.post { rolle.fullScroll(View.FOCUS_DOWN) }
     }
 
-    private fun knopfZeigen() = senden.setze(if (wartet) "Looking …" else "Send", null, !wartet)
+    private fun knopfZeigen() {
+        senden.setze(if (wartet) "Looking …" else "Send", null, !wartet)
+        sprechen.setze(if (sprache.hoert) "Listening … tap to send" else if (wartet) "Looking …" else "Speak", null, !wartet)
+    }
+
+    private fun vorlesenSchalten() {
+        vorlesen = !vorlesen
+        stimmKnopf.setze(if (vorlesen) "Voice on" else "Voice off", false)
+        if (!vorlesen) sprache.schweigen()
+    }
+
+    private fun sprechKnopf() {
+        if (wartet) return
+        if (sprache.hoert) { sprache.genug(); return }
+        val grund = gast.ccGesperrt()
+        if (grund != null) return zeile("!!", grund, Farbe.WARN_TEXT)
+        if (!sprache.erkennungDa) return zeile("!!", "Speech recognition is not available on this phone. Type the question below.", Farbe.WARN_TEXT)
+        if (!sprache.mikrofonErlaubt) { gast.mikrofonErlauben(); return zeile("!!", "Allow the microphone, then press Speak again.", Farbe.WARN_TEXT) }
+        gehoert.zeige("…"); gehoert.farbe(Farbe.TEXT_DIM)
+        sprache.hoeren(
+            teil = { gehoert.zeige(it) },
+            fertig = { t -> knopfZeigen(); if (t == null) { gehoert.zeige("Nothing understood. Press Speak again.") } else { gehoert.zeige(""); abschicken(t) } },
+            fehler = { f -> knopfZeigen(); gehoert.zeige(""); zeile("!!", f, Farbe.WARN_TEXT) })
+        knopfZeigen()
+    }
 
     private fun vorschlagZeigen(a: Pair<String, () -> Unit>?) {
         aktion = a
@@ -246,11 +281,11 @@ internal class CcTafel(private val stil: Stil, wurzel: FrameLayout, private val 
         if (a != null) vorschlag.setze("Do it: ${a.first}", Zeichen.Art.PLAY, true)
     }
 
-    private fun abschicken() {
+    private fun abschicken(gesprochen: String? = null) {
         if (wartet) return
         val grund = gast.ccGesperrt()
         if (grund != null) return zeile("!!", grund, Farbe.WARN_TEXT)
-        val frage = eingabe.text.toString().trim().ifBlank { "What do you see, and what do you suggest?" }
+        val frage = gesprochen ?: eingabe.text.toString().trim().ifBlank { "What do you see, and what do you suggest?" }
         eingabe.setText("")
         (stil.c.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(eingabe.windowToken, 0)
         vorschlagZeigen(null)
@@ -261,12 +296,14 @@ internal class CcTafel(private val stil: Stil, wurzel: FrameLayout, private val 
             wartet = false; knopfZeigen()
             rahmen.zusatz.zeige("")
             zeile(if (fehler) "!!" else "CC", antwort, if (fehler) Farbe.WARN_TEXT else Farbe.ACCENT)
+            if (vorlesen && rahmen.visibility == View.VISIBLE) sprache.sprechen(antwort)
             vorschlagZeigen(a)
         }
     }
 
     fun geoeffnet() { rahmen.zusatz.zeige(gast.ccGesperrt()?.let { "not ready" } ?: "ready") }
     fun geschlossen() {
+        sprache.schliessen(); gehoert.zeige(""); knopfZeigen()
         (stil.c.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(eingabe.windowToken, 0)
     }
 }
