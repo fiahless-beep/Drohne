@@ -1,414 +1,384 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>3D</title>
 <style>
-  html, body { margin: 0; height: 100%; background: #c9d6e2; overflow: hidden; }
-  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
-  #hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #3a4652; font: 15px system-ui, sans-serif; background: rgba(255,255,255,.75); padding: 8px 14px; border-radius: 20px; }
-  #cam { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); color: #f5f7fa; font: 600 13px system-ui, sans-serif; background: rgba(20,24,30,.6); padding: 6px 12px; border-radius: 16px; pointer-events: none; opacity: 0; transition: opacity .4s; backdrop-filter: blur(8px); }
-  #reticle { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border: 1.5px solid rgba(255,255,255,.7); border-radius: 50%; pointer-events: none; display: none; box-shadow: 0 0 0 1px rgba(0,0,0,.15); }
-  #reticle:after { content: ""; position: absolute; left: 11px; top: 11px; width: 4px; height: 4px; background: #fff; border-radius: 50%; }
+  /* Schriften des Cockpits; View3D.kt liefert sie unter dieser Adresse aus res/font (ohne Netz). Fehlen sie, gilt monospace. */
+  @font-face { font-family: "JetBrains Mono"; font-weight: 500; src: url("https://appassets.androidplatform.net/font/jetbrains_mono_medium.ttf"); }
+  @font-face { font-family: "JetBrains Mono"; font-weight: 700; src: url("https://appassets.androidplatform.net/font/jetbrains_mono_bold.ttf"); }
+  html, body { margin: 0; height: 100%; background: #05080A; overflow: hidden; }
+  canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+  #marks { pointer-events: none; }
 </style>
 </head>
 <body>
 <canvas id="view"></canvas>
-<div id="hint">3D lädt …</div>
-<div id="reticle"></div>
-<div id="cam"></div>
+<canvas id="marks"></canvas>
 <script src="three.min.js"></script>
 <script>if (!window.THREE) document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
 <script>
-// Koordinaten: x = Ost (m), y = Höhe (m), z = -Nord (m), relativ zum Startpunkt.
-// Android ruft: setScene({b:[{h,p:[[x,y],…]}], r:[[x,y,z,yaw|null,pitch,hold],…], clear, mar}),
-//   setDrone(x, y, z, headingDeg, gimbalPitchDeg), setFlying(bool), cycleCamera(), clearDrone().
-// Kamera: 'fpv' = aus der Drohne (Gimbal), 'chase' = hinter/über der Drohne, 'orbit' = frei um den Plan,
-//   'preview' = Vorschau-Flug mit virtueller Drohne nach dem Laden (inkl. Drehen und Halten an den Punkten).
-const canvas = document.getElementById('view'), hint = document.getElementById('hint'), camLabel = document.getElementById('cam'), reticle = document.getElementById('reticle');
-let renderer, scene, cam, sun, drone, rotors = [], camCone, trail, trailPts = [], buildings = [], routeObjs = [], markers = [], droneShadow, droneLine, glow;
-let routeTex = null, wallTex = null, routeCurve = null, routeTube = null, routeRadius = 0.55, curtain = null, droneTarget = null;
-let terrain = null, terrainMesh = null, groundPlane = null; // Gelände (optional): {x0,y0,dx,dy,nx,ny,z[]} relativ zum Startboden
-let center = null, theta = -0.7, phi = 0.75, dist = 220;
-let camMode = 'orbit', flightMode = 'fpv';           // flightMode: gewünschte Kamera im Flug (fpv | chase)
-let chaseDist = 30, chasePitch = 0.4, yawOff = 0, pitchOff = 0, lastTouch = 0;
-let heading = 0, smoothHeading = 0, gimbal = -20, smoothGimbal = -20, camPos = null, camLook = null, flying = false;
-let preview = null, drag = null, labelTimer = null, passed = 0, droneOn = false; // droneOn: Drohne gesetzt (Modell wird in der Drohnensicht ausgeblendet)
-const SKY_TOP = 0x4f86c9, SKY_HORIZON = 0xdfe8f1;
-
-function texCanvas(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d')); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; return t; }
+// Höhenansicht (Felix 22.11.2026: „dass ich einen Sense für die Höhe kriege“).
+// Zweck: auf einen Blick sehen, wie hoch die Drohne über dem steht, was unter ihr ist (Boden, Bäume, Dächer), und wohin sie als Nächstes fliegt.
+// Die Drohne steht immer in der Mitte der freien Fläche. Den Blickwinkel wählt die Seite selbst; es gibt nichts zu schieben.
+//   Richtung: fest je Plan, vom Startplatz zum Plan hin (so steht Felix im Feld); die Welt dreht sich im Flug nicht.
+//   Neigung: flach genug, dass Höhe als Höhe zu sehen ist; steiler nur, wenn ein Hang den Fußpunkt verdeckt.
+//   Abstand: NEAR = Lot füllt gut ein Drittel der Höhe; WIDE = ganzer Plan um die Drohne. Am Boden WIDE, im Flug NEAR.
+// Koordinaten: x = Ost (m), y = Höhe über dem Startpunkt (m), z = -Nord (m).
+// Android ruft: setScene({r:[[x,y,z,yaw|null,pitch,hold],…], t:{x0,y0,dx,dy,nx,ny,z[],c[]}, b:[{h,g,p:[[x,y],…]}], clear, mar}),
+//   setDrone(x, höhe, y, kursGrad, gimbalGrad), setFlying(bool), clearDrone(), cycleCamera() → 'near' | 'wide',
+//   setInsets(links, oben, rechts, unten) in CSS-Pixeln: Flächen, die das Cockpit überdeckt.
+// WebGL zeichnet nur das Relief. Alles, was man ablesen muss (Lot, Route, Zahlen), liegt als 2D-Zeichnung darüber:
+// feste Strichstärken und scharfe Schrift, auch in der Sonne.
+const C = { bg: '#05080A', panel: 'rgba(11,16,18,0.90)', line: '#1C262B', accent: '#1EE8B0', dim: '#15826A', text: '#D7E2DC', textDim: '#8A9A93', warn: '#FF7A1A', warnText: '#FFB27A', obst: '#8A9A93' };
+const MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FOV = 24, EL_MIN = 30, EL_MAX = 42;
+const gl = document.getElementById('view'), marks = document.getElementById('marks'), g = marks.getContext('2d');
+let renderer = null, scene, cam, light, reliefMesh = null, extras = [];
+let W = 1, H = 1, inset = { l: 0, t: 0, r: 0, b: 0 };
+let terrain = null, route = [], runs = [], lowSeg = [], clearM = 8;
+let azimuth = 0, planCenter = null, planRadius = 60;       // azimuth: Blickrichtung als Kurs (0 = nach Norden schauen)
+let drone = null, droneTarget = null, heading = 0, flying = false, passed = 0;
+let userView = null, view = { x: 0, y: 0, z: 0, d: 400, el: EL_MIN }, snap = true, dirty = true, lastSig = '';
 
 function init() {
-  if (!window.THREE) { hint.textContent = 'three.js fehlt (kein Internet beim Build)'; return false; }
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
-  scene = new THREE.Scene(); scene.background = new THREE.Color(SKY_HORIZON); scene.fog = new THREE.Fog(SKY_HORIZON, 500, 1600);
-  cam = new THREE.PerspectiveCamera(60, 1, 0.5, 6000);
-  // Himmel: Kuppel mit Verlauf, Dunst am Horizont
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(4000, 24, 12), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, fog: false,
-    uniforms: { top: { value: new THREE.Color(SKY_TOP) }, bottom: { value: new THREE.Color(SKY_HORIZON) } },
-    vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-    fragmentShader: 'uniform vec3 top; uniform vec3 bottom; varying vec3 vP; void main(){ float h = clamp(normalize(vP).y, 0.0, 1.0); gl_FragColor = vec4(mix(bottom, top, pow(h, 0.55)), 1.0); }' }));
-  sky.renderOrder = -1; scene.add(sky);
-  // Licht: Sonne mit weichen Schatten, Himmelslicht, leichtes Gegenlicht
-  scene.add(new THREE.HemisphereLight(0xdfe8f2, 0x7d8388, 0.55));
-  sun = new THREE.DirectionalLight(0xfff2dc, 0.85); sun.position.set(260, 420, 180); sun.castShadow = true;
-  sun.shadow.mapSize.set(1024, 1024); sun.shadow.camera.near = 50; sun.shadow.camera.far = 1600; sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.3;
-  const sc = sun.shadow.camera; sc.left = sc.bottom = -450; sc.right = sc.top = 450;
-  scene.add(sun); scene.add(sun.target);
-  const fill = new THREE.DirectionalLight(0xcfe0ff, 0.18); fill.position.set(-300, 200, -200); scene.add(fill);
-  // Boden: helle Fläche mit feinem Raster, nimmt Schatten an
-  const groundTex = texCanvas(256, 256, g => { g.fillStyle = '#c3cad0'; g.fillRect(0, 0, 256, 256); g.strokeStyle = 'rgba(70,80,90,0.16)'; g.lineWidth = 2; g.strokeRect(0, 0, 256, 256); g.strokeStyle = 'rgba(70,80,90,0.08)'; g.lineWidth = 1; for (let i = 64; i < 256; i += 64) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 256); g.moveTo(0, i); g.lineTo(256, i); g.stroke(); } });
-  groundTex.repeat.set(80, 80);
-  groundPlane = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshLambertMaterial({ color: 0xffffff, map: groundTex })); groundPlane.rotation.x = -Math.PI / 2; groundPlane.receiveShadow = true; scene.add(groundPlane);
-  // Fassaden: feine Stockwerkslinien alle 3 m
-  wallTex = texCanvas(64, 64, g => { g.fillStyle = '#ece8e1'; g.fillRect(0, 0, 64, 64); g.fillStyle = 'rgba(70,75,80,0.16)'; g.fillRect(0, 60, 64, 2); g.fillStyle = 'rgba(255,255,255,0.35)'; g.fillRect(0, 0, 64, 1); });
-  wallTex.repeat.set(1 / 6, 1 / 3);
-  // Route: leuchtendes Band mit laufenden Pfeilen
-  routeTex = texCanvas(128, 32, g => { g.fillStyle = '#2f8cff'; g.fillRect(0, 0, 128, 32); g.fillStyle = 'rgba(255,255,255,0.9)'; g.beginPath(); g.moveTo(40, 2); g.lineTo(70, 16); g.lineTo(40, 30); g.lineTo(52, 16); g.closePath(); g.fill(); });
-  buildDrone();
-  droneLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0x2f3b47, transparent: true, opacity: 0.35 })); scene.add(droneLine); droneLine.visible = false;
-  droneShadow = new THREE.Mesh(new THREE.CircleGeometry(2.0, 24), new THREE.MeshBasicMaterial({ color: 0x1b2430, transparent: true, opacity: 0.25 })); droneShadow.rotation.x = -Math.PI / 2; droneShadow.position.y = 0.12; scene.add(droneShadow); droneShadow.visible = false;
-  trail = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xff9f0a })); scene.add(trail);
-
-  canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, id: e.pointerId }; canvas.setPointerCapture(e.pointerId); lastTouch = performance.now(); });
-  canvas.addEventListener('pointermove', e => { if (!drag || e.pointerId !== drag.id) return; const dx = (e.clientX - drag.x) * 0.006, dy = (e.clientY - drag.y) * 0.006; drag.x = e.clientX; drag.y = e.clientY; lastTouch = performance.now();
-    if (effMode() === 'orbit') { theta -= dx; phi = Math.max(0.08, Math.min(1.5, phi + dy)); } else { yawOff -= dx; pitchOff = Math.max(-0.6, Math.min(0.8, pitchOff + dy)); } });
-  canvas.addEventListener('pointerup', () => drag = null);
-  canvas.addEventListener('wheel', e => { e.preventDefault(); zoom(1 + e.deltaY * 0.001); }, { passive: false });
-  let pinch = null;
-  canvas.addEventListener('touchstart', e => { if (e.touches.length === 2) pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); }, { passive: true });
-  canvas.addEventListener('touchmove', e => { if (e.touches.length === 2 && pinch) { const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); zoom(pinch / d); pinch = d; drag = null; } }, { passive: true });
-  canvas.addEventListener('touchend', () => pinch = null);
-  window.addEventListener('resize', resize); resize();
-  hint.textContent = 'Kein Plan – Karte zeigt nur die Umgebung';
-  (function loop() { tick(); place(); renderer.render(scene, cam); requestAnimationFrame(loop); })();
-  return true;
-}
-
-// Drohne nach Art der Mini 4 Pro: hellgrauer Rumpf, dunkle Arme, vier drehende Rotoren, Gimbalkamera vorn, Sichtkegel
-function buildDrone() {
-  drone = new THREE.Group();
-  const grey = new THREE.MeshLambertMaterial({ color: 0xe6e8ea }), dark = new THREE.MeshLambertMaterial({ color: 0x3a3f45 });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.7, 2.6), grey); body.castShadow = true; drone.add(body);
-  const top = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.35, 1.6), grey); top.position.set(0, 0.5, -0.1); drone.add(top);
-  const camHead = new THREE.Mesh(new THREE.SphereGeometry(0.45, 12, 10), dark); camHead.position.set(0, -0.15, -1.45); drone.add(camHead);
-  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.25, 12), new THREE.MeshBasicMaterial({ color: 0x1b6cff })); lens.rotation.x = Math.PI / 2; lens.position.set(0, -0.15, -1.9); drone.add(lens);
-  [[-1.6, -1.5], [1.6, -1.5], [-1.6, 1.5], [1.6, 1.5]].forEach(([x, z]) => {
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(x) + 0.4, 0.22, 0.32), dark); arm.position.set(x / 2, 0.05, z * 0.9); drone.add(arm);
-    const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, 0.35, 10), dark); motor.position.set(x, 0.25, z); drone.add(motor);
-    const rotor = new THREE.Mesh(new THREE.CircleGeometry(1.0, 24), new THREE.MeshBasicMaterial({ color: 0xd7dbe0, transparent: true, opacity: 0.35, side: THREE.DoubleSide, depthWrite: false })); rotor.rotation.x = -Math.PI / 2; rotor.position.set(x, 0.45, z); drone.add(rotor);
-    const blade = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.03, 0.14), dark); blade.position.set(x, 0.46, z); drone.add(blade); rotors.push(blade);
-    const light = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 6), new THREE.MeshBasicMaterial({ color: z < 0 ? 0xff453a : 0x30d158 })); light.position.set(x, 0.0, z + (z < 0 ? -0.2 : 0.2)); drone.add(light);
-  });
-  const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 2, 32, 32, 32); gr.addColorStop(0, 'rgba(255,159,10,0.55)'); gr.addColorStop(0.5, 'rgba(255,159,10,0.15)'); gr.addColorStop(1, 'rgba(255,159,10,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
-  glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false })); glow.scale.set(10, 10, 1); drone.add(glow);
-  // Sichtkegel der Kamera (dreht mit dem Gimbal)
-  camCone = new THREE.Mesh(new THREE.ConeGeometry(9, 28, 4, 1, true), new THREE.MeshBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.10, side: THREE.DoubleSide, depthWrite: false }));
-  camCone.geometry.rotateX(Math.PI / 2); camCone.geometry.rotateZ(Math.PI / 4); camCone.geometry.translate(0, 0, -14);
-  camCone.position.set(0, -0.15, -1.5); drone.add(camCone);
-  scene.add(drone); droneOn = false;
-}
-
-function effMode() { return camMode === 'preview' ? flightMode : camMode; }
-function isFpv() { return camMode === 'fpv' || (camMode === 'preview' && flightMode === 'fpv' && preview && preview.stage === 'fly'); }
-let previewScale = 4; // Vorschau-Zeitraffer (1, 2, 4, 8)
-function setPreviewScale(f) { previewScale = f; showLabel(f === 1 ? 'Echtzeit' : f + '× Zeitraffer'); return f; }
-function zoom(f) {
-  if (effMode() === 'orbit') dist = Math.max(20, Math.min(2000, dist * f));
-  else if (isFpv()) { cam.fov = Math.max(25, Math.min(100, cam.fov * f)); cam.updateProjectionMatrix(); }
-  else chaseDist = Math.max(6, Math.min(300, chaseDist * f));
-}
-function resize() { const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight; renderer.setSize(w, h, false); renderer.setPixelRatio(Math.min(1.5, devicePixelRatio)); cam.aspect = w / h; cam.updateProjectionMatrix(); markers.forEach(spriteScale); }
-function showLabel(t) { camLabel.textContent = t; camLabel.style.opacity = 1; clearTimeout(labelTimer); labelTimer = setTimeout(() => camLabel.style.opacity = 0, 2200); }
-function angDiff(a, b) { return ((a - b + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI; }
-function fwd(yaw) { return new THREE.Vector3(Math.sin(yaw), 0, -Math.cos(yaw)); }
-
-// Glättung von Kurs und Gimbal (auch für die Vorschau), Rotoren, laufende Route, Markierungen nahe der Kamera ausblenden
-function tick() {
-  if (preview) previewStep();
-  smoothHeading += angDiff(heading, smoothHeading) * 0.08;
-  smoothGimbal += (gimbal - smoothGimbal) * 0.08;
-  if (performance.now() - lastTouch > 4000) { yawOff *= 0.95; pitchOff *= 0.95; }
-  const fpvNow = isFpv();
-  const zoomFpv = preview && preview.stage === 'zoom' && flightMode === 'fpv' && cam.position.distanceTo(drone.position) < 4;
-  drone.visible = droneOn && !fpvNow && !zoomFpv;
-  if (routeTube) routeTube.visible = !zoomFpv;
-  if (droneOn) {
-    drone.rotation.y = -smoothHeading;
-    const sc = effMode() === 'orbit' ? Math.max(1, dist / 70) : Math.max(1, chaseDist / 20); drone.scale.set(sc, sc, sc);
-    rotors.forEach((r, i) => r.rotation.y += (i % 2 ? 0.9 : -0.9));
-    camCone.rotation.x = THREE.MathUtils.degToRad(smoothGimbal);
-    camCone.visible = !fpvNow;
-    glow.visible = effMode() === 'orbit';
+  window.addEventListener('resize', resize);
+  if (document.fonts && document.fonts.load) { document.fonts.load('700 12px "JetBrains Mono"').then(() => dirty = true, () => {}); document.fonts.load('500 12px "JetBrains Mono"').then(() => dirty = true, () => {}); }
+  if (window.THREE) {
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas: gl, antialias: true });
+      renderer.setClearColor(0x05080A, 1);
+      scene = new THREE.Scene();
+      cam = new THREE.PerspectiveCamera(FOV, 1, 5, 9000);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.62));
+      light = new THREE.DirectionalLight(0xffffff, 0.95); scene.add(light); scene.add(light.target);
+    } catch (e) { renderer = null; }
   }
-  if (routeTex) routeTex.offset.x -= 0.012;
-  if (routeTube && routeCurve) { const want = (effMode() === 'orbit' || (preview && preview.stage === 'overview')) ? Math.max(0.55, Math.min(3.5, dist / 110)) : 0.55;
-    if (Math.abs(want - routeRadius) > routeRadius * 0.25) { routeRadius = want; const old = routeTube.geometry; routeTube.geometry = new THREE.TubeGeometry(routeCurve, Math.max(8, routeInfo.length * 12), want, 8, false); old.dispose(); } }
-  markers.forEach(m => { m.visible = !((fpvNow || zoomFpv) && m.position.distanceTo(cam.position) < 8); });
-  if (curtain) curtain.visible = effMode() === 'orbit' || (preview && preview.stage === 'overview');
-  // Echte Drohne: Positionen kommen 10× je Sekunde, dazwischen weich nachziehen (sonst ruckelt die Kamera)
-  if (droneTarget && !preview) drone.position.lerp(droneTarget, 0.22);
-  reticle.style.display = (fpvNow && droneOn) ? 'block' : 'none';
+  resize();
+  (function loop() { frame(); requestAnimationFrame(loop); })();
 }
 
-function place() {
-  let target, look;
-  let mode = camMode === 'preview' ? flightMode : camMode;
-  let k = 0.1;
-  if (preview && preview.stage === 'overview') mode = 'orbit';
-  else if (preview && preview.stage === 'zoom') k = 0.03;
-  if (mode === 'fpv' && droneOn) {
-    const yaw = smoothHeading + yawOff, pitch = THREE.MathUtils.degToRad(smoothGimbal) + pitchOff;
-    const dir = new THREE.Vector3(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
-    target = drone.position.clone().add(new THREE.Vector3(0, 0.1, 0)).add(dir.clone().multiplyScalar(1.2));
-    look = target.clone().add(dir.multiplyScalar(100));
-    k = 0.45;
-  } else if (mode === 'chase' && droneOn) {
-    const yaw = smoothHeading + yawOff, pitch = chasePitch + pitchOff;
-    target = drone.position.clone().add(fwd(yaw).multiplyScalar(-chaseDist * Math.cos(pitch))).add(new THREE.Vector3(0, chaseDist * Math.sin(pitch), 0));
-    look = drone.position.clone().add(fwd(yaw).multiplyScalar(chaseDist * 0.5));
-    target = clearCam(drone.position, target);
-  } else {
-    const c = center || new THREE.Vector3(0, 10, 0);
-    const ph = (preview && preview.stage === 'overview') ? 0.95 : phi;
-    look = c;
-    target = new THREE.Vector3(c.x + dist * Math.cos(ph) * Math.sin(theta), c.y + dist * Math.sin(ph), c.z + dist * Math.cos(ph) * Math.cos(theta));
-  }
-  if (mode !== 'fpv') { const gy = groundAt(target.x, target.z) + 3; if (target.y < gy) target.y = gy; }
-  if (!camPos) { camPos = target.clone(); camLook = look.clone(); }
-  camPos.lerp(target, k); camLook.lerp(look, Math.min(1, k * 1.4));
-  cam.position.copy(camPos); cam.lookAt(camLook);
+function resize() {
+  W = window.innerWidth || 1; H = window.innerHeight || 1;
+  const dpr = Math.min(3, window.devicePixelRatio || 1);
+  marks.width = Math.round(W * dpr); marks.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (renderer) { renderer.setPixelRatio(Math.min(2, dpr)); renderer.setSize(W, H, false); }
+  dirty = true;
 }
-// Verfolgerkamera nie in Gebäuden: Strahl von der Drohne zur gewünschten Kameraposition, bei Treffer kurz davor bleiben
-const camRay = new THREE.Raycaster();
-function clearCam(from, want) {
-  const dir = want.clone().sub(from); const len = dir.length(); if (len < 0.5) return want;
-  camRay.set(from, dir.normalize()); camRay.far = len + 1.5;
-  const hits = camRay.intersectObjects(buildings.filter(o => o.isMesh), false);
-  if (!hits.length) return want;
-  const d = Math.max(2, hits[0].distance - 2.5);
-  return from.clone().add(dir.multiplyScalar(d));
-}
+function setInsets(l, t, r, b) { inset = { l: l || 0, t: t || 0, r: r || 0, b: b || 0 }; dirty = true; }
+/** Freie Fläche (ohne das, was das Cockpit überdeckt); zu klein gerechnete Ränder fallen weg. */
+function free() { let x0 = inset.l, y0 = inset.t, x1 = W - inset.r, y1 = H - inset.b; if (x1 - x0 < 160 || y1 - y0 < 120) { x0 = 0; y0 = 0; x1 = W; y1 = H; } return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 }; }
 
-// Geländehöhe unter (x, z) relativ zum Startboden; ohne Gelände 0
+// ---------------------------------------------------------------- Höhenmodell
+function cell(arr, i, j) { const t = terrain; i = Math.max(0, Math.min(t.nx - 1, i)); j = Math.max(0, Math.min(t.ny - 1, j)); return arr[j * t.nx + i] || 0; }
+/** Geländehöhe unter (x, z) relativ zum Startpunkt; ohne Höhenmodell 0. */
 function groundAt(x, z) {
   const t = terrain; if (!t) return 0;
-  const fx = (x - t.x0) / t.dx, fy = (-z - t.y0) / t.dy; const i = Math.floor(fx), j = Math.floor(fy);
-  if (i < 0 || j < 0 || i >= t.nx - 1 || j >= t.ny - 1) return 0;
-  const u = fx - i, v = fy - j, z00 = t.z[j * t.nx + i], z10 = t.z[j * t.nx + i + 1], z01 = t.z[(j + 1) * t.nx + i], z11 = t.z[(j + 1) * t.nx + i + 1];
-  return (z00 * (1 - u) + z10 * u) * (1 - v) + (z01 * (1 - u) + z11 * u) * v;
+  const fx = (x - t.x0) / t.dx, fy = (-z - t.y0) / t.dy, i = Math.floor(fx), j = Math.floor(fy);
+  if (i < 0 || j < 0 || i >= t.nx - 1 || j >= t.ny - 1) return cell(t.z, Math.round(fx), Math.round(fy));
+  const u = fx - i, v = fy - j;
+  return (cell(t.z, i, j) * (1 - u) + cell(t.z, i + 1, j) * u) * (1 - v) + (cell(t.z, i, j + 1) * (1 - u) + cell(t.z, i + 1, j + 1) * u) * v;
 }
-// Straßen und Parks werden in die Geländetextur gemalt (kein Z-Fighting, läuft über Hänge mit): s = [[Breite m, [[x,y],…]],…], p = [[[x,y],…],…]
-function paintGround(t, roads, parks) {
-  const W = (t.nx - 1) * t.dx, Hh = (t.ny - 1) * t.dy, px = Math.min(2048, Math.max(256, Math.round(Math.max(W, Hh) / 0.8)));
-  const c = document.createElement('canvas'); c.width = Math.round(px * W / Math.max(W, Hh)); c.height = Math.round(px * Hh / Math.max(W, Hh)); const g = c.getContext('2d');
-  const sx = c.width / W, sy = c.height / Hh; const X = x => (x - t.x0) * sx, Y = y => c.height - (y - t.y0) * sy;
-  g.fillStyle = '#c3cad0'; g.fillRect(0, 0, c.width, c.height);
-  // Schummerung: Hänge je nach Neigung zur Sonne (Nordwest, 45°) heller oder dunkler – so sieht man das Gefälle (Praça liegt 48 m tiefer)
-  if (t.z && t.nx > 4 && t.ny > 4) {
-    // geglättetes Gelände (5×5 Zellen), Neigung über 2 Zellen, Licht aus Nordwest
-    const zi = (i, j) => t.z[Math.min(t.ny - 1, Math.max(0, j)) * t.nx + Math.min(t.nx - 1, Math.max(0, i))];
-    const sm = (i, j) => { let s = 0; for (let b = -2; b <= 2; b++) for (let a = -2; a <= 2; a++) s += zi(i + a, j + b); return s / 25; };
-    const lx = -0.5, ly = 0.5, lz = 0.707;
-    for (let j = 0; j < t.ny - 1; j++) for (let i = 0; i < t.nx - 1; i++) {
-      const dzx = (sm(i + 1, j) - sm(i - 1, j)) / (2 * t.dx), dzy = (sm(i, j + 1) - sm(i, j - 1)) / (2 * t.dy);
-      const nl = Math.sqrt(dzx * dzx + dzy * dzy + 1); const shade = (-dzx * lx - dzy * ly + lz) / nl - lz;
-      if (Math.abs(shade) < 0.01) continue;
-      g.fillStyle = shade > 0 ? `rgba(255,255,255,${Math.min(0.35, shade * 2.2)})` : `rgba(40,50,60,${Math.min(0.35, -shade * 2.0)})`;
-      g.fillRect(X(t.x0 + i * t.dx), Y(t.y0 + (j + 1) * t.dy), t.dx * sx + 1, t.dy * sy + 1);
-    }
-  }
-  // Baumkronen aus dem Höhenmodell (c = Kronenhöhe je Zelle in m): grüne Flecken, je höher desto satter
-  if (t.c) {
-    for (let j = 0; j < t.ny - 1; j++) for (let i = 0; i < t.nx - 1; i++) {
-      const ch = t.c[j * t.nx + i]; if (!ch) continue;
-      g.fillStyle = `rgba(96,150,70,${Math.min(0.85, 0.3 + ch / 25)})`;
-      g.beginPath(); g.arc(X(t.x0 + i * t.dx + t.dx / 2), Y(t.y0 + j * t.dy + t.dy / 2), t.dx * sx * 0.75, 0, Math.PI * 2); g.fill();
-    }
-  }
-  g.strokeStyle = 'rgba(70,80,90,0.10)'; g.lineWidth = 1; for (let x = Math.ceil(t.x0 / 50) * 50; x < t.x0 + W; x += 50) { g.beginPath(); g.moveTo(X(x), 0); g.lineTo(X(x), c.height); g.stroke(); } for (let y = Math.ceil(t.y0 / 50) * 50; y < t.y0 + Hh; y += 50) { g.beginPath(); g.moveTo(0, Y(y)); g.lineTo(c.width, Y(y)); g.stroke(); }
-  (parks || []).forEach(poly => { g.fillStyle = '#b9d3a6'; g.beginPath(); poly.forEach((q, i) => i ? g.lineTo(X(q[0]), Y(q[1])) : g.moveTo(X(q[0]), Y(q[1]))); g.closePath(); g.fill(); });
-  g.lineCap = 'round'; g.lineJoin = 'round';
-  [[1, '#f2f4f6', 0], [0, '#ffffff', 0]].forEach(([pass, col, extra]) => (roads || []).forEach(([w, pts]) => { if (pts.length < 2) return; g.strokeStyle = pass ? 'rgba(120,130,140,0.55)' : col; g.lineWidth = Math.max(1.5, (w + (pass ? 1.5 : 0)) * sx); g.beginPath(); pts.forEach((q, i) => i ? g.lineTo(X(q[0]), Y(q[1])) : g.moveTo(X(q[0]), Y(q[1]))); g.stroke(); }));
-  const tex = new THREE.CanvasTexture(c); tex.anisotropy = 4; return tex;
+/** Höchste Oberfläche (Baum, Dach, sonst Boden) im Umkreis von etwa 3 m: vorsichtig gerechnet, damit die Zahl nicht zu gut aussieht. */
+function surfaceAt(x, z) {
+  const t = terrain; if (!t) return 0; if (!t.c) return groundAt(x, z);
+  const i0 = Math.round((x - t.x0) / t.dx), j0 = Math.round((-z - t.y0) / t.dy), n = Math.max(1, Math.round(3 / t.dx));
+  let m = -1e9; for (let j = j0 - n; j <= j0 + n; j++) for (let i = i0 - n; i <= i0 + n; i++) m = Math.max(m, cell(t.z, i, j) + cell(t.c, i, j));
+  return Math.max(m, groundAt(x, z));
 }
-function buildTerrain(t, roads, parks) {
-  if (terrainMesh) { scene.remove(terrainMesh); terrainMesh.geometry.dispose(); terrainMesh = null; }
-  terrain = t || null; if (!t) { groundPlane.position.y = 0; return; }
+
+function buildRelief() {
+  if (!renderer) return;
+  if (reliefMesh) { scene.remove(reliefMesh); reliefMesh.geometry.dispose(); reliefMesh = null; }
+  extras.forEach(o => { scene.remove(o); if (o.geometry) o.geometry.dispose(); }); extras = [];
+  const t = terrain;
+  if (!t) {  // ohne Höhenmodell: Raster auf Starthöhe, damit Lage und Maßstab bleiben
+    const grid = new THREE.GridHelper(1200, 24, 0x1C262B, 0x121A1E); scene.add(grid); extras.push(grid); return;
+  }
   const geo = new THREE.PlaneGeometry((t.nx - 1) * t.dx, (t.ny - 1) * t.dy, t.nx - 1, t.ny - 1); geo.rotateX(-Math.PI / 2);
-  const pos = geo.attributes.position; let mn = 1e9;
-  for (let j = 0; j < t.ny; j++) for (let i = 0; i < t.nx; i++) { const k = j * t.nx + i; const z = t.z[(t.ny - 1 - j) * t.nx + i]; pos.setY(k, z); mn = Math.min(mn, z); }
-  geo.computeVertexNormals();
-  const tex = (roads && roads.length) || (parks && parks.length) ? paintGround(t, roads, parks) : groundPlane.material.map;
-  terrainMesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0xffffff, map: tex })); terrainMesh.receiveShadow = true;
-  terrainMesh.position.set(t.x0 + (t.nx - 1) * t.dx / 2, 0, -(t.y0 + (t.ny - 1) * t.dy / 2)); scene.add(terrainMesh);
-  groundPlane.position.y = mn - 1;
+  const pos = geo.attributes.position, col = new Float32Array(pos.count * 3);
+  // Boden dunkel, alles was darauf steht (Baum, Dach) heller, je höher desto heller; zum Rand hin läuft das Modell ins Schwarz aus
+  const lo = [0.085, 0.105, 0.115], hi = [0.40, 0.45, 0.46], bg = [0.02, 0.031, 0.039];
+  for (let j = 0; j < t.ny; j++) for (let i = 0; i < t.nx; i++) {
+    const k = j * t.nx + i, src = (t.ny - 1 - j) * t.nx + i, c = t.c ? (t.c[src] || 0) : 0;
+    pos.setY(k, (t.z[src] || 0) + c);
+    const a = c < 1.5 ? 0 : Math.min(1, 0.35 + c / 14);
+    const edge = Math.min(1, Math.min(i, j, t.nx - 1 - i, t.ny - 1 - j) * t.dx / 45);
+    for (let q = 0; q < 3; q++) col[k * 3 + q] = bg[q] + ((lo[q] + (hi[q] - lo[q]) * a) - bg[q]) * edge;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  reliefMesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ vertexColors: true, flatShading: true, shininess: 0, specular: 0x000000 }));
+  reliefMesh.position.set(t.x0 + (t.nx - 1) * t.dx / 2, 0, -(t.y0 + (t.ny - 1) * t.dy / 2));
+  scene.add(reliefMesh);
 }
-function distPointSeg(p, a, b) { const ab = b.clone().sub(a); const l = ab.lengthSq(); const t = l ? Math.max(0, Math.min(1, p.clone().sub(a).dot(ab) / l)) : 0; return p.distanceTo(a.clone().add(ab.multiplyScalar(t))); }
-// Gebäude-Wächter wie in der App: Dach = Höhe + Geländeversatz (g); Konflikt, wenn die Route näher als mar waagerecht und unter Dach + clear ist
-function nearRoute(route, poly, h, clear, mar, g) {
-  const top = h + (g || 0) + clear;
-  for (let i = 0; i < route.length - 1; i++) { const a = route[i], b = route[i + 1]; if (Math.min(a.y, b.y) >= top) continue;
-    const a2 = new THREE.Vector3(a.x, 0, a.z), b2 = new THREE.Vector3(b.x, 0, b.z);
-    for (let k = 0; k <= 20; k++) { const p = a2.clone().lerp(b2, k / 20); if (a.y + (b.y - a.y) * k / 20 >= top) continue; for (let j = 0; j < poly.length; j++) { const q1 = new THREE.Vector3(poly[j][0], 0, -poly[j][1]), q2 = new THREE.Vector3(poly[(j + 1) % poly.length][0], 0, -poly[(j + 1) % poly.length][1]); if (distPointSeg(p, q1, q2) < mar) return true; } } }
+
+/** Gebäude als Klötze: nur ohne Oberflächenmodell (mit Modell stehen die Dächer schon im Relief). Zu nah an der Route = Orange. */
+function buildBlocks(list) {
+  if (!renderer || !list || !list.length || (terrain && terrain.c)) return;
+  const mat = new THREE.MeshPhongMaterial({ color: 0x4d7068, flatShading: true, shininess: 0, specular: 0x000000 });
+  const matWarn = new THREE.MeshPhongMaterial({ color: 0xb85a18, flatShading: true, shininess: 0, specular: 0x000000 });
+  list.forEach(b => { try {
+    const geo = new THREE.ExtrudeGeometry(new THREE.Shape(b.p.map(q => new THREE.Vector2(q[0], q[1]))), { depth: b.h, bevelEnabled: false }); geo.rotateX(-Math.PI / 2); if (b.g) geo.translate(0, b.g, 0);
+    const m = new THREE.Mesh(geo, blockNearRoute(b) ? matWarn : mat); scene.add(m); extras.push(m);
+  } catch (e) {} });
+}
+function blockNearRoute(b) {
+  const top = b.h + (b.g || 0) + clearM, mar = 8;
+  for (let i = 0; i < route.length - 1; i++) { const a = route[i], c = route[i + 1]; if (Math.min(a.y, c.y) >= top) continue;
+    for (let k = 0; k <= 12; k++) { const x = a.x + (c.x - a.x) * k / 12, n = -(a.z + (c.z - a.z) * k / 12);
+      for (let j = 0; j < b.p.length; j++) { const p = b.p[j], q = b.p[(j + 1) % b.p.length], dx = q[0] - p[0], dy = q[1] - p[1], l = dx * dx + dy * dy, s = l ? Math.max(0, Math.min(1, ((x - p[0]) * dx + (n - p[1]) * dy) / l)) : 0;
+        if (Math.hypot(x - p[0] - dx * s, n - p[1] - dy * s) < mar) return true; } } }
   return false;
 }
 
-function spriteScale(s) { const a = cam ? cam.aspect : 2; s.scale.set(0.075 / a, 0.075, 1); }
-function numberSprite(n, color) {
-  const c = document.createElement('canvas'); c.width = c.height = 96; const g = c.getContext('2d');
-  g.fillStyle = color; g.beginPath(); g.arc(48, 48, 40, 0, Math.PI * 2); g.fill();
-  g.strokeStyle = 'rgba(255,255,255,0.9)'; g.lineWidth = 5; g.stroke();
-  g.fillStyle = '#fff'; g.font = 'bold 44px system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(n), 48, 50);
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false, sizeAttenuation: false })); s.renderOrder = 5; spriteScale(s); return s;
-}
-
-// Alle Gebäude in ein Objekt (2 Materialgruppen: Dach, Wand) – statt ~1.400 Zeichenaufrufen nur ein paar
-function mergeExtrudes(geoms) {
-  const parts = [[], []]; let counts = [0, 0];
-  geoms.forEach(g => g.groups.forEach(gr => { parts[gr.materialIndex].push([g, gr.start, gr.count]); counts[gr.materialIndex] += gr.count; }));
-  const total = counts[0] + counts[1];
-  const pos = new Float32Array(total * 3), nor = new Float32Array(total * 3), uv = new Float32Array(total * 2);
-  const out = new THREE.BufferGeometry(); let off = 0;
-  parts.forEach((list, mi) => { const start = off;
-    list.forEach(([g, st, cnt]) => { pos.set(g.attributes.position.array.subarray(st * 3, (st + cnt) * 3), off * 3); nor.set(g.attributes.normal.array.subarray(st * 3, (st + cnt) * 3), off * 3); uv.set(g.attributes.uv.array.subarray(st * 2, (st + cnt) * 2), off * 2); off += cnt; });
-    out.addGroup(start, off - start, mi); });
-  out.setAttribute('position', new THREE.BufferAttribute(pos, 3)); out.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-  return out;
-}
-function mergeLines(geoms) { let n = 0; geoms.forEach(g => n += g.attributes.position.count); const pos = new Float32Array(n * 3); let off = 0; geoms.forEach(g => { pos.set(g.attributes.position.array, off); off += g.attributes.position.array.length; }); const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.BufferAttribute(pos, 3)); return out; }
-
-let routeInfo = [];
+// ---------------------------------------------------------------- Szene
 function setScene(D) {
-  if (!scene) return;
-  buildings.forEach(o => scene.remove(o)); buildings = []; routeObjs.forEach(o => scene.remove(o)); routeObjs = []; markers = []; passed = 0;
-  routeInfo = (D.r || []).map(p => ({ pos: new THREE.Vector3(p[0], p[2], -p[1]), yaw: p[3] == null ? null : THREE.MathUtils.degToRad(p[3]), pitch: p[4] == null ? -20 : p[4], hold: p[5] || 0, speed: p[6] || 5 }));
-  const route = routeInfo.map(r => r.pos);
-  let T = D.t;
-  if (!T && ((D.s && D.s.length) || (D.p && D.p.length))) { const all = [].concat(...(D.s || []).map(r => r[1]), ...(D.p || []), (D.r || []).map(p => [p[0], p[1]])); const xs = all.map(q => q[0]), ys = all.map(q => q[1]); const x0 = Math.min(...xs) - 50, y0 = Math.min(...ys) - 50, nx = 2, ny = 2; T = { x0, y0, dx: Math.max(...xs) + 50 - x0, dy: Math.max(...ys) + 50 - y0, nx, ny, z: [0, 0, 0, 0] }; }
-  buildTerrain(T, D.s, D.p);
-  const roofMat = new THREE.MeshLambertMaterial({ color: 0xcfc9c0 }), wallMat = new THREE.MeshLambertMaterial({ color: 0xffffff, map: wallTex });
-  const roofWarn = new THREE.MeshLambertMaterial({ color: 0xe0823a }), wallWarn = new THREE.MeshLambertMaterial({ color: 0xf0a060, map: wallTex });
-  const gOk = [], gWarn = [], eOk = [], eWarn = [];
-  (D.b || []).forEach(b => {
-    try {
-      const shape = new THREE.Shape(b.p.map(q => new THREE.Vector2(q[0], -q[1])));
-      const g = new THREE.ExtrudeGeometry(shape, { depth: b.h, bevelEnabled: false }); g.rotateX(-Math.PI / 2); if (b.g) g.translate(0, b.g, 0);
-      const conflict = route.length > 1 && nearRoute(route, b.p, b.h, D.clear || 8, D.mar || 8, b.g);
-      (conflict ? gWarn : gOk).push(g); (conflict ? eWarn : eOk).push(new THREE.EdgesGeometry(g, 20));
-    } catch (e) {}
-  });
-  [[gOk, eOk, [roofMat, wallMat], 0x6b7580], [gWarn, eWarn, [roofWarn, wallWarn], 0xa04a10]].forEach(([gs, es, mats, ec]) => {
-    if (!gs.length) return;
-    const m = new THREE.Mesh(mergeExtrudes(gs), mats); m.castShadow = true; m.receiveShadow = true; scene.add(m); buildings.push(m);
-    const e = new THREE.LineSegments(mergeLines(es), new THREE.LineBasicMaterial({ color: ec, transparent: true, opacity: 0.28 })); scene.add(e); buildings.push(e);
-    gs.forEach(g => g.dispose()); es.forEach(g => g.dispose());
-  });
+  D = D || {};
+  clearM = D.clear || 8;
+  terrain = (D.t && D.t.z && D.t.nx > 1 && D.t.ny > 1) ? D.t : null;
+  route = (D.r || []).map(p => ({ x: p[0], y: p[2], z: -p[1], photo: (p[5] || 0) > 0 }));
+  passed = 0; userView = null; snap = true; dirty = true;
+  // Abschnitte gleicher Flughöhe: jeder bekommt eine Höhenmarke (ALT = über dem Startpunkt, wie die Kachel ALT · START)
+  runs = [];
+  route.forEach((p, i) => { const r = runs[runs.length - 1]; if (r && Math.abs(r.h - p.y) < 0.5) r.to = i; else runs.push({ from: i, to: i, h: p.y }); });
+  // Strecken mit weniger als dem Mindestabstand über der Oberfläche: Warnfarbe
+  lowSeg = route.map((a, i) => { const b = route[i + 1]; if (!b || !terrain) return false; const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 4));
+    for (let k = 0; k <= n; k++) { const x = a.x + (b.x - a.x) * k / n, z = a.z + (b.z - a.z) * k / n, y = a.y + (b.y - a.y) * k / n; if (Math.hypot(x, z) > 12 && y - surfaceAt(x, z) < clearM) return true; } return false; });
+  // Blickrichtung: vom Startplatz (0,0) zur Mitte des Plans; liegt der Plan um den Start herum, nach Norden
   if (route.length) {
-    try {
-      routeCurve = new THREE.CatmullRomCurve3(route, false, 'catmullrom', 0.0); const len = routeCurve.getLength();
-      routeTex.repeat.set(Math.max(1, len / 6), 1);
-      routeTube = new THREE.Mesh(new THREE.TubeGeometry(routeCurve, Math.max(8, route.length * 12), 0.55, 8, false), new THREE.MeshBasicMaterial({ map: routeTex, side: THREE.FrontSide })); routeRadius = 0.55; scene.add(routeTube); routeObjs.push(routeTube);
-      // Höhenvorhang: durchscheinende Fläche vom Boden bis zur Linie, zeigt das Höhenprofil von oben und schräg
-      const cp = [], ci = [];
-      route.forEach((p, i) => { cp.push(p.x, p.y, p.z, p.x, groundAt(p.x, p.z) + 0.05, p.z); if (i) { const k = (i - 1) * 2; ci.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); } });
-      const cg = new THREE.BufferGeometry(); cg.setAttribute('position', new THREE.Float32BufferAttribute(cp, 3)); cg.setIndex(ci);
-      curtain = new THREE.Mesh(cg, new THREE.MeshBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false })); scene.add(curtain); routeObjs.push(curtain);
-      const groundLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(route.map(p => new THREE.Vector3(p.x, groundAt(p.x, p.z) + 0.1, p.z))), new THREE.LineBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.5 })); scene.add(groundLine); routeObjs.push(groundLine);
-    } catch (e) {}
-    route.forEach((p, i) => {
-      const first = i === 0, last = i === route.length - 1;
-      const sp = numberSprite(first ? '▲' : (last ? '⌂' : i), (first || last) ? '#30d158' : (routeInfo[i].hold > 0 ? '#ff9f0a' : '#2f8cff'));
-      sp.position.set(p.x, p.y + 4, p.z); scene.add(sp); routeObjs.push(sp); markers.push(sp);
-      const pole = new THREE.Line(new THREE.BufferGeometry().setFromPoints([p, new THREE.Vector3(p.x, groundAt(p.x, p.z), p.z)]), new THREE.LineBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.3 })); scene.add(pole); routeObjs.push(pole);
-      const foot = new THREE.Mesh(new THREE.RingGeometry(1.0, 1.6, 20), new THREE.MeshBasicMaterial({ color: 0x2f8cff, transparent: true, opacity: 0.45, side: THREE.DoubleSide })); foot.rotation.x = -Math.PI / 2; foot.position.set(p.x, groundAt(p.x, p.z) + 0.1, p.z); scene.add(foot); routeObjs.push(foot);
-    });
-    center = new THREE.Box3().setFromPoints(route).getCenter(new THREE.Vector3()); center.y = 10;
-    dist = Math.max(120, route.reduce((m, p) => Math.max(m, p.distanceTo(center)), 0) * 2.2);
-    hint.style.display = 'none';
-    if (!flying) startPreview();
-  } else { center = new THREE.Vector3(0, 10, 0); hint.style.display = ''; }
-  sun.target.position.copy(center); sun.position.set(center.x + 260, 420, center.z + 180);
-  // Schattenbereich und Dunst an die Größe des Plans anpassen (sonst verschwinden ferne Gebäude bei großen Routen im Nebel)
-  const ext = Math.max(450, dist * 0.8); const sc2 = sun.shadow.camera; sc2.left = sc2.bottom = -ext; sc2.right = sc2.top = ext; sc2.updateProjectionMatrix();
-  scene.fog.near = Math.max(500, dist * 1.3); scene.fog.far = Math.max(1600, dist * 4);
-  const homeMark = new THREE.Mesh(new THREE.RingGeometry(2.6, 3.6, 32), new THREE.MeshBasicMaterial({ color: 0x30d158, side: THREE.DoubleSide })); homeMark.rotation.x = -Math.PI / 2; homeMark.position.y = 0.1; // Start = Bezug (Gelände 0) scene.add(homeMark); routeObjs.push(homeMark);
-  const homeH = new THREE.Mesh(new THREE.CircleGeometry(2.4, 32), new THREE.MeshBasicMaterial({ color: 0x30d158, transparent: true, opacity: 0.25, side: THREE.DoubleSide })); homeH.rotation.x = -Math.PI / 2; homeH.position.y = 0.1; scene.add(homeH); routeObjs.push(homeH);
-  trailPts = []; trail.geometry.setFromPoints(trailPts);
+    let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9, y1 = 0; route.forEach(p => { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); z0 = Math.min(z0, p.z); z1 = Math.max(z1, p.z); y1 = Math.max(y1, p.y); });
+    planCenter = { x: (x0 + x1) / 2, z: (z0 + z1) / 2, top: y1 };
+    planRadius = Math.max(40, route.reduce((m, p) => Math.max(m, Math.hypot(p.x - planCenter.x, p.z - planCenter.z)), Math.hypot(planCenter.x, planCenter.z)));
+    azimuth = Math.hypot(planCenter.x, planCenter.z) > 25 ? Math.atan2(planCenter.x, -planCenter.z) : 0;
+  } else { planCenter = null; planRadius = 60; azimuth = 0; }
+  buildRelief(); buildBlocks(D.b);
+  if (light) { const a = azimuth - 0.9; light.position.set(-Math.sin(a) * 300, 420, Math.cos(a) * 300); light.target.position.set(0, 0, 0); }
 }
 
-// Markierung eines erreichten Punkts abblenden
-function markPassed(i) { for (; passed <= i && passed < markers.length; passed++) markers[passed].material.opacity = 0.35; }
+function setFlying(f) { f = !!f; if (f !== flying) { flying = f; userView = null; dirty = true; } }
+function setDrone(x, y, n, hdg) {
+  const p = { x: x, y: y, z: -n };
+  if (!drone || Math.hypot(p.x - drone.x, p.y - drone.y, p.z - drone.z) > 40) { drone = { x: p.x, y: p.y, z: p.z }; if (!droneTarget) snap = true; }
+  droneTarget = p; heading = (hdg || 0) * Math.PI / 180; dirty = true;
+  // Fortschritt: der früheste noch offene Punkt, an dem die Drohne gerade ist (Start- und Schlusspunkt liegen oft übereinander)
+  for (let i = passed; i < route.length; i++) if (Math.hypot(route[i].x - p.x, route[i].y - p.y, route[i].z - p.z) < 4) { passed = i + 1; break; }
+}
+function clearDrone() { if (drone) { drone = null; droneTarget = null; snap = true; dirty = true; } }
+function mode() { return userView || (flying ? 'near' : 'wide'); }
+/** Der eine Umschalter: NEAR (Abstand zur Oberfläche ablesen) ↔ WIDE (ganzer Plan). Gilt bis zum nächsten Abheben oder Landen. */
+function cycleCamera() { userView = mode() === 'near' ? 'wide' : 'near'; dirty = true; return userView; }
+function setFollow() {}
 
-// ---- Vorschau: virtuelle Drohne fliegt die Route (8 m/s), dreht an Punkten mit Blickrichtung, hält dort kurz
-function startPreview() {
-  if (routeInfo.length < 2) return;
-  preview = { i: 0, t: 0, hold: 0.3, last: performance.now(), stage: 'overview', stageT: 0 };
-  camMode = 'preview';
-  droneOn = true; drone.position.copy(routeInfo[0].pos); heading = smoothHeading = routeInfo[0].yaw ?? segYaw(0); gimbal = smoothGimbal = -20;
-  droneLine.visible = droneShadow.visible = true;
-  camPos = null; droneTarget = null;
-  showLabel('Route im Überblick');
+// ---------------------------------------------------------------- Kamera
+function eye(v) { const el = v.el * Math.PI / 180, ch = Math.cos(el) * v.d; return { x: v.x - Math.sin(azimuth) * ch, y: v.y + Math.sin(el) * v.d, z: v.z + Math.cos(azimuth) * ch }; }
+/** Ist der Fußpunkt von der Kamera aus zu sehen (kein Hang, kein Baum dazwischen)? */
+function footVisible(v, foot, margin) {
+  const e = eye(v);
+  for (let k = 1; k < 48; k++) { const s = k / 48, x = foot.x + (e.x - foot.x) * s, z = foot.z + (e.z - foot.z) * s, y = foot.y + (e.y - foot.y) * s; if (Math.hypot(x - foot.x, z - foot.z) < 6) continue; if (surfaceAt(x, z) + margin > y) return false; }
+  return true;
 }
-function segYaw(i) { const a = routeInfo[i].pos, b = routeInfo[Math.min(i + 1, routeInfo.length - 1)].pos; const d = b.clone().sub(a); return (Math.abs(d.x) + Math.abs(d.z)) < 0.01 ? heading : Math.atan2(d.x, -d.z); }
-function previewStep() {
-  const p = preview, now = performance.now(), dt = Math.min(0.1, (now - p.last) / 1000); p.last = now;
-  if (p.stage !== 'fly') { p.stageT += dt;
-    if (p.stage === 'overview' && p.stageT > 3.5) { p.stage = 'zoom'; p.stageT = 0; showLabel('Vorschau · Kameraknopf wechselt die Sicht'); }
-    else if (p.stage === 'zoom' && p.stageT > 3.0) { p.stage = 'fly'; p.stageT = 0; }
-    return; }
-  if (p.hold > 0) { p.hold -= dt * previewScale; return; }
-  if (p.i >= routeInfo.length - 1) { endPreview(); return; }
-  const a = routeInfo[p.i].pos, b = routeInfo[p.i + 1].pos, L = Math.max(0.1, a.distanceTo(b));
-  p.t += dt * previewScale * Math.min(routeInfo[p.i].speed, Math.abs(a.y - b.y) > L - 0.5 ? 2.5 : 99) / L;
-  const wa = routeInfo[p.i], wb = routeInfo[p.i + 1];
-  if (wa.yaw != null && wb.yaw != null) { heading = wa.yaw + angDiff(wb.yaw, wa.yaw) * p.t; gimbal = wa.pitch + (wb.pitch - wa.pitch) * p.t; }  // zwischen Fotopunkten: Kamera bleibt auf dem Motiv
-  else { heading = segYaw(p.i); gimbal = -20; }
-  if (p.t >= 1) {
-    p.t = 0; p.i += 1; const w = routeInfo[p.i];
-    drone.position.copy(w.pos); markPassed(p.i);
-    if (w.yaw != null) heading = w.yaw;
-    gimbal = w.pitch;
-    p.hold = w.hold > 0 ? w.hold : 0.3;
-  } else drone.position.copy(a).lerp(b, p.t);
-  const gy = groundAt(drone.position.x, drone.position.z);
-  droneLine.geometry.setFromPoints([drone.position, new THREE.Vector3(drone.position.x, gy, drone.position.z)]);
-  droneShadow.position.set(drone.position.x, gy + 0.12, drone.position.z);
+/**
+ * WIDE: Bildhöhe in Metern, damit alle Punkte ins Bild passen (Kamerarichtung fest, Neigung el). Waagerecht bleibt w
+ * (die Drohne) in der Mitte; senkrecht wird w so verschoben, dass der Plan die Höhe füllt statt halb leer zu bleiben.
+ */
+function spanFor(w, pts, el, aspect) {
+  const e = el * Math.PI / 180, rx = Math.cos(azimuth), rz = Math.sin(azimuth), ux = Math.sin(azimuth) * Math.sin(e), uy = Math.cos(e), uz = -Math.cos(azimuth) * Math.sin(e);
+  let sx = 0, lo = 1e9, hi = -1e9; pts.forEach(p => { const dx = p.x - w.x, dy = p.y - w.y, dz = p.z - w.z, v = dx * ux + dy * uy + dz * uz; sx = Math.max(sx, Math.abs(dx * rx + dz * rz)); lo = Math.min(lo, v); hi = Math.max(hi, v); });
+  const mid = (lo + hi) / 2; w.x += ux * mid; w.y += uy * mid; w.z += uz * mid;
+  return Math.max(hi - lo, 2 * sx / aspect) * 1.2 + 16;
 }
-function endPreview() { preview = null; camMode = flying ? flightMode : 'orbit'; if (!flying) flightMode = flightMode === 'orbit' ? 'fpv' : flightMode; markers.forEach(m => m.material.opacity = 1); passed = 0; if (!flying) { droneOn = false; droneLine.visible = droneShadow.visible = false; } }
+function planPoints() { const pts = route.slice(); pts.push({ x: 0, y: groundAt(0, 0), z: 0 }); runs.forEach(r => { const p = route[r.from]; pts.push({ x: p.x, y: surfaceAt(p.x, p.z), z: p.z }); }); return pts; }
+function wantView() {
+  const f = free(), tanHalf = Math.tan(FOV * Math.PI / 360), m = mode();
+  let w;
+  if (drone) {
+    const gy = groundAt(drone.x, drone.z), agl = Math.max(0, drone.y - gy);
+    w = { x: drone.x, y: drone.y - agl * 0.36, z: drone.z };
+    const pts = planPoints(); pts.push({ x: drone.x, y: gy, z: drone.z }, drone);
+    const spanV = m === 'wide' ? Math.max(90, spanFor(w, pts, view.el, f.w / f.h)) : Math.max(74, agl * 0.87 / 0.40);
+    w.d = spanV * (H / f.h) / (2 * tanHalf);
+    w.foot = { x: drone.x, y: gy, z: drone.z };
+  } else {
+    const c = planCenter || { x: 0, z: 0, top: 20 };
+    w = { x: c.x, y: groundAt(c.x, c.z) + c.top * 0.4, z: c.z };
+    w.d = Math.max(90, spanFor(w, planPoints(), view.el, f.w / f.h)) * (H / f.h) / (2 * tanHalf);
+    w.foot = { x: c.x, y: groundAt(c.x, c.z), z: c.z };
+  }
+  // Neigung: die flachste, bei der der Fußpunkt frei zu sehen ist; wieder flacher erst mit Reserve, damit nichts pendelt
+  let el = EL_MAX;
+  for (let e = EL_MIN; e <= EL_MAX; e += 4) { w.el = e; if (footVisible(w, w.foot, e < view.el - 1 ? 4 : 0.5)) { el = e; break; } }
+  w.el = el;
+  return w;
+}
+function placeCamera() {
+  if (drone && droneTarget) { const k = 0.22; drone.x += (droneTarget.x - drone.x) * k; drone.y += (droneTarget.y - drone.y) * k; drone.z += (droneTarget.z - drone.z) * k; }
+  const w = wantView();
+  if (snap) { view = { x: w.x, y: w.y, z: w.z, d: w.d, el: w.el }; snap = false; }
+  else { const k = 0.14, kz = 0.07; view.x += (w.x - view.x) * k; view.y += (w.y - view.y) * k; view.z += (w.z - view.z) * k; view.d += (w.d - view.d) * kz; view.el += (w.el - view.el) * 0.05; }
+  if (!cam) return;
+  const f = free(), e = eye(view);
+  cam.aspect = W / H;
+  // Bildmitte in die Mitte der freien Fläche legen
+  cam.setViewOffset(W, H, W / 2 - f.cx, H / 2 - f.cy, W, H);
+  cam.position.set(e.x, e.y, e.z); cam.lookAt(view.x, view.y, view.z); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+}
+const tmp = window.THREE ? new THREE.Vector3() : null;
+function P(x, y, z) { tmp.set(x, y, z).project(cam); return { x: (tmp.x + 1) / 2 * W, y: (1 - tmp.y) / 2 * H, ok: tmp.z > -1 && tmp.z < 1 }; }
 
-function setFlying(f) { flying = !!f; if (flying) { if (preview) endPreview(); camMode = flightMode === 'orbit' ? 'fpv' : flightMode; } else if (camMode !== 'orbit') camMode = 'orbit'; }
-function setDrone(x, y, z, hdg, pitch) {
-  if (!scene) return;
-  if (preview) endPreview();
-  droneOn = true; const np = new THREE.Vector3(x, y, -z);
-  if (!droneTarget || np.distanceTo(drone.position) > 15) drone.position.copy(np);
-  droneTarget = np;
-  heading = hdg * Math.PI / 180; if (pitch != null) gimbal = pitch;
-  const gy = groundAt(x, -z);
-  droneLine.visible = true; droneLine.geometry.setFromPoints([np, new THREE.Vector3(x, gy, -z)]);
-  droneShadow.visible = true; droneShadow.position.set(x, gy + 0.12, -z);
-  for (let i = passed; i < routeInfo.length; i++) if (routeInfo[i].pos.distanceTo(drone.position) < 3) markPassed(i);
-  const last = trailPts[trailPts.length - 1];
-  if (!last || last.distanceTo(drone.position) > 0.5) { trailPts.push(drone.position.clone()); if (trailPts.length > 2000) trailPts.shift(); trail.geometry.setFromPoints(trailPts); }
+// ---------------------------------------------------------------- Zeichnung über dem Relief
+let boxes = [];
+function hits(b) { return boxes.some(o => b.x < o.x + o.w && b.x + b.w > o.x && b.y < o.y + o.h && b.y + b.h > o.y); }
+function font(weight, px) { g.font = weight + ' ' + px + 'px ' + MONO; }
+function seg(a, b, color, width, dash) { if (!a.ok || !b.ok) return; g.strokeStyle = color; g.lineWidth = width; g.setLineDash(dash || []); g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); g.setLineDash([]); }
+/** Kleine Marke mit Kasten. ax/ay = Ankerpunkt; side: -1 links davon, 1 rechts davon. Gibt false zurück, wenn kein Platz ist. */
+function tag(text, ax, ay, side, color, must) {
+  font(700, 11); const w = Math.ceil(g.measureText(text).width) + 10, h = 17, f = free();
+  const b = { x: side < 0 ? ax - w - 7 : ax + 7, y: ay - h / 2, w, h };
+  if (b.x < f.x0 + 2 || b.x + b.w > f.x1 - 2 || b.y < f.y0 + 2 || b.y + b.h > f.y1 - 2) { if (!must) return false; b.x = Math.max(f.x0 + 2, Math.min(f.x1 - 2 - w, b.x)); b.y = Math.max(f.y0 + 2, Math.min(f.y1 - 2 - h, b.y)); }
+  if (!must && hits(b)) return false;
+  boxes.push(b);
+  g.fillStyle = C.panel; g.fillRect(b.x, b.y, b.w, b.h); g.strokeStyle = color === C.warnText ? C.warn : C.line; g.lineWidth = 1; g.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h - 1);
+  g.fillStyle = color; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(text, b.x + 5, b.y + h / 2 + 0.5);
+  return true;
 }
-function clearDrone() { droneTarget = null; if (drone && !preview) { droneOn = false; droneLine.visible = false; droneShadow.visible = false; } }
-// Kamera weiterschalten: Drohnensicht → Verfolger → Übersicht. Gibt den Namen zurück.
-function cycleCamera() {
-  const order = ['fpv', 'chase', 'orbit'];
-  const cur = camMode === 'preview' ? flightMode : camMode;
-  const next = order[(order.indexOf(cur) + 1) % order.length];
-  yawOff = 0; pitchOff = 0;
-  const names = { fpv: 'Drohnensicht', chase: 'Verfolger', orbit: 'Übersicht' };
-  // Aus der Übersicht ohne fliegende Drohne: Vorschau in der gewünschten Sicht neu starten (sonst bleibt es bei der Übersicht)
-  if (!preview && !droneOn && routeInfo.length > 1) { flightMode = next; startPreview(); preview.stage = 'fly'; showLabel(names[flightMode]); return flightMode; }
-  if (camMode === 'preview') { flightMode = next; preview.stage = 'fly'; if (next === 'orbit') camPos = null; }
-  else { camMode = next; flightMode = next; }
-  showLabel(names[next]); return next;
+function m0(v) { return String(Math.round(v)); }
+
+function drawRoute() {
+  if (!route.length) return;
+  const pts = route.map(p => P(p.x, p.y, p.z));
+  // Stützen an den Enden jedes Höhenabschnitts: zeigen, wo die Linie über dem Boden hängt
+  runs.forEach(r => [r.from, r.to].forEach((i, n) => { if (n && r.to === r.from) return; const p = route[i]; const foot = P(p.x, surfaceAt(p.x, p.z), p.z); seg(pts[i], foot, 'rgba(21,130,106,0.75)', 1, [2, 4]); if (foot.ok) { g.fillStyle = C.dim; g.fillRect(foot.x - 3, foot.y - 0.5, 6, 1.5); } }));
+  // geflogen: blass · offen: gedämpft · die nächsten drei Strecken: hell
+  for (let pass = 0; pass < 3; pass++) for (let i = 0; i < route.length - 1; i++) {
+    const done = i + 1 < passed, next = !done && !!drone && i >= passed && i < passed + 2, kind = done ? 0 : (next ? 2 : 1);
+    if (kind !== pass) continue;
+    const low = lowSeg[i];
+    if (kind === 2) seg(pts[i], pts[i + 1], 'rgba(5,8,10,0.85)', 5);
+    if (kind === 1) seg(pts[i], pts[i + 1], 'rgba(5,8,10,0.55)', 3.5);
+    seg(pts[i], pts[i + 1], low ? (done ? 'rgba(255,122,26,0.4)' : C.warn) : (kind === 0 ? 'rgba(21,130,106,0.5)' : kind === 1 ? '#1AAE88' : C.accent), kind === 2 ? 2.5 : (kind === 1 ? 1.5 : 1));
+  }
+  return pts;
 }
-function setFollow(f) { camMode = f ? (flightMode === 'orbit' ? 'fpv' : flightMode) : 'orbit'; }
+function drawRunTags(pts) {
+  // Höhenmarken: lange Abschnitte zuerst; was keinen Platz hat, fällt weg
+  runs.slice().sort((a, b) => (b.to - b.from) - (a.to - a.from)).forEach(r => {
+    if (r.to < passed - 1) return;
+    const cands = [r.from, r.to, Math.round((r.from + r.to) / 2)];
+    for (const i of cands) { const p = pts[i]; if (!p.ok) continue; if (tag('ALT ' + m0(r.h), p.x, p.y - 12, -1, C.text, false) || tag('ALT ' + m0(r.h), p.x, p.y - 12, 1, C.text, false)) { g.fillStyle = C.text; g.fillRect(p.x - 2.5, p.y - 2.5, 5, 5); break; } }
+  });
+}
+function drawHome() {
+  const gy = groundAt(0, 0), h = P(0, gy, 0); if (!h.ok) return;
+  g.fillStyle = C.bg; g.strokeStyle = C.text; g.lineWidth = 1.5; g.fillRect(h.x - 7, h.y - 7, 14, 14); g.strokeRect(h.x - 6.5, h.y - 6.5, 13, 13);
+  font(700, 10); g.fillStyle = C.text; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('H', h.x, h.y + 0.5);
+  boxes.push({ x: h.x - 9, y: h.y - 9, w: 18, h: 18 });
+  return h;
+}
+function drawNext(pts) {
+  if (!drone || !route.length) return;
+  const d = P(drone.x, drone.y, drone.z);
+  if (passed < route.length) {
+    const i = passed, p = route[i], q = pts[i]; if (!q.ok) return;
+    if (flying || i > 0) { seg(d, q, 'rgba(5,8,10,0.85)', 5); seg(d, q, C.accent, 2.5); }
+    g.strokeStyle = C.accent; g.lineWidth = 2; g.beginPath(); g.moveTo(q.x, q.y - 7); g.lineTo(q.x + 7, q.y); g.lineTo(q.x, q.y + 7); g.lineTo(q.x - 7, q.y); g.closePath(); g.fillStyle = C.bg; g.fill(); g.stroke();
+    const dh = p.y - drone.y, overHome = Math.hypot(p.x, p.z) < 4;
+    const t = 'NEXT ' + (overHome ? 'HOME ' : '') + 'ALT ' + m0(p.y) + (Math.abs(dh) >= 1.5 ? (dh > 0 ? ' ▲' : ' ▼') + m0(Math.abs(dh)) : '');
+    if (Math.hypot(q.x - d.x, q.y - d.y) > 26) { tag(t, q.x, q.y, q.x >= d.x ? 1 : -1, C.accent, false) || tag(t, q.x, q.y - 16, q.x >= d.x ? -1 : 1, C.accent, false) || tag(t, q.x, q.y + 16, 1, C.accent, true); }
+  } else if (flying && Math.hypot(drone.x, drone.z) > 6) {
+    // Plan fertig: Heimweg auf der jetzigen Höhe bis über den Startplatz, dann hinunter
+    const over = P(0, drone.y, 0), home = P(0, groundAt(0, 0), 0);
+    seg(d, over, C.accent, 2, [6, 5]); seg(over, home, C.accent, 2, [6, 5]);
+    tag('HOME ' + m0(Math.hypot(drone.x, drone.z)) + ' m', over.x, over.y, over.x >= d.x ? 1 : -1, C.accent, true);
+  }
+}
+/** Drohne mit Lot: das Herzstück. Lot vom Boden bis zur Drohne mit 10-m-Strichen; was darauf steht (Baum, Dach) als graues Stück. */
+function drawDrone() {
+  if (!drone) return;
+  const f = free(), gy = groundAt(drone.x, drone.z), sy = Math.max(gy, surfaceAt(drone.x, drone.z));
+  const agl = Math.max(0, drone.y - gy), obst = sy - gy, under = drone.y < sy - 0.5;         // under: Drohne steht tiefer als die Oberfläche daneben (unter Bäumen, neben einer Mauer)
+  const hasObst = obst >= 2 && !under, clr = hasObst ? drone.y - sy : agl;
+  const nearHome = Math.hypot(drone.x, drone.z) < 15;
+  const low = flying && agl > 3 && clr < clearM && (hasObst || !nearHome);
+  const col = low ? C.warn : C.accent, d = P(drone.x, drone.y, drone.z), foot = P(drone.x, gy, drone.z), top = P(drone.x, hasObst ? sy : gy, drone.z);
+  const mpp = 2 * view.d * Math.tan(FOV * Math.PI / 360) / H;                                  // Meter je Pixel bei der Drohne
+  // Fußpunkt: Schatten und Ring auf der Oberfläche
+  const ring = (r, fill, stroke, lw) => { g.beginPath(); for (let k = 0; k <= 32; k++) { const a = k / 32 * Math.PI * 2, q = P(drone.x + Math.cos(a) * r, hasObst ? sy : gy, drone.z + Math.sin(a) * r); k ? g.lineTo(q.x, q.y) : g.moveTo(q.x, q.y); } g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.stroke(); } };
+  ring(Math.max(3, 12 * mpp), 'rgba(2,4,5,0.6)', col, 1.5);
+  if (agl > 1) {
+    // Lot: dunkle Unterlage, dann graues Hindernis-Stück und der freie Abstand in Akzentfarbe
+    seg(foot, d, 'rgba(5,8,10,0.85)', 6);
+    if (hasObst) seg(foot, top, C.obst, 4);
+    seg(top, d, col, 2.5);
+    const pxPer10 = Math.hypot(d.x - foot.x, d.y - foot.y) / agl * 10;
+    font(500, 10); g.textAlign = 'right'; g.textBaseline = 'middle';
+    for (let h = 10; h < agl - 2; h += 10) { const q = P(drone.x, gy + h, drone.z); g.fillStyle = h <= obst && hasObst ? C.bg : col; g.fillRect(q.x - 5, q.y - 1, 10, 2);
+      if (pxPer10 >= 16 && Math.hypot(q.x - d.x, q.y - d.y) > 26 && !hits({ x: q.x - 24, y: q.y - 6, w: 16, h: 12 })) { g.fillStyle = C.textDim; g.lineWidth = 3; g.strokeStyle = 'rgba(5,8,10,0.9)'; g.strokeText(String(h), q.x - 9, q.y + 0.5); g.fillText(String(h), q.x - 9, q.y + 0.5); } }
+    g.fillStyle = col; g.fillRect(top.x - 8, top.y - 1.5, 16, 3);
+  }
+  // Drohne: X mit vier Rotoren und Bugstrich, nach Kurs gedreht, feste Größe auf dem Bildschirm
+  const s = 11 * mpp, hx = Math.sin(heading), hz = -Math.cos(heading), rx = Math.cos(heading), rz = Math.sin(heading);
+  const arm = [[1, 1], [1, -1], [-1, -1], [-1, 1]].map(([a, b]) => P(drone.x + (hx * a + rx * b) * s, drone.y, drone.z + (hz * a + rz * b) * s));
+  const nose = P(drone.x + hx * s * 1.9, drone.y, drone.z + hz * s * 1.9);
+  [['rgba(5,8,10,0.9)', 6], [low ? C.warn : C.text, 2.5]].forEach(([c, w]) => { seg(arm[0], arm[2], c, w); seg(arm[1], arm[3], c, w); seg(d, nose, c, w); });
+  arm.forEach(a => { g.beginPath(); g.arc(a.x, a.y, 3.5, 0, Math.PI * 2); g.fillStyle = C.bg; g.fill(); g.strokeStyle = low ? C.warn : C.text; g.lineWidth = 2; g.stroke(); });
+  boxes.push({ x: d.x - 20, y: d.y - 16, w: 40, h: 32 });
+  if (agl < 1) { tag('ON GROUND', d.x, d.y - 26, 1, C.text, true); return; }
+  // Die eine Zahl: Abstand zu dem, was unter der Drohne ist
+  const cap = (low ? 'LOW · ' : '') + (!terrain ? 'OVER START LEVEL' : hasObst ? 'OVER TREE / ROOF' : 'OVER GROUND');
+  const num = m0(clr), sub = hasObst ? 'GROUND ' + m0(agl) + ' m' : (under ? 'UNDER TREES / NEXT TO WALL' : '');
+  font(700, 30); const wn = g.measureText(num).width; font(500, 11); const wc = Math.max(g.measureText(cap).width, sub ? g.measureText(sub).width : 0);
+  const bw = Math.ceil(Math.max(wn + 24, wc)) + 16, bh = sub ? 70 : 54;
+  let bx = d.x + 30, by = (d.y + top.y) / 2 - bh / 2; if (agl < 12) by = d.y - bh - 18;
+  if (bx + bw > f.x1 - 4) bx = d.x - 30 - bw;
+  bx = Math.max(f.x0 + 4, bx); by = Math.max(f.y0 + 4, Math.min(f.y1 - bh - 4, by));
+  boxes.push({ x: bx, y: by, w: bw, h: bh });
+  g.fillStyle = low ? 'rgba(42,23,8,0.94)' : C.panel; g.fillRect(bx, by, bw, bh); g.strokeStyle = low ? C.warn : C.line; g.lineWidth = 1; g.strokeRect(bx + 0.5, by + 0.5, bw - 1, bh - 1);
+  g.fillStyle = col; g.fillRect(bx, by, 3, bh);
+  g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+  font(500, 11); g.fillStyle = low ? C.warnText : C.text; g.fillText(cap, bx + 10, by + 16);
+  font(700, 30); g.fillStyle = low ? C.warnText : C.accent; g.fillText(num, bx + 10, by + 46);
+  font(500, 13); g.fillStyle = C.text; g.fillText('m', bx + 14 + wn, by + 46);
+  if (sub) { font(500, 11); g.fillStyle = C.textDim; g.fillText(sub, bx + 10, by + 62); }
+}
+/** Oben rechts: wohin Norden zeigt und welche Stufe der Umschalter gerade hat. */
+function drawCorner() {
+  const f = free(), cx = f.x1 - 24, cy = f.y0 + 26;
+  const a = P(view.x, view.y, view.z), b = P(view.x, view.y, view.z - 30), ang = Math.atan2(b.x - a.x, -(b.y - a.y));
+  boxes.push({ x: cx - 44, y: cy - 20, w: 66, h: 56 });
+  g.fillStyle = C.panel; g.fillRect(cx - 18, cy - 18, 36, 36); g.strokeStyle = C.line; g.lineWidth = 1; g.strokeRect(cx - 17.5, cy - 17.5, 35, 35);
+  g.save(); g.translate(cx, cy); g.rotate(ang); g.fillStyle = C.text; g.beginPath(); g.moveTo(0, -12); g.lineTo(5, 3); g.lineTo(0, 0); g.lineTo(-5, 3); g.closePath(); g.fill(); g.restore();
+  font(700, 9); g.fillStyle = C.textDim; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('N', cx, cy + 12);
+  font(700, 10); g.textAlign = 'right'; g.fillStyle = C.text; g.fillText(mode() === 'near' ? 'NEAR' : 'WIDE', f.x1 - 6, cy + 28);
+}
+/** Unten links: was die hellen Körper im Relief sind (das Modell kennt nur „etwas steht hier“, nicht Baum oder Dach). */
+function drawLegend() {
+  if (!terrain || !terrain.c) return;
+  const f = free(), x = f.x0 + 8, y = f.y1 - 14;
+  font(500, 10); const w = g.measureText('TREES / ROOFS').width + 26;
+  g.fillStyle = C.panel; g.fillRect(x - 4, y - 9, w, 18); g.fillStyle = '#737f80'; g.fillRect(x, y - 4, 9, 9);
+  g.fillStyle = C.textDim; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText('TREES / ROOFS', x + 15, y + 0.5);
+  boxes.push({ x: x - 4, y: y - 9, w, h: 18 });
+}
+function note(text) { const f = free(); font(500, 11); g.textAlign = 'center'; g.textBaseline = 'middle'; const w = g.measureText(text).width + 16; g.fillStyle = C.panel; g.fillRect(f.cx - w / 2, f.y1 - 30, w, 20); g.fillStyle = C.textDim; g.fillText(text, f.cx, f.y1 - 19.5); }
+
+function frame() {
+  placeCamera();
+  const sig = [view.x, view.y, view.z, view.d, view.el, drone ? drone.x : 0, drone ? drone.y : 0, drone ? drone.z : 0].map(v => v.toFixed(2)).join() + heading.toFixed(2) + passed + mode() + flying;
+  if (!dirty && sig === lastSig) return;
+  lastSig = sig; dirty = false;
+  g.clearRect(0, 0, W, H); boxes = [];
+  if (!renderer) { note('3D NOT AVAILABLE ON THIS DEVICE'); return; }
+  renderer.render(scene, cam);
+  const pts = drawRoute();
+  drawHome(); drawCorner(); drawLegend();
+  if (pts) drawNext(pts);
+  drawDrone();
+  if (pts) drawRunTags(pts);
+  if (!route.length && !drone) note('NO PLAN LOADED');
+  else if (!terrain) note('NO HEIGHT MODEL HERE · HEIGHTS REFER TO START LEVEL');
+  else if (!drone) note('NO DRONE POSITION');
+}
 init();
 </script>
 </body>

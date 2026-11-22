@@ -23,8 +23,10 @@ interface Gastgeber {
     /** Das Livebild der Drohne kommt gerade an. */
     val livebildAn: Boolean
     fun ansichtWechseln()
-    /** Karte einpassen bzw. Kamera der 3D-Ansicht wechseln. */
+    /** Karte einpassen bzw. in der 3D-Ansicht zwischen NEAR und WIDE wechseln. */
     fun einpassen()
+    /** Was das Cockpit von der Bildfläche überdeckt (Pixel je Rand); die 3D-Ansicht hält Drohne und Zahlen im freien Teil. */
+    fun bildRaender(links: Int, oben: Int, rechts: Int, unten: Int)
     fun protokoll()
     fun protokollKopieren()
     fun einstellungen()
@@ -47,7 +49,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private var laeuft = false
 
     private val kAnsicht = LeistenKnopf(stil, "Switch view: map, live view, 3D") { gast.ansichtWechseln(); leisteZeigen() }
-    private val kEinpassen = LeistenKnopf(stil, "Fit map / switch 3D camera") { gast.einpassen() }
+    private val kEinpassen = LeistenKnopf(stil, "Fit map / 3D view near or wide") { gast.einpassen() }
     private val kSystem = LeistenKnopf(stil, "System status") { systemAn = !systemAn; leisteZeigen(); zeige(aktionen.zustand()) }
     private val kCopilot = LeistenKnopf(stil, "Ask Claude") { gast.copilot() }
     private val kProtokoll = LeistenKnopf(stil, "Log (hold to copy)") { gast.protokoll() }
@@ -66,6 +68,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             leiste.addView(k, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { if (i > 0) topMargin = stil.dp(4) })
         }
         kCopilot.setze("AI", false); kProtokoll.setze("Log", false); kMehr.setze("Set", false)
+        live.beiLeistenhoehe = { raenderMelden() }
         leisteZeigen()
     }
 
@@ -76,7 +79,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     fun leisteZeigen() {
         val a = gast.ansicht
         kAnsicht.setze(a.kuerzel, !systemAn)
-        kEinpassen.setze(if (a == Ansicht.DREI_D) "Cam" else "Fit", false)
+        kEinpassen.setze(if (a == Ansicht.DREI_D) "Zoom" else "Fit", false)
         kEinpassen.isEnabled = a != Ansicht.LIVEBILD && !systemAn
         kEinpassen.alpha = if (kEinpassen.isEnabled) 1f else 0.35f
         kSystem.setze("Sys", systemAn)
@@ -84,8 +87,13 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         // Livebild-Fläche bleibt darunter bestehen; nur die Bedienflächen des Live-Bildschirms werden verdeckt.
         liveWurzel.importantForAccessibility = if (systemAn) View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS else View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
         live.hud.mitFadenkreuz = a == Ansicht.LIVEBILD
-        live.hud.mitBahn = a != Ansicht.KARTE
+        // Die kleine Bahnkarte nur über dem Livebild: Karte und 3D-Ansicht zeigen den Weg selbst.
+        live.hud.mitBahn = a == Ansicht.LIVEBILD
+        raenderMelden()
     }
+
+    /** Links die Flugwerte (wie im HUD 150 dp), oben Status-, Warnzeile und Kompassband. */
+    private fun raenderMelden() = gast.bildRaender(stil.dp(150), live.hud.obenPx + stil.dp(46), 0, 0)
 
     private fun zeige(z: CockpitZustand) {
         val jetzt = System.currentTimeMillis()

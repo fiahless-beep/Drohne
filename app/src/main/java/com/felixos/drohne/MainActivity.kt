@@ -207,6 +207,7 @@ class MainActivity : AppCompatActivity() {
         override val livebildAn: Boolean get() = videoAttached && DroneManager.state.connected
         override fun ansichtWechseln() = chooseView(when (mode) { Mode.MAP -> Mode.VIDEO; Mode.VIDEO -> Mode.THREE; Mode.THREE -> Mode.MAP }, byUser = true)
         override fun einpassen() { if (mode == Mode.THREE) view3d.cycleCamera {} else mapPanel.fit() }
+        override fun bildRaender(links: Int, oben: Int, rechts: Int, unten: Int) = view3d.raender(links, oben, rechts, unten)
         override fun protokoll() = showLog()
         override fun protokollKopieren() = copyLog()
         override fun einstellungen() = showMore()

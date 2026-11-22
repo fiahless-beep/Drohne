@@ -26,6 +26,8 @@ import java.util.Locale
  */
 internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen, buehne: FrameLayout, feld: FrameLayout) {
     val hud = HudView(stil)
+    /** Die Leisten oben haben ihre Höhe geändert (die 3D-Ansicht richtet ihre Bildmitte danach). */
+    var beiLeistenhoehe: (() -> Unit)? = null
 
     // Bildfläche
     private val phase = Abzeichen(stil, neutral = true)
@@ -108,7 +110,7 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         warnZeile.accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
         oben.addView(warnZeile, stil.lp(Stil.MATCH, Stil.WRAP))
         buehne.addView(oben, FrameLayout.LayoutParams(-1, -2, Gravity.TOP))
-        oben.addOnLayoutChangeListener { _, _, _, _, unten, _, _, _, _ -> hud.obenPx = unten }
+        oben.addOnLayoutChangeListener { _, _, _, _, unten, _, _, _, _ -> if (hud.obenPx != unten) { hud.obenPx = unten; beiLeistenhoehe?.invoke() } }
 
         val werte = stil.spalte().apply { isClickable = true }
         werte.addView(alt.kachel, stil.lp(Stil.MATCH, Stil.WRAP))

@@ -12,8 +12,10 @@ import org.json.JSONObject
 import kotlin.math.cos
 
 /**
- * 3D-Ansicht in der App (assets/view3d.html, three.js): Gebäude aus der Stadtdatenbank im Umkreis des Plans,
- * Flugweg mit Transit, Startpunkt, Drohne live mit Spur. Koordinaten in Metern relativ zum Bezugspunkt.
+ * 3D-Ansicht in der App (assets/view3d.html, three.js). Zweck (Felix 22.11.2026): Gefühl für die Höhe. Die Seite zeigt
+ * das Relief aus dem Höhenmodell (Boden, darauf Bäume und Dächer), den Flugweg mit Höhenmarken und die Drohne mit Lot
+ * und Abstand zur Oberfläche unter ihr; Blickwinkel und Ausschnitt wählt sie selbst. Koordinaten in Metern relativ zum
+ * Bezugspunkt. Gebäude aus der Stadtdatenbank gehen weiter mit; die Seite zeichnet sie nur, wenn das Höhenmodell fehlt.
  */
 class View3D(private val web: WebView) {
     private var origin: LatLon? = null
@@ -21,6 +23,7 @@ class View3D(private val web: WebView) {
     private var pendingScene: String? = null
     private var pendingJs: String? = null
     private var lastDroneMs = 0L
+    private var raender = "0,0,0,0"
     /** true = fotorealistische Google-Seite (assets/google3d.html, braucht Schlüssel + Internet), false = Klötzchen (view3d.html). */
     private var google = false
     private var loader: androidx.webkit.WebViewAssetLoader? = null
@@ -35,14 +38,37 @@ class View3D(private val web: WebView) {
         loader = androidx.webkit.WebViewAssetLoader.Builder().addPathHandler("/assets/", androidx.webkit.WebViewAssetLoader.AssetsPathHandler(web.context)).build()
         web.webViewClient = object : android.webkit.WebViewClient() {
             override fun shouldInterceptRequest(view: WebView?, request: android.webkit.WebResourceRequest?): android.webkit.WebResourceResponse? =
-                request?.url?.let { loader?.shouldInterceptRequest(it) } ?: super.shouldInterceptRequest(view, request)
+                request?.url?.let { schrift(it) ?: loader?.shouldInterceptRequest(it) } ?: super.shouldInterceptRequest(view, request)
             override fun onPageFinished(view: WebView?, url: String?) {
                 ready = true
+                if (!google) js("setInsets($raender)")
                 pendingScene?.let { js("setScene($it)") }; pendingScene = null
                 pendingJs?.let { js(it) }; pendingJs = null
             }
         }
         load(wantGoogle())
+    }
+
+    /**
+     * Schriften des Cockpits für view3d.html: die Seite fragt https://appassets.androidplatform.net/font/<name>.ttf,
+     * geliefert wird aus res/font (ohne Netz). Fehlt die Antwort, nimmt die Seite die Monospace-Schrift des Systems.
+     */
+    private fun schrift(url: android.net.Uri): android.webkit.WebResourceResponse? {
+        if (url.host != "appassets.androidplatform.net" || url.pathSegments.firstOrNull() != "font") return null
+        val id = when (url.lastPathSegment) { "jetbrains_mono_medium.ttf" -> R.font.jetbrains_mono_medium; "jetbrains_mono_bold.ttf" -> R.font.jetbrains_mono_bold; else -> return null }
+        return try { android.webkit.WebResourceResponse("font/ttf", null, 200, "OK", mapOf("Access-Control-Allow-Origin" to "*"), web.resources.openRawResource(id)) } catch (_: Throwable) { null }
+    }
+
+    /**
+     * Flächen der Bildfläche, die das Cockpit überdeckt (Leisten oben, Flugwerte links), in Pixeln der Ansicht:
+     * die Seite stellt die Drohne in die Mitte dessen, was frei bleibt, und hält ihre Beschriftung dort.
+     */
+    fun raender(links: Int, oben: Int, rechts: Int, unten: Int) {
+        val d = web.resources.displayMetrics.density
+        val neu = listOf(links, oben, rechts, unten).joinToString(",") { Math.round(it / d).toString() }
+        if (neu == raender) return
+        raender = neu
+        if (!google) js("setInsets($raender)")
     }
 
     /** Seite (neu) laden – Google-Seite über https://appassets… (Maps JavaScript API braucht eine echte Herkunft), Klötzchen aus file://. */
@@ -88,24 +114,28 @@ class View3D(private val web: WebView) {
         if (ready) js("setScene($sceneStr)") else pendingScene = sceneStr
     }
 
-    /** Gelände aus dem Höhenmodell als 10-m-Raster relativ zum Startboden (wie tools/plan_artifact.py); Gebäude stehen in der Ansicht auf 0, das Raster zeigt das Gefälle. */
+    /**
+     * Höhenmodell für die Ansicht, relativ zum Startpunkt: z = Boden, c = was darauf steht (Baum, Dach) in Metern.
+     * Fein genug, dass Bäume und Dächer als Körper zu sehen sind (2,5 m; das Modell der Mühle hat 2,2 m), 110 m Rand
+     * um den Plan. Große Pläne bekommen ein gröberes Raster statt gar keins (höchstens etwa 60 000 Zellen).
+     */
     private fun terrainJson(pts: List<LatLon>, o: LatLon): JSONObject? {
         if (!com.felixos.drohne.plan.Terrain.loaded) return null
         val g0 = (com.felixos.drohne.plan.Terrain.groundM(o) ?: return null) + MissionController.startAboveGroundM
         val xs = pts.map { local(it).first }; val ys = pts.map { local(it).second }
-        val m = 300.0; val step = 10.0
+        val m = 110.0
+        val step = maxOf(2.5, Math.ceil(Math.sqrt((xs.max() - xs.min() + 2 * m) * (ys.max() - ys.min() + 2 * m) / 60_000.0) * 2) / 2)
         val x0 = Math.floor((xs.min() - m) / step) * step; val y0 = Math.floor((ys.min() - m) / step) * step
         val nx = ((xs.max() + m - x0) / step).toInt() + 2; val ny = ((ys.max() + m - y0) / step).toInt() + 2
-        if (nx * ny > 40_000) return null
         val cosLat = cos(Math.toRadians(o.lat))
         val z = JSONArray(); val c = JSONArray()
         for (j in 0 until ny) for (i in 0 until nx) {
             val p = LatLon(o.lat + (y0 + j * step) / 110_540.0, o.lon + (x0 + i * step) / (111_320.0 * cosLat))
             val v = com.felixos.drohne.plan.Terrain.groundM(p)
             z.put(if (v == null) 0.0 else Math.round((v - g0) * 10) / 10.0)
-            // Baumkronen/Hohes je Zelle: Oberfläche − Boden (≥ 3 m); Gebäude stehen als Klötze ohnehin darüber
+            // Was auf dem Boden steht: Oberfläche − Boden, ab 1 m (darunter ist es Gras und Messrauschen)
             val s = com.felixos.drohne.plan.Terrain.surfaceM(p); val ch = if (v != null && s != null) s - v else 0.0
-            c.put(if (ch >= 3.0) Math.round(ch).toInt() else 0)
+            c.put(if (ch >= 1.0) Math.round(ch * 10) / 10.0 else 0)
         }
         return JSONObject().put("x0", x0).put("y0", y0).put("dx", step).put("dy", step).put("nx", nx).put("ny", ny).put("z", z).put("c", c)
     }
@@ -152,6 +182,6 @@ class View3D(private val web: WebView) {
 
     fun follow(on: Boolean) = js("setFollow($on)")
 
-    /** Kamera weiterschalten: Drohnensicht → Verfolger → Übersicht; [onMode] bekommt "fpv", "chase" oder "orbit". */
-    fun cycleCamera(onMode: (String) -> Unit) { if (ready) web.evaluateJavascript("cycleCamera()") { r -> onMode(r?.trim('"') ?: "fpv") } }
+    /** Der eine Umschalter der Ansicht: NEAR (nah an der Drohne) ↔ WIDE (ganzer Plan); [onMode] bekommt "near" oder "wide". */
+    fun cycleCamera(onMode: (String) -> Unit) { if (ready) web.evaluateJavascript("cycleCamera()") { r -> onMode(r?.trim('"') ?: "near") } }
 }
