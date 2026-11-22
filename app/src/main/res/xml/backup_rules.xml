@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 6–11: nur die Einstellungen „drohne“ sichern (Token, gemerkte Startplätze, Schalter). Nichts aus fluege/, keine Caches,
+     keine Dateien des DJI SDK. Nur wenn das Backup auf dem Gerät verschlüsselt wird (Android 9+ mit Bildschirmsperre). -->
+<full-backup-content>
+    <include domain="sharedpref" path="drohne.xml" requireFlags="clientSideEncryption" />
+</full-backup-content>

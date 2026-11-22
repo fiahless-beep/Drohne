@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+: nur die Einstellungen „drohne“ (Token, gemerkte Startplätze, Schalter); sonst nichts.
+     Cloud-Backup nur verschlüsselt (Gerät mit Bildschirmsperre); Umzug von Gerät zu Gerät ebenfalls nur diese Datei. -->
+<data-extraction-rules>
+    <cloud-backup disableIfNoEncryptionCapabilities="true">
+        <include domain="sharedpref" path="drohne.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="sharedpref" path="drohne.xml" />
+    </device-transfer>
+</data-extraction-rules>

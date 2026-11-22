@@ -110,6 +110,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         bindViews()
         applyInsets()
+        window.decorView.post { handleTokenLink(intent) }
         MissionController.onStateText = missionListener
 
         ActivityCompat.requestPermissions(this, arrayOf(
@@ -218,6 +219,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() { super.onResume(); mapPanel.onResume() }
+    override fun onNewIntent(intent: android.content.Intent) { super.onNewIntent(intent); setIntent(intent); handleTokenLink(intent) }
+
+    /**
+     * Token-Link (QR-Code, felixdrohne://token?v=…): erst Rückfrage mit den letzten 4 Zeichen, dann derselbe Speicherweg wie
+     * Settings → Data → Enter GitHub token. Der Token kommt nie ins Protokoll und nicht in den Live-Draht.
+     */
+    private fun handleTokenLink(i: android.content.Intent?) {
+        if (i == null || i.action != android.content.Intent.ACTION_VIEW) return
+        val link = i.dataString
+        i.data = null   // einmal behandeln: kein zweites Fragen, der Token bleibt nicht im Intent liegen
+        if (i.flags and android.content.Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0) return
+        when (val r = TokenLink.parse(link)) {
+            is TokenLink.Result.NotALink -> return
+            is TokenLink.Result.Invalid -> { DroneManager.log("Token link rejected"); info("Token link not accepted", r.reason + "\n\nNothing was saved.") }
+            is TokenLink.Result.Token -> AlertDialog.Builder(this).setTitle("GitHub token")
+                .setMessage("Save GitHub token ending …${r.ending}?" + if (FlightReport.token(this) != null) "\n\nIt replaces the token stored now." else "")
+                .setPositiveButton("Save") { _, _ -> FlightReport.saveToken(this, r.value); DroneManager.log("Token gespeichert (per Link)") }
+                .setNegativeButton("Cancel") { _, _ -> DroneManager.log("Token link: not saved") }
+                .setCancelable(false).show()
+        }
+    }
     override fun onPause() { mapPanel.onPause(); super.onPause() }
 
     override fun onStop() {

@@ -21,13 +21,15 @@
 
     <application
         android:name=".DrohneApp"
-        android:allowBackup="false"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:extractNativeLibs="true"
         android:icon="@android:drawable/ic_menu_camera"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.Drohne"
-        tools:replace="android:allowBackup,android:label,android:icon,android:theme">
+        tools:replace="android:allowBackup,android:fullBackupContent,android:dataExtractionRules,android:label,android:icon,android:theme">
 
         <meta-data android:name="com.dji.sdk.API_KEY" android:value="${API_KEY}" />
 
@@ -40,6 +42,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- GitHub-Token per QR-Code: felixdrohne://token?v=… (Rückfrage in der App, siehe TokenLink). -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="felixdrohne" android:host="token" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />

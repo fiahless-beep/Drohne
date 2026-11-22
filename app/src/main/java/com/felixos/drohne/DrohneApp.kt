@@ -15,6 +15,7 @@ class DrohneApp : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+        noteRestoredSettings()
         nativeDiagnose()
         if (CrashLog.hasReport(this)) {
             // Nach einem Absturz SDK diesmal nicht starten, damit der Bericht in Ruhe kopiert werden kann.
@@ -27,6 +28,23 @@ class DrohneApp : Application() {
             CrashLog.write(this, "Fehler beim Start des DJI SDK", t)
             DroneManager.log("SDK-Start fehlgeschlagen: ${t.javaClass.simpleName}: ${t.message}")
         }
+    }
+
+    /**
+     * Einstellungen überleben eine Neuinstallation (Android-Backup, nur die Datei „drohne“, siehe res/xml). Beim ersten Start einer
+     * frischen Installation melden, wenn sie schon da sind. Nur Anzahl und ob ein Token dabei ist, nie Werte.
+     */
+    private fun noteRestoredSettings() {
+        try {
+            val marker = java.io.File(noBackupFilesDir, "installiert")
+            val first = !marker.exists()
+            if (!first) return
+            marker.writeText("1")
+            val pi = packageManager.getPackageInfo(packageName, 0)
+            val n = getSharedPreferences("drohne", Context.MODE_PRIVATE).all.size
+            if (TokenLink.restoredFromBackup(first, pi.firstInstallTime, pi.lastUpdateTime, n))
+                DroneManager.log("Settings restored from the phone's backup: $n entries, GitHub token ${if (FlightReport.token(this) != null) "present" else "missing"}")
+        } catch (_: Throwable) {}
     }
 
     /**
