@@ -71,6 +71,19 @@ data class Mission(
 }
 
 object Missions {
+    /**
+     * Höchstzahl eigener Wegpunkte eines Plans. Die App setzt bis zu 4 Punkte davor und dahinter (senkrechter Steigflug über dem Start,
+     * Anflug und Rückweg auf Transithöhe); zusammen dürfen es höchstens 200 sein (Grenze im Konstruktor von [Mission]).
+     */
+    const val MAX_PLAN_WAYPOINTS = 196
+
+    /**
+     * null = Plan darf vorbereitet werden, sonst die Meldung für Protokoll und Anzeige. Früher wurde ein längerer Plan still OHNE
+     * Steigflug und Transit vorbereitet (Muster des Absturzes vom 7.11.); jetzt wird er abgelehnt.
+     */
+    fun waypointLimitProblem(count: Int): String? =
+        if (count > MAX_PLAN_WAYPOINTS) "Plan has $count waypoints, max $MAX_PLAN_WAYPOINTS. Not loaded." else null
+
     /** Blickrichtung von [from] zum Ziel [to] in Grad. */
     fun bearingTo(from: LatLon, to: LatLon): Double = Geo.bearing(from, to)
 

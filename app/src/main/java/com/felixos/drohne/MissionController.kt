@@ -216,9 +216,21 @@ object MissionController {
     /** Letzter Abschnitt ist der senkrechte Abstieg vor den Balkon (Landeanflug, von Hand fortgesetzt) – nicht gegen Fassaden prüfen. */
     private var landingTail = false
 
+    /** Why the last prepare() refused the plan outright (too many waypoints); null = not refused. Shown to the user. */
+    var rejectReason: String? = null; private set
+
     fun prepare(mIn0: Mission): Boolean {
         uploaded = false
         landingTail = false
+        // Zu lange Pläne hart ablehnen, bevor irgendetwas geschrieben wird: kein KMZ, kein Plan in der App, also weder Upload noch Start.
+        // (Ein Aufrufer mit Snapshot stellt danach den vorherigen, geprüften Plan wieder her.)
+        rejectReason = com.felixos.drohne.plan.Missions.waypointLimitProblem(mIn0.waypoints.size)
+        rejectReason?.let { why ->
+            currentKmz = null; currentMission = null; conflicts = emptyList(); terrainConflicts = emptyList(); returnProblems = emptyList(); preCount = 0
+            DroneManager.log("PLAN REJECTED: $why")
+            show(why)
+            return false
+        }
         val h = DroneManager.state.home
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
         preparedHome = home
@@ -245,7 +257,7 @@ object MissionController {
         // Deshalb: erster Punkt = senkrecht über dem Startpunkt auf Transithöhe (unabhängig von takeOffSecurityHeight),
         // dann über den ersten Missionspunkt, dort absteigen; am Ende wieder hoch und über den Startpunkt (Heimflug = nur Abstieg).
         val transit = maxOf(TRANSIT_HEIGHT_M, m0.transitHeightM ?: m0.waypoints.maxOf { it.heightM })  // Plan darf eine eigene Transithöhe setzen (Hügelziele: nicht auf die höchste Planhöhe steigen)
-        val m1 = if (m0.waypoints.size <= 196) {
+        val m1 = run {   // immer: Pläne über Missions.MAX_PLAN_WAYPOINTS sind oben schon abgelehnt
             val first = m0.waypoints.first(); val last = m0.waypoints.last()
             // Übereinanderliegende Punkte 1,5 m versetzen (DJI mag keine Punkte ohne waagerechten Abstand).
             fun beside(p: LatLon, towards: LatLon) = Geo.offset(p, 1.5, Geo.bearing(p, towards))
@@ -281,7 +293,7 @@ object MissionController {
             val open = m0.waypoints.lastOrNull { it.video != 0 }?.video == 1
             val post2 = if (open && post.isNotEmpty()) listOf(post[0].copy(video = 2)) + post.drop(1) else post
             m0.copy(waypoints = pre + m0.waypoints + post2, takeOffSecurityHeightM = transit)
-        } else m0
+        }
         // Tempo je Abschnitt
         val wps = m1.waypoints.mapIndexed { i, w -> w.copy(speedMs = speedFor(w, m1.waypoints.getOrNull(i + 1), m1)) }
         val m = m1.copy(waypoints = wps, speedMs = minOf(m1.speedMs, TRANSIT_SPEED_MAX))

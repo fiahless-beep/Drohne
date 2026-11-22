@@ -3,7 +3,7 @@ package com.felixos.drohne.plan
 import kotlin.math.ceil
 
 /**
- * Akku-Budget (Felix 6.11.): sicher mit mindestens 20 % zurück.
+ * Akku-Budget (Felix 6.11.): sicher mit mindestens 20 % zurück; bestätigt von Felix am 22.11.2026.
  * Mini 4 Pro: DJI nennt 34 min, realistisch rechnen wir mit 25 min für 100 % (Wind, Kälte, Steigen).
  */
 object Budget {

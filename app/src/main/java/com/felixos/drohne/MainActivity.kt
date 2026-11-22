@@ -551,7 +551,7 @@ class MainActivity : AppCompatActivity() {
         setBusy("Checking $what …")
         val ok = try { MissionController.prepare(m) } catch (t: Throwable) { DroneManager.log("Check failed: ${t.message}"); false }
         mission = m
-        val problems = if (!ok) listOf("DJI file check failed") else preflightProblems(s).filterNot { it.startsWith("No plan on the drone") }
+        val problems = if (!ok) listOf(MissionController.rejectReason ?: "DJI file check failed") else preflightProblems(s).filterNot { it.startsWith("No plan on the drone") }
         if (problems.isNotEmpty()) {
             mission = prev; MissionController.restore(snap); setBusy(null)
             AlertDialog.Builder(this).setTitle("Not possible: $what").setMessage(problems.joinToString("\n\n") + "\n\nNothing was changed. The drone keeps hovering.").setPositiveButton("OK", null).show()
@@ -1432,6 +1432,14 @@ class MainActivity : AppCompatActivity() {
         askedStartPlace = false
         setPlanCard("Plan “${m.name}” – checking …", text)
         if (!MissionController.prepare(m)) {
+            val why = MissionController.rejectReason
+            if (why != null) {
+                // Abgelehnt, nichts vorbereitet: auch den vorher geladenen Plan vergessen, damit „Upload again“/Start nichts Altes anbietet.
+                mission = null; missionText = ""
+                setPlanCard("Plan “${m.name}” – not loaded", "$why\n\nThin the plan out or split it, then get it again.")
+                renderChecklist(preflightProblems(DroneManager.state), hasPlan = false)
+                return
+            }
             setPlanCard("Plan “${m.name}” – DJI check failed", text + "\n\nNo variant without errors. Send the log to Claude.")
             renderChecklist(preflightProblems(DroneManager.state), hasPlan = false)
             return
