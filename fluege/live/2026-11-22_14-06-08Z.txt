@@ -568,3 +568,25 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:25:59  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
 06:25:59  Fotos geladen: 0
 06:26:01  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-09_muehle-scan-v5
+06:26:40  S utc=14:26:40 verbunden=true fliegt=false pos=38.901391,-9.388101 h=0.0 start=38.901392,-9.388106 akku=20 sat=24 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:26:56  New plan in the cloud: muehle-scan-rest-v2. Tap the plan name → Get plan to load it.
+06:27:00  Lade Flugplan aus der Cloud …
+06:27:03  Wetter am Start (Vorhersage, 10 m Höhe, grob): Forecast wind 3 m/s from N (356°), gusts up to 6 m/s in the next 2 h
+06:27:03  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+06:27:03  Transithöhe 45 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+06:27:03  Tempo: max 3.0 m/s, 20 Abschnitte nahe Gebäuden gedrosselt (min 3,0 m/s)
+06:27:03  Return guard: way home clear from every point at 45 m
+06:27:03  Höhenmodell: Gelände am Ziel +2 m gegenüber dem Start
+06:27:03  Oberflächen-Wächter: Strecke frei
+06:27:03  KMZ erstellt: 20 Punkte, 187 m, ca. 2 min
+06:27:03  DJI-Prüfung: in Ordnung
+06:27:03  Plan übernommen, lade auf die Drohne …
+06:27:03  Lade Mission auf die Drohne …
+06:27:03  Mission: UPLOADING
+06:27:03  Upload 5 %
+06:27:04  Upload 25 %
+06:27:04  Upload 57 %
+06:27:04  Upload 77 %
+06:27:04  Upload 100 %
+06:27:05  Mission ist auf der Drohne
+06:27:05  Mission: READY
