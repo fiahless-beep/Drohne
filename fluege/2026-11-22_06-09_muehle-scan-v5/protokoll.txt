@@ -543,3 +543,22 @@
 06:19:35  Wegpunkt 72
 06:19:36  T 38.901496 -9.388666 h=45.0 akku=46 fliegt=true mission=EXECUTING wp=71 wind=0 hind=2506@58°/n360/o60000/u60000
 06:19:37  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:38  T 38.901500 -9.388666 h=45.0 akku=46 fliegt=true mission=EXECUTING wp=71 wind=0 hind=1286@108°/n360/o60000/u60000
+06:19:40  T 38.901525 -9.388666 h=45.0 akku=46 fliegt=true mission=EXECUTING wp=71 wind=0 hind=2917@93°/n360/o60000/u60000
+06:19:42  T 38.901574 -9.388667 h=45.0 akku=46 fliegt=true mission=EXECUTING wp=71 wind=0 hind=1617@88°/n360/o60000/u60000
+06:19:42  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:44  T 38.901586 -9.388667 h=45.0 akku=46 fliegt=true mission=EXECUTING wp=71 wind=0 hind=2509@58°/n360/o60000/u60000
+06:19:44  Wegpunkt 73
+06:19:46  T 38.901590 -9.388666 h=45.0 akku=46 fliegt=true mission=EXECUTING wp=72 wind=0 hind=1874@103°/n360/o60000/u60000
+06:19:47  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:48  T 38.901610 -9.388666 h=44.9 akku=46 fliegt=true mission=EXECUTING wp=72 wind=0 hind=3001@113°/n360/o60000/u60000
+06:19:50  T 38.901663 -9.388666 h=44.9 akku=46 fliegt=true mission=EXECUTING wp=72 wind=0 hind=2080@73°/n360/o60000/u60000
+06:19:51  Wegpunkt 74
+06:19:52  T 38.901676 -9.388667 h=45.0 akku=45 fliegt=true mission=EXECUTING wp=73 wind=0 hind=60000@0°/n360/o60000/u60000
+06:19:52  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:54  T 38.901680 -9.388667 h=44.9 akku=45 fliegt=true mission=EXECUTING wp=73 wind=0 hind=2412@98°/n360/o60000/u60000
+06:19:56  T 38.901698 -9.388667 h=45.0 akku=45 fliegt=true mission=EXECUTING wp=73 wind=0 hind=2634@118°/n360/o60000/u60000
+06:19:57  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:58  T 38.901753 -9.388666 h=45.0 akku=45 fliegt=true mission=EXECUTING wp=73 wind=0 hind=2328@73°/n360/o60000/u60000
+06:19:59  Wegpunkt 75
+06:20:00  T 38.901766 -9.388667 h=45.0 akku=45 fliegt=true mission=EXECUTING wp=74 wind=0 hind=2481@73°/n360/o60000/u60000
