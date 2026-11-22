@@ -27,3 +27,15 @@ Sitzung 2026-11-22_13-53-47 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 05:54:02  Telemetrie läuft
 05:55:47  Token gespeichert (per Link)
 05:55:57  Live link: Claude reads along (fluege/live/2026-11-22_13-53-47Z.txt)
+06:02:36  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported by current aircraft
+06:02:36  Hinderniserkennung einschalten fehlgeschlagen: Not supported by current aircraft – in DJI Fly unter Safety → Obstacle Avoidance
+06:02:36  Lade Flugplan aus der Cloud …
+06:02:38  Wetter am Start (Vorhersage, 10 m Höhe, grob): Forecast wind 3 m/s from N (353°), gusts up to 6 m/s in the next 2 h
+06:02:38  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+06:02:38  ACHTUNG: Startpunkt unbekannt, Transit nur über dem Ziel. Vor dem Start Plan erneut übernehmen!
+06:02:38  Tempo: max 5.0 m/s
+06:02:38  KMZ erstellt: 126 Punkte, 1381 m, ca. 11 min
+06:02:38  DJI-Prüfung: in Ordnung
+06:02:38  Plan übernommen, lade auf die Drohne …
+06:02:38  Lade Mission auf die Drohne …
+06:02:38  S utc=14:02:38 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=aus hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=? windms=? windrichtung=?
