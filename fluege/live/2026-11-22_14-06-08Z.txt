@@ -21,3 +21,42 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:06:09  Registrierung erfolgreich (App-Key gültig)
 06:06:09  Telemetrie läuft
 06:06:09  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
+06:06:10  Registrierung erfolgreich (App-Key gültig)
+06:06:10  Telemetrie läuft
+06:06:11  Live link: Claude reads along (fluege/live/2026-11-22_14-06-08Z.txt)
+06:06:11  Drohne/Controller verbunden (Produkt 0)
+06:06:12  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Replace SD card
+06:06:12  DJI-Status: NORMAL – Ready to Go (GPS)
+06:06:13  Seriennummer Fluggerät: 1581F6Z9A24AAML30L86
+06:06:13  Wächter: Livebild wird mitgelesen
+06:06:13  Live-Bild verbunden
+06:06:14  DJI-Höhenlimit gelesen: 120 m
+06:06:14  DJI-Höhenlimit gelesen: 120 m
+06:06:14  DJI-Höhenlimit gelesen: 120 m
+06:06:14  [3 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=92
+06:06:15  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported.
+06:06:15  Lade Flugplan aus der Cloud …
+06:06:15  Hinderniserkennung: aktiv (Typ von der Drohne bestätigt, Hauptschalter nicht abfragbar)
+06:06:15  Hinderniserkennung wieder AN (Bremsen) – Plan holen
+06:06:16  S utc=14:06:16 verbunden=true fliegt=false pos=38.901392,-9.388109 h=0.0 start=38.901394,-9.388113 akku=92 sat=23 sensoren=aktiv hindernis=- mission=- wp=-1 plan=- wind=0 windms=0.0 windrichtung=WINDLESS
+06:06:16  Wetter am Start (Vorhersage, 10 m Höhe, grob): Forecast wind 3 m/s from N (353°), gusts up to 6 m/s in the next 2 h
+06:06:17  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+06:06:17  Transithöhe 50 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+06:06:17  Tempo: max 5.0 m/s
+06:06:17  Return guard: way home clear from every point at 50 m
+06:06:17  Höhenmodell: Gelände am Ziel +5 m gegenüber dem Start
+06:06:17  Oberflächen-Wächter: Strecke frei
+06:06:17  KMZ erstellt: 128 Punkte, 1431 m, ca. 11 min
+06:06:17  DJI-Prüfung: in Ordnung
+06:06:17  Plan übernommen, lade auf die Drohne …
+06:06:17  Lade Mission auf die Drohne …
+06:06:17  Upload 100 %
+06:06:18  Upload 5 %
+06:06:18  Upload 27 %
+06:06:19  Upload 52 %
+06:06:19  Upload 76 %
+06:06:20  Upload 100 %
+06:06:20  Mission ist auf der Drohne
+06:06:21  S utc=14:06:21 verbunden=true fliegt=false pos=38.901391,-9.388109 h=0.0 start=38.901394,-9.388113 akku=92 sat=23 sensoren=aktiv hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:06:21  [10 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=92
+06:06:31  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
