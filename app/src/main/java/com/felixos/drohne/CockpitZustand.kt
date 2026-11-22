@@ -51,6 +51,8 @@ data class CockpitZustand(
     /** Im Flug ist die Startprüfung erledigt und wird nicht gezeigt. */
     val startpruefungZeigen: Boolean = true,
     val folgenAktiv: Boolean = false,
+    /** Abheben per Knopf wird angeboten: am Boden, verbunden, kein Plan läuft oder startet gerade. */
+    val abhebenMoeglich: Boolean = false,
     val waechter: Waechter = Waechter(),
     val bahn: Bahn? = null,
 ) {

@@ -12,6 +12,7 @@ import com.felixos.drohne.plan.Missions
 import com.felixos.drohne.plan.PlanJson
 import com.felixos.drohne.plan.Preflight
 import com.felixos.drohne.plan.RcLost
+import com.felixos.drohne.plan.Takeoff
 import com.felixos.drohne.plan.Terrain
 import com.felixos.drohne.plan.Waypoint
 import com.felixos.drohne.plan.Weather
@@ -117,6 +118,8 @@ object FlugSitzung : Aktionen {
     }
 
     private fun setBusy(text: String?) { busy = text; if (text != null) DroneManager.log(text); melden() }
+    /** Die Oberfläche arbeitet an etwas (Copilot schaut aufs Bild): solange sind die Starttüren zu. null = fertig. */
+    fun beschaeftigt(text: String?) = setBusy(text)
 
     /** Plan-Feld: Name, darunter eine Zeile Zustand; der lange Text bleibt, wenn [text] leer ist. */
     private fun setPlanCard(name: String, text: String) {
@@ -176,6 +179,20 @@ object FlugSitzung : Aktionen {
             return StartErgebnis.Verweigert(problems)
         }
         MissionController.start()
+        return StartErgebnis.Gestartet
+    }
+
+    /** Am Boden, verbunden, nichts läuft und nichts wird gerade gestartet: nur dann gibt es das Abheben per Knopf. */
+    private fun abhebenMoeglich(s: DroneState): Boolean =
+        s.connected && !s.flying && !s.motorsOn && !MissionController.executing && !Simulator.active && !uploading && !loading && busy == null && !FollowController.active
+
+    /** Abheben ohne Plan (Knopf 1,5 s gehalten). Verweigert mit leerer Liste = gerade nicht angeboten, nichts tun. */
+    override fun abheben(): StartErgebnis {
+        val s = DroneManager.state
+        if (!abhebenMoeglich(s)) return StartErgebnis.Verweigert(emptyList())
+        Takeoff.problem(s.connected, s.flying, s.motorsOn, s.satellites, s.home?.latitude?.let { it != 0.0 } == true, s.batteryPercent, s.windWarning)
+            ?.let { return StartErgebnis.Verweigert(listOf(it)) }
+        DroneManager.takeOff()
         return StartErgebnis.Gestartet
     }
 
@@ -754,6 +771,7 @@ object FlugSitzung : Aktionen {
             startProbleme = if (fliegtPlan) emptyList() else Preflight.problems(lage(s)),
             startpruefungZeigen = !fliegtPlan,
             folgenAktiv = FollowController.active,
+            abhebenMoeglich = abhebenMoeglich(s),
             waechter = CockpitZustand.Waechter(FlightGuard.enabled, FlightGuard.mayPause, ObstacleGuard.enabled, ObstacleGuard.armed, MissionController.duskMode),
             bahn = bahn,
         )

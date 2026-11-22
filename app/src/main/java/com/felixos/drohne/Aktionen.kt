@@ -15,6 +15,8 @@ interface Aktionen {
     fun startProbleme(): List<String>
     /** Start vom Boden. Rechnet die Startprüfung selbst und verweigert, solange ein Problem besteht. */
     fun starten(): StartErgebnis
+    /** Abheben ohne Plan: Motoren an, gut einen Meter steigen, schweben. Prüft plan.Takeoff selbst. */
+    fun abheben(): StartErgebnis
     fun pausieren()
     /** Pausierten Plan fortsetzen; wartet ein Hauptplan hinter einem Umweg, dessen Rest ab hier. */
     fun fortsetzen()
