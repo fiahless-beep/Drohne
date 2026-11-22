@@ -1,0 +1,2 @@
+b_140905.jpg utc=14:09:05 pos=38.901393,-9.388105 h=2.6 kurs=136 neigung=-90 wp=0 mission=READY plan=muehle-scan-v5
+b_140909.jpg utc=14:09:09 pos=38.901392,-9.388106 h=1.7 kurs=136 neigung=0 wp=0 mission=READY plan=muehle-scan-v5
