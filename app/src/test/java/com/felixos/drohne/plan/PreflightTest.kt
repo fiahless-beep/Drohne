@@ -44,11 +44,19 @@ class PreflightTest {
 
     @Test fun planNotUploaded() = assertTrue(only(ok().copy(uploaded = false)).startsWith("No plan on the drone"))
 
-    @Test fun batteryBelowNeedIncludesReserve() {
+    /** Felix 22.11.2026: Akku sperrt nur noch an der Umkehr-Grenze, nicht mehr beim Bedarf des ganzen Plans. */
+    @Test fun batteryBlocksOnlyAtTheReturnLimit() {
         val need = Budget.estimate(plan(), home).neededPercent
-        assertTrue(need > Budget.RESERVE_PERCENT)
-        assertEquals(emptyList<String>(), Preflight.problems(ok().copy(batteryPercent = need)))
-        assertEquals("Battery ${need - 1} %, the plan needs about $need % (incl. ${Budget.RESERVE_PERCENT} % reserve)", only(ok().copy(batteryPercent = need - 1)))
+        assertTrue(need > Budget.RESERVE_PERCENT + 4)
+        assertEquals(emptyList<String>(), Preflight.problems(ok().copy(batteryPercent = need - 1)))
+        assertEquals(emptyList<String>(), Preflight.problems(ok().copy(batteryPercent = Budget.RESERVE_PERCENT + 4)))
+        assertTrue(only(ok().copy(batteryPercent = Budget.RESERVE_PERCENT + 3)).startsWith("Battery ${Budget.RESERVE_PERCENT + 3} %: at the return limit"))
+    }
+
+    @Test fun fullCameraStorageBlocks() {
+        assertTrue(only(ok().copy(cameraFreeMb = 3)).startsWith("Camera storage: 3 MB free"))
+        assertEquals(emptyList<String>(), Preflight.problems(ok().copy(cameraFreeMb = 100_000)))
+        assertEquals(emptyList<String>(), Preflight.problems(ok().copy(cameraFreeMb = null)))
     }
 
     @Test fun unknownBatteryCountsAsEmpty() = assertTrue(only(ok().copy(batteryPercent = null)).startsWith("Battery 0 %"))
@@ -165,7 +173,7 @@ class PreflightTest {
 
     @Test fun fullChecklistNamesEveryRuleAndKeepsUnknownProblems() {
         val rows = Preflight.checklist(listOf("Drone not connected", "Something new"), hasPlan = false, full = true)
-        assertEquals(17, rows.size)
+        assertEquals(18, rows.size)
         assertEquals(Preflight.Row(false, "Drone not connected", "Drone not connected"), rows[1])
         assertEquals(Preflight.Row(true, "SDK registered"), rows[0])
         assertEquals("Ohne Plan sind planabhängige Regeln offen", null, rows.first { it.text.startsWith("Battery") }.ok)
@@ -176,6 +184,6 @@ class PreflightTest {
     @Test fun everyRuleTextHasItsChecklistRow() {
         val bad = ok().copy(registered = false, connected = false, uploaded = false, batteryPercent = 1, satellites = 3, home = null)
         val rows = Preflight.checklist(Preflight.problems(bad), hasPlan = true, full = true)
-        assertEquals(16, rows.size)
+        assertEquals(17, rows.size)
     }
 }

@@ -1,0 +1,60 @@
+Sitzung 2026-11-22_13-53-47 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Handy-Zeitzone America/Los_Angeles
+05:53:46  Gerät: arm64-v8a, armeabi-v7a, armeabi, Seitengröße 4096, 64 Bibliotheken in arm64
+05:53:46  libc++_shared geladen
+05:53:46  libCORPProtobuf geladen
+05:53:46  libcorpbase geladen
+05:53:46  libCORPCSDKCommon geladen
+05:53:46  libFlightRecordEngine geladen
+05:53:46  libcorpsdk_jni geladen
+05:53:46  SDK wird gestartet …
+05:53:47  S utc=13:53:47 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=? hindernis=- mission=- wp=-1 plan=- wind=? windms=? windrichtung=?
+05:53:47  ⚠ NO GitHub token: nothing is sent to Claude (logs and stills stay on the phone). Settings → Data → Enter GitHub token.
+05:53:47  Gebäudedatenbank geladen: 57938 Gebäude
+05:53:48  Höhenmodell geladen: hoehen_muehle.bin, 74513 Zellen
+05:53:49  Netz verfügbar, Registrierung erneut
+05:53:49  Netz verfügbar, Registrierung erneut
+05:53:50  Höhenmodell geladen: hoehen.bin, 8400000 Zellen
+05:53:50  SDK bereit, registriere App bei DJI …
+05:53:53  Registrierung erfolgreich (App-Key gültig)
+05:53:53  Hinderniserkennung: aus (BRAKE, Hauptschalter false)
+05:53:53  Telemetrie läuft
+05:53:53  DJI-Status: UNKNOWN – Unknown error
+05:53:53  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
+05:53:54  Registrierung erfolgreich (App-Key gültig)
+05:53:54  Telemetrie läuft
+05:53:57  S utc=13:53:57 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=aus hindernis=frei/n0/o0/u0 mission=- wp=-1 plan=- wind=? windms=? windrichtung=?
+05:54:02  Registrierung erfolgreich (App-Key gültig)
+05:54:02  Telemetrie läuft
+05:55:47  Token gespeichert (per Link)
+05:55:57  Live link: Claude reads along (fluege/live/2026-11-22_13-53-47Z.txt)
+06:02:36  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported by current aircraft
+06:02:36  Hinderniserkennung einschalten fehlgeschlagen: Not supported by current aircraft – in DJI Fly unter Safety → Obstacle Avoidance
+06:02:36  Lade Flugplan aus der Cloud …
+06:02:38  Wetter am Start (Vorhersage, 10 m Höhe, grob): Forecast wind 3 m/s from N (353°), gusts up to 6 m/s in the next 2 h
+06:02:38  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+06:02:38  ACHTUNG: Startpunkt unbekannt, Transit nur über dem Ziel. Vor dem Start Plan erneut übernehmen!
+06:02:38  Tempo: max 5.0 m/s
+06:02:38  KMZ erstellt: 126 Punkte, 1381 m, ca. 11 min
+06:02:38  DJI-Prüfung: in Ordnung
+06:02:38  Plan übernommen, lade auf die Drohne …
+06:02:38  Lade Mission auf die Drohne …
+06:02:38  S utc=14:02:38 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=aus hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=? windms=? windrichtung=?
+06:03:53  Drohne/Controller verbunden (Produkt 0)
+06:03:54  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+06:03:55  DJI-Status: NORMAL – Ready to Go (GPS)
+06:03:55  Hinderniserkennung: aktiv (BRAKE, Hauptschalter false, nicht unterstützt)
+06:03:55  Seriennummer Fluggerät: 1581F6Z9A24AAML30L86
+06:03:55  Wächter: Livebild wird mitgelesen
+06:03:55  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Replace SD card
+06:03:56  Live-Bild verbunden
+06:03:56  [3 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=94
+06:03:56  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+06:03:56  DJI-Höhenlimit gelesen: 120 m
+06:03:56  DJI-Höhenlimit gelesen: 120 m
+06:03:56  DJI-Höhenlimit gelesen: 120 m
+06:03:56  S utc=14:03:56 verbunden=true fliegt=false pos=38.901394,-9.388113 h=0.0 start=38.901394,-9.388113 akku=94 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=frei/n0/o0/u0 mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:04:03  [10 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=94
+06:04:11  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:04:28  S utc=14:04:28 verbunden=true fliegt=false pos=38.901394,-9.388113 h=0.0 start=38.901394,-9.388113 akku=94 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:05:00  S utc=14:05:00 verbunden=true fliegt=false pos=38.901394,-9.388113 h=0.0 start=38.901394,-9.388113 akku=93 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:05:32  S utc=14:05:32 verbunden=true fliegt=false pos=38.901394,-9.388113 h=0.0 start=38.901394,-9.388113 akku=93 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS

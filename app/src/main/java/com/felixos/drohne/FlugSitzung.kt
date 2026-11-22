@@ -167,6 +167,7 @@ object FlugSitzung : Aktionen {
             buildingConflicts = MissionController.conflicts.map { it.toString() },
             surfaceConflicts = MissionController.terrainConflicts.map { it.toString() },
             returnProblems = MissionController.returnProblems,
+            cameraFreeMb = if (s.connected) { FlightReport.refreshStorage(); FlightReport.activeFreeMb } else null,
             rthHeightM = MissionController.rthHeightM, transitHeightM = MissionController.TRANSIT_HEIGHT_M,
             terrainCovered = MissionController.terrainCovered, preparedHome = MissionController.preparedHome,
             nowMs = System.currentTimeMillis())
@@ -438,6 +439,7 @@ object FlugSitzung : Aktionen {
         if (home?.latitude != null && home.latitude != 0.0) {
             val e = Budget.estimate(m, LatLon(home.latitude, home.longitude))
             appendLine(String.format(Locale.US, "Flight time about %.1f min, battery needed about %d %%", e.totalMin, e.neededPercent))
+            DroneManager.state.batteryPercent?.let { have -> if (have < e.neededPercent) appendLine("Battery $have %: not enough for the whole plan. The drone will turn back early at the ${Budget.RESERVE_PERCENT} % reserve; the rest is flown later as a rest plan.") }
             appendLine("Farthest point ${e.maxDistanceFromHomeM.toInt()} m from the start")
         } else {
             appendLine(String.format(Locale.US, "Plan about %.1f min (without approach and return)", m.durationSec / 60))

@@ -1,0 +1,1135 @@
+Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Handy-Zeitzone America/Los_Angeles
+06:06:07  Gerät: arm64-v8a, armeabi-v7a, armeabi, Seitengröße 4096, 64 Bibliotheken in arm64
+06:06:07  libc++_shared geladen
+06:06:07  libCORPProtobuf geladen
+06:06:07  libcorpbase geladen
+06:06:07  libCORPCSDKCommon geladen
+06:06:07  libFlightRecordEngine geladen
+06:06:07  libcorpsdk_jni geladen
+06:06:07  SDK wird gestartet …
+06:06:08  S utc=14:06:08 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=? hindernis=- mission=- wp=-1 plan=- wind=? windms=? windrichtung=?
+06:06:08  Gebäudedatenbank geladen: 57938 Gebäude
+06:06:08  Höhenmodell geladen: hoehen_muehle.bin, 74513 Zellen
+06:06:09  Netz verfügbar, Registrierung erneut
+06:06:09  Netz verfügbar, Registrierung erneut
+06:06:09  Registrierung erfolgreich (App-Key gültig)
+06:06:09  Höhenmodell geladen: hoehen.bin, 8400000 Zellen
+06:06:09  Hinderniserkennung: aus (BRAKE, Hauptschalter false)
+06:06:09  Telemetrie läuft
+06:06:09  DJI-Status: UNKNOWN – Unknown error
+06:06:09  SDK bereit, registriere App bei DJI …
+06:06:09  Registrierung erfolgreich (App-Key gültig)
+06:06:09  Telemetrie läuft
+06:06:09  DJI-Status: REMOTE_DISCONNECT – Aircraft disconnected
+06:06:10  Registrierung erfolgreich (App-Key gültig)
+06:06:10  Telemetrie läuft
+06:06:11  Live link: Claude reads along (fluege/live/2026-11-22_14-06-08Z.txt)
+06:06:11  Drohne/Controller verbunden (Produkt 0)
+06:06:12  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Replace SD card
+06:06:12  DJI-Status: NORMAL – Ready to Go (GPS)
+06:06:13  Seriennummer Fluggerät: 1581F6Z9A24AAML30L86
+06:06:13  Wächter: Livebild wird mitgelesen
+06:06:13  Live-Bild verbunden
+06:06:14  DJI-Höhenlimit gelesen: 120 m
+06:06:14  DJI-Höhenlimit gelesen: 120 m
+06:06:14  DJI-Höhenlimit gelesen: 120 m
+06:06:14  [3 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=92
+06:06:15  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported.
+06:06:15  Lade Flugplan aus der Cloud …
+06:06:15  Hinderniserkennung: aktiv (Typ von der Drohne bestätigt, Hauptschalter nicht abfragbar)
+06:06:15  Hinderniserkennung wieder AN (Bremsen) – Plan holen
+06:06:16  S utc=14:06:16 verbunden=true fliegt=false pos=38.901392,-9.388109 h=0.0 start=38.901394,-9.388113 akku=92 sat=23 sensoren=aktiv hindernis=- mission=- wp=-1 plan=- wind=0 windms=0.0 windrichtung=WINDLESS
+06:06:16  Wetter am Start (Vorhersage, 10 m Höhe, grob): Forecast wind 3 m/s from N (353°), gusts up to 6 m/s in the next 2 h
+06:06:17  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+06:06:17  Transithöhe 50 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+06:06:17  Tempo: max 5.0 m/s
+06:06:17  Return guard: way home clear from every point at 50 m
+06:06:17  Höhenmodell: Gelände am Ziel +5 m gegenüber dem Start
+06:06:17  Oberflächen-Wächter: Strecke frei
+06:06:17  KMZ erstellt: 128 Punkte, 1431 m, ca. 11 min
+06:06:17  DJI-Prüfung: in Ordnung
+06:06:17  Plan übernommen, lade auf die Drohne …
+06:06:17  Lade Mission auf die Drohne …
+06:06:17  Upload 100 %
+06:06:18  Upload 5 %
+06:06:18  Upload 27 %
+06:06:19  Upload 52 %
+06:06:19  Upload 76 %
+06:06:20  Upload 100 %
+06:06:20  Mission ist auf der Drohne
+06:06:21  S utc=14:06:21 verbunden=true fliegt=false pos=38.901391,-9.388109 h=0.0 start=38.901394,-9.388113 akku=92 sat=23 sensoren=aktiv hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:06:21  [10 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=92
+06:06:31  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:06:51  Abheben per Knopf: Motoren an, steigt auf etwa 1,2 m und schwebt
+06:06:51  Abheben eingeleitet
+06:06:53  S utc=14:06:53 verbunden=true fliegt=false pos=38.901391,-9.388107 h=0.0 start=38.901394,-9.388113 akku=92 sat=23 sensoren=aktiv hindernis=60000@0°/n360/o60000/u100 mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:06:58  S utc=14:06:58 verbunden=true fliegt=true pos=38.901391,-9.388106 h=1.1 start=38.901391,-9.388107 akku=92 sat=23 sensoren=aktiv hindernis=1719@108°/n360/o60000/u1131 mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=1.2 windrichtung=SOUTH
+06:07:08  Flugprotokoll: 2026-11-22_06-07_muehle-scan-v5/protokoll.txt
+06:07:08  Startpunkt: 38.901391, -9.388107
+06:07:08  Karte: https://www.google.com/maps/dir/38.901394,-9.388113/38.901237,-9.387781/38.901230,-9.387766/38.901320,-9.387766/38.901410,-9.387766/38.901500,-9.387766/38.901590,-9.387766/38.901680,-9.387766/38.901770,-9.387766/38.901860,-9.387766/data=!4m2!4m1!3e2
+06:07:08  Mission: READY
+06:07:08  Wegpunkt 1
+06:07:09  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 515 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+06:07:09  Rückkehrhöhe: 50 m
+06:07:09  Flight stills: saving a still every 4 s (1920x1080)
+06:07:09  Mission: PREPARING
+06:07:09  S utc=14:07:09 verbunden=true fliegt=true pos=38.901391,-9.388107 h=1.1 start=38.901391,-9.388107 akku=91 sat=23 sensoren=aktiv hindernis=1198@93°/n360/o60000/u1145 mission=PREPARING wp=0 plan=muehle-scan-v5 wind=0 windms=1.3 windrichtung=SOUTH
+06:07:10  Start: ok
+06:07:10  Mission: ENTER_WAYLINE
+06:07:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:07:13  Live-Bild verbunden
+06:07:14  S utc=14:07:14 verbunden=true fliegt=true pos=38.901390,-9.388107 h=7.1 start=38.901391,-9.388107 akku=91 sat=23 sensoren=aktiv hindernis=60000@0°/n360/o60000/u14094 mission=ENTER_WAYLINE wp=0 plan=muehle-scan-v5 wind=0 windms=0.8 windrichtung=SOUTH_EAST
+06:07:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:07:20  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:07:25  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:07:27  WÄCHTER (nur beobachten): Fläche kommt schnell näher – hätte angehalten
+06:07:27  Live-Bild verbunden
+06:07:28  Mission: EXECUTING
+06:07:28  Mission: INTERRUPTED
+06:07:28  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 60000@0°/n360/o60000/u60000
+06:07:29  S utc=14:07:29 verbunden=true fliegt=true pos=38.901391,-9.388113 h=50.0 start=38.901391,-9.388107 akku=90 sat=23 sensoren=aktiv hindernis=2691@63°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-scan-v5 wind=0 windms=4.8 windrichtung=NORTH_EAST
+06:07:35  Mission: RECOVERING
+06:07:35  Weiter: ok
+06:07:38  Mission: EXECUTING
+06:07:38  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:07:40  S utc=14:07:40 verbunden=true fliegt=true pos=38.901394,-9.388112 h=50.0 start=38.901391,-9.388107 akku=89 sat=24 sensoren=aktiv hindernis=871@63°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-scan-v5 wind=0 windms=5.5 windrichtung=NORTH_EAST
+06:07:43  Wächter: Vergrößerung 1,03/Bild, Treffer 0
+06:07:48  Wächter: Vergrößerung 1,03/Bild, Treffer 0
+06:07:50  S utc=14:07:50 verbunden=true fliegt=true pos=38.901290,-9.387894 h=50.0 start=38.901391,-9.388107 akku=89 sat=25 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-scan-v5 wind=0 windms=4.8 windrichtung=WEST
+06:07:52  Wegpunkt 2
+06:07:53  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:07:56  Mission: INTERRUPTED
+06:07:56  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 1144@63°/n360/o60000/u60000
+06:07:57  S utc=14:07:57 verbunden=true fliegt=true pos=38.901231,-9.387767 h=45.6 start=38.901391,-9.388107 akku=88 sat=25 sensoren=aktiv hindernis=1120@48°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-scan-v5 wind=0 windms=3.4 windrichtung=NORTH_WEST
+06:08:00  Mission: RECOVERING
+06:08:00  Weiter: ok
+06:08:01  Mission: EXECUTING
+06:08:01  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:08:02  Mission: INTERRUPTED
+06:08:02  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 2360@68°/n360/o60000/u60000
+06:08:10  Mission: RECOVERING
+06:08:11  Weiter: ok
+06:08:11  Mission: EXECUTING
+06:08:11  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:08:12  S utc=14:08:12 verbunden=true fliegt=true pos=38.901231,-9.387767 h=45.7 start=38.901391,-9.388107 akku=87 sat=25 sensoren=aktiv hindernis=1424@53°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-scan-v5 wind=0 windms=2.4 windrichtung=WEST
+06:08:13  Mission: INTERRUPTED
+06:08:13  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 1090@63°/n360/o60000/u60000
+06:08:15  Mission: RECOVERING
+06:08:15  Weiter: ok
+06:08:16  Mission: EXECUTING
+06:08:16  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:08:16  Mission: INTERRUPTED
+06:08:16  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 1343@68°/n360/o60000/u60000
+06:08:18  Mission: RECOVERING
+06:08:18  Weiter: ok
+06:08:18  Mission: INTERRUPTED
+06:08:18  Mission unterbrochen: OBSTACAL_STOP Obstacles detected. Flight route mission paused · Abstände 1171@48°/n360/o60000/u60000
+06:08:18  S utc=14:08:18 verbunden=true fliegt=true pos=38.901230,-9.387768 h=45.5 start=38.901391,-9.388107 akku=87 sat=26 sensoren=aktiv hindernis=1172@48°/n360/o60000/u60000 mission=INTERRUPTED wp=-1 plan=muehle-scan-v5 wind=0 windms=1.8 windrichtung=WEST
+06:08:23  Abbruch: ok
+06:08:23  Mission: FINISHED
+06:08:23  Mission beendet → hole Fotos und lade hoch
+06:08:23  Mission: READY
+06:08:26  Rückkehr zum Startpunkt ausgelöst
+06:08:33  S utc=14:08:33 verbunden=true fliegt=true pos=38.901258,-9.387842 h=44.8 start=38.901391,-9.388107 akku=87 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=1.7 windrichtung=NORTH
+06:08:44  S utc=14:08:44 verbunden=true fliegt=true pos=38.901386,-9.388104 h=30.1 start=38.901391,-9.388107 akku=86 sat=26 sensoren=aktiv hindernis=1814@248°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=3.0 windrichtung=SOUTH_EAST
+06:08:45  Flugprotokoll: 2026-11-22_06-08_muehle-scan-v5/protokoll.txt
+06:08:45  Startpunkt: 38.901391, -9.388107
+06:08:45  Karte: https://www.google.com/maps/dir/38.901394,-9.388113/38.901237,-9.387781/38.901230,-9.387766/38.901320,-9.387766/38.901410,-9.387766/38.901500,-9.387766/38.901590,-9.387766/38.901680,-9.387766/38.901770,-9.387766/38.901860,-9.387766/data=!4m2!4m1!3e2
+06:08:45  Wegpunkt 1
+06:08:45  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 515 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+06:08:45  Rückkehrhöhe: 50 m
+06:08:45  Start fehlgeschlagen: null
+06:08:49  Flight stills: saving a still every 4 s (1920x1080)
+06:08:54  HINDERNISERKENNUNG AUS – nur für den Handstart, vorsichtig fliegen. Geht bei „Plan holen“/„Start“ automatisch wieder an.
+06:09:01  S utc=14:09:01 verbunden=true fliegt=true pos=38.901391,-9.388107 h=3.6 start=38.901391,-9.388107 akku=85 sat=26 sensoren=aktiv hindernis=1378@68°/n360/o60000/u2991 mission=READY wp=0 plan=muehle-scan-v5 wind=0 windms=4.0 windrichtung=SOUTH
+06:09:03  Flugprotokoll: 2026-11-22_06-09_muehle-scan-v5/protokoll.txt
+06:09:03  Startpunkt: 38.901391, -9.388107
+06:09:03  Karte: https://www.google.com/maps/dir/38.901394,-9.388113/38.901237,-9.387781/38.901230,-9.387766/38.901320,-9.387766/38.901410,-9.387766/38.901500,-9.387766/38.901590,-9.387766/38.901680,-9.387766/38.901770,-9.387766/38.901860,-9.387766/data=!4m2!4m1!3e2
+06:09:03  Wegpunkt 1
+06:09:03  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 515 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+06:09:03  Rückkehrhöhe: 50 m
+06:09:03  Start fehlgeschlagen: null
+06:09:05  Flight stills: saving a still every 4 s (1920x1080)
+06:09:16  S utc=14:09:16 verbunden=true fliegt=true pos=38.901392,-9.388106 h=0.1 start=38.901391,-9.388107 akku=84 sat=24 sensoren=aktiv hindernis=1627@153°/n360/o60000/u37 mission=READY wp=0 plan=muehle-scan-v5 wind=0 windms=2.1 windrichtung=SOUTH_EAST
+06:09:17  Landehelfer: Drohne ist am Boden
+06:09:18  Landehelfer: Drohne ist am Boden
+06:09:18  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 515 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+06:09:19  Hole Fotoliste von der Drohne (SD-Karte) …
+06:09:20  Abheben per Knopf: Motoren an, steigt auf etwa 1,2 m und schwebt
+06:09:20  Abheben eingeleitet
+06:09:22  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+06:09:24  S utc=14:09:24 verbunden=true fliegt=true pos=38.901391,-9.388105 h=0.3 start=38.901392,-9.388106 akku=84 sat=24 sensoren=aktiv hindernis=3387@248°/n360/o60000/u597 mission=READY wp=0 plan=muehle-scan-v5 wind=0 windms=1.0 windrichtung=SOUTH
+06:09:24  Hole Fotoliste von der Drohne (interner Speicher) …
+06:09:24  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+06:09:25  Fotos geladen: 0
+06:09:27  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-09_muehle-scan-v5
+06:09:28  Flugprotokoll: 2026-11-22_06-09_muehle-scan-v5/protokoll.txt
+06:09:28  Startpunkt: 38.901392, -9.388106
+06:09:28  Karte: https://www.google.com/maps/dir/38.901394,-9.388113/38.901237,-9.387781/38.901230,-9.387766/38.901320,-9.387766/38.901410,-9.387766/38.901500,-9.387766/38.901590,-9.387766/38.901680,-9.387766/38.901770,-9.387766/38.901860,-9.387766/data=!4m2!4m1!3e2
+06:09:28  Wegpunkt 1
+06:09:28  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 515 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 0 Fotos
+06:09:28  Rückkehrhöhe: 50 m
+06:09:29  Mission: PREPARING
+06:09:29  Start: ok
+06:09:29  Mission: ENTER_WAYLINE
+06:09:29  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:09:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:09:38  S utc=14:09:38 verbunden=true fliegt=true pos=38.901393,-9.388106 h=29.5 start=38.901392,-9.388106 akku=83 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=ENTER_WAYLINE wp=0 plan=muehle-scan-v5 wind=0 windms=3.6 windrichtung=SOUTH
+06:09:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:09:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:09:47  WÄCHTER (nur beobachten): Fläche kommt schnell näher – hätte angehalten
+06:09:49  Mission: EXECUTING
+06:09:49  S utc=14:09:49 verbunden=true fliegt=true pos=38.901393,-9.388112 h=50.0 start=38.901392,-9.388106 akku=82 sat=26 sensoren=aktiv hindernis=2878@108°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-scan-v5 wind=0 windms=3.4 windrichtung=SOUTH_EAST
+06:09:50  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:09:55  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:00  Wächter: Vergrößerung 1,03/Bild, Treffer 0
+06:10:04  Wegpunkt 2
+06:10:05  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:05  S utc=14:10:05 verbunden=true fliegt=true pos=38.901232,-9.387769 h=46.9 start=38.901392,-9.388106 akku=81 sat=26 sensoren=aktiv hindernis=1352@58°/n360/o60000/u60000 mission=EXECUTING wp=1 plan=muehle-scan-v5 wind=0 windms=3.0 windrichtung=NORTH
+06:10:08  Wegpunkt 3
+06:10:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:14  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Back up files and format or replace SD card
+06:10:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:19  Wegpunkt 4
+06:10:20  DJI-Meldung erledigt: 0x1C000402
+06:10:20  S utc=14:10:20 verbunden=true fliegt=true pos=38.901319,-9.387766 h=45.0 start=38.901392,-9.388106 akku=80 sat=26 sensoren=aktiv hindernis=1191@63°/n360/o60000/u60000 mission=EXECUTING wp=3 plan=muehle-scan-v5 wind=0 windms=2.8 windrichtung=NORTH
+06:10:20  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:25  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:28  Wegpunkt 5
+06:10:30  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:31  S utc=14:10:31 verbunden=true fliegt=true pos=38.901411,-9.387766 h=45.0 start=38.901392,-9.388106 akku=80 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=4 plan=muehle-scan-v5 wind=0 windms=2.9 windrichtung=NORTH
+06:10:35  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:37  Wegpunkt 6
+06:10:40  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:45  Wegpunkt 7
+06:10:45  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:48  S utc=14:10:48 verbunden=true fliegt=true pos=38.901595,-9.387766 h=45.0 start=38.901392,-9.388106 akku=79 sat=26 sensoren=aktiv hindernis=2195@113°/n360/o60000/u60000 mission=EXECUTING wp=6 plan=muehle-scan-v5 wind=0 windms=2.9 windrichtung=NORTH
+06:10:50  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:10:53  Wegpunkt 8
+06:10:55  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:00  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:03  Wegpunkt 9
+06:11:03  S utc=14:11:03 verbunden=true fliegt=true pos=38.901766,-9.387766 h=45.0 start=38.901392,-9.388106 akku=78 sat=26 sensoren=aktiv hindernis=818@98°/n360/o60000/u60000 mission=EXECUTING wp=8 plan=muehle-scan-v5 wind=0 windms=2.7 windrichtung=NORTH
+06:11:05  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:11  Wegpunkt 10
+06:11:15  S utc=14:11:15 verbunden=true fliegt=true pos=38.901864,-9.387766 h=44.9 start=38.901392,-9.388106 akku=77 sat=26 sensoren=aktiv hindernis=2553@163°/n360/o60000/u60000 mission=EXECUTING wp=9 plan=muehle-scan-v5 wind=0 windms=3.6 windrichtung=NORTH
+06:11:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:19  Wegpunkt 11
+06:11:20  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:25  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:28  Wegpunkt 12
+06:11:30  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:31  S utc=14:11:31 verbunden=true fliegt=true pos=38.902040,-9.387766 h=45.0 start=38.901392,-9.388106 akku=76 sat=26 sensoren=aktiv hindernis=1193@133°/n360/o60000/u60000 mission=EXECUTING wp=11 plan=muehle-scan-v5 wind=0 windms=3.7 windrichtung=NORTH
+06:11:35  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:37  Wegpunkt 13
+06:11:40  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:45  S utc=14:11:45 verbunden=true fliegt=true pos=38.902130,-9.387898 h=44.9 start=38.901392,-9.388106 akku=76 sat=26 sensoren=aktiv hindernis=2047@48°/n360/o60000/u60000 mission=EXECUTING wp=12 plan=muehle-scan-v5 wind=0 windms=3.0 windrichtung=SOUTH_WEST
+06:11:46  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:11:47  Live-Bild verbunden
+06:11:48  Wegpunkt 14
+06:11:51  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:55  Wegpunkt 15
+06:11:56  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:11:56  S utc=14:11:56 verbunden=true fliegt=true pos=38.902041,-9.387915 h=44.9 start=38.901392,-9.388106 akku=75 sat=26 sensoren=aktiv hindernis=2512@58°/n360/o60000/u60000 mission=EXECUTING wp=14 plan=muehle-scan-v5 wind=0 windms=5.4 windrichtung=SOUTH
+06:12:01  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:03  Wegpunkt 16
+06:12:06  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:11  Wegpunkt 17
+06:12:12  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:12  S utc=14:12:12 verbunden=true fliegt=true pos=38.901861,-9.387916 h=44.9 start=38.901392,-9.388106 akku=74 sat=26 sensoren=aktiv hindernis=2257@63°/n360/o60000/u60000 mission=EXECUTING wp=16 plan=muehle-scan-v5 wind=0 windms=5.5 windrichtung=SOUTH
+06:12:17  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:18  Wegpunkt 18
+06:12:22  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:26  Wegpunkt 19
+06:12:27  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:27  S utc=14:12:27 verbunden=true fliegt=true pos=38.901681,-9.387917 h=44.9 start=38.901392,-9.388106 akku=73 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=18 plan=muehle-scan-v5 wind=0 windms=4.4 windrichtung=SOUTH_EAST
+06:12:32  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:33  Wegpunkt 20
+06:12:37  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:38  S utc=14:12:38 verbunden=true fliegt=true pos=38.901531,-9.387916 h=44.9 start=38.901392,-9.388106 akku=72 sat=26 sensoren=aktiv hindernis=3629@108°/n360/o60000/u60000 mission=EXECUTING wp=19 plan=muehle-scan-v5 wind=0 windms=5.6 windrichtung=SOUTH_EAST
+06:12:41  Wegpunkt 21
+06:12:42  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:47  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:49  Wegpunkt 22
+06:12:52  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:12:54  S utc=14:12:54 verbunden=true fliegt=true pos=38.901336,-9.387917 h=44.9 start=38.901392,-9.388106 akku=71 sat=26 sensoren=aktiv hindernis=2509@73°/n360/o60000/u60000 mission=EXECUTING wp=21 plan=muehle-scan-v5 wind=0 windms=5.6 windrichtung=SOUTH_EAST
+06:12:56  Wegpunkt 23
+06:12:57  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:02  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:04  Wegpunkt 24
+06:13:07  Wächter: Vergrößerung 1,20/Bild, Treffer 1
+06:13:11  S utc=14:13:11 verbunden=true fliegt=true pos=38.901228,-9.388049 h=44.9 start=38.901392,-9.388106 akku=70 sat=26 sensoren=aktiv hindernis=1941@83°/n360/o60000/u60000 mission=EXECUTING wp=23 plan=muehle-scan-v5 wind=0 windms=5.0 windrichtung=SOUTH_WEST
+06:13:12  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:13  Wegpunkt 25
+06:13:17  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:21  Wegpunkt 26
+06:13:22  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:23  S utc=14:13:23 verbunden=true fliegt=true pos=38.901320,-9.388066 h=45.0 start=38.901392,-9.388106 akku=70 sat=25 sensoren=aktiv hindernis=1205@93°/n360/o60000/u60000 mission=EXECUTING wp=25 plan=muehle-scan-v5 wind=0 windms=3.3 windrichtung=NORTH
+06:13:27  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:30  Wegpunkt 27
+06:13:32  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:34  S utc=14:13:34 verbunden=true fliegt=true pos=38.901412,-9.388066 h=45.0 start=38.901392,-9.388106 akku=69 sat=26 sensoren=aktiv hindernis=2491@143°/n360/o60000/u60000 mission=EXECUTING wp=26 plan=muehle-scan-v5 wind=0 windms=3.3 windrichtung=NORTH
+06:13:37  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:38  Wegpunkt 28
+06:13:42  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:45  S utc=14:13:45 verbunden=true fliegt=true pos=38.901580,-9.388066 h=45.0 start=38.901392,-9.388106 akku=68 sat=26 sensoren=aktiv hindernis=1762@118°/n360/o60000/u60000 mission=EXECUTING wp=27 plan=muehle-scan-v5 wind=0 windms=2.4 windrichtung=NORTH_WEST
+06:13:46  Wegpunkt 29
+06:13:47  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:52  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:13:56  Wegpunkt 30
+06:13:57  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:01  S utc=14:14:01 verbunden=true fliegt=true pos=38.901734,-9.388067 h=45.0 start=38.901392,-9.388106 akku=67 sat=25 sensoren=aktiv hindernis=2187@93°/n360/o60000/u60000 mission=EXECUTING wp=29 plan=muehle-scan-v5 wind=0 windms=3.2 windrichtung=NORTH
+06:14:02  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:04  Wegpunkt 31
+06:14:07  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:12  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:14  Wegpunkt 32
+06:14:16  S utc=14:14:16 verbunden=true fliegt=true pos=38.901858,-9.388067 h=45.0 start=38.901392,-9.388106 akku=67 sat=25 sensoren=aktiv hindernis=741@98°/n360/o60000/u60000 mission=EXECUTING wp=31 plan=muehle-scan-v5 wind=0 windms=2.3 windrichtung=NORTH
+06:14:17  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:22  Wegpunkt 33
+06:14:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:27  S utc=14:14:27 verbunden=true fliegt=true pos=38.901985,-9.388066 h=45.0 start=38.901392,-9.388106 akku=66 sat=25 sensoren=aktiv hindernis=2355@93°/n360/o60000/u60000 mission=EXECUTING wp=32 plan=muehle-scan-v5 wind=0 windms=2.1 windrichtung=NORTH
+06:14:28  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:31  Wegpunkt 34
+06:14:33  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:37  S utc=14:14:37 verbunden=true fliegt=true pos=38.902108,-9.388066 h=45.0 start=38.901392,-9.388106 akku=65 sat=26 sensoren=aktiv hindernis=1219@93°/n360/o60000/u60000 mission=EXECUTING wp=33 plan=muehle-scan-v5 wind=0 windms=2.6 windrichtung=NORTH_WEST
+06:14:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:40  Wegpunkt 35
+06:14:44  Wächter: Vergrößerung 0,97/Bild, Treffer 0
+06:14:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:49  S utc=14:14:49 verbunden=true fliegt=true pos=38.902129,-9.388210 h=45.0 start=38.901392,-9.388106 akku=64 sat=26 sensoren=aktiv hindernis=2677@63°/n360/o60000/u60000 mission=EXECUTING wp=34 plan=muehle-scan-v5 wind=0 windms=2.6 windrichtung=SOUTH_EAST
+06:14:49  Wegpunkt 36
+06:14:54  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:14:57  Wegpunkt 37
+06:14:58  Live-Bild verbunden
+06:14:59  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:04  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:05  Wegpunkt 38
+06:15:05  S utc=14:15:05 verbunden=true fliegt=true pos=38.901953,-9.388216 h=44.9 start=38.901392,-9.388106 akku=63 sat=26 sensoren=aktiv hindernis=2920@73°/n360/o60000/u60000 mission=EXECUTING wp=37 plan=muehle-scan-v5 wind=0 windms=3.2 windrichtung=SOUTH_EAST
+06:15:09  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:12  Wegpunkt 39
+06:15:14  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:19  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:20  S utc=14:15:20 verbunden=true fliegt=true pos=38.901781,-9.388217 h=44.9 start=38.901392,-9.388106 akku=63 sat=26 sensoren=aktiv hindernis=3170@98°/n360/o60000/u60000 mission=EXECUTING wp=38 plan=muehle-scan-v5 wind=0 windms=2.8 windrichtung=SOUTH_EAST
+06:15:20  Wegpunkt 40
+06:15:24  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:27  Wegpunkt 41
+06:15:29  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:31  S utc=14:15:31 verbunden=true fliegt=true pos=38.901667,-9.388216 h=44.9 start=38.901392,-9.388106 akku=62 sat=26 sensoren=aktiv hindernis=4949@143°/n360/o60000/u60000 mission=EXECUTING wp=40 plan=muehle-scan-v5 wind=0 windms=4.2 windrichtung=SOUTH_EAST
+06:15:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:35  Wegpunkt 42
+06:15:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:43  Wegpunkt 43
+06:15:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:47  S utc=14:15:47 verbunden=true fliegt=true pos=38.901475,-9.388216 h=45.0 start=38.901392,-9.388106 akku=61 sat=26 sensoren=aktiv hindernis=5009@158°/n360/o60000/u60000 mission=EXECUTING wp=42 plan=muehle-scan-v5 wind=0 windms=4.2 windrichtung=SOUTH_EAST
+06:15:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:50  Wegpunkt 44
+06:15:54  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:15:58  Wegpunkt 45
+06:15:59  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:01  S utc=14:16:01 verbunden=true fliegt=true pos=38.901314,-9.388216 h=44.9 start=38.901392,-9.388106 akku=60 sat=27 sensoren=aktiv hindernis=3308@133°/n360/o60000/u60000 mission=EXECUTING wp=44 plan=muehle-scan-v5 wind=0 windms=4.9 windrichtung=SOUTH_EAST
+06:16:05  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:06  Wegpunkt 46
+06:16:10  Wächter: Vergrößerung 0,97/Bild, Treffer 0
+06:16:13  S utc=14:16:13 verbunden=true fliegt=true pos=38.901229,-9.388352 h=44.9 start=38.901392,-9.388106 akku=59 sat=27 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=45 plan=muehle-scan-v5 wind=0 windms=6.0 windrichtung=WEST
+06:16:15  Wegpunkt 47
+06:16:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:20  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:23  Wegpunkt 48
+06:16:25  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:29  S utc=14:16:29 verbunden=true fliegt=true pos=38.901397,-9.388366 h=44.9 start=38.901392,-9.388106 akku=58 sat=26 sensoren=aktiv hindernis=1850@118°/n360/o60000/u60000 mission=EXECUTING wp=47 plan=muehle-scan-v5 wind=0 windms=2.4 windrichtung=NORTH_WEST
+06:16:30  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:31  Wegpunkt 49
+06:16:35  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:36  Live-Bild verbunden
+06:16:39  Wegpunkt 50
+06:16:40  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:44  S utc=14:16:44 verbunden=true fliegt=true pos=38.901515,-9.388366 h=44.9 start=38.901392,-9.388106 akku=57 sat=26 sensoren=aktiv hindernis=3276@133°/n360/o60000/u60000 mission=EXECUTING wp=49 plan=muehle-scan-v5 wind=0 windms=1.8 windrichtung=WEST
+06:16:45  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:47  Wegpunkt 51
+06:16:50  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:55  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:16:55  S utc=14:16:55 verbunden=true fliegt=true pos=38.901676,-9.388365 h=44.9 start=38.901392,-9.388106 akku=57 sat=26 sensoren=aktiv hindernis=654@103°/n360/o60000/u60000 mission=EXECUTING wp=50 plan=muehle-scan-v5 wind=0 windms=1.7 windrichtung=WEST
+06:16:56  Wegpunkt 52
+06:17:00  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:04  Wegpunkt 53
+06:17:05  DJI-Meldung: [Hinweis]  – SD card full. Change card or delete files
+06:17:05  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:11  DJI-Meldung erledigt: 0x1C00040F
+06:17:11  S utc=14:17:11 verbunden=true fliegt=true pos=38.901850,-9.388366 h=45.0 start=38.901392,-9.388106 akku=56 sat=25 sensoren=aktiv hindernis=1138@138°/n360/o60000/u60000 mission=EXECUTING wp=52 plan=muehle-scan-v5 wind=0 windms=1.4 windrichtung=NORTH_WEST
+06:17:13  Wegpunkt 54
+06:17:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:20  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:21  Wegpunkt 55
+06:17:25  S utc=14:17:25 verbunden=true fliegt=true pos=38.901968,-9.388367 h=45.0 start=38.901392,-9.388106 akku=55 sat=24 sensoren=aktiv hindernis=2449@103°/n360/o60000/u60000 mission=EXECUTING wp=54 plan=muehle-scan-v5 wind=0 windms=3.1 windrichtung=NORTH_WEST
+06:17:26  Wächter: Vergrößerung 1,09/Bild, Treffer 1
+06:17:30  Wegpunkt 56
+06:17:31  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:36  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:37  S utc=14:17:37 verbunden=true fliegt=true pos=38.902125,-9.388366 h=45.0 start=38.901392,-9.388106 akku=54 sat=25 sensoren=aktiv hindernis=1638@58°/n360/o60000/u60000 mission=EXECUTING wp=55 plan=muehle-scan-v5 wind=0 windms=2.2 windrichtung=NORTH_WEST
+06:17:37  Wegpunkt 57
+06:17:41  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:46  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:48  Wegpunkt 58
+06:17:51  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:17:53  S utc=14:17:53 verbunden=true fliegt=true pos=38.902078,-9.388516 h=44.9 start=38.901392,-9.388106 akku=53 sat=25 sensoren=aktiv hindernis=3252@93°/n360/o60000/u60000 mission=EXECUTING wp=57 plan=muehle-scan-v5 wind=0 windms=5.8 windrichtung=SOUTH_EAST
+06:17:56  Wegpunkt 59
+06:17:56  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:01  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:03  Wegpunkt 60
+06:18:06  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:08  S utc=14:18:08 verbunden=true fliegt=true pos=38.901870,-9.388517 h=44.9 start=38.901392,-9.388106 akku=52 sat=25 sensoren=aktiv hindernis=2066@88°/n360/o60000/u60000 mission=EXECUTING wp=59 plan=muehle-scan-v5 wind=0 windms=5.5 windrichtung=SOUTH_EAST
+06:18:10  Wegpunkt 61
+06:18:11  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:16  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:17  Wegpunkt 62
+06:18:20  S utc=14:18:20 verbunden=true fliegt=true pos=38.901770,-9.388515 h=44.9 start=38.901392,-9.388106 akku=51 sat=25 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=61 plan=muehle-scan-v5 wind=0 windms=5.1 windrichtung=SOUTH_EAST
+06:18:21  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:24  Wegpunkt 63
+06:18:26  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:31  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:32  Wegpunkt 64
+06:18:36  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:36  S utc=14:18:36 verbunden=true fliegt=true pos=38.901534,-9.388517 h=45.0 start=38.901392,-9.388106 akku=50 sat=26 sensoren=aktiv hindernis=3288@88°/n360/o60000/u60000 mission=EXECUTING wp=63 plan=muehle-scan-v5 wind=0 windms=4.9 windrichtung=SOUTH_EAST
+06:18:40  Wegpunkt 65
+06:18:41  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:46  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:47  Wegpunkt 66
+06:18:51  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:18:51  S utc=14:18:51 verbunden=true fliegt=true pos=38.901392,-9.388515 h=44.9 start=38.901392,-9.388106 akku=49 sat=26 sensoren=aktiv hindernis=5639@158°/n360/o60000/u60000 mission=EXECUTING wp=65 plan=muehle-scan-v5 wind=0 windms=4.9 windrichtung=SOUTH_EAST
+06:18:55  Wegpunkt 67
+06:18:56  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:01  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:01  Live-Bild verbunden
+06:19:02  Wegpunkt 68
+06:19:04  S utc=14:19:04 verbunden=true fliegt=true pos=38.901229,-9.388514 h=44.9 start=38.901392,-9.388106 akku=49 sat=26 sensoren=aktiv hindernis=3098@58°/n360/o60000/u60000 mission=EXECUTING wp=67 plan=muehle-scan-v5 wind=0 windms=5.4 windrichtung=SOUTH_EAST
+06:19:06  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:11  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:12  Wegpunkt 69
+06:19:14  S utc=14:19:14 verbunden=true fliegt=true pos=38.901230,-9.388664 h=44.9 start=38.901392,-9.388106 akku=48 sat=26 sensoren=aktiv hindernis=1372@93°/n360/o60000/u60000 mission=EXECUTING wp=68 plan=muehle-scan-v5 wind=0 windms=4.5 windrichtung=NORTH_WEST
+06:19:16  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:20  Wegpunkt 70
+06:19:21  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:26  S utc=14:19:26 verbunden=true fliegt=true pos=38.901391,-9.388667 h=44.9 start=38.901392,-9.388106 akku=47 sat=25 sensoren=aktiv hindernis=1589@88°/n360/o60000/u60000 mission=EXECUTING wp=69 plan=muehle-scan-v5 wind=0 windms=2.7 windrichtung=NORTH_WEST
+06:19:26  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:27  Wegpunkt 71
+06:19:32  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:35  Wegpunkt 72
+06:19:37  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:37  S utc=14:19:37 verbunden=true fliegt=true pos=38.901500,-9.388666 h=45.0 start=38.901392,-9.388106 akku=46 sat=25 sensoren=aktiv hindernis=1213@108°/n360/o60000/u60000 mission=EXECUTING wp=71 plan=muehle-scan-v5 wind=0 windms=2.9 windrichtung=NORTH_WEST
+06:19:42  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:44  Wegpunkt 73
+06:19:47  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:49  S utc=14:19:49 verbunden=true fliegt=true pos=38.901663,-9.388666 h=44.9 start=38.901392,-9.388106 akku=46 sat=26 sensoren=aktiv hindernis=2287@93°/n360/o60000/u60000 mission=EXECUTING wp=72 plan=muehle-scan-v5 wind=0 windms=2.3 windrichtung=NORTH_WEST
+06:19:51  Wegpunkt 74
+06:19:52  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:57  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:19:59  Wegpunkt 75
+06:20:00  S utc=14:20:00 verbunden=true fliegt=true pos=38.901766,-9.388667 h=45.0 start=38.901392,-9.388106 akku=45 sat=26 sensoren=aktiv hindernis=2478@73°/n360/o60000/u60000 mission=EXECUTING wp=74 plan=muehle-scan-v5 wind=0 windms=2.1 windrichtung=NORTH_WEST
+06:20:02  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:07  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:08  Wegpunkt 76
+06:20:11  S utc=14:20:11 verbunden=true fliegt=true pos=38.901877,-9.388666 h=45.0 start=38.901392,-9.388106 akku=44 sat=25 sensoren=aktiv hindernis=2675@98°/n360/o60000/u60000 mission=EXECUTING wp=75 plan=muehle-scan-v5 wind=0 windms=1.3 windrichtung=NORTH_WEST
+06:20:12  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:15  Wegpunkt 77
+06:20:17  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:22  S utc=14:20:22 verbunden=true fliegt=true pos=38.902023,-9.388666 h=44.9 start=38.901392,-9.388106 akku=44 sat=26 sensoren=aktiv hindernis=1342@118°/n360/o60000/u60000 mission=EXECUTING wp=76 plan=muehle-scan-v5 wind=0 windms=2.2 windrichtung=NORTH_WEST
+06:20:22  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:24  Wegpunkt 78
+06:20:27  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:32  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:33  Wegpunkt 79
+06:20:33  S utc=14:20:33 verbunden=true fliegt=true pos=38.902127,-9.388666 h=45.0 start=38.901392,-9.388106 akku=43 sat=25 sensoren=aktiv hindernis=708@103°/n360/o60000/u60000 mission=EXECUTING wp=78 plan=muehle-scan-v5 wind=0 windms=3.1 windrichtung=NORTH_WEST
+06:20:37  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:20:42  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:44  Wegpunkt 80
+06:20:47  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:50  S utc=14:20:50 verbunden=true fliegt=true pos=38.902071,-9.388815 h=44.9 start=38.901392,-9.388106 akku=42 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=79 plan=muehle-scan-v5 wind=0 windms=4.7 windrichtung=SOUTH_EAST
+06:20:51  Wegpunkt 81
+06:20:52  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:57  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:20:59  Wegpunkt 82
+06:21:02  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:05  S utc=14:21:05 verbunden=true fliegt=true pos=38.901867,-9.388816 h=44.9 start=38.901392,-9.388106 akku=41 sat=26 sensoren=aktiv hindernis=2128@63°/n360/o60000/u60000 mission=EXECUTING wp=81 plan=muehle-scan-v5 wind=0 windms=5.0 windrichtung=SOUTH_EAST
+06:21:06  Wegpunkt 83
+06:21:07  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:12  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:13  Wegpunkt 84
+06:21:16  S utc=14:21:16 verbunden=true fliegt=true pos=38.901733,-9.388815 h=44.9 start=38.901392,-9.388106 akku=40 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=83 plan=muehle-scan-v5 wind=0 windms=5.3 windrichtung=SOUTH_EAST
+06:21:17  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:21  Wegpunkt 85
+06:21:22  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:26  S utc=14:21:26 verbunden=true fliegt=true pos=38.901596,-9.388817 h=44.9 start=38.901392,-9.388106 akku=39 sat=26 sensoren=aktiv hindernis=4650@133°/n360/o60000/u60000 mission=EXECUTING wp=84 plan=muehle-scan-v5 wind=0 windms=5.1 windrichtung=SOUTH_EAST
+06:21:27  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:28  Wegpunkt 86
+06:21:32  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:35  Wegpunkt 87
+06:21:37  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:38  S utc=14:21:38 verbunden=true fliegt=true pos=38.901499,-9.388816 h=44.9 start=38.901392,-9.388106 akku=39 sat=26 sensoren=aktiv hindernis=- mission=EXECUTING wp=86 plan=muehle-scan-v5 wind=0 windms=4.6 windrichtung=SOUTH_EAST
+06:21:42  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:42  Wegpunkt 88
+06:21:47  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:49  Wegpunkt 89
+06:21:52  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:21:55  S utc=14:21:55 verbunden=true fliegt=true pos=38.901246,-9.388816 h=44.9 start=38.901392,-9.388106 akku=37 sat=26 sensoren=aktiv hindernis=2863@83°/n360/o60000/u60000 mission=EXECUTING wp=88 plan=muehle-scan-v5 wind=0 windms=6.1 windrichtung=SOUTH_EAST
+06:21:57  Wegpunkt 90
+06:21:57  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:02  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:07  Wegpunkt 91
+06:22:07  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:09  S utc=14:22:09 verbunden=true fliegt=true pos=38.901354,-9.388682 h=50.0 start=38.901392,-9.388106 akku=36 sat=26 sensoren=aktiv hindernis=2881@88°/n360/o60000/u60000 mission=EXECUTING wp=90 plan=muehle-scan-v5 wind=0 windms=3.8 windrichtung=WEST
+06:22:13  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:16  Wegpunkt 92
+06:22:18  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:21  S utc=14:22:21 verbunden=true fliegt=true pos=38.901546,-9.388841 h=50.0 start=38.901392,-9.388106 akku=36 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=91 plan=muehle-scan-v5 wind=0 windms=3.7 windrichtung=SOUTH_WEST
+06:22:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:24  Wegpunkt 93
+06:22:28  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:33  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:33  Wegpunkt 94
+06:22:38  S utc=14:22:38 verbunden=true fliegt=true pos=38.901739,-9.388864 h=49.9 start=38.901392,-9.388106 akku=34 sat=26 sensoren=aktiv hindernis=- mission=EXECUTING wp=93 plan=muehle-scan-v5 wind=0 windms=4.1 windrichtung=SOUTH_WEST
+06:22:38  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:42  Wegpunkt 95
+06:22:43  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:48  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:50  Wegpunkt 96
+06:22:53  S utc=14:22:53 verbunden=true fliegt=true pos=38.901966,-9.388732 h=50.0 start=38.901392,-9.388106 akku=33 sat=26 sensoren=aktiv hindernis=2293@78°/n360/o60000/u60000 mission=EXECUTING wp=95 plan=muehle-scan-v5 wind=0 windms=4.5 windrichtung=SOUTH_EAST
+06:22:53  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:58  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:22:59  Wegpunkt 97
+06:23:03  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:04  S utc=14:23:04 verbunden=true fliegt=true pos=38.902061,-9.388571 h=49.9 start=38.901392,-9.388106 akku=33 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=96 plan=muehle-scan-v5 wind=0 windms=3.3 windrichtung=SOUTH
+06:23:07  Wegpunkt 98
+06:23:08  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:14  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:15  Wegpunkt 99
+06:23:19  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:21  S utc=14:23:21 verbunden=true fliegt=true pos=38.902086,-9.388148 h=49.9 start=38.901392,-9.388106 akku=31 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=98 plan=muehle-scan-v5 wind=0 windms=5.2 windrichtung=SOUTH_EAST
+06:23:24  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:24  Wegpunkt 100
+06:23:29  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:32  Wegpunkt 101
+06:23:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:35  S utc=14:23:35 verbunden=true fliegt=true pos=38.901996,-9.387948 h=49.9 start=38.901392,-9.388106 akku=30 sat=26 sensoren=aktiv hindernis=5469@78°/n360/o60000/u60000 mission=EXECUTING wp=100 plan=muehle-scan-v5 wind=0 windms=5.8 windrichtung=EAST
+06:23:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:40  Wegpunkt 102
+06:23:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:47  S utc=14:23:47 verbunden=true fliegt=true pos=38.901792,-9.387787 h=50.0 start=38.901392,-9.388106 akku=29 sat=26 sensoren=aktiv hindernis=- mission=EXECUTING wp=101 plan=muehle-scan-v5 wind=0 windms=6.5 windrichtung=NORTH_EAST
+06:23:49  Wegpunkt 103
+06:23:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:54  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:23:57  Wegpunkt 104
+06:23:59  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:03  S utc=14:24:03 verbunden=true fliegt=true pos=38.901540,-9.387801 h=50.0 start=38.901392,-9.388106 akku=28 sat=26 sensoren=aktiv hindernis=2380@63°/n360/o60000/u60000 mission=EXECUTING wp=103 plan=muehle-scan-v5 wind=0 windms=4.7 windrichtung=EAST
+06:24:04  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:05  Wegpunkt 105
+06:24:09  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:14  Wegpunkt 106
+06:24:14  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:18  S utc=14:24:18 verbunden=true fliegt=true pos=38.901389,-9.387916 h=50.0 start=38.901392,-9.388106 akku=27 sat=26 sensoren=aktiv hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=105 plan=muehle-scan-v5 wind=0 windms=3.6 windrichtung=NORTH_EAST
+06:24:19  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:22  Wegpunkt 107
+06:24:24  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:29  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:30  S utc=14:24:30 verbunden=true fliegt=true pos=38.901266,-9.388174 h=50.0 start=38.901392,-9.388106 akku=27 sat=26 sensoren=aktiv hindernis=2338@78°/n360/o60000/u60000 mission=EXECUTING wp=106 plan=muehle-scan-v5 wind=0 windms=2.2 windrichtung=NORTH_WEST
+06:24:31  Wegpunkt 108
+06:24:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:40  S utc=14:24:40 verbunden=true fliegt=true pos=38.901251,-9.388358 h=49.9 start=38.901392,-9.388106 akku=26 sat=26 sensoren=aktiv hindernis=1418@58°/n360/o60000/u60000 mission=EXECUTING wp=108 plan=muehle-scan-v5 wind=0 windms=2.6 windrichtung=NORTH_WEST
+06:24:40  Wegpunkt 109
+06:24:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:49  Wegpunkt 110
+06:24:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:24:52  S utc=14:24:52 verbunden=true fliegt=true pos=38.901285,-9.388531 h=49.6 start=38.901392,-9.388106 akku=25 sat=26 sensoren=aktiv hindernis=2763@83°/n360/o60000/u60000 mission=EXECUTING wp=109 plan=muehle-scan-v5 wind=0 windms=4.3 windrichtung=WEST
+06:24:54  Wächter: Vergrößerung 1,09/Bild, Treffer 1
+06:24:59  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:25:01  Wegpunkt 111
+06:25:03  S utc=14:25:03 verbunden=true fliegt=true pos=38.901449,-9.388446 h=31.9 start=38.901392,-9.388106 akku=25 sat=26 sensoren=aktiv hindernis=2520@78°/n360/o60000/u60000 mission=EXECUTING wp=110 plan=muehle-scan-v5 wind=0 windms=3.9 windrichtung=WEST
+06:25:04  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:25:07  ⚠ Battery 24 %: returning home now (the way back needs 24 % incl. reserve).
+06:25:07  Abbruch: ok
+06:25:07  Mission: FINISHED
+06:25:07  Mission beendet → hole Fotos und lade hoch
+06:25:07  Mission: READY
+06:25:10  S utc=14:25:10 verbunden=true fliegt=true pos=38.901496,-9.388540 h=32.0 start=38.901392,-9.388106 akku=24 sat=26 sensoren=aktiv hindernis=2698@33°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=4.0 windrichtung=WEST
+06:25:10  Rückkehr zum Startpunkt ausgelöst
+06:25:24  S utc=14:25:24 verbunden=true fliegt=true pos=38.901393,-9.388111 h=30.0 start=38.901392,-9.388106 akku=23 sat=26 sensoren=aktiv hindernis=1742@83°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=5.0 windrichtung=SOUTH_WEST
+06:25:35  S utc=14:25:35 verbunden=true fliegt=true pos=38.901394,-9.388108 h=7.7 start=38.901392,-9.388106 akku=22 sat=26 sensoren=aktiv hindernis=1831@83°/n360/o60000/u6350 mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=3.1 windrichtung=SOUTH
+06:25:46  S utc=14:25:46 verbunden=true fliegt=true pos=38.901396,-9.388109 h=3.4 start=38.901392,-9.388106 akku=22 sat=24 sensoren=aktiv hindernis=2050@73°/n360/o60000/u1558 mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=2.6 windrichtung=SOUTH_EAST
+06:25:55  Landehelfer: Drohne ist am Boden
+06:25:56  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:25:56  Landehelfer: Drohne ist am Boden
+06:25:57  Hole Fotoliste von der Drohne (SD-Karte) …
+06:25:57  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+06:25:57  S utc=14:25:57 verbunden=true fliegt=false pos=38.901394,-9.388108 h=0.0 start=38.901392,-9.388106 akku=21 sat=24 sensoren=aktiv hindernis=60000@0°/n360/o60000/u100 mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:25:59  Hole Fotoliste von der Drohne (interner Speicher) …
+06:25:59  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+06:25:59  Fotos geladen: 0
+06:26:01  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-09_muehle-scan-v5
+06:26:40  S utc=14:26:40 verbunden=true fliegt=false pos=38.901391,-9.388101 h=0.0 start=38.901392,-9.388106 akku=20 sat=24 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
+06:26:56  New plan in the cloud: muehle-scan-rest-v2. Tap the plan name → Get plan to load it.
+06:27:00  Lade Flugplan aus der Cloud …
+06:27:03  Wetter am Start (Vorhersage, 10 m Höhe, grob): Forecast wind 3 m/s from N (356°), gusts up to 6 m/s in the next 2 h
+06:27:03  Gebäudedatenbank: kein Gebäude im Umkreis (außerhalb Lissabon?)
+06:27:03  Transithöhe 45 m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel
+06:27:03  Tempo: max 3.0 m/s, 20 Abschnitte nahe Gebäuden gedrosselt (min 3,0 m/s)
+06:27:03  Return guard: way home clear from every point at 45 m
+06:27:03  Höhenmodell: Gelände am Ziel +2 m gegenüber dem Start
+06:27:03  Oberflächen-Wächter: Strecke frei
+06:27:03  KMZ erstellt: 20 Punkte, 187 m, ca. 2 min
+06:27:03  DJI-Prüfung: in Ordnung
+06:27:03  Plan übernommen, lade auf die Drohne …
+06:27:03  Lade Mission auf die Drohne …
+06:27:03  Mission: UPLOADING
+06:27:03  Upload 5 %
+06:27:04  Upload 25 %
+06:27:04  Upload 57 %
+06:27:04  Upload 77 %
+06:27:04  Upload 100 %
+06:27:05  Mission ist auf der Drohne
+06:27:05  Mission: READY
+06:27:14  S utc=14:27:14 verbunden=true fliegt=false pos=38.901390,-9.388101 h=0.0 start=38.901392,-9.388106 akku=20 sat=23 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:27:52  S utc=14:27:52 verbunden=true fliegt=false pos=38.901391,-9.388103 h=0.0 start=38.901392,-9.388106 akku=19 sat=23 sensoren=aktiv hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:28:05  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:28:10  Mission: IDLE
+06:28:10  DJI-Meldung erledigt: 0x1C00040A
+06:28:10  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+06:28:25  S utc=14:28:25 verbunden=true fliegt=false pos=38.901393,-9.388103 h=1.2 start=38.901392,-9.388106 akku=19 sat=21 sensoren=aktiv hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:28:36  DJI-Status: NORMAL – Ready to Go (GPS)
+06:28:36  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:28:36  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:28:37  DJI-Meldung: [WARNUNG]  – Remote controller not bound/still confirming binding status
+06:28:37  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:28:37  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+06:28:39  S utc=14:28:39 verbunden=true fliegt=false pos=38.901393,-9.388103 h=1.2 start=? akku=99 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:28:41  DJI-Meldung: [Hinweis]  – SD card full. Change card or delete files
+06:28:42  DJI-Meldung erledigt: 0x16100089
+06:28:42  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:28:57  Live-Bild verbunden
+06:29:11  S utc=14:29:11 verbunden=true fliegt=false pos=38.901393,-9.388103 h=1.2 start=? akku=98 sat=8 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:29:15  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:29:17  Abheben per Knopf: Motoren an, steigt auf etwa 1,2 m und schwebt
+06:29:17  Abheben eingeleitet
+06:29:23  Flugprotokoll: 2026-11-22_06-29_muehle-scan-rest-v2/protokoll.txt
+06:29:23  Obstacle sensing OFF for this plan flight: the plan marks the whole route as free (open water / high above everything). It comes back on after landing. Keep the drone in sight.
+06:29:23  Startpunkt: 38.901389, -9.388127
+06:29:23  Karte: https://www.google.com/maps/dir/38.901392,-9.388106/38.901447,-9.388157/38.901458,-9.388167/38.901430,-9.388287/38.901439,-9.388413/38.901485,-9.388524/38.901560,-9.388604/38.901654,-9.388642/38.901752,-9.388630/38.901839,-9.388571/data=!4m2!4m1!3e2
+06:29:23  Mission: READY
+06:29:23  Wegpunkt 1
+06:29:23  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:29:23  HINDERNISERKENNUNG AUS – the plan marks this route as free
+06:29:23  Rückkehrhöhe: 45 m
+06:29:23  Mission: PREPARING
+06:29:23  Start: ok
+06:29:23  Mission: ENTER_WAYLINE
+06:29:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:25  Flight stills: saving a still every 4 s (1920x1080)
+06:29:28  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:30  S utc=14:29:30 verbunden=true fliegt=true pos=38.901390,-9.388125 h=17.4 start=38.901389,-9.388127 akku=97 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=ENTER_WAYLINE wp=0 plan=muehle-scan-rest-v2 wind=0 windms=1.7 windrichtung=SOUTH_EAST
+06:29:33  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:38  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:29:42  Mission: EXECUTING
+06:29:43  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:29:48  S utc=14:29:48 verbunden=true fliegt=true pos=38.901392,-9.388104 h=45.0 start=38.901389,-9.388127 akku=96 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=634@93°/n360/o60000/u60000 mission=EXECUTING wp=0 plan=muehle-scan-rest-v2 wind=0 windms=3.3 windrichtung=NORTH
+06:29:48  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:52  Wegpunkt 2
+06:29:53  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:58  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:59  S utc=14:29:59 verbunden=true fliegt=true pos=38.901457,-9.388167 h=32.3 start=38.901389,-9.388127 akku=96 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=632@83°/n360/o60000/u60000 mission=EXECUTING wp=1 plan=muehle-scan-rest-v2 wind=0 windms=1.4 windrichtung=NORTH
+06:30:00  Wegpunkt 3
+06:30:03  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:08  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:09  Wegpunkt 4
+06:30:10  S utc=14:30:10 verbunden=true fliegt=true pos=38.901431,-9.388283 h=32.0 start=38.901389,-9.388127 akku=95 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=2527@68°/n360/o60000/u60000 mission=EXECUTING wp=3 plan=muehle-scan-rest-v2 wind=0 windms=2.3 windrichtung=NORTH_WEST
+06:30:13  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:18  Wegpunkt 5
+06:30:18  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:21  S utc=14:30:21 verbunden=true fliegt=true pos=38.901448,-9.388435 h=32.0 start=38.901389,-9.388127 akku=94 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=3439@88°/n360/o60000/u60000 mission=EXECUTING wp=4 plan=muehle-scan-rest-v2 wind=0 windms=2.4 windrichtung=NORTH_WEST
+06:30:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:27  Wegpunkt 6
+06:30:29  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:31  S utc=14:30:31 verbunden=true fliegt=true pos=38.901524,-9.388565 h=31.9 start=38.901389,-9.388127 akku=94 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=5 plan=muehle-scan-rest-v2 wind=0 windms=2.7 windrichtung=WEST
+06:30:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:35  Wegpunkt 7
+06:30:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:43  S utc=14:30:43 verbunden=true fliegt=true pos=38.901650,-9.388640 h=31.9 start=38.901389,-9.388127 akku=93 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=6 plan=muehle-scan-rest-v2 wind=0 windms=2.9 windrichtung=SOUTH
+06:30:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:44  Wegpunkt 8
+06:30:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:53  Wegpunkt 9
+06:30:54  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:54  S utc=14:30:54 verbunden=true fliegt=true pos=38.901749,-9.388631 h=31.9 start=38.901389,-9.388127 akku=92 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=3881@73°/n360/o60000/u60000 mission=EXECUTING wp=8 plan=muehle-scan-rest-v2 wind=0 windms=3.4 windrichtung=SOUTH_WEST
+06:30:59  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:02  Wegpunkt 10
+06:31:04  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:06  S utc=14:31:06 verbunden=true fliegt=true pos=38.901854,-9.388547 h=32.0 start=38.901389,-9.388127 akku=91 sat=25 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=9 plan=muehle-scan-rest-v2 wind=0 windms=4.7 windrichtung=SOUTH
+06:31:09  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:10  Wegpunkt 11
+06:31:14  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:17  Wegpunkt 12
+06:31:20  Wächter: Vergrößerung 1,03/Bild, Treffer 0
+06:31:22  S utc=14:31:22 verbunden=true fliegt=true pos=38.901927,-9.388308 h=32.0 start=38.901389,-9.388127 akku=90 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=12041@73°/n360/o60000/u60000 mission=EXECUTING wp=11 plan=muehle-scan-rest-v2 wind=0 windms=5.1 windrichtung=SOUTH_EAST
+06:31:25  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:25  Wegpunkt 13
+06:31:30  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:33  Wegpunkt 14
+06:31:35  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:38  S utc=14:31:38 verbunden=true fliegt=true pos=38.901845,-9.388084 h=31.9 start=38.901389,-9.388127 akku=89 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=60000@0°/n360/o60000/u60000 mission=EXECUTING wp=13 plan=muehle-scan-rest-v2 wind=0 windms=5.8 windrichtung=EAST
+06:31:40  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:41  Wegpunkt 15
+06:31:45  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:49  Wegpunkt 16
+06:31:49  S utc=14:31:49 verbunden=true fliegt=true pos=38.901709,-9.387999 h=32.0 start=38.901389,-9.388127 akku=89 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=3393@63°/n360/o60000/u60000 mission=EXECUTING wp=15 plan=muehle-scan-rest-v2 wind=0 windms=5.3 windrichtung=NORTH_EAST
+06:31:50  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:55  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:57  Wegpunkt 17
+06:31:59  S utc=14:31:59 verbunden=true fliegt=true pos=38.901606,-9.388011 h=32.0 start=38.901389,-9.388127 akku=88 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=2294@88°/n360/o60000/u60000 mission=EXECUTING wp=16 plan=muehle-scan-rest-v2 wind=0 windms=4.8 windrichtung=NORTH_EAST
+06:32:00  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:05  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:05  Wegpunkt 18
+06:32:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:11  S utc=14:32:11 verbunden=true fliegt=true pos=38.901512,-9.388072 h=42.3 start=38.901389,-9.388127 akku=87 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=EXECUTING wp=17 plan=muehle-scan-rest-v2 wind=0 windms=5.4 windrichtung=EAST
+06:32:12  Wegpunkt 19
+06:32:13  DJI-Meldung: [Hinweis]  – Gimbal pan axis reached movement limit
+06:32:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:19  Wegpunkt 20
+06:32:19  Mission: FINISHED
+06:32:19  Mission beendet → hole Fotos und lade hoch
+06:32:19  Mission: READY
+06:32:19  DJI-Meldung erledigt: 0x1D050003
+06:32:21  S utc=14:32:21 verbunden=true fliegt=true pos=38.901389,-9.388106 h=45.0 start=38.901389,-9.388127 akku=87 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=2469@118°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=7.2 windrichtung=SOUTH
+06:32:33  S utc=14:32:33 verbunden=true fliegt=true pos=38.901388,-9.388126 h=9.7 start=38.901389,-9.388127 akku=86 sat=26 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=5322@223°/n360/o60000/u60000 mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=3.0 windrichtung=SOUTH
+06:32:50  S utc=14:32:50 verbunden=true fliegt=true pos=38.901388,-9.388127 h=1.5 start=38.901389,-9.388127 akku=85 sat=24 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=1154@63°/n360/o60000/u928 mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=3.5 windrichtung=SOUTH_EAST
+06:32:57  Landehelfer: Drohne ist am Boden
+06:32:58  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:32:59  Hole Fotoliste von der Drohne (SD-Karte) …
+06:33:02  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+06:33:02  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported.
+06:33:02  Hinderniserkennung wieder AN (Bremsen) – landed after a dusk-mode flight
+06:33:03  Hole Fotoliste von der Drohne (interner Speicher) …
+06:33:04  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+06:33:04  Fotos geladen: 0
+06:33:05  S utc=14:33:05 verbunden=true fliegt=false pos=38.901388,-9.388124 h=0.0 start=38.901389,-9.388127 akku=84 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:33:06  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-29_muehle-scan-rest-v2
+06:33:06  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:33:08  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:33:29  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:33:30  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:33:31  DJI-Meldung: [WARNUNG]  – Unable to take off. Disconnect aircraft from USB and try again
+06:33:33  DJI-Meldung erledigt: 0x16100015
+06:33:35  S utc=14:33:35 verbunden=true fliegt=false pos=38.901439,-9.388131 h=0.0 start=38.901389,-9.388127 akku=84 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:33:35  DJI-Meldung erledigt: 0x1C00040A
+06:34:09  S utc=14:34:09 verbunden=true fliegt=false pos=38.901443,-9.388133 h=0.0 start=38.901389,-9.388127 akku=83 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:34:40  S utc=14:34:40 verbunden=true fliegt=false pos=38.901440,-9.388128 h=0.0 start=38.901389,-9.388127 akku=83 sat=19 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:35:15  S utc=14:35:15 verbunden=true fliegt=false pos=38.901429,-9.388133 h=0.0 start=38.901389,-9.388127 akku=83 sat=20 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:35:50  S utc=14:35:50 verbunden=true fliegt=false pos=38.901429,-9.388133 h=0.0 start=38.901389,-9.388127 akku=82 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:36:22  S utc=14:36:22 verbunden=true fliegt=false pos=38.901432,-9.388144 h=0.0 start=38.901389,-9.388127 akku=82 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:36:55  Flight stills: all 53 of 2026-11-22_06-29_muehle-scan-rest-v2 sent to Claude
+06:37:00  S utc=14:37:00 verbunden=true fliegt=false pos=38.901434,-9.388142 h=0.0 start=38.901389,-9.388127 akku=81 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:37:35  S utc=14:37:35 verbunden=true fliegt=false pos=38.901429,-9.388132 h=0.0 start=38.901389,-9.388127 akku=81 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:38:07  S utc=14:38:07 verbunden=true fliegt=false pos=38.901434,-9.388126 h=0.0 start=38.901389,-9.388127 akku=80 sat=20 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:38:39  S utc=14:38:39 verbunden=true fliegt=false pos=38.901439,-9.388137 h=0.0 start=38.901389,-9.388127 akku=80 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:39:12  S utc=14:39:12 verbunden=true fliegt=false pos=38.901434,-9.388130 h=0.0 start=38.901389,-9.388127 akku=80 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:39:45  S utc=14:39:45 verbunden=true fliegt=false pos=38.901435,-9.388126 h=0.0 start=38.901389,-9.388127 akku=79 sat=20 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:40:17  S utc=14:40:17 verbunden=true fliegt=false pos=38.901429,-9.388123 h=0.0 start=38.901389,-9.388127 akku=79 sat=19 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:40:50  S utc=14:40:50 verbunden=true fliegt=false pos=38.901428,-9.388118 h=0.0 start=38.901389,-9.388127 akku=78 sat=20 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:41:23  S utc=14:41:23 verbunden=true fliegt=false pos=38.901425,-9.388108 h=0.0 start=38.901389,-9.388127 akku=78 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:41:55  S utc=14:41:55 verbunden=true fliegt=false pos=38.901426,-9.388121 h=0.0 start=38.901389,-9.388127 akku=77 sat=20 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:42:28  S utc=14:42:28 verbunden=true fliegt=false pos=38.901426,-9.388120 h=0.0 start=38.901389,-9.388127 akku=77 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:43:01  S utc=14:43:01 verbunden=true fliegt=false pos=38.901427,-9.388120 h=0.0 start=38.901389,-9.388127 akku=77 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:43:33  S utc=14:43:33 verbunden=true fliegt=false pos=38.901427,-9.388116 h=0.0 start=38.901389,-9.388127 akku=76 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:44:07  S utc=14:44:07 verbunden=true fliegt=false pos=38.901435,-9.388128 h=0.0 start=38.901389,-9.388127 akku=76 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:44:39  S utc=14:44:39 verbunden=true fliegt=false pos=38.901437,-9.388134 h=0.0 start=38.901389,-9.388127 akku=75 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:45:12  S utc=14:45:12 verbunden=true fliegt=false pos=38.901437,-9.388144 h=0.0 start=38.901389,-9.388127 akku=75 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:45:44  S utc=14:45:44 verbunden=true fliegt=false pos=38.901435,-9.388141 h=0.0 start=38.901389,-9.388127 akku=75 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:46:16  S utc=14:46:16 verbunden=true fliegt=false pos=38.901434,-9.388140 h=0.0 start=38.901389,-9.388127 akku=74 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:46:48  S utc=14:46:48 verbunden=true fliegt=false pos=38.901431,-9.388144 h=0.0 start=38.901389,-9.388127 akku=74 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:47:21  S utc=14:47:21 verbunden=true fliegt=false pos=38.901433,-9.388141 h=0.0 start=38.901389,-9.388127 akku=73 sat=20 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:47:53  S utc=14:47:53 verbunden=true fliegt=false pos=38.901427,-9.388132 h=0.0 start=38.901389,-9.388127 akku=73 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:48:26  S utc=14:48:26 verbunden=true fliegt=false pos=38.901431,-9.388133 h=0.0 start=38.901389,-9.388127 akku=73 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:48:59  S utc=14:48:59 verbunden=true fliegt=false pos=38.901435,-9.388140 h=0.0 start=38.901389,-9.388127 akku=72 sat=20 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:49:32  S utc=14:49:32 verbunden=true fliegt=false pos=38.901442,-9.388138 h=0.0 start=38.901389,-9.388127 akku=72 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:50:05  S utc=14:50:05 verbunden=true fliegt=false pos=38.901445,-9.388136 h=0.0 start=38.901389,-9.388127 akku=71 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:50:38  S utc=14:50:38 verbunden=true fliegt=false pos=38.901437,-9.388136 h=0.0 start=38.901389,-9.388127 akku=71 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:51:10  S utc=14:51:10 verbunden=true fliegt=false pos=38.901444,-9.388132 h=0.0 start=38.901389,-9.388127 akku=70 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:51:43  S utc=14:51:43 verbunden=true fliegt=false pos=38.901447,-9.388137 h=0.0 start=38.901389,-9.388127 akku=70 sat=20 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:52:15  S utc=14:52:15 verbunden=true fliegt=false pos=38.901444,-9.388141 h=0.0 start=38.901389,-9.388127 akku=70 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:52:38  New plan in the cloud: muehle-scan-rest-v3. Tap the plan name → Get plan to load it.
+06:52:48  S utc=14:52:48 verbunden=true fliegt=false pos=38.901445,-9.388141 h=0.0 start=38.901389,-9.388127 akku=69 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:53:22  S utc=14:53:22 verbunden=true fliegt=false pos=38.901442,-9.388137 h=0.0 start=38.901389,-9.388127 akku=69 sat=21 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:53:55  S utc=14:53:55 verbunden=true fliegt=false pos=38.901437,-9.388134 h=0.0 start=38.901389,-9.388127 akku=68 sat=19 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:54:28  S utc=14:54:28 verbunden=true fliegt=false pos=38.901438,-9.388140 h=0.0 start=38.901389,-9.388127 akku=68 sat=11 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:54:30  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:54:35  DJI-Meldung erledigt: 0x16100015
+06:54:39  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:54:55  DJI-Meldung erledigt: 0x16100015
+06:54:57  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:55:02  S utc=14:55:02 verbunden=true fliegt=false pos=38.901438,-9.388121 h=0.0 start=38.901389,-9.388127 akku=67 sat=19 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:55:08  DJI-Meldung erledigt: 0x16100015
+06:55:10  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:55:14  DJI-Meldung erledigt: 0x16100015
+06:55:36  S utc=14:55:36 verbunden=true fliegt=false pos=38.901434,-9.388129 h=0.0 start=38.901389,-9.388127 akku=67 sat=23 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:56:10  S utc=14:56:10 verbunden=true fliegt=false pos=38.901429,-9.388144 h=0.0 start=38.901389,-9.388127 akku=66 sat=19 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:56:38  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:56:39  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:56:39  DJI-Meldung: [WARNUNG]  – Aircraft movement detected
+06:56:39  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:56:39  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:56:43  S utc=14:56:43 verbunden=true fliegt=false pos=38.901518,-9.388289 h=0.0 start=38.901389,-9.388127 akku=66 sat=10 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:56:44  DJI-Meldung erledigt: 0x161000A4
+06:57:14  S utc=14:57:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=66 sat=14 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:57:39  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:57:43  DJI-Meldung erledigt: 0x16100015
+06:57:46  S utc=14:57:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=65 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:58:21  S utc=14:58:21 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=65 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:58:54  S utc=14:58:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=64 sat=3 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:59:28  S utc=14:59:28 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=64 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+06:59:52  DJI-Status: NORMAL – Ready to Go (GPS)
+06:59:52  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
+06:59:54  DJI-Meldung erledigt: 0x16200101
+07:00:01  S utc=15:00:01 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=63 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:00:32  S utc=15:00:32 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=63 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:01:05  S utc=15:01:05 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=63 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:01:40  S utc=15:01:40 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=63 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:02:13  S utc=15:02:13 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=62 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:02:46  S utc=15:02:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=62 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:03:20  S utc=15:03:20 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=62 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:03:54  S utc=15:03:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=61 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:04:28  S utc=15:04:28 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=61 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:05:02  S utc=15:05:02 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=61 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:05:36  S utc=15:05:36 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=61 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:06:10  S utc=15:06:10 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=60 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:06:41  S utc=15:06:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=60 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:07:15  S utc=15:07:15 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=60 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:07:48  S utc=15:07:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=59 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:08:20  S utc=15:08:20 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=59 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:08:55  S utc=15:08:55 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=59 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:09:30  S utc=15:09:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=59 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:10:05  S utc=15:10:05 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=58 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:10:40  S utc=15:10:40 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=58 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:11:14  S utc=15:11:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=58 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:11:44  S utc=15:11:44 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=58 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:12:18  S utc=15:12:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=57 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:12:53  S utc=15:12:53 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=57 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:13:27  S utc=15:13:27 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=57 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:14:01  S utc=15:14:01 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=56 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:14:35  S utc=15:14:35 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=56 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:15:09  S utc=15:15:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=56 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:15:44  S utc=15:15:44 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=56 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:16:17  S utc=15:16:17 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=55 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:16:51  S utc=15:16:51 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=55 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:17:24  S utc=15:17:24 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=55 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:17:58  S utc=15:17:58 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=54 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:18:32  S utc=15:18:32 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=54 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:19:06  S utc=15:19:06 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=54 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:19:41  S utc=15:19:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=54 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:20:14  S utc=15:20:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=53 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:20:50  S utc=15:20:50 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=53 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:21:24  S utc=15:21:24 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=53 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:21:58  S utc=15:21:58 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=52 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:22:31  S utc=15:22:31 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=52 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:23:06  S utc=15:23:06 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=52 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:23:39  S utc=15:23:39 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=52 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:24:14  S utc=15:24:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=51 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:24:46  S utc=15:24:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=51 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:25:18  S utc=15:25:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=51 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:25:50  S utc=15:25:50 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=50 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:26:23  S utc=15:26:23 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=50 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:26:55  S utc=15:26:55 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=50 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:27:27  S utc=15:27:27 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=50 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:27:59  S utc=15:27:59 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=49 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:28:31  S utc=15:28:31 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=49 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:29:05  S utc=15:29:05 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=49 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:29:36  S utc=15:29:36 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=49 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:30:09  S utc=15:30:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=48 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:30:41  S utc=15:30:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=48 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:31:14  S utc=15:31:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=48 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:31:47  S utc=15:31:47 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=47 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:32:19  S utc=15:32:19 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=47 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:32:52  S utc=15:32:52 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=47 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:33:25  S utc=15:33:25 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=47 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:33:58  S utc=15:33:58 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=46 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:34:30  S utc=15:34:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=46 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:35:03  S utc=15:35:03 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=46 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:35:35  S utc=15:35:35 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=46 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:36:08  S utc=15:36:08 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=45 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:36:40  S utc=15:36:40 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=45 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:37:13  S utc=15:37:13 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=45 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:37:45  S utc=15:37:45 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=44 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:38:18  S utc=15:38:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=44 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:38:51  S utc=15:38:51 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=44 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:39:24  S utc=15:39:24 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=44 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:39:56  S utc=15:39:56 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=43 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:40:29  S utc=15:40:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=43 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:41:02  S utc=15:41:02 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=43 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:41:35  S utc=15:41:35 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=42 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:42:08  S utc=15:42:08 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=42 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:42:40  S utc=15:42:40 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=42 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:43:14  S utc=15:43:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=42 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:43:24  Live link: no upload right now (no network?). The flight is not affected; the log stays on the phone.
+07:43:45  S utc=15:43:45 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=41 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:44:16  S utc=15:44:16 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=41 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:44:46  S utc=15:44:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=41 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:45:16  S utc=15:45:16 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=41 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:45:46  S utc=15:45:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=40 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:46:16  S utc=15:46:16 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=40 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:46:46  S utc=15:46:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=40 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:47:16  S utc=15:47:16 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=40 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:47:46  S utc=15:47:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=39 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:48:16  S utc=15:48:16 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=39 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:48:46  S utc=15:48:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=39 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:49:16  S utc=15:49:16 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=39 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:49:48  S utc=15:49:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=38 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:50:29  S utc=15:50:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=38 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:51:09  S utc=15:51:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=38 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:51:51  S utc=15:51:51 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=37 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:54:09  S utc=15:54:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=36 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:54:48  S utc=15:54:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=36 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:55:25  S utc=15:55:25 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=35 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:56:03  S utc=15:56:03 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=35 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:56:45  S utc=15:56:45 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=35 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:59:09  S utc=15:59:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=33 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+07:59:53  S utc=15:59:53 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=33 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:00:28  S utc=16:00:28 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=33 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:01:05  S utc=16:01:05 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=32 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:01:43  S utc=16:01:43 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=32 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:02:19  S utc=16:02:19 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=32 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:02:55  S utc=16:02:55 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=31 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:03:37  S utc=16:03:37 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=31 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:04:32  S utc=16:04:32 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=31 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:05:10  S utc=16:05:10 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=30 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:05:44  S utc=16:05:44 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=30 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:06:27  S utc=16:06:27 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=30 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:07:00  S utc=16:07:00 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=29 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:07:44  S utc=16:07:44 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=29 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:08:18  S utc=16:08:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=29 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:08:53  S utc=16:08:53 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=28 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:09:29  S utc=16:09:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=28 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:10:06  S utc=16:10:06 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=28 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:10:42  S utc=16:10:42 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=27 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:11:24  S utc=16:11:24 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=27 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:11:58  S utc=16:11:58 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=27 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:12:33  S utc=16:12:33 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=26 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:15:00  S utc=16:15:00 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=25 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:15:36  S utc=16:15:36 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=25 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:16:14  S utc=16:16:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=24 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:18:41  S utc=16:18:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=23 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:19:19  S utc=16:19:19 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=23 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:19:59  S utc=16:19:59 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=22 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:20:41  S utc=16:20:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=22 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:21:35  S utc=16:21:35 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=22 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:22:14  S utc=16:22:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=21 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:22:56  S utc=16:22:56 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=21 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:23:29  S utc=16:23:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=21 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:24:13  S utc=16:24:13 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=20 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:24:47  S utc=16:24:47 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=20 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:25:43  S utc=16:25:43 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=19 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:28:12  S utc=16:28:12 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=18 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:28:59  S utc=16:28:59 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=18 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:29:37  S utc=16:29:37 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=17 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:30:13  S utc=16:30:13 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=17 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:30:49  S utc=16:30:49 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=17 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:31:29  S utc=16:31:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=16 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:32:18  S utc=16:32:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=16 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:32:55  S utc=16:32:55 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=16 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:33:31  S utc=16:33:31 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=15 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:34:09  S utc=16:34:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=15 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:36:35  S utc=16:36:35 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=14 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:37:09  S utc=16:37:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=14 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:37:47  S utc=16:37:47 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=13 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:38:22  S utc=16:38:22 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=13 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:38:57  S utc=16:38:57 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=13 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:39:36  S utc=16:39:36 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=12 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:40:19  S utc=16:40:19 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=12 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:40:54  S utc=16:40:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=12 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:41:29  S utc=16:41:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=11 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:42:02  S utc=16:42:02 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=11 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:42:45  S utc=16:42:45 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=11 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:43:05  DJI-Meldung: [WARNUNG]  – Critical low battery. Recharge promptly
+08:43:28  S utc=16:43:28 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=10 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:44:03  S utc=16:44:03 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=10 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:44:38  S utc=16:44:38 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=10 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:45:11  S utc=16:45:11 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=10 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:45:48  S utc=16:45:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=9 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:46:30  S utc=16:46:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=9 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:47:00  S utc=16:47:00 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=9 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:47:30  S utc=16:47:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=9 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:48:00  S utc=16:48:00 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=9 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:48:30  S utc=16:48:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=8 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:49:00  S utc=16:49:00 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=8 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:49:37  S utc=16:49:37 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=8 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:50:18  S utc=16:50:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=8 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:50:53  S utc=16:50:53 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=8 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:51:40  S utc=16:51:40 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=7 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:52:15  S utc=16:52:15 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=7 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:52:54  S utc=16:52:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=7 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:53:29  S utc=16:53:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=6 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:54:02  S utc=16:54:02 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=6 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:54:38  S utc=16:54:38 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=6 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:55:11  S utc=16:55:11 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=5 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:55:48  S utc=16:55:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=5 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:56:31  S utc=16:56:31 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=4 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:57:44  DJI-Meldung: [WARNUNG]  – Critical low battery voltage. Recharge promptly
+08:58:58  S utc=16:58:58 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=3 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+08:59:39  S utc=16:59:39 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=3 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:00:22  S utc=17:00:22 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=2 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:00:58  S utc=17:00:58 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=2 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:01:37  S utc=17:01:37 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=2 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:02:13  S utc=17:02:13 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=1 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:03:03  S utc=17:03:03 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=1 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:03:44  S utc=17:03:44 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=1 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:06:14  S utc=17:06:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:06:48  S utc=17:06:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:07:26  S utc=17:07:26 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:08:02  S utc=17:08:02 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:08:42  S utc=17:08:42 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:09:20  S utc=17:09:20 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:09:57  S utc=17:09:57 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:10:31  S utc=17:10:31 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:11:18  S utc=17:11:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=READY wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:11:52  Mission: IDLE
+09:11:52  DJI-Meldung erledigt: 0x1610000F
+09:11:52  DJI-Meldung erledigt: 0x1610000E
+09:11:52  DJI-Meldung erledigt: 0x19000810
+09:11:52  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+09:11:54  S utc=17:11:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:12:46  S utc=17:12:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:13:30  S utc=17:13:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:14:07  S utc=17:14:07 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:16:30  S utc=17:16:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:17:04  S utc=17:17:04 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:17:41  S utc=17:17:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:18:18  S utc=17:18:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:19:04  S utc=17:19:04 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:19:38  S utc=17:19:38 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:20:20  S utc=17:20:20 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:20:58  S utc=17:20:58 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:21:42  S utc=17:21:42 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:22:19  S utc=17:22:19 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:22:52  S utc=17:22:52 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:23:32  S utc=17:23:32 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:24:14  S utc=17:24:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:24:48  S utc=17:24:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:27:14  S utc=17:27:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:27:54  S utc=17:27:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:28:29  S utc=17:28:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:29:04  S utc=17:29:04 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:29:44  S utc=17:29:44 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:30:20  S utc=17:30:20 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:32:42  S utc=17:32:42 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:33:20  S utc=17:33:20 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:33:54  S utc=17:33:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:34:41  S utc=17:34:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:35:18  S utc=17:35:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:35:54  S utc=17:35:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:36:37  S utc=17:36:37 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:37:15  S utc=17:37:15 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:37:56  S utc=17:37:56 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:38:34  S utc=17:38:34 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:39:14  S utc=17:39:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:39:51  S utc=17:39:51 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:40:35  S utc=17:40:35 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:41:12  S utc=17:41:12 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:41:53  S utc=17:41:53 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:42:29  S utc=17:42:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:43:14  S utc=17:43:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:43:52  S utc=17:43:52 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:44:33  S utc=17:44:33 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:45:11  S utc=17:45:11 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:47:50  S utc=17:47:50 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:50:17  S utc=17:50:17 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:51:00  S utc=17:51:00 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:51:33  S utc=17:51:33 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:52:05  S utc=17:52:05 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:52:38  S utc=17:52:38 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:53:10  S utc=17:53:10 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:53:43  S utc=17:53:43 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:54:17  S utc=17:54:17 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:54:52  S utc=17:54:52 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:55:25  S utc=17:55:25 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:55:55  S utc=17:55:55 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:56:25  S utc=17:56:25 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:56:57  S utc=17:56:57 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:57:29  S utc=17:57:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:58:04  S utc=17:58:04 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:58:35  S utc=17:58:35 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:59:09  S utc=17:59:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+09:59:41  S utc=17:59:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:00:16  S utc=18:00:16 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:00:50  S utc=18:00:50 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:01:24  S utc=18:01:24 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:01:57  S utc=18:01:57 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:02:32  S utc=18:02:32 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:03:05  S utc=18:03:05 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:03:39  S utc=18:03:39 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:04:12  S utc=18:04:12 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:04:46  S utc=18:04:46 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:05:20  S utc=18:05:20 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:05:55  S utc=18:05:55 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:06:29  S utc=18:06:29 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:07:03  S utc=18:07:03 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:07:33  S utc=18:07:33 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:08:08  S utc=18:08:08 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:08:42  S utc=18:08:42 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:09:14  S utc=18:09:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:09:48  S utc=18:09:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:10:21  S utc=18:10:21 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:10:52  S utc=18:10:52 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:11:27  S utc=18:11:27 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:12:03  S utc=18:12:03 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:12:34  S utc=18:12:34 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:13:09  S utc=18:13:09 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:13:41  S utc=18:13:41 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:14:13  S utc=18:14:13 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:14:45  S utc=18:14:45 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:15:18  S utc=18:15:18 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:15:53  S utc=18:15:53 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:16:27  S utc=18:16:27 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:17:00  S utc=18:17:00 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:17:33  S utc=18:17:33 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:18:08  S utc=18:18:08 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:18:40  S utc=18:18:40 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:19:14  S utc=18:19:14 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:19:49  S utc=18:19:49 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:20:23  S utc=18:20:23 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:20:57  S utc=18:20:57 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:21:31  S utc=18:21:31 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:22:04  S utc=18:22:04 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:22:39  S utc=18:22:39 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:23:12  S utc=18:23:12 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:23:45  S utc=18:23:45 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:24:16  S utc=18:24:16 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:24:50  S utc=18:24:50 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:25:22  S utc=18:25:22 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:25:56  S utc=18:25:56 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:26:30  S utc=18:26:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:27:04  S utc=18:27:04 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:27:36  S utc=18:27:36 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:28:02  DJI-Status: NORMAL – Ready to Go (GPS)
+10:28:02  Hinderniserkennung: aktiv (BRAKE, Hauptschalter false, nicht unterstützt)
+10:28:02  DJI-Status: CANT_TAKEOFF – Unable to take off
+10:28:02  DJI-Status: LOW_RC_POWER – Remote Controller Battery Low
+10:28:03  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+10:28:04  DJI-Status: CANT_TAKEOFF – Unable to take off
+10:28:05  DJI-Meldung: [WARNUNG]  – Unable to take off. Disconnect aircraft from USB and try again
+10:28:06  S utc=18:28:06 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=67 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:28:40  S utc=18:28:40 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=67 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:29:13  S utc=18:29:13 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=66 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:29:48  S utc=18:29:48 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=66 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:30:21  S utc=18:30:21 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=66 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:30:54  S utc=18:30:54 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=65 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:31:30  S utc=18:31:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=65 sat=5 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:32:04  S utc=18:32:04 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=64 sat=7 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:32:38  S utc=18:32:38 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=64 sat=8 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:33:12  S utc=18:33:12 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=63 sat=7 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:33:47  S utc=18:33:47 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=63 sat=7 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:34:17  S utc=18:34:17 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=63 sat=7 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:34:52  S utc=18:34:52 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=62 sat=5 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:35:24  S utc=18:35:24 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=62 sat=6 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:35:56  S utc=18:35:56 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=61 sat=5 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:36:21  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
+10:36:22  DJI-Status: NORMAL – Ready to Go (GPS)
+10:36:23  DJI-Meldung erledigt: 0x16200101
+10:36:28  S utc=18:36:28 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=61 sat=5 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS

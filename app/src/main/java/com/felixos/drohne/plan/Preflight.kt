@@ -34,6 +34,8 @@ object Preflight {
         val buildingConflicts: List<String> = emptyList(),
         val surfaceConflicts: List<String> = emptyList(),
         val returnProblems: List<String> = emptyList(),
+        /** Freier Platz des aktiven Kameraspeichers in MB; null = noch nicht gelesen. */
+        val cameraFreeMb: Int? = null,
         val rthHeightM: Double,
         val transitHeightM: Double,
         /** Lag der vorbereitete Plan ganz im Höhenmodell? */
@@ -52,13 +54,17 @@ object Preflight {
         if (m != null && home != null) {
             val est = Budget.estimate(m, home)
             val have = l.batteryPercent ?: 0
-            if (have < est.neededPercent) add("Battery $have %, the plan needs about ${est.neededPercent} % (incl. ${Budget.RESERVE_PERCENT} % reserve)")
+            // Felix 22.11.2026: Akku sperrt den Start nicht mehr; reicht er nicht, kehrt die Drohne im Flug um und der Rest wird als Restplan geflogen.
+            // Gesperrt bleibt nur, wenn die Umkehr-Grenze schon am Boden erreicht ist (er würde sofort wieder landen).
+            if (have <= Budget.RESERVE_PERCENT + 3) add("Battery $have %: at the return limit (${Budget.RESERVE_PERCENT} % reserve), the drone would turn back right away")
             if (est.maxDistanceFromHomeM > MAX_DISTANCE_M) add("One point is ${est.maxDistanceFromHomeM.toInt()} m from the home point (max. $MAX_DISTANCE_M m)")
         }
         if ((l.satellites ?: 0) < MIN_SATELLITES) add("GPS too weak (at least $MIN_SATELLITES satellites)")
         l.buildingConflicts.forEach { add("Building guard: $it") }
         l.surfaceConflicts.forEach { add("Surface guard: $it") }
         addAll(l.returnProblems)
+        // Flug 22.11.2026: Karte war nach 50 von 124 Fotos voll, der Rest flog ohne Bild.
+        if (m != null) Storage.problem(m.waypoints.count { it.takePhoto }, l.cameraFreeMb)?.let { add(it) }
         if (m != null) {
             val top = maxOf(m.waypoints.maxOf { it.heightM }, l.rthHeightM)
             l.heightLimitM?.let { if (it < top - 0.5) add("DJI height limit $it m is below the flight height ${top.toInt()} m. Settings → Safety → Height limit.") }
@@ -124,7 +130,8 @@ object Preflight {
         Check("GPS: at least $MIN_SATELLITES satellites", false) { it.startsWith("GPS too weak") },
         Check("Plan on the drone", false) { it.startsWith("No plan on the drone") },
         Check("Plan matches the home point", true) { it.contains("prepared without this home point") || it.contains("checked for a start point") },
-        Check("Battery sufficient (incl. reserve)", true) { it.startsWith("Battery ") },
+        Check("Battery above the return limit", true) { it.startsWith("Battery ") },
+        Check("Camera storage sufficient", true) { it.startsWith("Camera storage") },
         Check("All points within $MAX_DISTANCE_M m", true) { it.contains("from the home point") },
         Check("Building guard: route clear", true) { it.startsWith("Building guard") },
         Check("Surface guard: route clear", true) { it.startsWith("Surface guard") },

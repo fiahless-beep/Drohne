@@ -1,0 +1,238 @@
+06:29:23  Flugprotokoll: 2026-11-22_06-29_muehle-scan-rest-v2/protokoll.txt
+06:29:23  Obstacle sensing OFF for this plan flight: the plan marks the whole route as free (open water / high above everything). It comes back on after landing. Keep the drone in sight.
+06:29:23  Startpunkt: 38.901389, -9.388127
+06:29:23  Karte: https://www.google.com/maps/dir/38.901392,-9.388106/38.901447,-9.388157/38.901458,-9.388167/38.901430,-9.388287/38.901439,-9.388413/38.901485,-9.388524/38.901560,-9.388604/38.901654,-9.388642/38.901752,-9.388630/38.901839,-9.388571/data=!4m2!4m1!3e2
+06:29:23  Mission: READY
+06:29:23  Wegpunkt 1
+06:29:23  Kameraspeicher vor dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:29:23  HINDERNISERKENNUNG AUS – the plan marks this route as free
+06:29:23  Rückkehrhöhe: 45 m
+06:29:23  Mission: PREPARING
+06:29:23  Start: ok
+06:29:23  Mission: ENTER_WAYLINE
+06:29:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:24  T 38.901389 -9.388125 h=1.1 akku=98 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=3339@73°/n360/o60000/u1203
+06:29:25  Flight stills: saving a still every 4 s (1920x1080)
+06:29:26  T 38.901390 -9.388125 h=1.6 akku=98 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=5679@238°/n360/o60000/u4727
+06:29:28  T 38.901390 -9.388125 h=8.0 akku=98 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u14506
+06:29:28  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:30  T 38.901390 -9.388125 h=17.4 akku=97 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+06:29:32  T 38.901391 -9.388126 h=26.6 akku=97 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+06:29:33  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:34  T 38.901390 -9.388127 h=35.9 akku=97 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=-
+06:29:36  T 38.901390 -9.388127 h=42.9 akku=97 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=-
+06:29:38  T 38.901390 -9.388127 h=44.8 akku=97 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=2874@83°/n360/o60000/u60000
+06:29:38  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:29:40  T 38.901388 -9.388126 h=45.0 akku=97 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=3589@143°/n360/o60000/u60000
+06:29:42  T 38.901392 -9.388113 h=45.0 akku=97 fliegt=true mission=ENTER_WAYLINE wp=0 wind=0 hind=60000@0°/n360/o60000/u60000
+06:29:42  Mission: EXECUTING
+06:29:43  Wächter: Vergrößerung 0,94/Bild, Treffer 0
+06:29:44  T 38.901391 -9.388105 h=45.0 akku=97 fliegt=true mission=EXECUTING wp=0 wind=0 hind=1325@83°/n360/o60000/u60000
+06:29:46  T 38.901390 -9.388106 h=45.0 akku=96 fliegt=true mission=EXECUTING wp=0 wind=0 hind=837@103°/n360/o60000/u60000
+06:29:48  T 38.901392 -9.388104 h=45.0 akku=96 fliegt=true mission=EXECUTING wp=0 wind=0 hind=645@93°/n360/o60000/u60000
+06:29:48  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:50  T 38.901396 -9.388105 h=45.0 akku=96 fliegt=true mission=EXECUTING wp=0 wind=0 hind=1678@153°/n360/o60000/u60000
+06:29:52  T 38.901425 -9.388135 h=45.0 akku=96 fliegt=true mission=EXECUTING wp=0 wind=0 hind=1920@123°/n360/o60000/u60000
+06:29:52  Wegpunkt 2
+06:29:53  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:29:54  T 38.901450 -9.388161 h=44.4 akku=96 fliegt=true mission=EXECUTING wp=1 wind=0 hind=60000@0°/n360/o60000/u60000
+06:29:56  T 38.901459 -9.388171 h=39.6 akku=96 fliegt=true mission=EXECUTING wp=1 wind=0 hind=60000@0°/n360/o60000/u60000
+06:29:58  T 38.901456 -9.388167 h=34.4 akku=96 fliegt=true mission=EXECUTING wp=1 wind=0 hind=1814@73°/n360/o60000/u60000
+06:29:58  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:00  T 38.901457 -9.388167 h=32.3 akku=96 fliegt=true mission=EXECUTING wp=1 wind=0 hind=583@83°/n360/o60000/u60000
+06:30:00  Wegpunkt 3
+06:30:02  T 38.901458 -9.388167 h=32.0 akku=96 fliegt=true mission=EXECUTING wp=2 wind=0 hind=841@93°/n360/o60000/u60000
+06:30:03  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:04  T 38.901455 -9.388182 h=31.9 akku=95 fliegt=true mission=EXECUTING wp=2 wind=0 hind=60000@0°/n360/o60000/u60000
+06:30:06  T 38.901440 -9.388243 h=32.0 akku=95 fliegt=true mission=EXECUTING wp=2 wind=0 hind=1189@63°/n360/o60000/u60000
+06:30:08  T 38.901433 -9.388275 h=32.0 akku=95 fliegt=true mission=EXECUTING wp=2 wind=0 hind=2215@78°/n360/o60000/u60000
+06:30:08  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:09  Wegpunkt 4
+06:30:10  T 38.901431 -9.388283 h=32.0 akku=95 fliegt=true mission=EXECUTING wp=3 wind=0 hind=2492@58°/n360/o60000/u60000
+06:30:12  T 38.901430 -9.388289 h=32.0 akku=95 fliegt=true mission=EXECUTING wp=3 wind=0 hind=2559@83°/n360/o60000/u60000
+06:30:13  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:14  T 38.901434 -9.388332 h=32.0 akku=95 fliegt=true mission=EXECUTING wp=3 wind=0 hind=60000@0°/n360/o60000/u60000
+06:30:16  T 38.901438 -9.388391 h=32.0 akku=95 fliegt=true mission=EXECUTING wp=3 wind=0 hind=2978@63°/n360/o60000/u60000
+06:30:18  Wegpunkt 5
+06:30:18  T 38.901439 -9.388408 h=32.0 akku=95 fliegt=true mission=EXECUTING wp=4 wind=0 hind=2453@63°/n360/o60000/u60000
+06:30:18  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:20  T 38.901439 -9.388412 h=32.0 akku=94 fliegt=true mission=EXECUTING wp=4 wind=0 hind=60000@0°/n360/o60000/u60000
+06:30:22  T 38.901448 -9.388435 h=32.0 akku=94 fliegt=true mission=EXECUTING wp=4 wind=0 hind=6461@83°/n360/o60000/u60000
+06:30:23  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:24  T 38.901472 -9.388491 h=32.0 akku=94 fliegt=true mission=EXECUTING wp=4 wind=0 hind=3183@68°/n360/o60000/u60000
+06:30:26  T 38.901481 -9.388516 h=32.0 akku=94 fliegt=true mission=EXECUTING wp=4 wind=0 hind=2341@63°/n360/o60000/u60000
+06:30:27  Wegpunkt 6
+06:30:28  T 38.901484 -9.388522 h=32.0 akku=94 fliegt=true mission=EXECUTING wp=5 wind=0 hind=2152@83°/n360/o60000/u60000
+06:30:29  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:30  T 38.901489 -9.388529 h=32.0 akku=94 fliegt=true mission=EXECUTING wp=5 wind=0 hind=12959@303°/n360/o60000/u60000
+06:30:32  T 38.901524 -9.388565 h=31.9 akku=94 fliegt=true mission=EXECUTING wp=5 wind=0 hind=3850@68°/n360/o60000/u60000
+06:30:34  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:34  T 38.901551 -9.388595 h=31.9 akku=94 fliegt=true mission=EXECUTING wp=5 wind=0 hind=3383@63°/n360/o60000/u60000
+06:30:35  Wegpunkt 7
+06:30:36  T 38.901558 -9.388602 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=2780@63°/n360/o60000/u60000
+06:30:38  T 38.901562 -9.388604 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=5467@83°/n360/o60000/u60000
+06:30:39  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:40  T 38.901601 -9.388619 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=11327@73°/n360/o60000/u60000
+06:30:42  T 38.901641 -9.388636 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=60000@0°/n360/o60000/u60000
+06:30:44  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:44  T 38.901650 -9.388640 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=6 wind=0 hind=-
+06:30:44  Wegpunkt 8
+06:30:46  T 38.901652 -9.388641 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=7 wind=0 hind=2643@73°/n360/o60000/u60000
+06:30:48  T 38.901664 -9.388639 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=7 wind=0 hind=60000@0°/n360/o60000/u60000
+06:30:49  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:50  T 38.901713 -9.388634 h=31.9 akku=93 fliegt=true mission=EXECUTING wp=7 wind=0 hind=3009@63°/n360/o60000/u60000
+06:30:52  T 38.901743 -9.388631 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=7 wind=0 hind=2900@73°/n360/o60000/u60000
+06:30:53  Wegpunkt 9
+06:30:54  T 38.901749 -9.388631 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=8 wind=0 hind=3029@73°/n360/o60000/u60000
+06:30:54  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:30:56  T 38.901753 -9.388629 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=8 wind=0 hind=60000@0°/n360/o60000/u60000
+06:30:58  T 38.901785 -9.388607 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=8 wind=0 hind=-
+06:30:59  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:00  T 38.901825 -9.388581 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=8 wind=0 hind=4386@68°/n360/o60000/u60000
+06:31:02  Wegpunkt 10
+06:31:02  T 38.901836 -9.388573 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=9 wind=0 hind=60000@0°/n360/o60000/u60000
+06:31:04  T 38.901839 -9.388571 h=31.9 akku=92 fliegt=true mission=EXECUTING wp=9 wind=0 hind=3519@78°/n360/o60000/u60000
+06:31:04  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:06  T 38.901854 -9.388547 h=32.0 akku=91 fliegt=true mission=EXECUTING wp=9 wind=0 hind=60000@0°/n360/o60000/u60000
+06:31:08  T 38.901886 -9.388497 h=31.9 akku=91 fliegt=true mission=EXECUTING wp=9 wind=0 hind=2222@63°/n360/o60000/u60000
+06:31:09  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:10  Wegpunkt 11
+06:31:10  T 38.901899 -9.388478 h=31.9 akku=91 fliegt=true mission=EXECUTING wp=10 wind=0 hind=1687@63°/n360/o60000/u60000
+06:31:12  T 38.901902 -9.388473 h=32.0 akku=91 fliegt=true mission=EXECUTING wp=10 wind=0 hind=2713@83°/n360/o60000/u60000
+06:31:14  T 38.901909 -9.388442 h=31.9 akku=91 fliegt=true mission=EXECUTING wp=10 wind=0 hind=8775@78°/n360/o60000/u60000
+06:31:14  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:16  T 38.901924 -9.388380 h=31.9 akku=91 fliegt=true mission=EXECUTING wp=10 wind=0 hind=3204@63°/n360/o60000/u60000
+06:31:17  Wegpunkt 12
+06:31:18  T 38.901929 -9.388357 h=32.0 akku=91 fliegt=true mission=EXECUTING wp=11 wind=0 hind=2558@58°/n360/o60000/u60000
+06:31:20  Wächter: Vergrößerung 1,03/Bild, Treffer 0
+06:31:20  T 38.901930 -9.388352 h=32.0 akku=91 fliegt=true mission=EXECUTING wp=11 wind=0 hind=4729@78°/n360/o60000/u60000
+06:31:22  T 38.901927 -9.388308 h=32.0 akku=90 fliegt=true mission=EXECUTING wp=11 wind=0 hind=10483@78°/n360/o60000/u60000
+06:31:24  T 38.901922 -9.388248 h=32.0 akku=90 fliegt=true mission=EXECUTING wp=11 wind=0 hind=2828@88°/n360/o60000/u60000
+06:31:25  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:25  Wegpunkt 13
+06:31:26  T 38.901921 -9.388231 h=32.0 akku=90 fliegt=true mission=EXECUTING wp=12 wind=0 hind=2626@63°/n360/o60000/u60000
+06:31:28  T 38.901920 -9.388227 h=32.0 akku=90 fliegt=true mission=EXECUTING wp=12 wind=0 hind=2641@83°/n360/o60000/u60000
+06:31:30  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:30  T 38.901904 -9.388188 h=32.0 akku=90 fliegt=true mission=EXECUTING wp=12 wind=0 hind=8150@78°/n360/o60000/u60000
+06:31:32  T 38.901883 -9.388135 h=32.0 akku=90 fliegt=true mission=EXECUTING wp=12 wind=0 hind=2705@63°/n360/o60000/u60000
+06:31:33  Wegpunkt 14
+06:31:34  T 38.901876 -9.388119 h=32.0 akku=90 fliegt=true mission=EXECUTING wp=13 wind=0 hind=2154@63°/n360/o60000/u60000
+06:31:35  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:36  T 38.901873 -9.388114 h=31.9 akku=90 fliegt=true mission=EXECUTING wp=13 wind=0 hind=3122@83°/n360/o60000/u60000
+06:31:38  T 38.901845 -9.388084 h=31.9 akku=89 fliegt=true mission=EXECUTING wp=13 wind=0 hind=60000@0°/n360/o60000/u60000
+06:31:40  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:40  T 38.901812 -9.388048 h=32.0 akku=89 fliegt=true mission=EXECUTING wp=13 wind=0 hind=1331@88°/n360/o60000/u60000
+06:31:41  Wegpunkt 15
+06:31:42  T 38.901802 -9.388039 h=32.0 akku=89 fliegt=true mission=EXECUTING wp=14 wind=0 hind=1066@78°/n360/o60000/u60000
+06:31:44  T 38.901798 -9.388035 h=32.0 akku=89 fliegt=true mission=EXECUTING wp=14 wind=0 hind=4100@78°/n360/o60000/u60000
+06:31:45  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:46  T 38.901763 -9.388021 h=32.0 akku=89 fliegt=true mission=EXECUTING wp=14 wind=0 hind=9116@78°/n360/o60000/u60000
+06:31:48  T 38.901720 -9.388003 h=32.0 akku=89 fliegt=true mission=EXECUTING wp=14 wind=0 hind=1525@78°/n360/o60000/u60000
+06:31:49  Wegpunkt 16
+06:31:50  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:50  T 38.901709 -9.387999 h=32.0 akku=89 fliegt=true mission=EXECUTING wp=15 wind=0 hind=2783@63°/n360/o60000/u60000
+06:31:52  T 38.901704 -9.387998 h=32.0 akku=89 fliegt=true mission=EXECUTING wp=15 wind=0 hind=3964@78°/n360/o60000/u60000
+06:31:54  T 38.901667 -9.388002 h=32.0 akku=88 fliegt=true mission=EXECUTING wp=15 wind=0 hind=60000@0°/n360/o60000/u60000
+06:31:55  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:31:56  T 38.901623 -9.388007 h=32.0 akku=88 fliegt=true mission=EXECUTING wp=15 wind=0 hind=2776@78°/n360/o60000/u60000
+06:31:57  Wegpunkt 17
+06:31:58  T 38.901611 -9.388009 h=32.0 akku=88 fliegt=true mission=EXECUTING wp=16 wind=0 hind=1500@78°/n360/o60000/u60000
+06:32:00  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:00  T 38.901606 -9.388011 h=32.0 akku=88 fliegt=true mission=EXECUTING wp=16 wind=0 hind=2725@93°/n360/o60000/u60000
+06:32:02  T 38.901574 -9.388032 h=32.0 akku=88 fliegt=true mission=EXECUTING wp=16 wind=0 hind=8739@83°/n360/o60000/u60000
+06:32:04  T 38.901535 -9.388059 h=32.0 akku=88 fliegt=true mission=EXECUTING wp=16 wind=0 hind=1598@93°/n360/o60000/u60000
+06:32:05  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:05  Wegpunkt 18
+06:32:06  T 38.901523 -9.388067 h=32.0 akku=88 fliegt=true mission=EXECUTING wp=17 wind=0 hind=4638@78°/n360/o60000/u60000
+06:32:08  T 38.901521 -9.388069 h=32.2 akku=88 fliegt=true mission=EXECUTING wp=17 wind=0 hind=60000@0°/n360/o60000/u60000
+06:32:10  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:10  T 38.901516 -9.388071 h=36.0 akku=87 fliegt=true mission=EXECUTING wp=17 wind=0 hind=-
+06:32:12  Wegpunkt 19
+06:32:12  T 38.901512 -9.388072 h=42.3 akku=87 fliegt=true mission=EXECUTING wp=18 wind=0 hind=-
+06:32:13  DJI-Meldung: [Hinweis]  – Gimbal pan axis reached movement limit
+06:32:14  T 38.901493 -9.388077 h=46.4 akku=87 fliegt=true mission=EXECUTING wp=18 wind=0 hind=4875@148°/n360/o60000/u60000
+06:32:15  Wächter: Vergrößerung 1,00/Bild, Treffer 0
+06:32:16  T 38.901443 -9.388091 h=46.0 akku=87 fliegt=true mission=EXECUTING wp=18 wind=0 hind=3633@78°/n360/o60000/u60000
+06:32:18  T 38.901403 -9.388103 h=45.1 akku=87 fliegt=true mission=EXECUTING wp=18 wind=0 hind=2080@103°/n360/o60000/u60000
+06:32:19  Wegpunkt 20
+06:32:19  Mission: FINISHED
+06:32:19  Mission beendet → hole Fotos und lade hoch
+06:32:19  Mission: READY
+06:32:19  DJI-Meldung erledigt: 0x1D050003
+06:32:20  T 38.901392 -9.388105 h=45.0 akku=87 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+06:32:22  T 38.901389 -9.388106 h=45.0 akku=87 fliegt=true mission=READY wp=-1 wind=0 hind=2688@53°/n360/o60000/u60000
+06:32:24  T 38.901390 -9.388118 h=42.7 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+06:32:26  T 38.901391 -9.388126 h=35.8 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+06:32:28  T 38.901391 -9.388129 h=26.9 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=9553@213°/n360/o60000/u60000
+06:32:30  T 38.901389 -9.388128 h=19.9 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=7585@193°/n360/o60000/u60000
+06:32:32  T 38.901389 -9.388128 h=13.9 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=5598@223°/n360/o60000/u60000
+06:32:34  T 38.901388 -9.388126 h=9.7 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=5480@228°/n360/o60000/u60000
+06:32:36  T 38.901388 -9.388128 h=6.6 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=1385@73°/n360/o60000/u60000
+06:32:38  T 38.901389 -9.388127 h=4.5 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=1383@68°/n360/o60000/u3192
+06:32:40  T 38.901388 -9.388129 h=3.5 akku=86 fliegt=true mission=READY wp=-1 wind=0 hind=1932@73°/n360/o60000/u2813
+06:32:42  T 38.901388 -9.388128 h=3.1 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=2100@73°/n360/o60000/u2383
+06:32:44  T 38.901390 -9.388127 h=2.7 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1525@68°/n360/o60000/u1964
+06:32:46  T 38.901389 -9.388127 h=2.3 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1146@63°/n360/o60000/u1628
+06:32:48  T 38.901387 -9.388126 h=1.9 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1084@68°/n360/o60000/u1205
+06:32:50  T 38.901388 -9.388127 h=1.5 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1498@68°/n360/o60000/u798
+06:32:52  T 38.901388 -9.388127 h=1.1 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=1700@68°/n360/o60000/u398
+06:32:54  T 38.901387 -9.388127 h=0.7 akku=85 fliegt=true mission=READY wp=-1 wind=0 hind=2158@188°/n360/o60000/u30
+06:32:56  T 38.901387 -9.388127 h=0.4 akku=84 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u100
+06:32:57  Landehelfer: Drohne ist am Boden
+06:32:58  Kameraspeicher nach dem Flug: aktiv SDCARD · SDCARD INSERTED, frei 3 MB, noch 0 Fotos; INTERNAL INSERTED, frei 1895 MB, noch 274 Fotos
+06:32:58  T 38.901387 -9.388126 h=0.0 akku=84 fliegt=false mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u100
+06:32:59  Hole Fotoliste von der Drohne (SD-Karte) …
+06:33:00  T 38.901387 -9.388126 h=0.0 akku=84 fliegt=false mission=READY wp=-1 wind=0 hind=-
+06:33:02  Fotos auf der Drohne (SD-Karte): 0, zu diesem Flug: 0
+06:33:02  Hinderniserkennung insgesamt einschalten fehlgeschlagen: Not supported.
+06:33:02  Hinderniserkennung wieder AN (Bremsen) – landed after a dusk-mode flight
+06:33:03  Hole Fotoliste von der Drohne (interner Speicher) …
+06:33:04  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+06:33:04  Fotos geladen: 0
+06:33:06  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-29_muehle-scan-rest-v2
+06:33:06  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:33:08  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:33:29  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:33:30  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:33:31  DJI-Meldung: [WARNUNG]  – Unable to take off. Disconnect aircraft from USB and try again
+06:33:33  DJI-Meldung erledigt: 0x16100015
+06:33:35  DJI-Meldung erledigt: 0x1C00040A
+06:36:55  Flight stills: all 53 of 2026-11-22_06-29_muehle-scan-rest-v2 sent to Claude
+06:52:38  New plan in the cloud: muehle-scan-rest-v3. Tap the plan name → Get plan to load it.
+06:54:30  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:54:35  DJI-Meldung erledigt: 0x16100015
+06:54:39  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:54:55  DJI-Meldung erledigt: 0x16100015
+06:54:57  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:55:08  DJI-Meldung erledigt: 0x16100015
+06:55:10  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:55:14  DJI-Meldung erledigt: 0x16100015
+06:56:38  DJI-Status: CHLSTATUS_POOR – Strong Signal Interference
+06:56:39  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:56:39  DJI-Meldung: [WARNUNG]  – Aircraft movement detected
+06:56:39  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:56:39  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:56:44  DJI-Meldung erledigt: 0x161000A4
+06:57:39  DJI-Meldung: [WARNUNG]  – Aircraft pitch angle too large. Ensure aircraft is level
+06:57:43  DJI-Meldung erledigt: 0x16100015
+06:59:52  DJI-Status: NORMAL – Ready to Go (GPS)
+06:59:52  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
+06:59:54  DJI-Meldung erledigt: 0x16200101
+07:43:24  Live link: no upload right now (no network?). The flight is not affected; the log stays on the phone.
+08:43:05  DJI-Meldung: [WARNUNG]  – Critical low battery. Recharge promptly
+08:57:44  DJI-Meldung: [WARNUNG]  – Critical low battery voltage. Recharge promptly
+09:11:52  Mission: IDLE
+09:11:52  DJI-Meldung erledigt: 0x1610000F
+09:11:52  DJI-Meldung erledigt: 0x1610000E
+09:11:52  DJI-Meldung erledigt: 0x19000810
+09:11:52  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+10:28:02  DJI-Status: NORMAL – Ready to Go (GPS)
+10:28:02  Hinderniserkennung: aktiv (BRAKE, Hauptschalter false, nicht unterstützt)
+10:28:02  DJI-Status: CANT_TAKEOFF – Unable to take off
+10:28:02  DJI-Status: LOW_RC_POWER – Remote Controller Battery Low
+10:28:03  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+10:28:04  DJI-Status: CANT_TAKEOFF – Unable to take off
+10:28:05  DJI-Meldung: [WARNUNG]  – Unable to take off. Disconnect aircraft from USB and try again
+10:36:21  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
+10:36:22  DJI-Status: NORMAL – Ready to Go (GPS)
+10:36:23  DJI-Meldung erledigt: 0x16200101
