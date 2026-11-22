@@ -878,3 +878,12 @@
 06:28:10  Mission: IDLE
 06:28:10  DJI-Meldung erledigt: 0x1C00040A
 06:28:10  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+06:28:36  DJI-Status: NORMAL – Ready to Go (GPS)
+06:28:36  DJI-Status: CANT_TAKEOFF – Unable to take off
+06:28:36  DJI-Status: NON_GPS_NONVISION – Ready to GO
+06:28:37  DJI-Meldung: [WARNUNG]  – Remote controller not bound/still confirming binding status
+06:28:37  DJI-Status: CANT_TAKEOFF_HMS – Unable to take off
+06:28:37  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+06:28:41  DJI-Meldung: [Hinweis]  – SD card full. Change card or delete files
+06:28:42  DJI-Meldung erledigt: 0x16100089
+06:28:42  DJI-Status: NON_GPS_NONVISION – Ready to GO
