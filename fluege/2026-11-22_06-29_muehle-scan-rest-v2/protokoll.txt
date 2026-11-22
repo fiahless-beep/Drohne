@@ -236,3 +236,5 @@
 10:36:21  DJI-Meldung: [Hinweis]  – ECO mode enabled. Photo and video modes and playback still available. Take off as soon as possible after disabling ECO mode
 10:36:22  DJI-Status: NORMAL – Ready to Go (GPS)
 10:36:23  DJI-Meldung erledigt: 0x16200101
+10:42:05  DJI-Meldung erledigt: 0x19000810
+10:42:05  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
