@@ -56,10 +56,12 @@ object MissionController {
 
     /** Everything prepare() changes, so a rejected detour leaves the paused plan untouched. */
     class Snapshot(val kmz: File?, val mission: Mission?, val conflicts: List<com.felixos.drohne.plan.Obstacles.Conflict>, val terrain: List<com.felixos.drohne.plan.Terrain.Conflict>,
-                   val home: LatLon?, val above: Double, val uploaded: Boolean, val rth: Double, val tail: Boolean, val pre: Int, val text: String)
-    fun snapshot() = Snapshot(currentKmz, currentMission, conflicts, terrainConflicts, preparedHome, startAboveGroundM, uploaded, rthHeightM, landingTail, preCount, stateText)
+                   val home: LatLon?, val above: Double, val uploaded: Boolean, val rth: Double, val tail: Boolean, val pre: Int, val text: String,
+                   val returnProblems: List<String>, val homeLeg: Boolean, val covered: Boolean)
+    fun snapshot() = Snapshot(currentKmz, currentMission, conflicts, terrainConflicts, preparedHome, startAboveGroundM, uploaded, rthHeightM, landingTail, preCount, stateText, returnProblems, homeLegChecked, terrainCovered)
     fun restore(s: Snapshot) { currentKmz = s.kmz; currentMission = s.mission; conflicts = s.conflicts; terrainConflicts = s.terrain; preparedHome = s.home
-        startAboveGroundM = s.above; uploaded = s.uploaded; rthHeightM = s.rth; landingTail = s.tail; preCount = s.pre; show(s.text) }
+        startAboveGroundM = s.above; uploaded = s.uploaded; rthHeightM = s.rth; landingTail = s.tail; preCount = s.pre
+        returnProblems = s.returnProblems; homeLegChecked = s.homeLeg; terrainCovered = s.covered; show(s.text) }
     fun say(text: String) = show(text)
     val hasLandingTail: Boolean get() = landingTail
     /** Return-path problems (surface between a waypoint and home higher than any allowed return height). */
@@ -219,18 +221,23 @@ object MissionController {
     /** Why the last prepare() refused the plan outright (too many waypoints); null = not refused. Shown to the user. */
     var rejectReason: String? = null; private set
 
+    /** Hard refusal: nothing prepared, nothing left to upload or start. */
+    private fun reject(why: String): Boolean {
+        rejectReason = why
+        currentKmz = null; currentMission = null; uploaded = false; landingTail = false
+        conflicts = emptyList(); terrainConflicts = emptyList(); returnProblems = emptyList(); preCount = 0
+        DroneManager.log("PLAN REJECTED: $why")
+        show(why)
+        return false
+    }
+
     fun prepare(mIn0: Mission): Boolean {
         uploaded = false
         landingTail = false
         // Zu lange Pläne hart ablehnen, bevor irgendetwas geschrieben wird: kein KMZ, kein Plan in der App, also weder Upload noch Start.
         // (Ein Aufrufer mit Snapshot stellt danach den vorherigen, geprüften Plan wieder her.)
-        rejectReason = com.felixos.drohne.plan.Missions.waypointLimitProblem(mIn0.waypoints.size)
-        rejectReason?.let { why ->
-            currentKmz = null; currentMission = null; conflicts = emptyList(); terrainConflicts = emptyList(); returnProblems = emptyList(); preCount = 0
-            DroneManager.log("PLAN REJECTED: $why")
-            show(why)
-            return false
-        }
+        rejectReason = null
+        com.felixos.drohne.plan.Missions.waypointLimitProblem(mIn0.waypoints.size)?.let { return reject(it) }
         val h = DroneManager.state.home
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
         preparedHome = home
@@ -259,14 +266,7 @@ object MissionController {
         val transit = maxOf(TRANSIT_HEIGHT_M, m0.transitHeightM ?: m0.waypoints.maxOf { it.heightM })  // Plan darf eine eigene Transithöhe setzen (Hügelziele: nicht auf die höchste Planhöhe steigen)
         val m1 = run {   // immer: Pläne über Missions.MAX_PLAN_WAYPOINTS sind oben schon abgelehnt
             val first = m0.waypoints.first(); val last = m0.waypoints.last()
-            // Übereinanderliegende Punkte 1,5 m versetzen (DJI mag keine Punkte ohne waagerechten Abstand).
-            fun beside(p: LatLon, towards: LatLon) = Geo.offset(p, 1.5, Geo.bearing(p, towards))
-            val pre = buildList {
-                val a0 = DroneManager.state.location?.takeIf { (above > 0.1 || mIn0.startFromCurrent) && DroneManager.state.flying && it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
-                if (a0 != null) add(first.copy(pos = a0, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
-                else if (home != null) add(first.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
-                if (first.heightM < transit - 1) add(first.copy(pos = beside(first.pos, home ?: last.pos), heightM = transit, takePhoto = false, hoverSec = 0, video = 0))
-            }
+            val a0 = DroneManager.state.location?.takeIf { (above > 0.1 || mIn0.startFromCurrent) && DroneManager.state.flying && it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }
             // Balkonstart (Felix 9.11.): Felix fliegt von Hand raus und übernimmt den Plan im Flug. Die Stelle, an der die Drohne
             // dabei schwebt (vor dem Balkon über der Straße), wird Anker: dort beginnt und endet der Plan. Am Ende schwebt sie dort
             // auf Oberfläche (Bäume/Dächer im 8-m-Umkreis) + 8 m, Felix landet von Hand auf dem Balkon.
@@ -278,15 +278,13 @@ object MissionController {
                 if (g == null || top.isEmpty()) null else (top.max() - g + com.felixos.drohne.plan.Obstacles.CLEARANCE_M - above).coerceIn(2.0, transit)
             }
             if (anchor != null) DroneManager.log("Balkon: Plan beginnt und endet an der jetzigen Position; Ende schwebend ${anchorH?.toInt() ?: transit.toInt()} m über dem Balkon, Landung von Hand")
+            // Zusatzpunkte rechnet die plan-Schicht (Transit.frame, getestet): höchstens Transit.MAX_EXTRA.
+            val frame = com.felixos.drohne.plan.Transit.frame(first, last, transit, home, startAt = a0, anchor = anchor, anchorH = anchorH, hoverAtEnd = mIn0.hoverAtEnd)
+            val pre = frame.pre; val post = frame.post
+            // Zweite Sicherung: passt der Plan mit Steigflug und Rückweg nicht in die Grenze, wird er abgelehnt statt gekürzt.
+            com.felixos.drohne.plan.Missions.totalLimitProblem(pre.size + m0.waypoints.size + post.size)?.let { return reject(it) }
             preCount = pre.size
-            val post = if (mIn0.hoverAtEnd) emptyList() else buildList {
-                if (last.heightM < transit - 1) add(last.copy(pos = beside(last.pos, anchor ?: home ?: first.pos), heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
-                if (anchor != null) {
-                    add(last.copy(pos = anchor, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
-                    if (anchorH != null && anchorH < transit - 1) landingTail = true
-                    if (anchorH != null && anchorH < transit - 1) add(last.copy(pos = beside(anchor, last.pos), heightM = anchorH, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
-                } else if (home != null) add(last.copy(pos = home, heightM = transit, takePhoto = false, hoverSec = 0, headingDeg = null, video = 0))
-            }
+            landingTail = frame.landingTail
             if (home == null) DroneManager.log("ACHTUNG: Startpunkt unbekannt, Transit nur über dem Ziel. Vor dem Start Plan erneut übernehmen!")
             else DroneManager.log("Transithöhe ${transit.toInt()} m: senkrecht hoch über dem Start, Anflug und Rückweg oben, Abstieg erst über dem Ziel")
             // Video, das im Plan nicht beendet wird, spätestens am ersten Rückweg-Punkt stoppen.

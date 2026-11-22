@@ -58,7 +58,7 @@ data class Mission(
 ) {
     init {
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }
-        require(waypoints.size <= 200) { "Höchstens 200 Wegpunkte" }
+        require(waypoints.size <= Missions.MAX_TOTAL_WAYPOINTS) { "Höchstens ${Missions.MAX_TOTAL_WAYPOINTS} Wegpunkte" }
         require(speedMs in 1.0..15.0) { "Geschwindigkeit 1–15 m/s" }
         waypoints.forEach { require(it.heightM in -100.0..120.0) { "Höhe −100…120 m relativ zum Start" } } // negativ = bergab (Lissabon), Oberflächen-Wächter prüft den Bodenabstand
     }
@@ -71,11 +71,13 @@ data class Mission(
 }
 
 object Missions {
+    /** Grenze im Konstruktor von [Mission]: so viele Punkte darf das KMZ insgesamt haben. */
+    const val MAX_TOTAL_WAYPOINTS = 200
     /**
-     * Höchstzahl eigener Wegpunkte eines Plans. Die App setzt bis zu 4 Punkte davor und dahinter (senkrechter Steigflug über dem Start,
-     * Anflug und Rückweg auf Transithöhe); zusammen dürfen es höchstens 200 sein (Grenze im Konstruktor von [Mission]).
+     * Höchstzahl eigener Wegpunkte eines Plans. Die App setzt je nach Start bis zu [Transit.MAX_EXTRA] Punkte davor und dahinter
+     * (senkrechter Steigflug über dem Start, Anflug und Rückweg auf Transithöhe, Balkon-Anker); zusammen höchstens [MAX_TOTAL_WAYPOINTS].
      */
-    const val MAX_PLAN_WAYPOINTS = 196
+    const val MAX_PLAN_WAYPOINTS = MAX_TOTAL_WAYPOINTS - Transit.MAX_EXTRA
 
     /**
      * null = Plan darf vorbereitet werden, sonst die Meldung für Protokoll und Anzeige. Früher wurde ein längerer Plan still OHNE
@@ -83,6 +85,10 @@ object Missions {
      */
     fun waypointLimitProblem(count: Int): String? =
         if (count > MAX_PLAN_WAYPOINTS) "Plan has $count waypoints, max $MAX_PLAN_WAYPOINTS. Not loaded." else null
+
+    /** Zweite Sicherung nach dem Anfügen von Steigflug und Rückweg: [total] = alle Punkte, die auf die Drohne gingen. */
+    fun totalLimitProblem(total: Int): String? =
+        if (total > MAX_TOTAL_WAYPOINTS) "Plan has $total waypoints with climb and return, max $MAX_TOTAL_WAYPOINTS. Not loaded." else null
 
     /** Blickrichtung von [from] zum Ziel [to] in Grad. */
     fun bearingTo(from: LatLon, to: LatLon): Double = Geo.bearing(from, to)

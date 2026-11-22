@@ -1402,8 +1402,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun useMission(m: Mission, beschreibung: String) {
         // In the air: a newly loaded plan starts where the drone is; the paused plan waits and can be resumed afterwards.
+        // Läuft ein Plan (auch zwischen Start und Abheben), darf kein neues prepare() ihn und die Wächter ersetzen.
+        if (MissionController.executing && !m.name.startsWith("beispiel")) { info("Pause first", "A plan is running. Press Pause, then load the new plan."); return }
         if (DroneManager.state.flying && !m.name.startsWith("beispiel")) {
-            if (MissionController.executing) { info("Pause first", "Press Pause, then load the new plan."); return }
             AlertDialog.Builder(this).setTitle("Fly “${m.name}” from here?")
                 .setMessage(summary(m, beschreibung) + "\n\nThe drone flies this plan starting from where it hovers now. At the end it hovers. A paused plan waits and continues with “Resume plan”.")
                 .setPositiveButton("Fly from here") { _, _ -> flyFromHere(m.copy(startFromCurrent = true, hoverAtEnd = true), "plan “${m.name}”", detour = true, text = summary(m, beschreibung)) }
@@ -1438,6 +1439,7 @@ class MainActivity : AppCompatActivity() {
                 mission = null; missionText = ""
                 setPlanCard("Plan “${m.name}” – not loaded", "$why\n\nThin the plan out or split it, then get it again.")
                 renderChecklist(preflightProblems(DroneManager.state), hasPlan = false)
+                renderNow(DroneManager.state)
                 return
             }
             setPlanCard("Plan “${m.name}” – DJI check failed", text + "\n\nNo variant without errors. Send the log to Claude.")

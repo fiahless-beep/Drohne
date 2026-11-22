@@ -23,12 +23,23 @@ object StartPlaces {
     private val DEFAULTS = listOf(Place("Balkon RdF 190 (3. Stock)", LatLon(38.72783, -9.15727), 10.0))
     private const val KEY_DEL = "startplaetze_geloescht"
 
-    fun all(ctx: Context): List<Place> {
+    fun all(ctx: Context): List<Place> = read(ctx, strict = false)
+
+    /**
+     * Wie [all], wirft aber, wenn die gespeicherte Liste nicht lesbar ist (statt dann nur die festen Plätze zu liefern).
+     * Für alles, was Orte verbirgt (Standbilder, Live-Draht): dort heißt „unbekannt“ privat.
+     */
+    fun allStrict(ctx: Context): List<Place> = read(ctx, strict = true)
+
+    /** Gespeicherte Liste lesen; wirft bei beschädigtem Inhalt. */
+    internal fun parse(json: String?): List<Place> {
+        val a = JSONArray(json ?: "[]")
+        return (0 until a.length()).map { i -> val o = a.getJSONObject(i); Place(o.getString("name"), LatLon(o.getDouble("lat"), o.getDouble("lon")), o.getDouble("offset")) }
+    }
+
+    private fun read(ctx: Context, strict: Boolean): List<Place> {
         val prefs = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val saved = try {
-            val a = JSONArray(prefs.getString(KEY, "[]") ?: "[]")
-            (0 until a.length()).map { i -> val o = a.getJSONObject(i); Place(o.getString("name"), LatLon(o.getDouble("lat"), o.getDouble("lon")), o.getDouble("offset")) }
-        } catch (_: Throwable) { emptyList() }
+        val saved = try { parse(prefs.getString(KEY, "[]")) } catch (t: Throwable) { if (strict) throw t; emptyList() }
         val deleted = prefs.getStringSet(KEY_DEL, emptySet()) ?: emptySet()
         return saved + DEFAULTS.filter { d -> d.name !in deleted && saved.none { Geo.distance(it.pos, d.pos) <= MATCH_M } }
     }

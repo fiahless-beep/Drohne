@@ -71,8 +71,8 @@ object FrameShots {
         val size = width * height * 3 / 2
         if (data.size - offset < size) return
         val here = com.felixos.drohne.plan.LatLon(l.latitude, l.longitude)
-        // Fail-closed: schlägt die Prüfung fehl, gilt der Ort als privat → kein Standbild (öffentliches Repo).
-        val private = com.felixos.drohne.plan.Privacy.isPrivate(here, PRIVATE_RADIUS_M) { StartPlaces.all(app).map { it.pos } }
+        // Fail-closed: schlägt die Prüfung fehl (Liste beschädigt, Position unplausibel), gilt der Ort als privat → kein Standbild (öffentliches Repo).
+        val private = com.felixos.drohne.plan.Privacy.isPrivate(here, PRIVATE_RADIUS_M) { StartPlaces.allStrict(app).map { it.pos } }
         if (private) return
         lastShotMs = now
         working = true
