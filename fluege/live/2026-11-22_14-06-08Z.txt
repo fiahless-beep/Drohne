@@ -1107,3 +1107,11 @@ Sitzung 2026-11-22_14-06-08 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 10:26:30  S utc=18:26:30 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
 10:27:04  S utc=18:27:04 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
 10:27:36  S utc=18:27:36 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=38.901389,-9.388127 akku=0 sat=4 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
+10:28:02  DJI-Status: NORMAL – Ready to Go (GPS)
+10:28:02  Hinderniserkennung: aktiv (BRAKE, Hauptschalter false, nicht unterstützt)
+10:28:02  DJI-Status: CANT_TAKEOFF – Unable to take off
+10:28:02  DJI-Status: LOW_RC_POWER – Remote Controller Battery Low
+10:28:03  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+10:28:04  DJI-Status: CANT_TAKEOFF – Unable to take off
+10:28:05  DJI-Meldung: [WARNUNG]  – Unable to take off. Disconnect aircraft from USB and try again
+10:28:06  S utc=18:28:06 verbunden=true fliegt=false pos=38.901671,-9.388313 h=0.0 start=? akku=67 sat=0 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=- mission=IDLE wp=-1 plan=muehle-scan-rest-v2 wind=0 windms=0.0 windrichtung=WINDLESS
