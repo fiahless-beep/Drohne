@@ -39,3 +39,17 @@ Sitzung 2026-11-22_13-53-47 UTC · App 0.1.153 · SM-A166U1 · Android 16 · Han
 06:02:38  Plan übernommen, lade auf die Drohne …
 06:02:38  Lade Mission auf die Drohne …
 06:02:38  S utc=14:02:38 verbunden=false fliegt=false pos=? h=? start=? akku=? sat=? sensoren=aus hindernis=- mission=- wp=-1 plan=muehle-scan-v5 wind=? windms=? windrichtung=?
+06:03:53  Drohne/Controller verbunden (Produkt 0)
+06:03:54  DJI-Status: AIRCRAFT_DISCONNECT – Aircraft disconnected
+06:03:55  DJI-Status: NORMAL – Ready to Go (GPS)
+06:03:55  Hinderniserkennung: aktiv (BRAKE, Hauptschalter false, nicht unterstützt)
+06:03:55  Seriennummer Fluggerät: 1581F6Z9A24AAML30L86
+06:03:55  Wächter: Livebild wird mitgelesen
+06:03:55  DJI-Meldung: [Hinweis]  – SD card speed low. Normal use may be affected. Replace SD card
+06:03:56  Live-Bild verbunden
+06:03:56  [3 s nach Verbinden] Contr=true Funk=true Drohne=true Typ=DJI_MINI_4_PRO SN=1581F6Z9A24AAML30L86 Akku=94
+06:03:56  Hinderniserkennung: blind: vorn, hinten, links, rechts, unten (BRAKE, Hauptschalter false, nicht unterstützt)
+06:03:56  DJI-Höhenlimit gelesen: 120 m
+06:03:56  DJI-Höhenlimit gelesen: 120 m
+06:03:56  DJI-Höhenlimit gelesen: 120 m
+06:03:56  S utc=14:03:56 verbunden=true fliegt=false pos=38.901394,-9.388113 h=0.0 start=38.901394,-9.388113 akku=94 sat=22 sensoren=blind: vorn, hinten, links, rechts, unten hindernis=frei/n0/o0/u0 mission=- wp=-1 plan=muehle-scan-v5 wind=0 windms=0.0 windrichtung=WINDLESS
