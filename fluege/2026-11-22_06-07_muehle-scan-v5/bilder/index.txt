@@ -7,3 +7,9 @@ b_140729.jpg utc=14:07:29 pos=38.901391,-9.388113 h=50.0 kurs=-77 neigung=0 wp=-
 b_140733.jpg utc=14:07:33 pos=38.901396,-9.388111 h=50.1 kurs=-98 neigung=0 wp=-1 mission=INTERRUPTED plan=muehle-scan-v5
 b_140737.jpg utc=14:07:37 pos=38.901398,-9.388113 h=50.1 kurs=-100 neigung=0 wp=-1 mission=RECOVERING plan=muehle-scan-v5
 b_140741.jpg utc=14:07:41 pos=38.901394,-9.388112 h=50.0 kurs=-101 neigung=0 wp=0 mission=EXECUTING plan=muehle-scan-v5
+b_140745.jpg utc=14:07:45 pos=38.901392,-9.388111 h=50.0 kurs=-126 neigung=-90 wp=0 mission=EXECUTING plan=muehle-scan-v5
+b_140749.jpg utc=14:07:49 pos=38.901338,-9.387991 h=50.0 kurs=107 neigung=-90 wp=0 mission=EXECUTING plan=muehle-scan-v5
+b_140753.jpg utc=14:07:53 pos=38.901247,-9.387805 h=50.1 kurs=10 neigung=-90 wp=1 mission=EXECUTING plan=muehle-scan-v5
+b_140757.jpg utc=14:07:57 pos=38.901231,-9.387767 h=45.6 kurs=-3 neigung=-90 wp=-1 mission=INTERRUPTED plan=muehle-scan-v5
+b_140801.jpg utc=14:08:01 pos=38.901230,-9.387766 h=45.4 kurs=-2 neigung=-90 wp=-1 mission=RECOVERING plan=muehle-scan-v5
+b_140805.jpg utc=14:08:05 pos=38.901230,-9.387767 h=45.6 kurs=-13 neigung=-90 wp=-1 mission=INTERRUPTED plan=muehle-scan-v5
