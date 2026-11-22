@@ -826,3 +826,14 @@
 06:25:18  T 38.901455 -9.388336 h=32.0 akku=24 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
 06:25:20  T 38.901424 -9.388218 h=31.5 akku=23 fliegt=true mission=READY wp=-1 wind=0 hind=1736@98°/n360/o60000/u60000
 06:25:22  T 38.901401 -9.388138 h=30.5 akku=23 fliegt=true mission=READY wp=-1 wind=0 hind=4015@98°/n360/o60000/u60000
+06:25:24  T 38.901393 -9.388111 h=30.0 akku=23 fliegt=true mission=READY wp=-1 wind=0 hind=1743@78°/n360/o60000/u60000
+06:25:26  T 38.901393 -9.388108 h=29.9 akku=23 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+06:25:28  T 38.901395 -9.388111 h=27.1 akku=23 fliegt=true mission=READY wp=-1 wind=0 hind=60000@0°/n360/o60000/u60000
+06:25:30  T 38.901395 -9.388111 h=20.8 akku=23 fliegt=true mission=READY wp=-1 wind=0 hind=8475@168°/n360/o60000/u17616
+06:25:32  T 38.901394 -9.388109 h=15.2 akku=23 fliegt=true mission=READY wp=-1 wind=0 hind=5917@228°/n360/o60000/u11893
+06:25:34  T 38.901395 -9.388109 h=11.0 akku=22 fliegt=true mission=READY wp=-1 wind=0 hind=4179@108°/n360/o60000/u8125
+06:25:36  T 38.901394 -9.388108 h=7.7 akku=22 fliegt=true mission=READY wp=-1 wind=0 hind=1330@63°/n360/o60000/u5159
+06:25:38  T 38.901396 -9.388108 h=5.5 akku=22 fliegt=true mission=READY wp=-1 wind=0 hind=2359@73°/n360/o60000/u2988
+06:25:40  T 38.901395 -9.388106 h=4.7 akku=22 fliegt=true mission=READY wp=-1 wind=0 hind=1565@68°/n360/o60000/u2721
+06:25:42  T 38.901395 -9.388108 h=4.3 akku=22 fliegt=true mission=READY wp=-1 wind=0 hind=1694@73°/n360/o60000/u2320
+06:25:44  T 38.901396 -9.388110 h=3.8 akku=22 fliegt=true mission=READY wp=-1 wind=0 hind=1799@68°/n360/o60000/u1900
