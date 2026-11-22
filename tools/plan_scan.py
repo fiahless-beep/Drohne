@@ -13,17 +13,17 @@ import json, math, struct, sys
 import numpy as np
 
 # ---- Ort: Mühle (Koordinaten wie tools/plan_muehle_film.py) ----
-MODE = sys.argv[1]; assert MODE in ("raster", "ringe")
-NAME = "muehle-scan-v3-" + MODE
+MODE = sys.argv[1]; assert MODE in ("raster", "ringe", "alles")
+NAME = "muehle-scan-v4" if MODE == "alles" else "muehle-scan-v3-" + MODE
 GRID = "app/src/main/assets/hoehen_muehle.bin"
 START = (38.901381, -9.388113)          # Parkplatz vor dem Tor
 CENTER = (38.901680, -9.388320)         # Mitte zwischen Pool, Rundbau und Haupthaus
 HALF_NS, HALF_EW = 50.0, 48.0           # halbe Kantenlängen des Rasters in m
 H_GRID = 45.0                           # Flughöhe Raster über Start
-LINE_M, SHOT_M = 13.0, 10.0             # Linienabstand, Fotoabstand (an 13 m hohen Kronen noch gut 70 % Überlappung)
-RINGS = [(48.0, 50.0, 20), (28.0, 32.0, 16)]   # Radius, Höhe, Fotos: etwa 45° Neigung; der innere Ring bleibt 10 m neben dem Startplatz
+LINE_M, SHOT_M = (16.0, 12.5) if MODE == "alles" else (13.0, 10.0)             # Linienabstand, Fotoabstand (an 13 m hohen Kronen noch gut 70 % Überlappung)
+RINGS = [(48.0, 50.0, 16), (28.0, 32.0, 12)] if MODE == "alles" else [(48.0, 50.0, 20), (28.0, 32.0, 16)]   # Radius, Höhe, Fotos: etwa 45° Neigung; der innere Ring bleibt 10 m neben dem Startplatz
 TARGET_H = 4.0                          # Blickpunkt der schrägen Fotos über Boden
-SPEED = 3.0
+SPEED = 5.0 if MODE == "alles" else 3.0   # über 30 m erlaubt die App 5 m/s
 MIN_CLEAR = 15.0                        # verlangter Abstand zur Oberfläche (App verlangt 8)
 PHOTO_S = 6.0                           # Annahme: Bremsen, Foto, Anfahren je Punkt
 BATTERY_MIN = 25.0                      # Annahme: nutzbare Flugzeit eines vollen Akkus bei wenig Wind
@@ -70,7 +70,7 @@ if MODE == "ringe": wps.clear()
 n_grid = len(wps)
 
 # 2 Schräge Ringe, Kamera auf die Mitte; jeder Ring beginnt dort, wo der vorige Abschnitt endet
-for radius, h, count in (RINGS if MODE == "ringe" else []):
+for radius, h, count in (RINGS if MODE != "raster" else []):
     first = bearing(CENTER, (wps[-1]["lat"], wps[-1]["lon"]) if wps else START)
     for k in range(count):
         p = polar(CENTER, radius, first + k * 360.0 / count)
@@ -101,10 +101,11 @@ assert len(wps) <= 195, "zu viele Wegpunkte"
 assert worst >= MIN_CLEAR and home_worst >= MIN_CLEAR, "zu tief"
 assert used <= 80.0, "Akku reicht nicht mit 20 % Reserve"
 
-text = (f"Vermessungsflug Mühle V3, Teil 1 von 2: {n_grid} Fotos senkrecht von oben im Raster auf {H_GRID:.0f} m." if MODE == "raster" else
+text = (f"Vermessungsflug Mühle V4 in einem Flug (Felix 22.11.2026): {n_grid} Fotos senkrecht von oben im Raster auf {H_GRID:.0f} m, dann zwei schräge Ringe ({RINGS[0][2]} Fotos auf {RINGS[0][1]:.0f} m, {RINGS[1][2]} auf {RINGS[1][1]:.0f} m)." if MODE == "alles" else
+        f"Vermessungsflug Mühle V3, Teil 1 von 2: {n_grid} Fotos senkrecht von oben im Raster auf {H_GRID:.0f} m." if MODE == "raster" else
         f"Vermessungsflug Mühle V3, Teil 2 von 2: zwei schräge Ringe um das Grundstück ({RINGS[0][2]} Fotos auf {RINGS[0][1]:.0f} m, {RINGS[1][2]} auf {RINGS[1][1]:.0f} m), Kamera etwa 45° auf die Mitte.")
 plan = {"name": NAME,
-        "beschreibung": text + f" Aus beiden Teilen entsteht das 3D-Modell für die späteren Film- und Fotopläne. Gegen DGT-LiDAR 2024 geprüft: überall mindestens "
+        "beschreibung": text + f" Daraus entsteht das 3D-Modell für die späteren Film- und Fotopläne. Gegen DGT-LiDAR 2024 geprüft: überall mindestens "
                         f"{min(worst, home_worst):.0f} m über Bäumen und Dächern, auch auf dem Heimweg. Etwa {secs / 60:.0f} min, mit vollem Akku starten. "
                         f"Bei hohem Sonnenstand oder bedecktem Himmel fliegen, nicht in der Dämmerung.",
         "speed": SPEED, "rcLost": "continue", "transitHoehe": TR, "start": {"lat": START[0], "lon": START[1]}, "waypoints": wps}
