@@ -851,3 +851,5 @@
 06:25:58  T 38.901394 -9.388108 h=0.0 akku=21 fliegt=false mission=READY wp=-1 wind=0 hind=-
 06:25:59  Hole Fotoliste von der Drohne (interner Speicher) …
 06:25:59  Fotos auf der Drohne (interner Speicher): 0, zu diesem Flug: 0
+06:25:59  Fotos geladen: 0
+06:26:01  Hochgeladen: 1 von 1 Dateien → github.com/fiahless-beep/Drohne/tree/main/fluege/2026-11-22_06-09_muehle-scan-v5
