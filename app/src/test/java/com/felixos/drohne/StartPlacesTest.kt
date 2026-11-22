@@ -19,4 +19,22 @@ class StartPlacesTest {
             assertTrue(bad, threw)
         }
     }
+
+    @Test fun mirrorRoundTripKeepsPlacesAndDeletions() {
+        val places = listOf(StartPlaces.Place("Wiese", com.felixos.drohne.plan.LatLon(10.5, 20.25), 0.0), StartPlaces.Place("Dach", com.felixos.drohne.plan.LatLon(-1.0, 2.0), 12.5))
+        val (p, d) = StartPlaces.fromMirror(StartPlaces.toMirror(places, setOf("Alt")))
+        org.junit.Assert.assertEquals(places, p); org.junit.Assert.assertEquals(setOf("Alt"), d)
+    }
+
+    @Test fun brokenMirrorThrowsInsteadOfReturningAnEmptyList() {
+        for (bad in listOf("", "kaputt", "{}", "{\"plaetze\":[{\"name\":\"x\"}]}"))
+            try { StartPlaces.fromMirror(bad); org.junit.Assert.fail("kein Fehler bei: $bad") } catch (_: org.json.JSONException) {}
+    }
+
+    @Test fun mergeBringsBackUnknownPlacesAndKeepsOwnOnes() {
+        fun pl(n: String, lat: Double) = StartPlaces.Place(n, com.felixos.drohne.plan.LatLon(lat, 5.0), 1.0)
+        val own = listOf(pl("neu", 10.0)); val mirror = listOf(pl("alt-gleicher-ort", 10.0001), pl("alt-woanders", 11.0))
+        org.junit.Assert.assertEquals(listOf("neu", "alt-woanders"), StartPlaces.merge(own, mirror).map { it.name })
+        org.junit.Assert.assertEquals(mirror, StartPlaces.merge(emptyList(), mirror))
+    }
 }

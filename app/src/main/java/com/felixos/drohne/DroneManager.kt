@@ -357,6 +357,26 @@ object DroneManager {
             })
     } }
 
+    /**
+     * Abheben ohne Plan (Felix 22.11.2026: Knopf zum Langdrücken wie in DJI Fly, für den Schwebetest): die Drohne startet die Motoren,
+     * steigt auf gut einen Meter und schwebt. Ob es erlaubt ist, entscheidet plan.Takeoff.problem; hier nur die Aktion.
+     */
+    fun takeOff() {
+        if (Simulator.active) { log("Abheben per Knopf: in der Simulation nicht vorgesehen"); return }
+        val s = state
+        com.felixos.drohne.plan.Takeoff.problem(s.connected, s.flying, s.motorsOn, s.satellites, s.home?.latitude?.let { it != 0.0 } == true, s.batteryPercent, s.windWarning)
+            ?.let { log("Abheben abgelehnt: $it"); return }
+        safe("Abheben") {
+            log("Abheben per Knopf: Motoren an, steigt auf etwa 1,2 m und schwebt")
+            KeyManager.getInstance().performAction(
+                KeyTools.createKey(FlightControllerKey.KeyStartTakeoff),
+                object : dji.v5.common.callback.CommonCallbacks.CompletionCallbackWithParam<dji.sdk.keyvalue.value.common.EmptyMsg> {
+                    override fun onSuccess(t: dji.sdk.keyvalue.value.common.EmptyMsg?) { log("Abheben eingeleitet") }
+                    override fun onFailure(error: IDJIError) { log("Abheben fehlgeschlagen: ${error.description()}") }
+                })
+        }
+    }
+
     /** Landung auslösen (falls die Drohne nach der Mission nur schwebt). */
     fun startLanding() { if (Simulator.active) return; startLandingReal() }
     private fun startLandingReal() = safe("Landen") {

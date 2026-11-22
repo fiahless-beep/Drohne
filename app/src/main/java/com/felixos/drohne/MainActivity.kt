@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnPrimary: Button
     private lateinit var btnFollow: Button
     private lateinit var btnHome: Button
+    private lateinit var btnTakeoff: Button
     private lateinit var secondaryRow: View
     private val logLines = ArrayDeque<String>()
 
@@ -164,6 +165,34 @@ class MainActivity : AppCompatActivity() {
         }
         btnFollow.setOnClickListener { askFollow() }
         findViewById<Button>(R.id.btnClaude).setOnClickListener { askClaude() }
+        // Startplätze: Kopie im Handyspeicher (überlebt eine Deinstallation). Ohne die Erlaubnis einmal je Installation fragen.
+        if (StartPlaces.canMirror()) StartPlaces.syncMirror(this)
+        else if (Build.VERSION.SDK_INT >= 30 && !StartPlaces.askedForMirror(this)) {
+            StartPlaces.markAsked(this)
+            AlertDialog.Builder(this).setTitle("Keep start places safe?")
+                .setMessage("Remembered start places can be kept in the phone storage (Documents/FelixDrohne), so they survive a reinstall and come back by themselves. Android needs “All files access” for that: switch it on in the next screen, then go back.")
+                .setPositiveButton("Open setting") { _, _ ->
+                    try { startActivity(android.content.Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, android.net.Uri.parse("package:$packageName"))) }
+                    catch (_: Throwable) { try { startActivity(android.content.Intent(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)) } catch (_: Throwable) {} }
+                }
+                .setNegativeButton("Not now", null).show()
+        }
+        // Abheben ohne Plan: 1,5 s halten (kein versehentlicher Start), Loslassen vorher bricht ab.
+        btnTakeoff = findViewById(R.id.btnTakeoff)
+        val takeoffRun = Runnable {
+            val s = DroneManager.state
+            // Knopf inzwischen weg (Plan gestartet, Upload läuft …): nichts tun.
+            if (btnTakeoff.visibility != View.VISIBLE || MissionController.executing || uploading || busy != null) { btnTakeoff.text = "Hold: take off"; return@Runnable }
+            val why = com.felixos.drohne.plan.Takeoff.problem(s.connected, s.flying, s.motorsOn, s.satellites, s.home?.latitude?.let { it != 0.0 } == true, s.batteryPercent, s.windWarning)
+            if (why != null) { btnTakeoff.text = "Hold: take off"; info("No takeoff", why) } else { btnTakeoff.text = "Taking off …"; DroneManager.takeOff() }
+        }
+        btnTakeoff.setOnTouchListener { v, e ->
+            when (e.actionMasked) {
+                android.view.MotionEvent.ACTION_DOWN -> { btnTakeoff.text = "Keep holding …"; v.postDelayed(takeoffRun, com.felixos.drohne.plan.Takeoff.HOLD_MS) }
+                android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> { v.removeCallbacks(takeoffRun); if (btnTakeoff.text == "Keep holding …") btnTakeoff.text = "Hold: take off" }
+            }
+            true
+        }
         btnHome.setOnClickListener {
             FollowController.stop()
             MissionController.stop()
@@ -218,7 +247,11 @@ class MainActivity : AppCompatActivity() {
         DroneManager.addLogListener(logListener)
     }
 
-    override fun onResume() { super.onResume(); mapPanel.onResume() }
+    override fun onResume() {
+        super.onResume(); mapPanel.onResume()
+        // Nach dem Erlauben von „All files access“ kommt man hierher zurück: Kopie abgleichen bzw. Plätze zurückholen.
+        try { StartPlaces.syncMirror(this)?.let { n -> if (n > 0) info("Start places restored", "$n remembered start place(s) came back from the phone storage.") } } catch (_: Throwable) {}
+    }
     override fun onNewIntent(intent: android.content.Intent) { super.onNewIntent(intent); setIntent(intent); handleTokenLink(intent) }
 
     /**
@@ -426,6 +459,12 @@ class MainActivity : AppCompatActivity() {
         secondaryRow.visibility = View.GONE // Testflug/Folgen vorerst raus (Felix 8.11.)
         btnFollow.text = if (FollowController.active) "Stop following" else "Follow"
         btnHome.alpha = if (s.flying || s.motorsOn || FollowController.active) 1f else 0.6f
+        // Abheben-Knopf nur am Boden mit verbundener Drohne und nicht, während ein Plan läuft oder gestartet wird.
+        // Auch nicht während Upload, einer laufenden Aktion (Plan-Start) oder Folgen: kein zweiter Startbefehl neben dem des Plans.
+        val ground = s.connected && !s.flying && !s.motorsOn && !MissionController.executing && !Simulator.active && !uploading && !loading && busy == null && !FollowController.active
+        if (ground && btnTakeoff.visibility != View.VISIBLE) btnTakeoff.text = "Hold: take off"
+        btnTakeoff.visibility = if (ground) View.VISIBLE else View.GONE
+        btnHome.text = if (ground) "STOP · Home" else "STOP · Return home"
     }
 
     private var loading = false
