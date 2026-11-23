@@ -59,6 +59,14 @@ jobs:
         run: ./gradlew :app:assembleRelease
       - name: APK umbenennen
         run: cp app/build/outputs/apk/release/app-release.apk felix-drohne-0.1.${{ github.run_number }}.apk
+      # App-Bundle für die interne Teststrecke im Play Store (Felix 23.11.2026). Gleicher Schlüssel = Upload-Schlüssel.
+      - name: App-Bundle bauen (Play Store)
+        env:
+          DJI_API_KEY: ${{ secrets.DJI_API_KEY }}
+        run: |
+          ./gradlew :app:bundleRelease
+          cp app/build/outputs/bundle/release/app-release.aab felix-drohne-0.1.${{ github.run_number }}.aab
+          ls -l felix-drohne-0.1.${{ github.run_number }}.aab
       - name: Als Release veröffentlichen (Download aufs Handy)
         uses: softprops/action-gh-release@v2
         with:
@@ -68,4 +76,6 @@ jobs:
           body: |
             Neueste App-Version. Auf dem Samsung diese Seite öffnen und die .apk antippen.
             App-Key gesetzt: ${{ secrets.DJI_API_KEY != '' && 'ja' || 'nein (Registrierung schlägt fehl, Rest testbar)' }}
-          files: felix-drohne-0.1.${{ github.run_number }}.apk
+          files: |
+            felix-drohne-0.1.${{ github.run_number }}.apk
+            felix-drohne-0.1.${{ github.run_number }}.aab
