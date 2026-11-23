@@ -167,6 +167,7 @@ object FlugSitzung : Aktionen {
             buildingConflicts = MissionController.conflicts.map { it.toString() },
             surfaceConflicts = MissionController.terrainConflicts.map { it.toString() },
             returnProblems = MissionController.returnProblems,
+            keepOutConflicts = MissionController.keepOutConflicts, bypass = DroneManager.bypass,
             cameraFreeMb = if (s.connected) { FlightReport.refreshStorage(); FlightReport.activeFreeMb } else null,
             rthHeightM = MissionController.rthHeightM, transitHeightM = MissionController.TRANSIT_HEIGHT_M,
             terrainCovered = MissionController.terrainCovered, preparedHome = MissionController.preparedHome,
@@ -180,6 +181,8 @@ object FlugSitzung : Aktionen {
 
     /** Starttür am Boden. Die Prüfung läuft hier, im Augenblick des Starts, nicht in der Oberfläche. */
     override fun starten(): StartErgebnis {
+        // In der Luft startet kein Plan vom Boden neu (er flöge erst zum Startpunkt zurück): dort gilt nur der Weg über flyFromHere.
+        if (DroneManager.state.flying) return StartErgebnis.Verweigert(listOf("The drone is in the air. A plan is started from the ground; in flight use Resume plan or pick a subject."))
         val problems = startProbleme()
         if (problems.isNotEmpty()) {
             DroneManager.log("Start verweigert: ${problems.size} Problem(e) in der Startprüfung")
@@ -283,11 +286,11 @@ object FlugSitzung : Aktionen {
         val loc = DroneManager.state.location
         val from = if (loc != null) Geo.bearing(p, LatLon(loc.latitude, loc.longitude)) else 0.0  // start at the ring point nearest to the drone
         return Missions.orbit(p, r, h, points = 8, startBearingDeg = from, targetHeightM = targetTop.coerceIn(-100.0, h - 5), name = "photo-circle")
-            .copy(startFromCurrent = true, hoverAtEnd = true, obstacles = mission?.obstacles ?: emptyList())
+            .copy(startFromCurrent = true, hoverAtEnd = true, obstacles = mission?.obstacles ?: emptyList(), sperrzonen = mission?.sperrzonen ?: emptyList())
     }
 
     private fun lookDown(p: LatLon, h: Double): Mission = Mission(name = "look-closer", speedMs = 4.0, target = p, startFromCurrent = true, hoverAtEnd = true,
-        obstacles = mission?.obstacles ?: emptyList(), waypoints = listOf(
+        obstacles = mission?.obstacles ?: emptyList(), sperrzonen = mission?.sperrzonen ?: emptyList(), waypoints = listOf(
             Waypoint(p, h, gimbalPitchDeg = -90.0, takePhoto = true, hoverSec = 6),
             Waypoint(Geo.offset(p, 2.0, 0.0), h, gimbalPitchDeg = -90.0, takePhoto = false)))
 

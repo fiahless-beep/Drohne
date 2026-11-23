@@ -55,6 +55,8 @@ data class Mission(
     val startFromCurrent: Boolean = false,
     /** Ends hovering at the last waypoint (no return, no landing): detours while the main plan waits. */
     val hoverAtEnd: Boolean = false,
+    /** Sperrzonen (Menschenmenge): kein Stück des Flugs, auch kein Heimflug von irgendeinem Punkt, darf hindurch. Geprüft in MissionController.prepare. */
+    val sperrzonen: List<Sperrzone> = emptyList(),
 ) {
     init {
         require(waypoints.size >= 2) { "Mindestens 2 Wegpunkte" }

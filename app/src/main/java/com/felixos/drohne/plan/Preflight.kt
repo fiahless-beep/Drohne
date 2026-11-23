@@ -34,6 +34,10 @@ object Preflight {
         val buildingConflicts: List<String> = emptyList(),
         val surfaceConflicts: List<String> = emptyList(),
         val returnProblems: List<String> = emptyList(),
+        /** Verstöße gegen Sperrzonen des Plans (Sperrzone.konflikte auf dem vorbereiteten Plan). */
+        val keepOutConflicts: List<String> = emptyList(),
+        /** Hinderniserkennung steht auf Umfliegen: die Drohne weicht seitlich aus, das verträgt sich nicht mit einer Sperrzone. */
+        val bypass: Boolean = false,
         /** Freier Platz des aktiven Kameraspeichers in MB; null = noch nicht gelesen. */
         val cameraFreeMb: Int? = null,
         val rthHeightM: Double,
@@ -63,6 +67,8 @@ object Preflight {
         l.buildingConflicts.forEach { add("Building guard: $it") }
         l.surfaceConflicts.forEach { add("Surface guard: $it") }
         addAll(l.returnProblems)
+        l.keepOutConflicts.forEach { add("Keep-out zone: $it") }
+        if (m != null && m.sperrzonen.isNotEmpty() && l.bypass) add("Keep-out zone: obstacle sensing is set to Bypass, the drone could swerve sideways. Set it to Brake (Settings → Safety).")
         // Flug 22.11.2026: Karte war nach 50 von 124 Fotos voll, der Rest flog ohne Bild.
         if (m != null) Storage.problem(m.waypoints.count { it.takePhoto }, l.cameraFreeMb)?.let { add(it) }
         if (m != null) {
@@ -136,6 +142,7 @@ object Preflight {
         Check("Building guard: route clear", true) { it.startsWith("Building guard") },
         Check("Surface guard: route clear", true) { it.startsWith("Surface guard") },
         Check("Way home clear from every point", true) { it.startsWith("Return guard") },
+        Check("Keep-out zone: never over the crowd", true) { it.startsWith("Keep-out zone") },
         Check("DJI height limit sufficient", true) { it.startsWith("DJI height limit") },
         Check("No wind warning", true) { it.contains("ind warning") },
         Check("Low points: building data", true) { it.contains("no building data") },

@@ -308,6 +308,7 @@ object DroneManager {
                     if (info.rightSideObstacleAvoidanceWorking == false) add("rechts")
                     if (info.downwardObstacleAvoidanceWorking == false) add("unten")
                 }
+                bypass = info.obstacleAvoidanceType == dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.BYPASS
                 val text = when {
                     // Mini 4 Pro: der Hauptschalter ist über das SDK „Not supported“ und meldet dann immer aus → nur der Typ zählt (Felix 13.11., DJI Fly zeigte Brake).
                     (!overallUnsupported && !info.isOverallObstacleAvoidanceEnabled) || info.obstacleAvoidanceType == dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType.CLOSE -> "aus"
@@ -444,6 +445,8 @@ object DroneManager {
     } }
 
     @Volatile private var obstacleTypeOn = false
+    /** Hinderniserkennung steht auf Umfliegen (BYPASS): die Drohne weicht seitlich aus statt zu bremsen. */
+    @Volatile var bypass = false; private set
     /** Letzte Abstandsmessung der Hinderniserkennung (Rohwerte der Drohne) und wann sie kam. */
     @Volatile private var obstacleData: dji.v5.manager.aircraft.perception.data.ObstacleData? = null
     @Volatile private var obstacleDataMs = 0L

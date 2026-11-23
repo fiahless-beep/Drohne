@@ -173,7 +173,7 @@ class PreflightTest {
 
     @Test fun fullChecklistNamesEveryRuleAndKeepsUnknownProblems() {
         val rows = Preflight.checklist(listOf("Drone not connected", "Something new"), hasPlan = false, full = true)
-        assertEquals(18, rows.size)
+        assertEquals(19, rows.size)
         assertEquals(Preflight.Row(false, "Drone not connected", "Drone not connected"), rows[1])
         assertEquals(Preflight.Row(true, "SDK registered"), rows[0])
         assertEquals("Ohne Plan sind planabhängige Regeln offen", null, rows.first { it.text.startsWith("Battery") }.ok)
@@ -184,6 +184,43 @@ class PreflightTest {
     @Test fun everyRuleTextHasItsChecklistRow() {
         val bad = ok().copy(registered = false, connected = false, uploaded = false, batteryPercent = 1, satellites = 3, home = null)
         val rows = Preflight.checklist(Preflight.problems(bad), hasPlan = true, full = true)
-        assertEquals(17, rows.size)
+        assertEquals(18, rows.size)
+    }
+}
+
+/** Sperrzone über einer Menge: der vorbereitete Plan und jeder Heimweg bleiben draußen. */
+class SperrzoneTest {
+    private val home = LatLon(10.0, 20.0)
+    private val menge = Geo.offset(home, 300.0, 0.0)
+    private fun plan(vararg p: LatLon) = Mission(name = "t", waypoints = p.map { Waypoint(it, 40.0) }, sperrzonen = listOf(Sperrzone(menge, 40.0)))
+
+    @Test fun planWithoutZonesHasNoConflicts() =
+        assertEquals(emptyList<String>(), Sperrzone.konflikte(Mission(name = "t", waypoints = listOf(Waypoint(menge, 40.0), Waypoint(home, 40.0))), home))
+
+    @Test fun legAcrossTheCrowdIsAConflict() =
+        assertTrue(Sperrzone.konflikte(plan(Geo.offset(menge, 80.0, 270.0), Geo.offset(menge, 80.0, 90.0)), home).single().contains("crosses the keep-out zone"))
+
+    @Test fun pointsOnTheNearSideAreFree() =
+        assertEquals(emptyList<String>(), Sperrzone.konflikte(plan(Geo.offset(menge, 80.0, 150.0), Geo.offset(menge, 80.0, 210.0)), home))
+
+    @Test fun wayHomeAcrossTheCrowdIsAConflict() =
+        assertTrue(Sperrzone.konflikte(plan(Geo.offset(menge, 80.0, 20.0), Geo.offset(menge, 80.0, 340.0)), home).single().contains("way home"))
+
+    @Test fun bufferCounts() {
+        // 43 m am Rand vorbei: außerhalb des Radius (40 m), aber innerhalb des Puffers.
+        val knapp = plan(Geo.offset(Geo.offset(menge, 43.0, 180.0), 100.0, 270.0), Geo.offset(Geo.offset(menge, 43.0, 180.0), 100.0, 90.0))
+        assertEquals(1, Sperrzone.konflikte(knapp, home).size)
+    }
+
+    @Test fun preflightBlocksAndNamesTheRule() {
+        val m = plan(Geo.offset(menge, 80.0, 150.0), Geo.offset(menge, 80.0, 210.0))
+        val l = Preflight.Lage(registered = true, connected = true, mission = m, uploaded = true, home = home, position = home,
+            batteryPercent = 100, satellites = 17, heightLimitM = 120, windWarning = 0, sensorsOk = true, sensorsText = "on",
+            rthHeightM = 40.0, transitHeightM = 30.0, terrainCovered = true, preparedHome = home, nowMs = 1_782_038_400_000L)
+        val frei = Preflight.problems(l).filter { it.startsWith("Keep-out") }
+        assertEquals(emptyList<String>(), frei)
+        assertTrue(Preflight.problems(l.copy(keepOutConflicts = listOf("x"))).any { it == "Keep-out zone: x" })
+        assertTrue(Preflight.problems(l.copy(bypass = true)).any { it.contains("Bypass") })
+        assertTrue(Preflight.checklist(listOf("Keep-out zone: x"), hasPlan = true, full = true).any { it.ok == false && it.text.startsWith("Keep-out") })
     }
 }

@@ -57,15 +57,17 @@ object MissionController {
     /** Everything prepare() changes, so a rejected detour leaves the paused plan untouched. */
     class Snapshot(val kmz: File?, val mission: Mission?, val conflicts: List<com.felixos.drohne.plan.Obstacles.Conflict>, val terrain: List<com.felixos.drohne.plan.Terrain.Conflict>,
                    val home: LatLon?, val above: Double, val uploaded: Boolean, val rth: Double, val tail: Boolean, val pre: Int, val text: String,
-                   val returnProblems: List<String>, val homeLeg: Boolean, val covered: Boolean)
-    fun snapshot() = Snapshot(currentKmz, currentMission, conflicts, terrainConflicts, preparedHome, startAboveGroundM, uploaded, rthHeightM, landingTail, preCount, stateText, returnProblems, homeLegChecked, terrainCovered)
+                   val returnProblems: List<String>, val homeLeg: Boolean, val covered: Boolean, val keepOut: List<String>)
+    fun snapshot() = Snapshot(currentKmz, currentMission, conflicts, terrainConflicts, preparedHome, startAboveGroundM, uploaded, rthHeightM, landingTail, preCount, stateText, returnProblems, homeLegChecked, terrainCovered, keepOutConflicts)
     fun restore(s: Snapshot) { currentKmz = s.kmz; currentMission = s.mission; conflicts = s.conflicts; terrainConflicts = s.terrain; preparedHome = s.home
         startAboveGroundM = s.above; uploaded = s.uploaded; rthHeightM = s.rth; landingTail = s.tail; preCount = s.pre
-        returnProblems = s.returnProblems; homeLegChecked = s.homeLeg; terrainCovered = s.covered; show(s.text) }
+        returnProblems = s.returnProblems; homeLegChecked = s.homeLeg; terrainCovered = s.covered; keepOutConflicts = s.keepOut; show(s.text) }
     fun say(text: String) = show(text)
     val hasLandingTail: Boolean get() = landingTail
     /** Return-path problems (surface between a waypoint and home higher than any allowed return height). */
     var returnProblems: List<String> = emptyList(); private set
+    /** Verstöße gegen die Sperrzonen des vorbereiteten Plans (Menschenmenge); leer = frei. */
+    var keepOutConflicts: List<String> = emptyList(); private set
     private fun show(text: String) { stateText = text; onStateText?.invoke(text) }
 
     private var initialized = false
@@ -237,6 +239,7 @@ object MissionController {
         // Zu lange Pläne hart ablehnen, bevor irgendetwas geschrieben wird: kein KMZ, kein Plan in der App, also weder Upload noch Start.
         // (Ein Aufrufer mit Snapshot stellt danach den vorherigen, geprüften Plan wieder her.)
         rejectReason = null
+        keepOutConflicts = emptyList()
         com.felixos.drohne.plan.Missions.waypointLimitProblem(mIn0.waypoints.size)?.let { return reject(it) }
         val h = DroneManager.state.home
         val home = if (h?.latitude != null && h.latitude != 0.0) LatLon(h.latitude, h.longitude) else null
@@ -328,6 +331,9 @@ object MissionController {
             DroneManager.log("Balkon: letzter Abstieg (Landeanflug) von der Gebäudeprüfung ausgenommen")
         }
         terrainCovered = com.felixos.drohne.plan.Terrain.covers(m0, home)
+        // Sperrzonen (Menschenmenge): der Plan, wie er geflogen wird, samt Steigflug, Rückweg und Heimflug von jedem Punkt.
+        keepOutConflicts = com.felixos.drohne.plan.Sperrzone.konflikte(m, home)
+        if (m.sperrzonen.isNotEmpty()) DroneManager.log(if (keepOutConflicts.isEmpty()) "Sperrzone: Strecke und Heimwege frei (${m.sperrzonen.size} Zone(n))" else "SPERRZONE: " + keepOutConflicts.joinToString("; "))
         if (com.felixos.drohne.plan.Terrain.loaded && home != null && !terrainCovered) {
             DroneManager.log("KEINE HÖHENDATEN für diesen Ort: Gelände, Bäume und Dächer sind NICHT geprüft. Flughöhe nach Augenmaß wählen und die Drohne im Blick behalten.")
         } else if (com.felixos.drohne.plan.Terrain.loaded && home != null) {
