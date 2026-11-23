@@ -60,7 +60,42 @@ object FrameShots {
         } catch (t: Throwable) { DroneManager.log("Flight stills: no access to the live picture (${t.message})") }
     }
 
+    /** Wer gerade ein einzelnes Standbild will (Missionen 03 und 04); das nächste Bild des Livebilds erfüllt den Wunsch. */
+    @Volatile private var wunsch: ((ByteArray?) -> Unit)? = null
+    @Volatile private var wunschBreite = 1280
+    private val wunschUhr = android.os.Handler(android.os.Looper.getMainLooper())
+
+    /**
+     * Das nächste Bild des Livebilds als JPEG, höchstens [breite] Pixel breit; unabhängig davon, welche Ansicht offen ist.
+     * Nichts wird gespeichert oder hochgeladen. [fertig] bekommt null, wenn binnen [wartenMs] kein Bild kommt
+     * (Livebild aus, Simulation). Aufruf und Antwort auf dem UI-Thread.
+     */
+    fun naechstesBild(breite: Int = 1280, wartenMs: Long = 2500, fertig: (ByteArray?) -> Unit) {
+        var erledigt = false
+        val einmal: (ByteArray?) -> Unit = { b -> wunschUhr.post { if (!erledigt) { erledigt = true; fertig(b) } } }
+        wunschBreite = breite
+        wunsch = einmal
+        wunschUhr.postDelayed({ if (wunsch === einmal) wunsch = null; einmal(null) }, wartenMs)
+    }
+
+    private fun verkleinert(jpg: ByteArray, breite: Int): ByteArray {
+        val bmp = BitmapFactory.decodeByteArray(jpg, 0, jpg.size) ?: return jpg
+        if (bmp.width <= breite) { bmp.recycle(); return jpg }
+        val klein = android.graphics.Bitmap.createScaledBitmap(bmp, breite, (bmp.height.toLong() * breite / bmp.width).toInt().coerceAtLeast(1), true)
+        val out = ByteArrayOutputStream()
+        klein.compress(android.graphics.Bitmap.CompressFormat.JPEG, 78, out)
+        bmp.recycle(); if (klein !== bmp) klein.recycle()
+        return out.toByteArray()
+    }
+
     private fun onFrame(data: ByteArray, offset: Int, width: Int, height: Int) {
+        val w = wunsch
+        if (w != null && width >= 64 && height >= 36 && data.size - offset >= width * height * 3 / 2) {
+            wunsch = null
+            val kopie = data.copyOfRange(offset, offset + width * height * 3 / 2)
+            val breite = wunschBreite
+            Thread({ w(try { verkleinert(jpeg(kopie, width, height), breite) } catch (_: Throwable) { null }) }, "Standbild").start()
+        }
         if (!enabled || working || width < 64 || height < 36) return
         val now = System.currentTimeMillis()
         if (now - lastShotMs < INTERVAL_MS) return

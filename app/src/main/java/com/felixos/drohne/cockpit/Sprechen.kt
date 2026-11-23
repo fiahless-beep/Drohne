@@ -111,6 +111,23 @@ internal class SprechEbene(
         }
     }
 
+    /**
+     * Etwas diktieren statt Central Command fragen (Frage zu einem Ort, das Gesuchte): derselbe Streifen, dasselbe Mikrofon,
+     * aber der Text geht an [fertig] und nirgends sonst hin. Ein zweiter Druck auf den Sprechknopf beendet das Zuhören.
+     */
+    fun diktieren(was: String, fertig: (String) -> Unit) {
+        if (wartet) return zeige("CC · looking …", null, "Still waiting for the last answer.")
+        if (sprache.hoert) { sprache.genug(); return }
+        if (!sprache.erkennungDa) return zeige(was, null, "Speech recognition is not available on this phone.", true)
+        if (!sprache.mikrofonErlaubt) { gast.mikrofonErlauben(); return zeige(was, null, "Allow the microphone, then press again.", true) }
+        sprache.hoeren(
+            teil = { zeige("Listening · $was", "“$it”", null) },
+            fertig = { t -> if (t == null) zeige(was, null, "Nothing understood. Press again.", true) else { schliessen(); fertig(t) } },
+            fehler = { f -> zeige(was, null, f, true) })
+        zeige("Listening · $was", null, "Say it now. It is written into the brief, nothing is sent yet.")
+        cc.farbe(Farbe.TEXT_DIM)
+    }
+
     fun schliessen() { sprache.schliessen(); aktion = null; streifen.sichtbar(false); taste.an = false; taste.invalidate() }
     /** Von außen anstoßen (Kachel „Anything else“). */
     fun sprechen() { if (!sprache.hoert) druck() }

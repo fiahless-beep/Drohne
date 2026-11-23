@@ -121,6 +121,31 @@ object Preflight {
         }
     }
 
+    /** Folgen, Stufe 1 (ohne Höhenmodell, nie im Flug getestet): nicht unter dieser Höhe und nicht näher als dieser Abstand. */
+    const val FOLLOW_MIN_HEIGHT_M = 30.0
+    const val FOLLOW_MIN_DISTANCE_M = 15.0
+    const val FOLLOW_MIN_BATTERY = 35
+
+    /**
+     * Die Tür für „Folgen“: dieselben Grundregeln wie die Starttür, dazu die Grenzen der Stufe 1. Folgen hebt nie selbst ab:
+     * die Drohne muss schon in der Luft sein (Abheben bleibt beim gehaltenen Knopf). Leer = erlaubt.
+     */
+    fun followGate(connected: Boolean, flying: Boolean, planRunning: Boolean, pos: LatLon?, homeSet: Boolean, heightM: Double, distanceM: Double,
+                   batteryPercent: Int?, satellites: Int?, windWarning: Int?, heightLimitM: Int?, sensorsOk: Boolean, sensorsText: String, nowMs: Long): List<String> = buildList {
+        if (!connected) add("Drone not connected")
+        if (!flying) add("Take off first (hold the take-off button) and let the drone hover. Following never takes off by itself.")
+        if (planRunning) add("A plan is running. Pause or finish it first.")
+        if (!homeSet) add("Home point not set yet")
+        if ((satellites ?: 0) < MIN_SATELLITES) add("GPS too weak (at least $MIN_SATELLITES satellites)")
+        if (heightM < FOLLOW_MIN_HEIGHT_M) add("Following only from ${FOLLOW_MIN_HEIGHT_M.toInt()} m up: there is no height data for trees and roofs on the way")
+        if (distanceM < FOLLOW_MIN_DISTANCE_M) add("Distance at least ${FOLLOW_MIN_DISTANCE_M.toInt()} m")
+        heightLimitM?.let { if (it < heightM - 0.5) add("DJI height limit $it m is below the follow height ${heightM.toInt()} m") }
+        if ((batteryPercent ?: 0) < FOLLOW_MIN_BATTERY) add("Battery ${batteryPercent ?: 0} %: following needs at least $FOLLOW_MIN_BATTERY %")
+        if ((windWarning ?: 0) > 0) add("Wind warning from the drone: no following")
+        if (pos != null && Geo.sunElevationDeg(pos, nowMs) < -3) add("Following only in daylight")
+        followProblem(pos, heightM, sensorsOk, sensorsText, nowMs)?.let { if (!contains(it)) add(it) }
+    }
+
     // ---------------------------------------------------------------- Prüfliste (Anzeige der Regeln oben)
 
     /** Eine Zeile der Prüfliste: [ok] true = erfüllt, false = Problem, null = noch nicht prüfbar (kein Plan). */

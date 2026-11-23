@@ -42,6 +42,10 @@ interface Gastgeber {
     /** Frage an Central Command; [antwort] bekommt Text, ob es ein Fehler ist, und höchstens einen Vorschlag (Name, Handlung). */
     fun ccFragen(frage: String, antwort: (String, Boolean, Pair<String, () -> Unit>?) -> Unit)
     fun selbsttest()
+    /** Die Karte nach vorn holen (Ortswahl einer Mission). */
+    fun karteZeigen()
+    /** Die Orte der gewählten Mission haben sich geändert: die Karte holt sie sich selbst aus dem Flugkern und zeichnet sie. */
+    fun missionsOrte()
 }
 
 /**
@@ -57,7 +61,16 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private val system = SystemSchirm(stil, tafelFlaeche, gast)
     private val logTafel = LogTafel(stil, tafelFlaeche, gast)
     private val setTafel = SetTafel(stil, tafelFlaeche)
-    private val missionen = MissionenTafel(stil, tafelFlaeche, planHolen = { tafelSetzen(Tafel.KEINE); aktionen.planLaden() }, sprechen = { sprechen.sprechen() })
+    private val missionen = MissionenTafel(stil, tafelFlaeche, aktionen, planHolen = { tafelSetzen(Tafel.KEINE); aktionen.planLaden() }, sprechen = { sprechen.sprechen() },
+        diktieren = { was, fertig -> sprechen.diktieren(was, fertig) }, zumCockpit = { tafelSetzen(Tafel.KEINE) })
+    /** Balken unten auf der Karte, solange der Ort einer Mission gewählt wird: was zu tun ist, Zurück und Fertig. */
+    private val ortBalken = stil.spalte()
+    private val ortTitel = stil.text(12f, stil.monoFett, Farbe.ACCENT, versalien = true, sperrung = 0.08f)
+    private val ortSatz = stil.text(14f, stil.sans, Farbe.TEXT, zeilen = 3)
+    private val ortZurueck = LeistenKnopf(stil, "Undo the last tap") { aktionen.ortZurueck() }
+    private val ortFertig = Knopf(stil, Knopf.Stilart.HAUPT) { aktionen.ortFertig() }
+    private var ortswahl = false
+    private var orteSchluessel = ""
     private val sprechen: SprechEbene = SprechEbene(stil, sprechWurzel, gast, kontext = { kontext() }, lokal = { lokal(it) })
     private enum class Tafel { KEINE, SYSTEM, MSN, LOG, SET }
     private var tafel = Tafel.KEINE
@@ -106,6 +119,19 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         fuss.addView(systemStopp, LinearLayout.LayoutParams(stil.dp(190), stil.dp(52)))
         fuss.visibility = View.GONE
         systemWurzel.addView(fuss, FrameLayout.LayoutParams(-1, stil.dp(58), Gravity.BOTTOM))
+        ortBalken.background = stil.flaeche(Farbe.BG, Farbe.ACCENT)
+        ortBalken.setPadding(stil.dp(10), stil.dp(8), stil.dp(10), stil.dp(8))
+        ortBalken.isClickable = true   // ein Tipp auf den Balken ist kein Tipp auf die Karte
+        ortBalken.addView(ortTitel, stil.lp(Stil.MATCH, Stil.WRAP))
+        ortSatz.setLineSpacing(0f, 1.2f)
+        ortBalken.addView(ortSatz, stil.lp(Stil.MATCH, Stil.WRAP, oben = 4))
+        val ortKnoepfe = stil.zeile()
+        ortZurueck.setze("Undo", false); ortZurueck.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 13f)
+        ortKnoepfe.addView(ortZurueck, LinearLayout.LayoutParams(stil.dp(96), stil.dp(46)))
+        ortKnoepfe.addView(ortFertig, LinearLayout.LayoutParams(0, stil.dp(46), 1f).apply { leftMargin = stil.dp(8) })
+        ortBalken.addView(ortKnoepfe, stil.lp(Stil.MATCH, Stil.WRAP, oben = 8))
+        ortBalken.visibility = View.GONE
+        buehne.addView(ortBalken, FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM).apply { leftMargin = stil.dp(150); rightMargin = stil.dp(92); bottomMargin = stil.dp(8) })
         leisteZeigen()
     }
 
@@ -165,6 +191,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     /** Für die Zurück-Taste: in Set eine Ebene zurück, sonst die offene Fläche schließen; false = es war keine offen. */
     fun tafelZurueck(): Boolean {
         if (sprechen.offen) { sprechen.schliessen(); return true }
+        if (ortswahl) { aktionen.ortFertig(); return true }
         if (tafel == Tafel.KEINE) return false
         if (tafel == Tafel.SET && setTafel.zurueck()) return true
         if (tafel == Tafel.MSN && missionen.zurueck()) return true
@@ -206,7 +233,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             Tafel.SYSTEM -> SprechEbene.Kontext("System status · $flug", "“What does the wind warning mean?”" + if (imFlug) " · “Stop here.”" else "")
             Tafel.LOG -> SprechEbene.Kontext("Log · $flug", "“What went wrong in the last flight?”" + if (imFlug) " · “Stop here.”" else "")
             Tafel.SET -> SprechEbene.Kontext("Settings · $flug", "“Where do I switch the map?”" + if (imFlug) " · “Stop here.”" else "")
-            Tafel.MSN -> SprechEbene.Kontext(missionen.kontext + " · $flug", "“Which mission do I need to check a parking lot?”" + if (imFlug) " · “Stop here.”" else "")
+            Tafel.MSN -> SprechEbene.Kontext(missionen.kontext + (if (z.auftrag.art != 0) " (${z.auftrag.phase.name.lowercase(Locale.US)})" else "") + " · $flug", "“Which mission do I need to check a parking lot?”" + if (imFlug) " · “Stop here.”" else "")
             Tafel.KEINE -> SprechEbene.Kontext(gast.ansicht.kuerzel + " view · $flug" + (if (z.plan.geladen) " · plan “${z.plan.name}”" else ""),
                 if (z.plan.laeuft && z.phase != CockpitZustand.Phase.PAUSIERT) "“Stop here.” · “Come home.”" else if (imFlug) "“What do you see?” · “Look closer at the roof.” · “Come home.”" else "“Is the plan ready to fly?” · “What is missing for the start?”")
         }
@@ -256,6 +283,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             hoehen[hoehen.size - 1] = if (z.datenDa) z.hoeheM?.toFloat() ?: Float.NaN else Float.NaN
         }
         if (vollbild && !vollbildErlaubt(z)) vollbildSetzen(false)
+        ortswahlZeigen(z.auftrag)
         // Kommt eine neue Warnung, Pause oder ein Funkabriss, während der System-Bildschirm offen ist: zurück zum Live-Bildschirm
         // mit Warnzeile und Knöpfen. Nur beim Wechsel der Art (Ziffern zählen nicht), damit man ihn danach bewusst wieder öffnen kann.
         val lage = if (vollbildErlaubt(z)) null else (z.warnung?.titel?.filterNot { it.isDigit() } ?: "") + "|" + z.funkabriss + "|" + (z.phase == CockpitZustand.Phase.PAUSIERT)
@@ -285,6 +313,36 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         sprechen.lage(if (systemAn && (z.fliegt || z.motorenAn || z.funkabriss)) stil.dp(58) else 0, !vollbild)
         live.zeige(z)
         if (tafel == Tafel.SYSTEM) system.zeige(z, hoehen, windText(z))
+        if (tafel == Tafel.MSN) missionen.zeige(z)
+    }
+
+    /**
+     * Ortswahl einer Mission: die Missions-Fläche macht der Karte Platz, ein Balken sagt, was zu tippen ist; mit „Done“
+     * (oder der Zurück-Taste) kommt der Brief wieder. Die Orte selbst zeichnet der Gastgeber auf die Karte.
+     */
+    private fun ortswahlZeigen(a: CockpitZustand.Auftrag) {
+        val an = a.phase == CockpitZustand.AuftragPhase.ORT
+        if (an != ortswahl) {
+            ortswahl = an
+            if (an) { if (vollbild) vollbildSetzen(false); sprechen.schliessen(); tafel = Tafel.KEINE; gast.karteZeigen() } else tafel = Tafel.MSN
+            ortBalken.sichtbar(an)
+            leisteZeigen()
+        }
+        val s = "${a.art}|${a.phase}|${a.ortText}|${a.ecken}|${a.felder.joinToString { it.gewaehlt.toString() }}|${a.kandidaten.size}"
+        if (s != orteSchluessel) { orteSchluessel = s; gast.missionsOrte() }
+        if (!an) return
+        val flaeche = a.ortArt == 2
+        ortTitel.zeige("Mission ${if (a.art < 10) "0" else ""}${a.art} ${a.titel} · " + if (flaeche) "tap the corners" else "tap the place")
+        val satz = a.ortHinweis ?: when {
+            flaeche && a.ecken == 0 -> "Tap the corners of the property on the map, one after the other around it."
+            flaeche && a.ecken < 3 -> "${a.ecken} corner(s). At least three are needed."
+            flaeche -> "${a.ortText}. Tap more corners or press Done."
+            a.ortText == null -> when (a.art) { 4 -> "Tap the middle of the search area on the map."; 7 -> "Tap the middle of the crowd on the map. The red circle is the keep-out zone."; else -> "Tap the place on the map." }
+            else -> "Chosen: ${a.ortText}. Tap again to move it, or press Done."
+        }
+        ortSatz.zeige(satz); ortSatz.farbe(if (a.ortHinweis != null) Farbe.WARN_TEXT else Farbe.TEXT)
+        ortZurueck.alpha = if (a.ortText != null) 1f else 0.35f
+        ortFertig.setze(if (a.ortText == null) "Back to the brief" else "Done", null, true)
     }
 }
 

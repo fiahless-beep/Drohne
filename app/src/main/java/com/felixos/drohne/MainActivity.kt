@@ -109,7 +109,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 .setNegativeButton("Not now", null).show()
         }
-        mapPanel.onTap = { p -> pickSubject(p, "from map") }
+        // Läuft die Ortswahl einer Mission, gehört der Tipp ihr (der Flugkern hält den Ort); sonst wählt er im Flug ein Motiv.
+        mapPanel.onTap = { p -> if (MissionsLauf.kartenTipp(p)) mapPanel.auswahl(MissionsLauf.auswahl()) else pickSubject(p, "from map") }
         video.setOnTouchListener { _, e -> if (e.action == android.view.MotionEvent.ACTION_UP) onVideoTap(e.x, e.y); true }
         chooseView(Mode.MAP, byUser = false)
     }
@@ -228,6 +229,12 @@ class MainActivity : AppCompatActivity() {
         override fun mikrofonErlauben() = ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.RECORD_AUDIO), 2)
         override fun ccFragen(frage: String, antwort: (String, Boolean, Pair<String, () -> Unit>?) -> Unit) = askCc(frage, antwort)
         override fun selbsttest() = showSelfTest()
+        override fun karteZeigen() {
+            if (mode != Mode.MAP) chooseView(Mode.MAP, byUser = true)
+            // Ohne Drohne und ohne Plan stünde die Karte irgendwo: dann dorthin, wo das Handy ist.
+            if (homeLatLon() == null && DroneManager.state.location?.takeIf { it.latitude != 0.0 } == null) phoneLatLon()?.let { mapPanel.zeigeOrt(it) }
+        }
+        override fun missionsOrte() = mapPanel.auswahl(MissionsLauf.auswahl())
     }
 
     private fun homeLatLon(): LatLon? = FlugSitzung.homeLatLon()
@@ -360,7 +367,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     /** Overview of the use cases and what this build can do for each. */
-    private fun showUseCases() = menu("Use cases", listOf(
+    private fun showUseCases() = info("Missions", "The seven missions live under Msn in the left bar: each one has a brief, a plan check, the flight and a result. Speak works in every view.")
+    @Suppress("unused") private fun showUseCasesAlt() = menu("Use cases", listOf(
         "1 Fly a plan · ready" to { info("Fly a plan", "Get plan, check list, Start. Pause: button, any stick, or the pause button on the controller. Resume plan continues.") },
         "2 Subject on the way · ready (untested in flight)" to { info("Subject on the way", "Pause the plan. Tap the subject on the map or in the live view. Choose a photo circle. When it is done the drone hovers; Resume plan continues the plan from the point where you paused.") },
         "3 Go and look · ready (untested in flight)" to { info("Go and look", "Same as 2, choose “Look closer”: the drone flies above the point, camera straight down, hovers 6 s, takes a photo. Loading a new plan while hovering also works: it starts where the drone is.") },

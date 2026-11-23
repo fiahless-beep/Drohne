@@ -29,6 +29,29 @@ interface Aktionen {
     /** Was der Hauptknopf bei einem Druck tut (Reihenfolge wie bisher in der Activity); null = gerade nichts. */
     fun hauptaktionWaehlen(): CockpitZustand.Hauptaktion?
     fun zustand(): CockpitZustand
+
+    // ---- Missionen (Brief → Plan-Check → Flug → Ergebnis). Der Kern hält Brief und Orte; die Oberfläche sieht nur Worte.
+    /** Mission 1…7 wählen (ihr Brief erscheint), 0 = keine. Antwort: Grund, falls gerade nicht möglich. */
+    fun auftragWaehlen(art: Int): String?
+    /** Im Brief einen der festen Werte wählen. */
+    fun auftragFeld(id: String, index: Int)
+    /** Die gesprochene Frage (03) oder das Gesuchte (04) setzen. */
+    fun auftragText(text: String)
+    /** Ort auf der Karte wählen beginnen; Antwort: Grund, falls gerade nicht möglich. */
+    fun ortWaehlen(): String?
+    /** Letzte Ecke zurücknehmen bzw. den Punkt löschen. */
+    fun ortZurueck()
+    /** Ortswahl beenden, zurück zum Brief. */
+    fun ortFertig()
+    /** Aus dem Brief einen Plan bauen und durch die Starttür schicken (prüfen, hochladen). Antwort: Grund der Ablehnung oder null. */
+    fun auftragPlanen(): String?
+    /** Einen Kandidaten der Suche (04) als „Check a place“ (03) vorbereiten. */
+    fun kandidatWaehlen(nr: Int)
+    /** Den empfohlenen Vermessungsflug über dem Gebiet des geladenen Plans als Mission 06 vorbereiten. */
+    fun vermessungVorbereiten(): String?
+    /** Folgen (05) mit den Werten des Briefs beginnen; Antwort: Gründe, falls es nicht geht (leer = läuft). */
+    fun folgenBeginnen(): List<String>
+    fun folgenAufhoeren()
 }
 
 /** Eine Zeile der Prüfliste: [ok] true = erfüllt, false = Problem, null = ohne Plan noch nicht prüfbar. */

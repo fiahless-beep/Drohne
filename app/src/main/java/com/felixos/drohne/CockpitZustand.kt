@@ -59,6 +59,8 @@ data class CockpitZustand(
     val pruefliste: List<Pruefzeile> = emptyList(),
     val waechter: Waechter = Waechter(),
     val bahn: Bahn? = null,
+    /** Die gewählte Mission mit Brief, Phase und Ergebnis; [Auftrag.art] 0 = keine gewählt. */
+    val auftrag: Auftrag = Auftrag(),
 ) {
     /** Werte der Drohne sind frisch genug zum Anzeigen. */
     val datenDa: Boolean get() = verbindung == Verbindung.VERBUNDEN && keineDatenSeitS == null
@@ -102,7 +104,52 @@ data class CockpitZustand(
         val reserveProzent: Int = 0,
         val transitHoeheM: Int = 0,
         val rueckkehrHoeheM: Int? = null,
+        /** Satz für den Plan-Check: wie viele Akkus der Plan braucht; null = noch nicht gerechnet (kein Startpunkt). */
+        val akkuSatz: String? = null,
+        /** Satz für den Plan-Check: braucht dieser Plan einen Vermessungsflug? */
+        val vermessungSatz: String? = null,
+        /** Der Vermessungsflug wird empfohlen und kann als Mission 06 vorbereitet werden. */
+        val vermessungEmpfohlen: Boolean = false,
     )
+
+    enum class AuftragPhase { KEINE, BRIEF, ORT, PLAN, FLUG, ERGEBNIS }
+
+    /**
+     * Eine Mission aus Sicht der Oberfläche, ohne Koordinaten: [art] 1…7, Felder mit festen Werten zur Wahl,
+     * der Ort in Worten, was noch fehlt, und am Ende das Ergebnis.
+     */
+    data class Auftrag(
+        val art: Int = 0,
+        val titel: String = "",
+        val phase: AuftragPhase = AuftragPhase.KEINE,
+        val felder: List<Feld> = emptyList(),
+        /** 0 = kein Ort nötig, 1 = ein Punkt, 2 = Fläche aus Ecken. */
+        val ortArt: Int = 0,
+        /** Ort in Worten („140 m north-east of the start point“, „4 corners · 0.8 ha“); null = noch keiner. */
+        val ortText: String? = null,
+        val ecken: Int = 0,
+        /** Was der Pilot gesagt hat: Frage (03) oder was gesucht wird (04). */
+        val text: String = "",
+        val textName: String? = null,
+        /** Was im Brief noch fehlt; null = es kann geplant werden. */
+        val fehlt: String? = null,
+        /** Warum der letzte Versuch, den Plan zu bauen, abgelehnt wurde; null = nicht abgelehnt. */
+        val abgelehnt: String? = null,
+        /** Hinweis während der Ortswahl oder nach einem abgelehnten Tipp. */
+        val ortHinweis: String? = null,
+        /** Woran die App gerade arbeitet (Central Command wertet aus); null = nichts. */
+        val arbeitet: String? = null,
+        val ergebnis: String? = null,
+        val ergebnisWarnung: Boolean = false,
+        val kandidaten: List<Kandidat> = emptyList(),
+        /** Folgen (05): Gründe, warum es jetzt nicht geht; leer = möglich. */
+        val folgenSperren: List<String> = emptyList(),
+        /** Ein Restplan wurde nach einer vorzeitigen Landung geladen: der Satz dazu. */
+        val restSatz: String? = null,
+    ) {
+        data class Feld(val id: String, val name: String, val werte: List<String>, val gewaehlt: Int)
+        data class Kandidat(val nr: Int, val text: String, val ortText: String)
+    }
 
     enum class Hauptaktion(val text: String) {
         ARBEITET("Working …"), PLAN_WIRD_GEHOLT("Getting plan …"), LAEDT_HOCH("Uploading …"),

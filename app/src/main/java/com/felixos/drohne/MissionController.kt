@@ -58,6 +58,8 @@ object MissionController {
     class Snapshot(val kmz: File?, val mission: Mission?, val conflicts: List<com.felixos.drohne.plan.Obstacles.Conflict>, val terrain: List<com.felixos.drohne.plan.Terrain.Conflict>,
                    val home: LatLon?, val above: Double, val uploaded: Boolean, val rth: Double, val tail: Boolean, val pre: Int, val text: String,
                    val returnProblems: List<String>, val homeLeg: Boolean, val covered: Boolean, val keepOut: List<String>)
+    /** Die Drohne war aus (Akkuwechsel): was hochgeladen war, gilt nicht mehr als auf der Drohne. */
+    fun planVerloren() { uploaded = false }
     fun snapshot() = Snapshot(currentKmz, currentMission, conflicts, terrainConflicts, preparedHome, startAboveGroundM, uploaded, rthHeightM, landingTail, preCount, stateText, returnProblems, homeLegChecked, terrainCovered, keepOutConflicts)
     fun restore(s: Snapshot) { currentKmz = s.kmz; currentMission = s.mission; conflicts = s.conflicts; terrainConflicts = s.terrain; preparedHome = s.home
         startAboveGroundM = s.above; uploaded = s.uploaded; rthHeightM = s.rth; landingTail = s.tail; preCount = s.pre

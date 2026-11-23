@@ -5,7 +5,6 @@ import com.felixos.drohne.plan.Geo
 import com.felixos.drohne.plan.LatLon
 import com.felixos.drohne.plan.Mission
 import com.felixos.drohne.plan.Terrain
-import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
@@ -113,8 +112,7 @@ object FlightGuard {
         val home = MissionController.preparedHome ?: return
         val have = s.batteryPercent ?: return
         val rth = MissionController.rthHeightM
-        val sec = Geo.distance(p, home) / 8.0 + max(0.0, rth - alt) / 3.0 + max(alt, rth) / 2.0 + 20
-        val need = ceil(sec / 60 / Budget.MINUTES_PER_FULL_BATTERY * 100).toInt() + Budget.RESERVE_PERCENT
+        val need = Budget.heimwegProzent(Geo.distance(p, home), alt, rth)
         if (have > need) return
         batteryTripped = true
         val balcony = (m.startAboveGroundM ?: 0.0) > 0.1 || MissionController.startAboveGroundM > 0.1

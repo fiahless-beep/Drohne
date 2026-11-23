@@ -59,21 +59,21 @@ object ClaudeLink {
         .put(tool("return_home", "Stop and return to the start point. For low battery, wind, or when the job is done.", JSONObject().put("why", str("one short sentence for the pilot")), listOf("why")))
         .put(tool("ask_pilot", "Ask the pilot one short question when the request is unclear.", JSONObject().put("question", str("the question")), listOf("question")))
 
-    /** Blocking call; run on a worker thread. [jpeg] may be null (no live view). */
-    fun ask(apiKey: String, question: String, telemetry: String, jpeg: ByteArray?): Reply {
-        val content = JSONArray()
-        if (jpeg != null) content.put(JSONObject().put("type", "image").put("source", JSONObject().put("type", "base64").put("media_type", "image/jpeg").put("data", Base64.encodeToString(jpeg, Base64.NO_WRAP))))
-        content.put(JSONObject().put("type", "text").put("text", (if (jpeg == null) "No camera image is available right now.\n\n" else "") + "Telemetry:\n$telemetry\n\nPilot: $question"))
+    private fun bild(jpeg: ByteArray) = JSONObject().put("type", "image").put("source", JSONObject().put("type", "base64").put("media_type", "image/jpeg").put("data", Base64.encodeToString(jpeg, Base64.NO_WRAP)))
+
+    /** Eine Anfrage an die Messages API; gibt die Inhaltsblöcke oder den Fehlertext für die Anzeige zurück. Blockiert. */
+    private fun senden(apiKey: String, system: String, content: JSONArray, tools: JSONArray?, toolChoice: JSONObject? = null): Pair<JSONArray?, String?> {
         val body = JSONObject()
             .put("model", MODEL)
             .put("max_tokens", 4000)
-            .put("system", SYSTEM)
+            .put("system", system)
             .put("output_config", JSONObject().put("effort", "low"))
             .put("fallbacks", "default")
-            .put("tools", tools)
             .put("messages", JSONArray().put(JSONObject().put("role", "user").put("content", content)))
+        if (tools != null) body.put("tools", tools)
+        if (toolChoice != null) body.put("tool_choice", toolChoice)
         val conn = (URL("https://api.anthropic.com/v1/messages").openConnection() as HttpURLConnection).apply {
-            requestMethod = "POST"; connectTimeout = 10_000; readTimeout = 60_000; doOutput = true
+            requestMethod = "POST"; connectTimeout = 10_000; readTimeout = 90_000; doOutput = true
             setRequestProperty("Content-Type", "application/json")
             setRequestProperty("x-api-key", apiKey)
             setRequestProperty("anthropic-version", "2026-10-21")
@@ -85,23 +85,86 @@ object ClaudeLink {
             val raw = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.use { it.readText() } ?: ""
             if (code !in 200..299) {
                 val msg = runCatching { JSONObject(raw).getJSONObject("error").getString("message") }.getOrDefault(raw.take(200))
-                return Reply("", null, null, when (code) { 401 -> "Claude key not accepted (401). Check Settings → Data → Claude key."; 429 -> "Claude is rate limited (429). Try again in a moment."; else -> "Claude error $code: $msg" })
+                return null to when (code) { 401 -> "Claude key not accepted (401). Check Settings → Data → Claude key."; 429 -> "Claude is rate limited (429). Try again in a moment."; else -> "Claude error $code: $msg" }
             }
             val json = JSONObject(raw)
-            if (json.optString("stop_reason") == "refusal") return Reply("", null, null, "Claude declined this request.")
-            val blocks = json.getJSONArray("content")
-            val text = StringBuilder(); var cmd: String? = null; var input: JSONObject? = null
-            for (i in 0 until blocks.length()) {
-                val b = blocks.getJSONObject(i)
-                when (b.optString("type")) {
-                    "text" -> text.append(b.optString("text")).append(' ')
-                    "tool_use" -> if (cmd == null) { cmd = b.optString("name"); input = b.optJSONObject("input") }
-                }
-            }
-            Reply(text.toString().trim(), cmd, input)
+            if (json.optString("stop_reason") == "refusal") return null to "Claude declined this request."
+            json.getJSONArray("content") to null
         } catch (t: Throwable) {
-            Reply("", null, null, "No connection to Claude: ${t.javaClass.simpleName} ${t.message ?: ""}".trim())
+            null to "No connection to Claude: ${t.javaClass.simpleName} ${t.message ?: ""}".trim()
         } finally { conn.disconnect() }
+    }
+
+    /** Blocking call; run on a worker thread. [jpeg] may be null (no live view). */
+    fun ask(apiKey: String, question: String, telemetry: String, jpeg: ByteArray?): Reply {
+        val content = JSONArray()
+        if (jpeg != null) content.put(bild(jpeg))
+        content.put(JSONObject().put("type", "text").put("text", (if (jpeg == null) "No camera image is available right now.\n\n" else "") + "Telemetry:\n$telemetry\n\nPilot: $question"))
+        val (blocks, fehler) = senden(apiKey, SYSTEM, content, tools)
+        if (blocks == null) return Reply("", null, null, fehler)
+        val text = StringBuilder(); var cmd: String? = null; var input: JSONObject? = null
+        for (i in 0 until blocks.length()) {
+            val b = blocks.getJSONObject(i)
+            when (b.optString("type")) {
+                "text" -> text.append(b.optString("text")).append(' ')
+                "tool_use" -> if (cmd == null) { cmd = b.optString("name"); input = b.optJSONObject("input") }
+            }
+        }
+        return Reply(text.toString().trim(), cmd, input)
+    }
+
+    // ---------------------------------------------------------------- Missionen 03 und 04: Standbilder auswerten (ohne Flugbefehle)
+
+    private const val SYSTEM_NACHSEHEN = "You look at one still image from a small camera drone. The drone hovers straight above a place with the camera pointing straight down; north is at the top of the image. " +
+        "The pilot sent the drone there to answer one question about the place. Answer that question in at most three short plain sentences: first the answer, then what in the image shows it. " +
+        "If the image does not show enough to answer (too high, shadow, blur, wrong place), say so plainly instead of guessing, and say what would help. " +
+        "Do not identify people. You cannot steer the drone and you suggest no flight action."
+
+    /** 03 Check a place: die Frage des Piloten zu einem Standbild von oben. Antworttext oder Fehlertext ([zweites] true = Fehler). Blockiert. */
+    fun nachsehen(apiKey: String, frage: String, jpeg: ByteArray, hoeheM: Int): Pair<String, Boolean> {
+        val content = JSONArray().put(bild(jpeg)).put(JSONObject().put("type", "text").put("text", "Height above the start point: $hoeheM m.\n\nQuestion: $frage"))
+        val (blocks, fehler) = senden(apiKey, SYSTEM_NACHSEHEN, content, null)
+        if (blocks == null) return (fehler ?: "No answer.") to true
+        val text = (0 until blocks.length()).map { blocks.getJSONObject(it) }.filter { it.optString("type") == "text" }.joinToString(" ") { it.optString("text") }.trim()
+        return (text.ifBlank { "No answer." }) to text.isBlank()
+    }
+
+    /** Ein Kandidat aus der Suche: Nummer des Bildes (wie übergeben), Stelle im Bild als Anteile, ein Satz Begründung. */
+    class Fund(val bild: Int, val x: Double, val y: Double, val warum: String)
+    class Suchergebnis(val text: String, val funde: List<Fund>, val fehler: String? = null)
+
+    private const val SYSTEM_SUCHEN = "You look through still images from a small camera drone that swept an area in a grid. Every image is taken straight down; north is at the top. " +
+        "Each image is preceded by a line with its number. The pilot is looking for a kind of spot. Report the places that fit, best first, at most five, with the report_candidates tool: " +
+        "image number, position in that image as fractions (x from 0 left to 1 right, y from 0 top to 1 bottom) and one short plain sentence why it fits and what the pilot should check on site. " +
+        "The same place can appear in two overlapping images: report it once. If nothing fits, report an empty list and say in the summary what you saw instead. " +
+        "Do not guess what the image does not show. Do not identify people. You cannot steer the drone."
+
+    private val suchTool = JSONArray().put(tool("report_candidates", "Report the places that fit what the pilot is looking for.",
+        JSONObject()
+            .put("summary", str("one or two short plain sentences for the pilot: what was found overall"))
+            .put("candidates", JSONObject().put("type", "array").put("items", JSONObject().put("type", "object").put("additionalProperties", false)
+                .put("properties", JSONObject().put("image", JSONObject().put("type", "integer").put("description", "number of the image as given")).put("x", num("horizontal position 0..1")).put("y", num("vertical position 0..1")).put("why", str("one short plain sentence")))
+                .put("required", JSONArray(listOf("image", "x", "y", "why"))))),
+        listOf("summary", "candidates")))
+
+    /** 04 Find a spot: [bilder] = Nummer und JPEG je Rasterpunkt. Blockiert. */
+    fun suchen(apiKey: String, was: String, bilder: List<Pair<Int, ByteArray>>, hoeheM: Int): Suchergebnis {
+        val content = JSONArray()
+        bilder.forEach { (nr, jpg) -> content.put(JSONObject().put("type", "text").put("text", "Image $nr:")); content.put(bild(jpg)) }
+        content.put(JSONObject().put("type", "text").put("text", "All images are taken from about $hoeheM m above the start point.\n\nThe pilot is looking for: $was"))
+        val (blocks, fehler) = senden(apiKey, SYSTEM_SUCHEN, content, suchTool, JSONObject().put("type", "tool").put("name", "report_candidates"))
+        if (blocks == null) return Suchergebnis("", emptyList(), fehler)
+        for (i in 0 until blocks.length()) {
+            val b = blocks.getJSONObject(i)
+            if (b.optString("type") != "tool_use") continue
+            val inp = b.optJSONObject("input") ?: continue
+            val arr = inp.optJSONArray("candidates") ?: JSONArray()
+            val erlaubt = bilder.map { it.first }.toSet()
+            val funde = (0 until arr.length()).mapNotNull { k -> arr.optJSONObject(k)?.let { c -> Fund(c.optInt("image", -1), c.optDouble("x", 0.5), c.optDouble("y", 0.5), c.optString("why")) } }
+                .filter { it.bild in erlaubt && !it.x.isNaN() && !it.y.isNaN() }.take(5)
+            return Suchergebnis(inp.optString("summary"), funde)
+        }
+        return Suchergebnis("", emptyList(), "Central Command gave no usable answer.")
     }
 
     fun jpeg(b: Bitmap): ByteArray {

@@ -180,6 +180,68 @@ class MapPanel(private val map: MapView) {
 
     private fun dp(v: Float) = v * ctx.resources.displayMetrics.density
 
+    // ---------------------------------------------------------------- Orte einer Mission (Ortswahl, Sperrzone, Kandidaten)
+
+    private val auswahlTeile = mutableListOf<org.osmdroid.views.overlay.Overlay>()
+    private var auswahlKey = ""
+
+    /** Karte auf einen Ort stellen (Ortswahl ohne Drohne und ohne Plan). */
+    fun zeigeOrt(p: com.felixos.drohne.plan.LatLon) { try { map.controller.setZoom(17.5); map.controller.setCenter(GeoPoint(p.lat, p.lon)) } catch (_: Throwable) {} }
+
+    private fun kreis(mitte: com.felixos.drohne.plan.LatLon, radiusM: Double, linie: Int, fuellung: Int): org.osmdroid.views.overlay.Polygon =
+        org.osmdroid.views.overlay.Polygon(map).apply {
+            points = (0..48).map { com.felixos.drohne.plan.Geo.offset(mitte, radiusM, it * 7.5).let { q -> GeoPoint(q.lat, q.lon) } }
+            outlinePaint.color = linie; outlinePaint.strokeWidth = dp(2f); fillPaint.color = fuellung
+            setInfoWindow(null)
+        }
+
+    private fun marke(p: com.felixos.drohne.plan.LatLon, text: String, farbe: Int): Marker = Marker(map).apply {
+        position = GeoPoint(p.lat, p.lon); icon = textIcon(text, farbe)
+        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER); setInfoWindow(null)
+        // Ein Tipp auf die Marke ist ein Tipp auf die Karte (den Ort verschieben), nichts Eigenes.
+        setOnMarkerClickListener { _, _ -> false }
+    }
+
+    /**
+     * Zeichnet, was die gewählte Mission an Orten hat: Punkt, Ecken mit Umriss, Suchkreis, Sperrzone (rot) mit dem Kreis
+     * des Bogens, Kandidaten der Suche. null = nichts. Reine Anzeige; die Orte hält der Flugkern.
+     */
+    fun auswahl(a: MissionsLauf.Auswahl?) {
+        val key = if (a == null) "" else listOf(a.punkt, a.ecken, a.radiusM, a.sperrRadiusM, a.kandidaten).joinToString("|")
+        if (key == auswahlKey) return
+        auswahlKey = key
+        auswahlTeile.forEach { map.overlays.remove(it) }; auswahlTeile.clear()
+        if (a != null) {
+            val teal = 0xFF1EE8B0.toInt(); val rot = 0xFFFF3B30.toInt()
+            val p = a.punkt
+            if (p != null) {
+                a.radiusM?.let { auswahlTeile += kreis(p, it, teal, 0x221EE8B0) }
+                a.sperrRadiusM?.let { auswahlTeile += kreis(p, it, rot, 0x44FF3B30) }
+                auswahlTeile += marke(p, "×", if (a.sperrRadiusM != null) rot else teal)
+            }
+            if (a.ecken.size >= 2) auswahlTeile += Polyline(map).apply {
+                setPoints((a.ecken + if (a.ecken.size >= 3) listOf(a.ecken[0]) else emptyList()).map { GeoPoint(it.lat, it.lon) })
+                outlinePaint.color = teal; outlinePaint.strokeWidth = dp(3f); setInfoWindow(null)
+            }
+            a.ecken.forEachIndexed { i, e -> auswahlTeile += marke(e, (i + 1).toString(), teal) }
+            a.kandidaten.forEach { (nr, ort) -> auswahlTeile += marke(ort, "C$nr", 0xFFFFB27A.toInt()) }
+            auswahlTeile.forEach { map.overlays.add(it) }
+        }
+        map.invalidate()
+    }
+
+    /** Runde Marke mit kurzem Text in der Farbe der Mission. */
+    private fun textIcon(t: String, farbe: Int): Drawable {
+        val size = dp(26f).toInt()
+        val b = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val c = Canvas(b)
+        c.drawCircle(size / 2f, size / 2f, size / 2f - dp(1.5f), Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xE605080A.toInt() })
+        c.drawCircle(size / 2f, size / 2f, size / 2f - dp(1.5f), Paint(Paint.ANTI_ALIAS_FLAG).apply { color = farbe; style = Paint.Style.STROKE; strokeWidth = dp(2f) })
+        val text = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = farbe; textSize = dp(if (t.length >= 3) 9f else 12f); textAlign = Paint.Align.CENTER; isFakeBoldText = true }
+        c.drawText(t, size / 2f, size / 2f - (text.descent() + text.ascent()) / 2, text)
+        return BitmapDrawable(ctx.resources, b)
+    }
+
     private fun toBitmap(d: Drawable, rotateDeg: Float): Bitmap {
         val w = d.intrinsicWidth.coerceAtLeast(1); val h = d.intrinsicHeight.coerceAtLeast(1)
         val b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)

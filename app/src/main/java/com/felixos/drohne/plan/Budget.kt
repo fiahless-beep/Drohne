@@ -37,4 +37,13 @@ object Budget {
             maxDistanceFromHomeM = m.waypoints.maxOf { Geo.distance(home, it.pos) },
         )
     }
+
+    /**
+     * Was der Heimweg von hier kostet, in Prozent samt Reserve: Steigen auf Rückkehrhöhe, Strecke, Abstieg, Landung.
+     * Dieselbe Rechnung wie die Akku-Umkehr im Planflug (FlightGuard).
+     */
+    fun heimwegProzent(distM: Double, hoeheM: Double, rueckkehrHoeheM: Double): Int {
+        val sec = distM / 8.0 + kotlin.math.max(0.0, rueckkehrHoeheM - hoeheM) / 3.0 + kotlin.math.max(hoeheM, rueckkehrHoeheM) / 2.0 + 20
+        return ceil(sec / 60 / MINUTES_PER_FULL_BATTERY * 100).toInt() + RESERVE_PERCENT
+    }
 }

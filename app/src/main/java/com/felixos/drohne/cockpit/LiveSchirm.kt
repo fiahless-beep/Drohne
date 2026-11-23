@@ -45,6 +45,8 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
     // Aktionsfeld
     private val planName = stil.text(15f, stil.sansHalbfett, Farbe.TEXT, zeilen = 2)
     private val planZeile = stil.text(12f, stil.mono, Farbe.TEXT_DIM)
+    /** Plan-Check in einem Satz: Zahl der Akkus; orange, wenn der Plan erst einen Vermessungsflug braucht. */
+    private val planSatz = stil.text(12f, stil.sans, Farbe.TEXT, zeilen = 3)
     private val fortschritt = stil.spalte()
     private val wp = stil.text(15f, stil.monoFett, Farbe.ACCENT)
     private val wpProzent = stil.label("")
@@ -123,6 +125,8 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         val plan = stil.spalte().apply { isClickable = true; contentDescription = "Plan details"; setOnClickListener { planDetails() } }
         plan.addView(planName, stil.lp(Stil.MATCH, Stil.WRAP))
         plan.addView(planZeile, stil.lp(Stil.MATCH, Stil.WRAP, oben = 1))
+        planSatz.setLineSpacing(0f, 1.15f)
+        plan.addView(planSatz, stil.lp(Stil.MATCH, Stil.WRAP, oben = 3))
         p.addView(plan, stil.lp(Stil.MATCH, Stil.WRAP))
         val kopf = stil.zeile()
         kopf.addView(wp, stil.lp(0, Stil.WRAP, 1f)); kopf.addView(wpProzent)
@@ -216,6 +220,15 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
 
         // Aktionsfeld
         planName.zeige(z.plan.name); planZeile.zeige(z.plan.zeile)
+        val arbeit = z.auftrag.arbeitet
+        val checkSatz = when {
+            arbeit != null -> arbeit
+            z.plan.laeuft || !z.plan.geladen || z.fliegt -> null
+            z.plan.vermessungEmpfohlen -> "Survey flight first: this plan goes below 30 m without a height model. Details: tap here."
+            else -> z.plan.akkuSatz?.let { "Batteries: $it" }
+        }
+        planSatz.sichtbar(checkSatz != null)
+        if (checkSatz != null) { planSatz.zeige(checkSatz); planSatz.farbe(if (arbeit == null && z.plan.vermessungEmpfohlen) Farbe.WARN_TEXT else if (arbeit != null) Farbe.ACCENT else Farbe.TEXT) }
         fortschritt.sichtbar(z.plan.fortschrittZeigen)
         if (z.plan.fortschrittZeigen) {
             val n = z.plan.punkte; val i = z.plan.punktIndex

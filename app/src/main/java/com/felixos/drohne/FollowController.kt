@@ -68,6 +68,8 @@ object FollowController {
         val st = DroneManager.state
         if (!st.connected) return DroneManager.log("Folgen: Drohne nicht verbunden")
         if (st.location == null || st.location.latitude == 0.0) return DroneManager.log("Folgen: keine Drohnenposition")
+        // Abheben bleibt beim gehaltenen Knopf (Felix 23.11.2026): Folgen beginnt nur aus dem Schweben.
+        if (!st.flying) return DroneManager.log("Folgen: Drohne ist nicht in der Luft, kein Start")
         settings = s
         swapAxes = swapAxes(c)
         target = null
@@ -83,19 +85,10 @@ object FollowController {
             override fun onSuccess() {
                 DroneManager.log("Virtual Stick an")
                 vs.setVirtualStickAdvancedModeEnabled(true)
-                if (!DroneManager.state.flying) takeoff() else loop()
+                if (!DroneManager.state.flying) { DroneManager.log("Folgen: nicht mehr in der Luft, beendet"); stop() } else loop()
             }
             override fun onFailure(error: IDJIError) { DroneManager.log("Virtual Stick fehlgeschlagen: ${error.description()}"); stop() }
         })
-    }
-
-    private fun takeoff() {
-        DroneManager.log("Folgen: starte Drohne")
-        KeyManager.getInstance().performAction(KeyTools.createKey(FlightControllerKey.KeyStartTakeoff),
-            object : CommonCallbacks.CompletionCallbackWithParam<EmptyMsg> {
-                override fun onSuccess(t: EmptyMsg?) { loop() }
-                override fun onFailure(error: IDJIError) { DroneManager.log("Start fehlgeschlagen: ${error.description()}"); stop() }
-            })
     }
 
     private fun loop() {

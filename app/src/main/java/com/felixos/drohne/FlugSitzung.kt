@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import com.felixos.drohne.CockpitZustand.Hauptaktion
+import com.felixos.drohne.plan.Akkus
 import com.felixos.drohne.plan.Budget
 import com.felixos.drohne.plan.Geo
 import com.felixos.drohne.plan.LatLon
@@ -14,6 +15,7 @@ import com.felixos.drohne.plan.Preflight
 import com.felixos.drohne.plan.RcLost
 import com.felixos.drohne.plan.Takeoff
 import com.felixos.drohne.plan.Terrain
+import com.felixos.drohne.plan.Vermessung
 import com.felixos.drohne.plan.Waypoint
 import com.felixos.drohne.plan.Weather
 import dji.v5.manager.aircraft.waypoint3.model.WaypointMissionExecuteState
@@ -81,6 +83,7 @@ object FlugSitzung : Aktionen {
         MissionController.duskMode = app.getSharedPreferences("drohne", Context.MODE_PRIVATE).getBoolean("dusk_mode", false)
         FlightGuard.init()
         FlightGuard.onAlert = { t -> aufUi { anzeige?.hinweis(t); melden() } }
+        MissionsLauf.init(app)
         Thread {
             try {
                 val n = app.assets.open("gebaeude.bin").use { com.felixos.drohne.plan.Buildings.load(it) }
@@ -467,6 +470,49 @@ object FlugSitzung : Aktionen {
     }
 
     private var askedStartPlace = false
+    /** Die Frage nach dem Startplatz steht noch offen: der Plan ist weder angenommen noch abgelehnt. */
+    val startplatzFrageOffen: Boolean get() = askedStartPlace
+
+    /** Starttür für Pläne, die die App selbst aus einem Brief baut ([MissionsLauf]): derselbe Weg wie ein Plan aus dem Chat. */
+    fun planUebernehmen(m: Mission, text: String) {
+        DroneManager.ensureObstacleAvoidance("Mission plan")
+        askedStartPlace = false
+        forecastLine = null
+        useMission(m, text)
+        melden()
+    }
+    fun zustandGeaendert() = aufUi { melden() }
+    fun hinweis(text: String) = aufUi { anzeige?.hinweis(text) }
+
+    // Sätze für den Plan-Check, einmal je übernommenem Plan gerechnet (Akkus.teilen ist für zehnmal je Sekunde zu teuer).
+    private var saetzeFuer: Mission? = null
+    private var saetzeHeim: LatLon? = null
+    private var akkuSatz: String? = null
+    private var vermessungSatz: String? = null
+    private var vermessungEmpfohlen = false
+    private fun saetze(m: Mission?, home: LatLon?) {
+        if (m === saetzeFuer && home == saetzeHeim) return
+        saetzeFuer = m; saetzeHeim = home
+        akkuSatz = null; vermessungSatz = null; vermessungEmpfohlen = false
+        if (m == null || m.startFromCurrent) return
+        if (home != null) akkuSatz = try { Akkus.satz(Akkus.teilen(m, home)) } catch (t: Throwable) { null }
+        val u = Vermessung.urteil(m.waypoints.map { it.pos } + listOfNotNull(home), m.waypoints.minOf { it.heightM }, { Terrain.surfaceM(it) != null }, null)
+        vermessungSatz = u.satz
+        vermessungEmpfohlen = u.lage == Vermessung.Lage.EMPFOHLEN
+    }
+
+    // ---------------------------------------------------------------- Missionen: alles an MissionsLauf
+    override fun auftragWaehlen(art: Int): String? = MissionsLauf.waehlen(art)
+    override fun auftragFeld(id: String, index: Int) = MissionsLauf.feld(id, index)
+    override fun auftragText(text: String) = MissionsLauf.text(text)
+    override fun ortWaehlen(): String? = MissionsLauf.ortWaehlen()
+    override fun ortZurueck() = MissionsLauf.ortZurueck()
+    override fun ortFertig() = MissionsLauf.ortFertig()
+    override fun auftragPlanen(): String? = MissionsLauf.planen()
+    override fun kandidatWaehlen(nr: Int) = MissionsLauf.kandidatWaehlen(nr)
+    override fun vermessungVorbereiten(): String? = MissionsLauf.vermessungVorbereiten()
+    override fun folgenBeginnen(): List<String> = MissionsLauf.folgenBeginnen()
+    override fun folgenAufhoeren() = folgenBeenden()
 
     /**
      * Ein Schritt: Plan prüfen/vorbereiten (MissionController.prepare, unverändert) und auf die Drohne laden.
@@ -727,6 +773,10 @@ object FlugSitzung : Aktionen {
 
         val why = MissionController.interruptWhy
         val guard = FlightGuard.alert
+        // Im Schweben und im Handflug kehrt kein Wächter um (FlightGuard arbeitet nur, solange ein Plan läuft): wenigstens sagen.
+        val heimweg = if (s.connected && s.flying && !running && !s.landing && st != WaypointMissionExecuteState.RETURN_TO_START_POINT && home != null && here != null && loc != null)
+            Budget.heimwegProzent(Geo.distance(home, here), loc.altitude, MissionController.rthHeightM) else null
+        saetze(m, home)
         val warnung = when {
             s.registerError != null -> CockpitZustand.Warnung("SDK ERROR", s.registerError)
             funkabriss -> CockpitZustand.Warnung("LINK LOST", "No connection to the drone. Values and live view are off.")
@@ -734,6 +784,7 @@ object FlugSitzung : Aktionen {
             guard != null -> CockpitZustand.Warnung("GUARD", guard)
             paused && s.flying && why != null -> CockpitZustand.Warnung(if (why.contains("obstacle", true)) "OBSTACLE" else "PAUSED BY DRONE", "Drone paused the plan: $why. Hovering, you have control.")
             s.connected && s.windWarning == 2 -> CockpitZustand.Warnung("WIND STRONG", "Strong wind warning from the drone.")
+            heimweg != null && b != null && b <= heimweg -> CockpitZustand.Warnung("BATTERY · RETURN NOW", "Battery $b %: the way home needs about $heimweg % with the ${Budget.RESERVE_PERCENT} % reserve. Nothing turns the drone back while it hovers. Press STOP for home.")
             s.connected && b != null && b < 25 -> CockpitZustand.Warnung("BATTERY $b %", "Battery low.")
             s.connected && s.windWarning == 1 -> CockpitZustand.Warnung("WIND", "Moderate wind warning from the drone.")
             else -> null
@@ -788,7 +839,8 @@ object FlugSitzung : Aktionen {
             hoehenlimitM = s.heightLimitM,
             tageslicht = (here ?: home)?.let { Geo.sunElevationDeg(it, now) >= -3 },
             plan = CockpitZustand.Plan(
-                name = planName, zeile = planZeile, text = missionText,
+                name = planName, zeile = planZeile,
+                text = missionText + if (m != null && missionText.isNotBlank()) listOfNotNull(akkuSatz?.let { "Batteries: $it" }, vermessungSatz?.let { "Survey flight: $it" }).joinToString("") { "\n\n" + it } else "",
                 geladen = m != null, aufDrohne = m != null && MissionController.uploaded, laeuft = running,
                 punktIndex = idx, punkte = n,
                 fortschrittProzent = when {
@@ -803,6 +855,7 @@ object FlugSitzung : Aktionen {
                 reserveProzent = Budget.RESERVE_PERCENT,
                 transitHoeheM = MissionController.TRANSIT_HEIGHT_M.toInt(),
                 rueckkehrHoeheM = if (flown != null) MissionController.rthHeightM.toInt() else null,
+                akkuSatz = akkuSatz, vermessungSatz = vermessungSatz, vermessungEmpfohlen = vermessungEmpfohlen,
             ),
             hauptaktion = haupt,
             hauptaktionFrei = !loading && !uploading && busy == null,
@@ -814,6 +867,7 @@ object FlugSitzung : Aktionen {
             abhebenHalteMs = Takeoff.HOLD_MS,
             waechter = CockpitZustand.Waechter(FlightGuard.enabled, FlightGuard.mayPause, ObstacleGuard.enabled, ObstacleGuard.armed, MissionController.duskMode),
             bahn = bahn,
+            auftrag = MissionsLauf.zustand(),
         )
     }
 }
