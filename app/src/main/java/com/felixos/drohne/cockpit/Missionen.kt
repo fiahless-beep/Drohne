@@ -273,7 +273,12 @@ internal class MissionenTafel(
             }
             AuftragPhase.ERGEBNIS -> {
                 val reihe = knopfReihe()
-                if (a.arbeitet == null) knopf(reihe, "Change the brief", null, haupt = false) { aktionen.auftragAendern(); zeige(aktionen.zustand()) }
+                if (a.arbeitet == null) knopf(reihe, "Change the brief", null, haupt = false) {
+                    val weiter = { aktionen.auftragAendern(); zeige(aktionen.zustand()) }
+                    if (a.ergebnis == null && a.kandidaten.isEmpty()) weiter()
+                    else android.app.AlertDialog.Builder(stil.c).setTitle("Discard the answer?").setMessage("Changing the brief removes the answer shown here.")
+                        .setPositiveButton("Discard") { _, _ -> weiter() }.setNegativeButton("Keep", null).show()
+                }
             }
             AuftragPhase.KEINE -> {}
         }

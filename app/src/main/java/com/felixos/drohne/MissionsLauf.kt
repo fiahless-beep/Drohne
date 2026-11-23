@@ -103,6 +103,8 @@ object MissionsLauf {
         if (phase == CockpitZustand.AuftragPhase.FLUG) return "Mission $name is flying. Wait until the drone has landed."
         if (arbeitet != null) return "Central Command is still working on mission $name. Wait for the answer."
         if (phase == CockpitZustand.AuftragPhase.PLAN && b != null && geplant != null) return "Mission $name has a plan loaded. Fly it first or drop it."
+        // Eine Antwort geht nicht still verloren (Felix 23.11.2026): erst ein eigener Druck auf „Discard“. Ein halb ausgefüllter Brief darf ohne Rückfrage weg.
+        if (phase == CockpitZustand.AuftragPhase.ERGEBNIS && b != null && (ergebnis != null || kandidaten.isNotEmpty())) return "Mission $name still shows its answer. Opening this one discards it."
         planFallenLassen(); nochmal = null; suchbilder.clear()
         brief = Brief(art); phase = CockpitZustand.AuftragPhase.BRIEF
         fehlt = null; ortHinweis = null; ergebnis = null; ergebnisWarnung = false
