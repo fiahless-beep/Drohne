@@ -64,4 +64,16 @@ class AkkusTest {
         assertNull(Akkus.rest(m, 9))
         assertFalse(Akkus.rest(m.copy(name = "t-rest"), 2)!!.name.endsWith("-rest-rest"))
     }
+
+    @Test fun restPlanReopensARunningVideo() {
+        val o = LatLon(10.0, 20.0)
+        val m = Missionsbau.bogen(Geo.offset(o, 150.0, 0.0), 50.0, 30.0, 35.0, 180.0)
+        assertEquals(1, m.waypoints.first().video)
+        val rest = Akkus.rest(m, 3)!!
+        assertEquals(1, rest.waypoints.first().video)
+        assertEquals(m.waypoints.size - 3, rest.waypoints.size)
+        assertEquals(m.sperrzonen, rest.sperrzonen)
+        // Am ersten Punkt beendet: der Rest ist der ganze Plan
+        assertEquals(m.waypoints.size, Akkus.rest(m, 0)!!.waypoints.size)
+    }
 }

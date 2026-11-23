@@ -64,6 +64,11 @@ object Akkus {
     fun rest(m: Mission, naechster: Int): Mission? {
         val von = naechster.coerceAtLeast(0)
         if (m.waypoints.size - von < 2) return null
-        return m.copy(name = m.name.removeSuffix("-rest") + "-rest", waypoints = m.waypoints.drop(von), startFromCurrent = false, hoverAtEnd = false)
+        // Lief vor dem ersten Restpunkt ein Video (Start gesehen, Stopp noch nicht), öffnet der Rest es wieder.
+        var laeuft = false
+        m.waypoints.subList(0, von).forEach { if (it.video == 1) laeuft = true else if (it.video == 2) laeuft = false }
+        val rest = m.waypoints.drop(von).toMutableList()
+        if (laeuft && rest[0].video == 0) rest[0] = rest[0].copy(video = 1)
+        return m.copy(name = m.name.removeSuffix("-rest") + "-rest", waypoints = rest, startFromCurrent = false, hoverAtEnd = false)
     }
 }

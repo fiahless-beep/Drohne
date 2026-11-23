@@ -288,6 +288,8 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             hoehen[hoehen.size - 1] = if (z.datenDa) z.hoeheM?.toFloat() ?: Float.NaN else Float.NaN
         }
         if (vollbild && !vollbildErlaubt(z)) vollbildSetzen(false)
+        // Orte werden am Boden gewählt: hebt die Drohne ab, endet die Ortswahl und die Flugwerte sind wieder da.
+        if (ortswahl && (z.fliegt || z.motorenAn)) aktionen.ortFertig()
         ortswahlZeigen(z.auftrag)
         // Kommt eine neue Warnung, Pause oder ein Funkabriss, während der System-Bildschirm offen ist: zurück zum Live-Bildschirm
         // mit Warnzeile und Knöpfen. Nur beim Wechsel der Art (Ziffern zählen nicht), damit man ihn danach bewusst wieder öffnen kann.

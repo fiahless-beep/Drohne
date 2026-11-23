@@ -57,6 +57,7 @@ object MissionsLauf {
     private var bildZeiger = 0
     private var bildNr = 0
     private var nachgesehen = false
+    private var startSeit = 0L
     /** Eine gescheiterte Anfrage an Central Command, die noch einmal gestellt werden kann. */
     private var nochmal: (() -> Unit)? = null
 
@@ -93,6 +94,7 @@ object MissionsLauf {
     // ---------------------------------------------------------------- Brief
 
     fun waehlen(nr: Int): String? {
+        if (FlugSitzung.uploading) return "The plan is still uploading. Try again in a moment."
         if (nr == 0) { if (phase != CockpitZustand.AuftragPhase.FLUG && arbeitet == null) { planFallenLassen(); brief = null; phase = CockpitZustand.AuftragPhase.KEINE; fehlt = null; ergebnis = null; ergebnisWarnung = false; nochmal = null; suchbilder.clear() }; melden(); return null }
         val art = Art.von(nr) ?: return "Unknown mission."
         val b = brief
@@ -179,7 +181,7 @@ object MissionsLauf {
 
     /** Den Brief wieder öffnen: Werte, Ort und Gesprochenes bleiben; der Plan dazu gilt nicht mehr als Plan dieser Mission. */
     fun aendern() {
-        if (brief == null || arbeitet != null) return
+        if (brief == null || arbeitet != null || FlugSitzung.uploading) return
         if (phase != CockpitZustand.AuftragPhase.PLAN && phase != CockpitZustand.AuftragPhase.ERGEBNIS) return
         planFallenLassen(); nochmal = null
         phase = CockpitZustand.AuftragPhase.BRIEF; ergebnis = null; ergebnisWarnung = false; fehlt = null
@@ -188,7 +190,7 @@ object MissionsLauf {
 
     fun kandidatWaehlen(nr: Int) {
         val k = kandidaten.firstOrNull { it.nr == nr } ?: return
-        if (phase == CockpitZustand.AuftragPhase.FLUG || arbeitet != null) return
+        if (phase == CockpitZustand.AuftragPhase.FLUG || arbeitet != null || FlugSitzung.uploading) return
         planFallenLassen(); nochmal = null; suchbilder.clear()
         val was = brief?.text.orEmpty()
         val alle = kandidaten
@@ -242,7 +244,12 @@ object MissionsLauf {
         val jetzt = System.currentTimeMillis()
         // Akkuwechsel: die Drohne war aus. Ein Plan, der „auf der Drohne“ hieß, ist es danach nicht mehr sicher.
         // Ein kurzer Wackler der Verbindung am Boden zählt nicht.
-        if (!s.connected) { if (getrenntSeit == 0L) getrenntSeit = jetzt; if (inDerLuft) funkWeg = true }
+        if (!s.connected) {
+            if (getrenntSeit == 0L) getrenntSeit = jetzt
+            // Ein Wackler von unter 5 s zählt nicht als Funkabriss; nach einer Minute ohne Verbindung gilt der Flug als vorbei.
+            if (inDerLuft && jetzt - getrenntSeit >= 5_000) funkWeg = true
+            if (inDerLuft && jetzt - getrenntSeit >= 60_000) { inDerLuft = false; gelandet() }
+        }
         else if (getrenntSeit != 0L) {
             val lang = jetzt - getrenntSeit >= 15_000
             getrenntSeit = 0L
@@ -284,10 +291,16 @@ object MissionsLauf {
             val loc = s.location?.takeIf { it.latitude != 0.0 }
             val amLetzten = loc != null && Geo.distance(LatLon(loc.latitude, loc.longitude), h.waypoints.last().pos) < 8.0
             val st = MissionController.executeState
-            if (amLetzten || st == WaypointMissionExecuteState.FINISHED) { zuEnde = true; planZuEnde() }
+            // FINISHED eines Umwegs (endet schwebend) ist nicht das Ende des Hauptplans.
+            if (amLetzten || (st == WaypointMissionExecuteState.FINISHED && cur?.hoverAtEnd != true)) { zuEnde = true; planZuEnde() }
         }
-        if (s.flying || s.motorsOn) inDerLuft = true
+        if (s.flying || s.motorsOn) { inDerLuft = true; startSeit = 0L }
         else if (inDerLuft && s.connected) { inDerLuft = false; gelandet() }
+        else if (phase == CockpitZustand.AuftragPhase.FLUG && !MissionController.executing) {
+            // Start gemeldet, aber nie abgehoben (die Drohne hat ihn verweigert): nach 10 s zurück zum Plan-Check.
+            if (startSeit == 0L) startSeit = jetzt
+            else if (jetzt - startSeit >= 10_000) { startSeit = 0L; haupt = null; hauptFuer = null; phase = if (geplant != null && cur === geplant) CockpitZustand.AuftragPhase.PLAN else CockpitZustand.AuftragPhase.BRIEF; melden() }
+        } else startSeit = 0L
     }
 
     /**
@@ -299,7 +312,9 @@ object MissionsLauf {
         if (b.art != Art.NACHSEHEN && b.art != Art.SUCHEN) return
         val loc = s.location?.takeIf { it.latitude != 0.0 } ?: return
         val hier = LatLon(loc.latitude, loc.longitude)
-        fun nah(i: Int) = Geo.distance(hier, h.waypoints[i].pos) < BILD_NAH_M && Math.abs(loc.altitude - h.waypoints[i].heightM) < 5.0
+        // Bei erhöhtem Startplatz (Balkon) fliegt die Drohne die Planhöhen um den Versatz tiefer: beide Höhen gelten.
+        val versatz = MissionController.startAboveGroundM
+        fun nah(i: Int) = Geo.distance(hier, h.waypoints[i].pos) < BILD_NAH_M && (Math.abs(loc.altitude - h.waypoints[i].heightM) < 5.0 || Math.abs(loc.altitude - (h.waypoints[i].heightM - versatz)) < 5.0)
         if (b.art == Art.NACHSEHEN) {
             if (!nachgesehen && nah(0)) { nachgesehen = true; ui.postDelayed({ nachsehen(b, h) }, 3000) }
             return
@@ -397,7 +412,7 @@ object MissionsLauf {
         if (zuEnde) {
             if (offen && ergebnis == null && arbeitet == null) ergebnis = when (b!!.art) {
                 Art.VERMESSEN -> "Survey flown. The photos are on the card. Send them to Claude in the chat for the height model and the 3D model (Set → Data → Fetch photos and upload)."
-                Art.STIMMUNG -> "Arc flown. Photos and one video are on the card."
+                Art.STIMMUNG -> "Arc flown. Photos and video are on the card."
                 else -> "Flight done."
             }
             melden(); return
@@ -426,10 +441,10 @@ object MissionsLauf {
             }
             melden(); return
         }
-        if (flogBis < 0) {
-            // Vor dem ersten Punkt beendet: der Plan ist noch geladen und kann noch einmal gestartet werden.
+        if (flogBis <= 0) {
+            // Vor oder am ersten Punkt beendet: der „Rest“ wäre der ganze Plan. Er ist noch geladen und kann noch einmal gestartet werden.
             if (offen && FlugSitzung.mission === m) { geplant = m; phase = CockpitZustand.AuftragPhase.PLAN }
-            else if (offen) { ergebnis = "The flight ended before the first point. Nothing was recorded."; ergebnisWarnung = true }
+            else if (offen) { ergebnis = "The flight ended at the very beginning. Build the plan again to fly it."; ergebnisWarnung = true }
             melden(); return
         }
         // Es fehlt nur noch ein Punkt: kein Restplan. Was an Bildern da ist, wird ausgewertet.

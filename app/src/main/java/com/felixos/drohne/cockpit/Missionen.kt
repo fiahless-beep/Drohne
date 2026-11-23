@@ -203,7 +203,8 @@ internal class MissionenTafel(
         } else {
             if (a.folgenSperren.isEmpty()) zeichenZeile(true, "Ready. The drone hovers; following starts from where it is.")
             a.folgenSperren.forEach { zeichenZeile(false, it) }
-            knopf(knopfReihe(), "Start following", Zeichen.Art.PLAY, haupt = true, frei = a.folgenSperren.isEmpty()) {
+            // Flugwirksam: wie Abheben nur mit gehaltenem Knopf.
+            knopf(knopfReihe(), "Hold: start following", null, haupt = true, frei = a.folgenSperren.isEmpty(), halteMs = 1500) {
                 val gruende = aktionen.folgenBeginnen()
                 meldung = if (gruende.isEmpty()) null else gruende.joinToString(" · ")
                 zeige(aktionen.zustand())
@@ -348,9 +349,9 @@ internal class MissionenTafel(
     private fun knopfReihe(): LinearLayout = stil.zeile().also { inhalt.addView(it, stil.lp(Stil.MATCH, Stil.WRAP, oben = 12)) }
 
     /** [haupt] = der eine gefüllte Knopf der Seite; alles andere ist ein Rahmenknopf. */
-    private fun knopf(reihe: LinearLayout, text: String, zeichen: Zeichen.Art?, haupt: Boolean, frei: Boolean = true, beiDruck: () -> Unit) {
+    private fun knopf(reihe: LinearLayout, text: String, zeichen: Zeichen.Art?, haupt: Boolean, frei: Boolean = true, halteMs: Long = 0, beiDruck: () -> Unit) {
         val lp = LinearLayout.LayoutParams(stil.dp(if (haupt) 230 else 200), stil.dp(50)).apply { if (reihe.childCount > 0) leftMargin = stil.dp(8) }
-        if (haupt) reihe.addView(Knopf(stil, Knopf.Stilart.HAUPT, beiDruck).apply { setze(text, zeichen, frei) }, lp)
+        if (haupt) reihe.addView(Knopf(stil, Knopf.Stilart.HAUPT, beiDruck).apply { this.halteMs = halteMs; if (halteMs > 0) halteText = "Keep holding …"; setze(text, zeichen, frei) }, lp)
         else reihe.addView(LeistenKnopf(stil, text) { if (frei) beiDruck() }.apply { setze(text, false); setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f); alpha = if (frei) 1f else 0.35f }, lp)
     }
 }
