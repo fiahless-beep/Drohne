@@ -37,7 +37,11 @@ object ClaudeLink {
         "A position can only be converted to a place on the ground when it lies below the horizon. " +
         "The app shows your suggestion to the pilot, checks it against buildings, terrain, battery and limits, and may refuse it. " +
         "Never suggest flying low over people or closer than needed. If you are unsure what the pilot wants, use ask_pilot. " +
-        "If the image is missing or shows nothing useful, say so."
+        "If the image is missing or shows nothing useful, say so. " +
+        "The request starts in square brackets with the view the pilot is looking at and the flight state. Answer about that view. " +
+        "If the request belongs to another view (missions, settings, system status, log, map or live view), say in one sentence where it belongs and suggest nothing. " +
+        "If the request is impossible or not allowed (for example above 120 m, over people, taking off by voice), say why in one sentence and name the nearest thing that is possible. " +
+        "If it is unclear, ask one short question with ask_pilot."
 
     private fun tool(name: String, description: String, props: JSONObject, required: List<String>) = JSONObject()
         .put("name", name).put("description", description).put("strict", true)

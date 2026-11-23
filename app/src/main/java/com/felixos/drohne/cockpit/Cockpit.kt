@@ -48,7 +48,7 @@ interface Gastgeber {
  * Das neue Cockpit („Military Tactical“, freigegeben 22.11.2026): Leiste links, Live/HUD-Bildschirm und System-Bildschirm.
  * Kennt vom Flugkern nur den Vertrag: liest [CockpitZustand] aus der [FlugSitzung] und ruft [Aktionen].
  */
-class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: FrameLayout, private val liveWurzel: View, private val systemWurzel: FrameLayout, vollbildWurzel: FrameLayout, private val gast: Gastgeber) {
+class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: FrameLayout, private val liveWurzel: View, private val systemWurzel: FrameLayout, vollbildWurzel: FrameLayout, sprechWurzel: FrameLayout, private val gast: Gastgeber) {
     private val stil = Stil(c)
     private val aktionen: Aktionen = FlugSitzung
     private val live = LiveSchirm(stil, aktionen, buehne, feld)
@@ -57,8 +57,9 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private val system = SystemSchirm(stil, tafelFlaeche, gast)
     private val logTafel = LogTafel(stil, tafelFlaeche, gast)
     private val setTafel = SetTafel(stil, tafelFlaeche)
-    private val ccTafel = CcTafel(stil, tafelFlaeche, gast)
-    private enum class Tafel { KEINE, SYSTEM, CC, LOG, SET }
+    private val missionen = MissionenTafel(stil, tafelFlaeche, planHolen = { tafelSetzen(Tafel.KEINE); aktionen.planLaden() }, sprechen = { sprechen.sprechen() })
+    private val sprechen: SprechEbene = SprechEbene(stil, sprechWurzel, gast, kontext = { kontext() }, lokal = { lokal(it) })
+    private enum class Tafel { KEINE, SYSTEM, MSN, LOG, SET }
     private var tafel = Tafel.KEINE
     private val systemAn: Boolean get() = tafel != Tafel.KEINE
     private val fuss = stil.zeile()
@@ -77,7 +78,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private val kEinpassen = LeistenKnopf(stil, "Fit map / 3D view near or wide") { gast.einpassen() }
     private val kVoll = LeistenKnopf(stil, "Full screen") { vollbildSetzen(true) }
     private val kSystem = LeistenKnopf(stil, "System status") { tafelSchalten(Tafel.SYSTEM) }
-    private val kCopilot = LeistenKnopf(stil, "Central Command") { tafelSchalten(Tafel.CC) }
+    private val kMissionen = LeistenKnopf(stil, "Missions") { tafelSchalten(Tafel.MSN) }
     private val kProtokoll = LeistenKnopf(stil, "Log (hold to copy)") { tafelSchalten(Tafel.LOG) }
     private val kMehr = LeistenKnopf(stil, "Settings") { tafelSchalten(Tafel.SET) }
 
@@ -90,7 +91,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
 
     init {
         kProtokoll.setOnLongClickListener { gast.protokollKopieren(); true }
-        listOf(kAnsicht, kEinpassen, kVoll, kSystem, kCopilot, kProtokoll, kMehr).forEachIndexed { i, k ->
+        listOf(kMissionen, kAnsicht, kEinpassen, kVoll, kSystem, kProtokoll, kMehr).forEachIndexed { i, k ->
             leiste.addView(k, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { if (i > 0) topMargin = stil.dp(4) })
         }
         live.beiLeistenhoehe = { raenderMelden() }
@@ -109,7 +110,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     }
 
     fun start() { if (laeuft) return; laeuft = true; FlugSitzung.addZuhoerer(zuhoerer); ui.post(takt) }
-    fun stopp() { laeuft = false; FlugSitzung.removeZuhoerer(zuhoerer); ui.removeCallbacks(takt) }
+    fun stopp() { sprechen.schliessen(); laeuft = false; FlugSitzung.removeZuhoerer(zuhoerer); ui.removeCallbacks(takt) }
 
     /** Der Gastgeber hat die Bildfläche gewechselt (auch von selbst, etwa beim Verbinden). */
     fun leisteZeigen() {
@@ -121,9 +122,9 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         kVoll.setze("Full", false)
         vollKnopfZeigen(aktionen.zustand())
         kSystem.setze("Sys", tafel == Tafel.SYSTEM)
-        kCopilot.setze("CC", tafel == Tafel.CC); kProtokoll.setze("Log", tafel == Tafel.LOG); kMehr.setze("Set", tafel == Tafel.SET)
+        kMissionen.setze("Msn", tafel == Tafel.MSN); kProtokoll.setze("Log", tafel == Tafel.LOG); kMehr.setze("Set", tafel == Tafel.SET)
         systemWurzel.sichtbar(systemAn)
-        system.wurzel.sichtbar(tafel == Tafel.SYSTEM); ccTafel.rahmen.sichtbar(tafel == Tafel.CC)
+        system.wurzel.sichtbar(tafel == Tafel.SYSTEM); missionen.rahmen.sichtbar(tafel == Tafel.MSN)
         logTafel.rahmen.sichtbar(tafel == Tafel.LOG); setTafel.rahmen.sichtbar(tafel == Tafel.SET)
         // Livebild-Fläche bleibt darunter bestehen; nur die Bedienflächen des Live-Bildschirms werden verdeckt.
         liveWurzel.importantForAccessibility = if (systemAn) View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS else View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
@@ -138,13 +139,12 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
 
     private fun tafelSetzen(t: Tafel) {
         if (t == tafel) return
-        if (tafel == Tafel.CC) ccTafel.geschlossen()
+        sprechen.schliessen()
         if (t != Tafel.KEINE && vollbild) vollbildSetzen(false)
         tafel = t
         when (t) {
             Tafel.SET -> setTafel.oeffnen { gast.einstellungen() }
             Tafel.LOG -> logTafel.geoeffnet()
-            Tafel.CC -> ccTafel.geoeffnet()
             else -> {}
         }
         leisteZeigen(); zeige(aktionen.zustand())
@@ -152,7 +152,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
 
     /** Ein Menü des Gastgebers in der Set-Fläche zeigen (statt als Pop-up); öffnet die Fläche, wenn sie zu ist. */
     fun menue(titel: String, eintraege: List<Pair<String, () -> Unit>>) {
-        if (tafel != Tafel.SET) { if (tafel == Tafel.CC) ccTafel.geschlossen(); if (vollbild) vollbildSetzen(false); tafel = Tafel.SET; setTafel.leeren() }
+        if (tafel != Tafel.SET) { if (vollbild) vollbildSetzen(false); tafel = Tafel.SET; setTafel.leeren() }
         setTafel.ebene(titel, eintraege)
         leisteZeigen(); zeige(aktionen.zustand())
     }
@@ -164,8 +164,10 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
 
     /** Für die Zurück-Taste: in Set eine Ebene zurück, sonst die offene Fläche schließen; false = es war keine offen. */
     fun tafelZurueck(): Boolean {
+        if (sprechen.offen) { sprechen.schliessen(); return true }
         if (tafel == Tafel.KEINE) return false
         if (tafel == Tafel.SET && setTafel.zurueck()) return true
+        if (tafel == Tafel.MSN && missionen.zurueck()) return true
         tafelSetzen(Tafel.KEINE); return true
     }
 
@@ -184,7 +186,63 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         vollbild = neu
         gast.vollbild(neu)
         raenderMelden()
+        sprechen.lage(0, !neu)
         if (neu) vollSchirm.zeige(aktionen.zustand(), live.stoppFrei)
+    }
+
+    /** Was der Pilot gerade sieht; daran ist das Sprechen gebunden. */
+    private fun kontext(): SprechEbene.Kontext {
+        val z = aktionen.zustand()
+        val flug = when {
+            z.phase == CockpitZustand.Phase.PAUSIERT -> "plan paused, drone hovering"
+            z.plan.laeuft -> "plan running"
+            z.fliegt -> "in flight"
+            z.motorenAn -> "motors on"
+            z.verbindung != CockpitZustand.Verbindung.VERBUNDEN -> "drone not connected"
+            else -> "on the ground"
+        }
+        val imFlug = z.fliegt || z.motorenAn
+        return when (tafel) {
+            Tafel.SYSTEM -> SprechEbene.Kontext("System status · $flug", "“What does the wind warning mean?”" + if (imFlug) " · “Stop here.”" else "")
+            Tafel.LOG -> SprechEbene.Kontext("Log · $flug", "“What went wrong in the last flight?”" + if (imFlug) " · “Stop here.”" else "")
+            Tafel.SET -> SprechEbene.Kontext("Settings · $flug", "“Where do I switch the map?”" + if (imFlug) " · “Stop here.”" else "")
+            Tafel.MSN -> SprechEbene.Kontext(missionen.kontext + " · $flug", "“Which mission do I need to check a parking lot?”" + if (imFlug) " · “Stop here.”" else "")
+            Tafel.KEINE -> SprechEbene.Kontext(gast.ansicht.kuerzel + " view · $flug" + (if (z.plan.geladen) " · plan “${z.plan.name}”" else ""),
+                if (z.plan.laeuft && z.phase != CockpitZustand.Phase.PAUSIERT) "“Stop here.” · “Come home.”" else if (imFlug) "“What do you see?” · “Look closer at the roof.” · “Come home.”" else "“Is the plan ready to fly?” · “What is missing for the start?”")
+        }
+    }
+
+    /**
+     * Was ohne Central Command gehen muss, weil es im Flug sofort und ohne Netz wirken soll: Anhalten. Heimkommen wird nur
+     * vorgeschlagen und braucht einen Druck (es gibt Startplätze, an denen ein Heimflug falsch wäre). Abheben und Starten nie.
+     */
+    private var warnLageVorher = "|false"
+    private fun lokal(t: String): SprechEbene.Lokal? {
+        val s = t.lowercase(Locale.ROOT).trim().trimEnd('.', '!', '?')
+        val z = aktionen.zustand()
+        val woerter = s.split(Regex("[\\s,]+")).filter { it.isNotEmpty() }
+        // Verneinungen und Fragen entscheidet nicht das Muster, sondern Central Command (oder niemand): lieber nichts tun als das Falsche.
+        val unsicher = t.trim().endsWith("?") || woerter.size > 6 ||
+            Regex("\\b(don't|dont|do not|not|never|no|nicht|kein|keine|nie|why|should|can|could|what|when|warum|soll|sollte|kann|was|wann)\\b").containsMatchIn(s)
+        val anhalten = !unsicher && Regex("^(bitte |please |drohne |drone )?(stop+|stopp|halt|pause|pausieren|anhalten|warte|wait|hold)\\b").containsMatchIn(s) ||
+            !unsicher && Regex("\\b(anhalten|pausieren)$").containsMatchIn(s)
+        val heim = !unsicher && Regex("\\b(come|return|fly|go) (back )?home\\b|\\b(komm|flieg|fliege) (bitte )?(nach hause|zurück|heim)\\b|^(nach hause|return home|come back)$").containsMatchIn(s)
+        val start = Regex("^(start|take ?off|abheben|starten|heb ab|los|go)( now| jetzt| bitte| please)*$").matches(s)
+        val heimVorschlag = "Stop · Return home" to { val j = aktionen.zustand(); if (j.fliegt || j.motorenAn) aktionen.stoppUndHeim() }
+        return when {
+            anhalten -> if (aktionen.hauptaktionWaehlen() == CockpitZustand.Hauptaktion.PAUSE) {
+                    aktionen.pausieren()
+                    SprechEbene.Lokal("Pausing. The drone hovers, you have control." + if (heim) " Return home needs your press." else "", if (heim) heimVorschlag else null)
+                }
+                else if (heim && (z.fliegt || z.motorenAn)) SprechEbene.Lokal("Return home flies back to the start point. Press to confirm.", heimVorschlag)
+                else if (z.phase == CockpitZustand.Phase.PAUSIERT) SprechEbene.Lokal("Already paused. The drone hovers.")
+                else if (z.fliegt) SprechEbene.Lokal("No plan is running that I could pause. You fly by hand; to end it press Stop · Return home.")
+                else SprechEbene.Lokal("Nothing is flying.")
+            heim -> if (z.fliegt || z.motorenAn) SprechEbene.Lokal("Return home stops the plan and flies back to the start point. Press to confirm.", heimVorschlag)
+                else SprechEbene.Lokal("Nothing is flying.")
+            start -> SprechEbene.Lokal("Take-off stays with your thumb: hold the start button. I never take off by voice.")
+            else -> null
+        }
     }
 
     /** Für die Zurück-Taste: verlässt das Vollbild; false = es war keins an. */
@@ -201,8 +259,12 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         // Kommt eine neue Warnung, Pause oder ein Funkabriss, während der System-Bildschirm offen ist: zurück zum Live-Bildschirm
         // mit Warnzeile und Knöpfen. Nur beim Wechsel der Art (Ziffern zählen nicht), damit man ihn danach bewusst wieder öffnen kann.
         val lage = if (vollbildErlaubt(z)) null else (z.warnung?.titel?.filterNot { it.isDigit() } ?: "") + "|" + z.funkabriss + "|" + (z.phase == CockpitZustand.Phase.PAUSIERT)
-        if (systemAn && lage != null && lage != lageVorher) { if (tafel == Tafel.CC) ccTafel.geschlossen(); tafel = Tafel.KEINE; leisteZeigen() }
+        if (systemAn && lage != null && lage != lageVorher) { tafel = Tafel.KEINE; leisteZeigen() }
         lageVorher = lage
+        // Der Sprechstreifen liegt über der Warnzeile: kommt eine neue Warnung oder reißt der Funk ab, macht er Platz.
+        val warnLage = (z.warnung?.titel?.filterNot { it.isDigit() } ?: "") + "|" + z.funkabriss
+        if (warnLage != warnLageVorher && warnLage != "|false" && sprechen.offen) sprechen.schliessen()
+        warnLageVorher = warnLage
         if (systemAn) {
             val imFlug = z.fliegt || z.motorenAn || z.funkabriss
             if (fuss.visibility != (if (imFlug) View.VISIBLE else View.GONE)) {
@@ -220,6 +282,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             }
             if (tafel == Tafel.LOG) logTafel.zeige()
         }
+        sprechen.lage(if (systemAn && (z.fliegt || z.motorenAn || z.funkabriss)) stil.dp(58) else 0, !vollbild)
         live.zeige(z)
         if (tafel == Tafel.SYSTEM) system.zeige(z, hoehen, windText(z))
     }

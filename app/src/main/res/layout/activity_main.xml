@@ -115,6 +115,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:visibility="gone" />
+
+                <!-- Sprechen mit Central Command: runder Knopf und Streifen über jeder Ansicht und Fläche (cockpit/Sprechen.kt) -->
+                <FrameLayout
+                    android:id="@+id/sprechHost"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </FrameLayout>
         </LinearLayout>
     </FrameLayout>

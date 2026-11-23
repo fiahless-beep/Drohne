@@ -46,7 +46,7 @@ internal class Sprache(private val c: Context) {
             override fun onBufferReceived(buffer: ByteArray?) {}
             override fun onEndOfSpeech() {}
             override fun onEvent(eventType: Int, params: Bundle?) {}
-            override fun onPartialResults(partialResults: Bundle?) { text(partialResults)?.let(teil) }
+            override fun onPartialResults(partialResults: Bundle?) { if (hoerer !== h) return; text(partialResults)?.let(teil) }
             override fun onResults(results: Bundle?) { if (hoerer !== h) return; ende(); fertig(text(results)) }
             override fun onError(error: Int) {
                 if (hoerer !== h) return
