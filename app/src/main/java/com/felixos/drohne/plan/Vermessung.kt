@@ -15,27 +15,17 @@ object Vermessung {
         NICHT_NOETIG,
         /** Kein Höhenmodell und der Plan will tiefer: erst vermessen. */
         EMPFOHLEN,
-        /** Hier wurde schon vermessen, das Modell ist aber noch nicht in der App. */
-        GEFLOGEN,
     }
 
     class Urteil(val lage: Lage, val satz: String)
 
     /**
      * [punkte] = Orte des Plans samt Start; [deckt] = hat das Höhenmodell dort einen Wert; [tiefsterPunktM] = tiefste Planhöhe
-     * über dem Start; [geflogenAm] = Datum eines Vermessungsflugs über diesem Gebiet oder null.
+     * über dem Start.
      */
-    fun urteil(punkte: List<LatLon>, tiefsterPunktM: Double, deckt: (LatLon) -> Boolean, geflogenAm: String?, sichereHoeheM: Double = Missionsbau.SICHERE_HOEHE_M): Urteil = when {
+    fun urteil(punkte: List<LatLon>, tiefsterPunktM: Double, deckt: (LatLon) -> Boolean, sichereHoeheM: Double = Missionsbau.SICHERE_HOEHE_M): Urteil = when {
         punkte.isNotEmpty() && punkte.all(deckt) -> Urteil(Lage.GEDECKT, "Height model covers this area. No survey flight needed.")
-        geflogenAm != null -> Urteil(Lage.GEFLOGEN, "Survey flown here on $geflogenAm. The height model is built from those photos outside the app; until it is in the app, plans stay at ${sichereHoeheM.toInt()} m or higher.")
-        tiefsterPunktM >= sichereHoeheM -> Urteil(Lage.NICHT_NOETIG, "No height model here. This plan stays at ${tiefsterPunktM.toInt()} m or higher and does not need one. A survey flight pays off if you want to fly lower or closer here later.")
-        else -> Urteil(Lage.EMPFOHLEN, "No height model here, and this plan goes down to ${tiefsterPunktM.toInt()} m: without measured ground and trees the app allows nothing below ${sichereHoeheM.toInt()} m. Fly a survey first.")
+        tiefsterPunktM >= sichereHoeheM -> Urteil(Lage.NICHT_NOETIG, "No height model here: the plan stays at ${tiefsterPunktM.toInt()} m or higher above the start point, but ground and trees on the route are not checked. Judge the line yourself. A survey flight pays off if you want to fly lower or closer here later.")
+        else -> Urteil(Lage.EMPFOHLEN, "No height model here, and this plan goes down to ${tiefsterPunktM.toInt()} m: without measured ground and trees the app allows nothing below ${sichereHoeheM.toInt()} m. Fly a survey flight first; lower flights open once Claude has built the height model from its photos and it is in the app.")
     }
-
-    /** Ein vermessenes Gebiet: Mittelpunkt, Radius, Datum (für „schon vermessen“). */
-    data class Gebiet(val mitte: LatLon, val radiusM: Double, val datum: String)
-
-    /** Datum des Vermessungsflugs, der alle [punkte] einschließt; null = keiner. */
-    fun geflogen(punkte: List<LatLon>, gebiete: List<Gebiet>): String? =
-        gebiete.lastOrNull { g -> punkte.isNotEmpty() && punkte.all { Geo.distance(it, g.mitte) <= g.radiusM + 20.0 } }?.datum
 }

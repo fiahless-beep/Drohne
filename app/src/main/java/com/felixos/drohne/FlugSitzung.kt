@@ -170,11 +170,29 @@ object FlugSitzung : Aktionen {
             buildingConflicts = MissionController.conflicts.map { it.toString() },
             surfaceConflicts = MissionController.terrainConflicts.map { it.toString() },
             returnProblems = MissionController.returnProblems,
-            keepOutConflicts = MissionController.keepOutConflicts, bypass = DroneManager.bypass,
+            keepOutConflicts = sperrzoneJetzt(home?.takeIf { it.latitude != 0.0 }?.let { LatLon(it.latitude, it.longitude) }), bypass = DroneManager.bypass,
             cameraFreeMb = if (s.connected) { FlightReport.refreshStorage(); FlightReport.activeFreeMb } else null,
             rthHeightM = MissionController.rthHeightM, transitHeightM = MissionController.TRANSIT_HEIGHT_M,
             terrainCovered = MissionController.terrainCovered, preparedHome = MissionController.preparedHome,
             nowMs = System.currentTimeMillis())
+    }
+
+    /**
+     * Sperrzone mit dem Startpunkt von JETZT: prepare() rechnet einmal, der Pilot kann danach noch bis 30 m gehen, auch auf
+     * die Menge zu. Nur bei Plänen mit Sperrzone, und nur neu, wenn sich der Startpunkt um mehr als 2 m bewegt hat.
+     */
+    private var sperrFuer: Mission? = null
+    private var sperrHeim: LatLon? = null
+    private var sperrJetzt: List<String> = emptyList()
+    private fun sperrzoneJetzt(home: LatLon?): List<String> {
+        val flown = MissionController.currentMission
+        if (flown == null || flown.sperrzonen.isEmpty() || MissionController.executing) return MissionController.keepOutConflicts
+        val alt = sperrHeim
+        if (flown !== sperrFuer || (home == null) != (alt == null) || (home != null && alt != null && Geo.distance(home, alt) > 2.0)) {
+            sperrFuer = flown; sperrHeim = home
+            sperrJetzt = com.felixos.drohne.plan.Sperrzone.konflikte(flown, home)
+        }
+        return (MissionController.keepOutConflicts + sperrJetzt).distinct()
     }
 
     override fun startProbleme(): List<String> = Preflight.startGate(lage(DroneManager.state))
@@ -362,7 +380,7 @@ object FlugSitzung : Aktionen {
         Preflight.followProblem(pos, hoeheM, st.sensorsOk, st.sensors ?: "unknown", System.currentTimeMillis())?.let { return it }
         FollowController.start(app, FollowController.Settings(hoeheM, abstandM))
         melden()
-        return null
+        return if (FollowController.active) null else "Following did not start. The reason is in the log."
     }
 
     fun folgenBeenden() { FollowController.stop(); melden() }
@@ -481,6 +499,16 @@ object FlugSitzung : Aktionen {
         useMission(m, text)
         melden()
     }
+    /** Einen Plan von der Starttür nehmen (sein Brief wurde verworfen oder geändert). Nur am Boden und nur, wenn es der geladene ist. */
+    fun planVerwerfen(m: Mission) {
+        if (mission !== m || MissionController.executing || DroneManager.state.flying || uploading) return
+        mission = null; missionText = ""; waiting = null
+        MissionController.verwerfen()
+        setPlanCard("No plan", "")
+        DroneManager.log("Plan “${m.name}” dropped with its brief")
+        anzeige?.planUebernommen(vorschau = false)
+        melden()
+    }
     fun zustandGeaendert() = aufUi { melden() }
     fun hinweis(text: String) = aufUi { anzeige?.hinweis(text) }
 
@@ -488,15 +516,16 @@ object FlugSitzung : Aktionen {
     private var saetzeFuer: Mission? = null
     private var saetzeHeim: LatLon? = null
     private var akkuSatz: String? = null
+    private var akkuZuWeit = false
     private var vermessungSatz: String? = null
     private var vermessungEmpfohlen = false
     private fun saetze(m: Mission?, home: LatLon?) {
         if (m === saetzeFuer && home == saetzeHeim) return
         saetzeFuer = m; saetzeHeim = home
-        akkuSatz = null; vermessungSatz = null; vermessungEmpfohlen = false
+        akkuSatz = null; akkuZuWeit = false; vermessungSatz = null; vermessungEmpfohlen = false
         if (m == null || m.startFromCurrent) return
-        if (home != null) akkuSatz = try { Akkus.satz(Akkus.teilen(m, home)) } catch (t: Throwable) { null }
-        val u = Vermessung.urteil(m.waypoints.map { it.pos } + listOfNotNull(home), m.waypoints.minOf { it.heightM }, { Terrain.surfaceM(it) != null }, null)
+        if (home != null) try { val t = Akkus.teilen(m, home); akkuSatz = Akkus.satz(t); akkuZuWeit = Akkus.zuWeit(t) } catch (t: Throwable) { akkuSatz = null }
+        val u = Vermessung.urteil(m.waypoints.map { it.pos } + listOfNotNull(home), m.waypoints.minOf { it.heightM }, { Terrain.surfaceM(it) != null })
         vermessungSatz = u.satz
         vermessungEmpfohlen = u.lage == Vermessung.Lage.EMPFOHLEN
     }
@@ -509,6 +538,8 @@ object FlugSitzung : Aktionen {
     override fun ortZurueck() = MissionsLauf.ortZurueck()
     override fun ortFertig() = MissionsLauf.ortFertig()
     override fun auftragPlanen(): String? = MissionsLauf.planen()
+    override fun auftragAendern() = MissionsLauf.aendern()
+    override fun auftragNochmal() = MissionsLauf.nochmalFragen()
     override fun kandidatWaehlen(nr: Int) = MissionsLauf.kandidatWaehlen(nr)
     override fun vermessungVorbereiten(): String? = MissionsLauf.vermessungVorbereiten()
     override fun folgenBeginnen(): List<String> = MissionsLauf.folgenBeginnen()
@@ -527,7 +558,7 @@ object FlugSitzung : Aktionen {
             a.frage("Fly “${m.name}” from here?",
                 summary(m, beschreibung) + "\n\nThe drone flies this plan starting from where it hovers now. At the end it hovers. A paused plan waits and continues with “Resume plan”.",
                 "Fly from here", "Cancel", abbrechbar = true) { ja ->
-                if (ja) flyFromHere(m.copy(startFromCurrent = true, hoverAtEnd = true), "plan “${m.name}”", detour = true, text = summary(m, beschreibung))
+                if (ja) flyFromHere(m.copy(startFromCurrent = true, hoverAtEnd = true, sperrzonen = (m.sperrzonen + (mission?.sperrzonen ?: emptyList())).distinct()), "plan “${m.name}”", detour = true, text = summary(m, beschreibung))
             }
             return
         }
@@ -781,10 +812,10 @@ object FlugSitzung : Aktionen {
             s.registerError != null -> CockpitZustand.Warnung("SDK ERROR", s.registerError)
             funkabriss -> CockpitZustand.Warnung("LINK LOST", "No connection to the drone. Values and live view are off.")
             stale -> CockpitZustand.Warnung("NO DATA", "No data from the drone for $age s. Values are not shown.")
+            heimweg != null && b != null && b <= heimweg -> CockpitZustand.Warnung("BATTERY · RETURN NOW", "Battery $b %: the way home needs about $heimweg % with the ${Budget.RESERVE_PERCENT} % reserve. Nothing turns the drone back while it hovers. Press STOP for home.")
             guard != null -> CockpitZustand.Warnung("GUARD", guard)
             paused && s.flying && why != null -> CockpitZustand.Warnung(if (why.contains("obstacle", true)) "OBSTACLE" else "PAUSED BY DRONE", "Drone paused the plan: $why. Hovering, you have control.")
             s.connected && s.windWarning == 2 -> CockpitZustand.Warnung("WIND STRONG", "Strong wind warning from the drone.")
-            heimweg != null && b != null && b <= heimweg -> CockpitZustand.Warnung("BATTERY · RETURN NOW", "Battery $b %: the way home needs about $heimweg % with the ${Budget.RESERVE_PERCENT} % reserve. Nothing turns the drone back while it hovers. Press STOP for home.")
             s.connected && b != null && b < 25 -> CockpitZustand.Warnung("BATTERY $b %", "Battery low.")
             s.connected && s.windWarning == 1 -> CockpitZustand.Warnung("WIND", "Moderate wind warning from the drone.")
             else -> null
@@ -840,7 +871,7 @@ object FlugSitzung : Aktionen {
             tageslicht = (here ?: home)?.let { Geo.sunElevationDeg(it, now) >= -3 },
             plan = CockpitZustand.Plan(
                 name = planName, zeile = planZeile,
-                text = missionText + if (m != null && missionText.isNotBlank()) listOfNotNull(akkuSatz?.let { "Batteries: $it" }, vermessungSatz?.let { "Survey flight: $it" }).joinToString("") { "\n\n" + it } else "",
+                text = missionText + if (m != null && missionText.isNotBlank()) listOfNotNull(akkuSatz, vermessungSatz?.let { "Survey flight: $it" }).joinToString("") { "\n\n" + it } else "",
                 geladen = m != null, aufDrohne = m != null && MissionController.uploaded, laeuft = running,
                 punktIndex = idx, punkte = n,
                 fortschrittProzent = when {
@@ -855,7 +886,7 @@ object FlugSitzung : Aktionen {
                 reserveProzent = Budget.RESERVE_PERCENT,
                 transitHoeheM = MissionController.TRANSIT_HEIGHT_M.toInt(),
                 rueckkehrHoeheM = if (flown != null) MissionController.rthHeightM.toInt() else null,
-                akkuSatz = akkuSatz, vermessungSatz = vermessungSatz, vermessungEmpfohlen = vermessungEmpfohlen,
+                akkuSatz = akkuSatz, akkuZuWeit = akkuZuWeit, vermessungSatz = vermessungSatz, vermessungEmpfohlen = vermessungEmpfohlen,
             ),
             hauptaktion = haupt,
             hauptaktionFrei = !loading && !uploading && busy == null,

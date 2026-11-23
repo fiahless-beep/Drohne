@@ -143,6 +143,7 @@ object Preflight {
         if ((batteryPercent ?: 0) < FOLLOW_MIN_BATTERY) add("Battery ${batteryPercent ?: 0} %: following needs at least $FOLLOW_MIN_BATTERY %")
         if ((windWarning ?: 0) > 0) add("Wind warning from the drone: no following")
         if (pos != null && Geo.sunElevationDeg(pos, nowMs) < -3) add("Following only in daylight")
+        if (!sensorsOk) add("Following only with obstacle sensing on (now: $sensorsText)")
         followProblem(pos, heightM, sensorsOk, sensorsText, nowMs)?.let { if (!contains(it)) add(it) }
     }
 

@@ -34,10 +34,11 @@ class MapPanel(private val map: MapView) {
     private val route = Polyline(map).apply {
         outlinePaint.color = 0xFF2F80ED.toInt(); outlinePaint.strokeWidth = 6f
         outlinePaint.strokeCap = Paint.Cap.ROUND
+        setOnClickListener { _, _, _ -> false }
     }
     private val numberMarkers = mutableListOf<Marker>()
-    private val homeMarker = Marker(map).apply { icon = ContextCompat.getDrawable(ctx, R.drawable.ic_home); setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER); setInfoWindow(null); title = "Startpunkt" }
-    private val droneMarker = Marker(map).apply { setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER); setInfoWindow(null); title = "Drohne" }
+    private val homeMarker = Marker(map).apply { icon = ContextCompat.getDrawable(ctx, R.drawable.ic_home); setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER); setInfoWindow(null); title = "Startpunkt"; setOnMarkerClickListener { _, _ -> false } }
+    private val droneMarker = Marker(map).apply { setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER); setInfoWindow(null); title = "Drohne"; setOnMarkerClickListener { _, _ -> false } }
     private var me: MyLocationNewOverlay? = null
     private val droneIcon: Drawable? = ContextCompat.getDrawable(ctx, R.drawable.ic_drone)
     private var lastHeadingKey = Int.MIN_VALUE
@@ -147,6 +148,7 @@ class MapPanel(private val map: MapView) {
                     position = GeoPoint(w.pos.lat, w.pos.lon)
                     icon = numberIcon(i + 1, w.takePhoto)
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER); setInfoWindow(null)
+                    setOnMarkerClickListener { _, _ -> false }
                 }
                 numberMarkers += m; map.overlays.add(m)
             }
@@ -193,6 +195,8 @@ class MapPanel(private val map: MapView) {
             points = (0..48).map { com.felixos.drohne.plan.Geo.offset(mitte, radiusM, it * 7.5).let { q -> GeoPoint(q.lat, q.lon) } }
             outlinePaint.color = linie; outlinePaint.strokeWidth = dp(2f); fillPaint.color = fuellung
             setInfoWindow(null)
+            // Ein Tipp in den Kreis ist ein Tipp auf die Karte (Ort verschieben): osmdroid schluckt ihn sonst.
+            setOnClickListener { _, _, _ -> false }
         }
 
     private fun marke(p: com.felixos.drohne.plan.LatLon, text: String, farbe: Int): Marker = Marker(map).apply {
@@ -216,12 +220,13 @@ class MapPanel(private val map: MapView) {
             val p = a.punkt
             if (p != null) {
                 a.radiusM?.let { auswahlTeile += kreis(p, it, teal, 0x221EE8B0) }
-                a.sperrRadiusM?.let { auswahlTeile += kreis(p, it, rot, 0x44FF3B30) }
+                a.sperrRadiusM?.let { r -> auswahlTeile += kreis(p, r, rot, 0x44FF3B30).apply { outlinePaint.strokeWidth = dp(4f); outlinePaint.pathEffect = android.graphics.DashPathEffect(floatArrayOf(dp(10f), dp(6f)), 0f) }
+                    auswahlTeile += marke(com.felixos.drohne.plan.Geo.offset(p, r, 0.0), "OUT", rot) }
                 auswahlTeile += marke(p, "×", if (a.sperrRadiusM != null) rot else teal)
             }
             if (a.ecken.size >= 2) auswahlTeile += Polyline(map).apply {
                 setPoints((a.ecken + if (a.ecken.size >= 3) listOf(a.ecken[0]) else emptyList()).map { GeoPoint(it.lat, it.lon) })
-                outlinePaint.color = teal; outlinePaint.strokeWidth = dp(3f); setInfoWindow(null)
+                outlinePaint.color = teal; outlinePaint.strokeWidth = dp(3f); setInfoWindow(null); setOnClickListener { _, _, _ -> false }
             }
             a.ecken.forEachIndexed { i, e -> auswahlTeile += marke(e, (i + 1).toString(), teal) }
             a.kandidaten.forEach { (nr, ort) -> auswahlTeile += marke(ort, "C$nr", 0xFFFFB27A.toInt()) }

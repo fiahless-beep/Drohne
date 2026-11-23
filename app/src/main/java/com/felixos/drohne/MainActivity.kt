@@ -368,16 +368,6 @@ class MainActivity : AppCompatActivity() {
 
     /** Overview of the use cases and what this build can do for each. */
     private fun showUseCases() = info("Missions", "The seven missions live under Msn in the left bar: each one has a brief, a plan check, the flight and a result. Speak works in every view.")
-    @Suppress("unused") private fun showUseCasesAlt() = menu("Use cases", listOf(
-        "1 Fly a plan · ready" to { info("Fly a plan", "Get plan, check list, Start. Pause: button, any stick, or the pause button on the controller. Resume plan continues.") },
-        "2 Subject on the way · ready (untested in flight)" to { info("Subject on the way", "Pause the plan. Tap the subject on the map or in the live view. Choose a photo circle. When it is done the drone hovers; Resume plan continues the plan from the point where you paused.") },
-        "3 Go and look · ready (untested in flight)" to { info("Go and look", "Same as 2, choose “Look closer”: the drone flies above the point, camera straight down, hovers 6 s, takes a photo. Loading a new plan while hovering also works: it starts where the drone is.") },
-        "4 Central Command · first step (needs the Claude key)" to { info("Central Command", "Pause or hover, press the round Speak key over the view you mean. Central Command (Claude) gets the image and telemetry, answers, and may suggest one action (look closer, photo circle, resume, return home). You confirm before anything happens. Watching in the background during the flight is not built yet.") },
-        "5 Follow me / the car · tracking test first" to { info("Follow", "Run Settings → Device & test → Tracking test in flight and upload the result. It decides whether DJI tracking can be used or the app needs its own detection.") },
-        "6 Plan over several batteries · not built yet" to { info("Several batteries", "Not in this build.") },
-        "7 Survey a property · as a plan from Claude" to { info("Property", "Claude builds the plan from the boundary; you fly it as a plan (1). Boundary import in the app is not built.") },
-        "8 Atmosphere over a crowd · not built yet" to { info("Atmosphere", "Not in this build.") },
-    ))
 
 
     // ---------------------------------------------------------------- Menüs und Dialoge des Gastgebers

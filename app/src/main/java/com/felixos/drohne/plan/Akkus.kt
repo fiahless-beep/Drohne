@@ -53,8 +53,8 @@ object Akkus {
     /** Satz für den Plan-Check. */
     fun satz(t: Teilung): String = when {
         zuWeit(t) -> "Too far for one battery: even a single leg needs ${t.prozentJeAbschnitt.max()} %."
-        t.akkus == 1 -> "1 battery, about ${t.prozentJeAbschnitt[0]} % with reserve."
-        else -> "${t.akkus} batteries: " + t.abschnitte.indices.joinToString(", ") { "leg ${it + 1} about ${t.prozentJeAbschnitt[it]} %" } + ". The drone lands between the legs, you swap the battery."
+        t.akkus == 1 -> "1 battery · needs about ${t.prozentJeAbschnitt[0]} %, reserve included."
+        else -> "${t.akkus} batteries · legs " + t.prozentJeAbschnitt.joinToString(" / ") + " % · land, swap, the rest loads by itself."
     }
 
     /**

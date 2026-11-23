@@ -79,8 +79,13 @@ object ClaudeLink {
             setRequestProperty("anthropic-version", "2026-10-21")
             setRequestProperty("anthropic-beta", "server-side-fallback-2026-07-01")
         }
+        // Schreiben hat bei HttpURLConnection keine eigene Zeitgrenze: ein Wächter trennt nach 150 s, was am schwachen Netz hängt.
+        val bytes = body.toString().toByteArray(Charsets.UTF_8)
+        conn.setFixedLengthStreamingMode(bytes.size)
+        val waechter = java.util.Timer("cc-timeout", true)
+        waechter.schedule(object : java.util.TimerTask() { override fun run() { try { conn.disconnect() } catch (_: Throwable) {} } }, 150_000)
         return try {
-            conn.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
+            conn.outputStream.use { it.write(bytes) }
             val code = conn.responseCode
             val raw = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.use { it.readText() } ?: ""
             if (code !in 200..299) {
@@ -92,7 +97,7 @@ object ClaudeLink {
             json.getJSONArray("content") to null
         } catch (t: Throwable) {
             null to "No connection to Claude: ${t.javaClass.simpleName} ${t.message ?: ""}".trim()
-        } finally { conn.disconnect() }
+        } finally { waechter.cancel(); conn.disconnect() }
     }
 
     /** Blocking call; run on a worker thread. [jpeg] may be null (no live view). */
@@ -115,7 +120,7 @@ object ClaudeLink {
 
     // ---------------------------------------------------------------- Missionen 03 und 04: Standbilder auswerten (ohne Flugbefehle)
 
-    private const val SYSTEM_NACHSEHEN = "You look at one still image from a small camera drone. The drone hovers straight above a place with the camera pointing straight down; north is at the top of the image. " +
+    private const val SYSTEM_NACHSEHEN = "You look at one still image from a small camera drone. The drone hovers straight above a place with the camera pointing straight down; the top of the image is the direction the drone is heading. " +
         "The pilot sent the drone there to answer one question about the place. Answer that question in at most three short plain sentences: first the answer, then what in the image shows it. " +
         "If the image does not show enough to answer (too high, shadow, blur, wrong place), say so plainly instead of guessing, and say what would help. " +
         "Do not identify people. You cannot steer the drone and you suggest no flight action."
@@ -133,8 +138,8 @@ object ClaudeLink {
     class Fund(val bild: Int, val x: Double, val y: Double, val warum: String)
     class Suchergebnis(val text: String, val funde: List<Fund>, val fehler: String? = null)
 
-    private const val SYSTEM_SUCHEN = "You look through still images from a small camera drone that swept an area in a grid. Every image is taken straight down; north is at the top. " +
-        "Each image is preceded by a line with its number. The pilot is looking for a kind of spot. Report the places that fit, best first, at most five, with the report_candidates tool: " +
+    private const val SYSTEM_SUCHEN = "You look through still images from a small camera drone that swept an area in a grid. Every image is taken straight down; the top of each image is the direction the drone was heading, not necessarily north. " +
+        "Each image is preceded by a line with its number. The pilot is looking for a kind of spot. Always answer by calling the report_candidates tool exactly once, never with plain text. Report the places that fit, best first, at most five: " +
         "image number, position in that image as fractions (x from 0 left to 1 right, y from 0 top to 1 bottom) and one short plain sentence why it fits and what the pilot should check on site. " +
         "The same place can appear in two overlapping images: report it once. If nothing fits, report an empty list and say in the summary what you saw instead. " +
         "Do not guess what the image does not show. Do not identify people. You cannot steer the drone."
@@ -152,7 +157,8 @@ object ClaudeLink {
         val content = JSONArray()
         bilder.forEach { (nr, jpg) -> content.put(JSONObject().put("type", "text").put("text", "Image $nr:")); content.put(bild(jpg)) }
         content.put(JSONObject().put("type", "text").put("text", "All images are taken from about $hoeheM m above the start point.\n\nThe pilot is looking for: $was"))
-        val (blocks, fehler) = senden(apiKey, SYSTEM_SUCHEN, content, suchTool, JSONObject().put("type", "tool").put("name", "report_candidates"))
+        // Keine erzwungene Tool-Wahl: das Modell lehnt sie mit 400 ab. Der Systemtext verlangt das Werkzeug, strict hält das Schema.
+        val (blocks, fehler) = senden(apiKey, SYSTEM_SUCHEN, content, suchTool)
         if (blocks == null) return Suchergebnis("", emptyList(), fehler)
         for (i in 0 until blocks.length()) {
             val b = blocks.getJSONObject(i)

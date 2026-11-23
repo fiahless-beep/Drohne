@@ -115,7 +115,7 @@ class AuftragTest {
         assertEquals("140 m north-east of the start point", Auftragsbau.ortText(home, Geo.offset(home, 141.0, 45.0)))
         assertEquals("200 m west of the start point", Auftragsbau.ortText(home, Geo.offset(home, 200.0, 270.0)))
         assertEquals("100 m north of the start point", Auftragsbau.ortText(home, Geo.offset(home, 100.0, 350.0)))
-        assertTrue(Auftragsbau.ortText(null, home).contains("chosen"))
+        assertTrue(Auftragsbau.ortText(null, home).startsWith("set"))
     }
 
     @Test fun pointInAStillStraightDown() {

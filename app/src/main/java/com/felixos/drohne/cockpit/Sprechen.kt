@@ -68,10 +68,12 @@ internal class SprechEbene(
     }
 
     /** Über der Fußzeile mit STOP bleiben, wenn eine Fläche im Flug offen ist; im Vollbild verschwindet der Knopf. */
-    fun lage(fussHoehePx: Int, sichtbar: Boolean) {
+    fun lage(fussHoehePx: Int, sichtbar: Boolean, flaecheOffen: Boolean = false) {
         val lp = taste.layoutParams as FrameLayout.LayoutParams
         val unten = stil.dp(12) + fussHoehePx
-        if (lp.bottomMargin != unten) { lp.bottomMargin = unten; taste.requestLayout() }
+        // Eine offene Fläche (Msn, Sys, Log, Set) füllt die ganze Breite: dort sitzt der Knopf am rechten Rand, sonst links vom Aktionsfeld.
+        val rechts = if (flaecheOffen) stil.dp(14) else breiteFeld + stil.dp(18)
+        if (lp.bottomMargin != unten || lp.rightMargin != rechts) { lp.bottomMargin = unten; lp.rightMargin = rechts; taste.requestLayout() }
         taste.sichtbar(sichtbar)
         if (!sichtbar) schliessen()
     }

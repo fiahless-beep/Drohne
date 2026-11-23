@@ -46,6 +46,13 @@ object Auftragsbau {
         else -> emptyList()
     }
 
+    /** Feste Sätze statt des Gesprochenen, falls die Spracherkennung am Feld nicht will (Felix: Sprache und feste Werte, nie tippen). */
+    fun vorschlaege(art: Art): List<String> = when (art) {
+        Art.NACHSEHEN -> listOf("What is there right now?", "Is the way there free?")
+        Art.SUCHEN -> listOf("a place to park the car", "a flat spot to camp", "a quiet spot for a picnic")
+        else -> emptyList()
+    }
+
     /** Was beim Tippen auf die Karte gilt; null = angenommen, sonst der Grund. */
     fun tippen(b: Brief, p: LatLon, home: LatLon?): String? {
         if (home != null && Geo.distance(home, p) > Preflight.MAX_DISTANCE_M) return "That point is ${Geo.distance(home, p).toInt()} m from the start point (max. ${Preflight.MAX_DISTANCE_M} m)."
@@ -68,7 +75,7 @@ object Auftragsbau {
 
     /** „140 m north-east of the start point“: Ort in Worten, damit die Oberfläche keine Koordinaten braucht. */
     fun ortText(home: LatLon?, p: LatLon): String {
-        if (home == null) return "chosen (distance unknown until the home point is set)"
+        if (home == null) return "set (the distance appears once the start point is known)"
         val d = Geo.distance(home, p)
         if (d < 5) return "at the start point"
         val r = listOf("north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west")[(((Geo.bearing(home, p) + 22.5) % 360) / 45).toInt()]

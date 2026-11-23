@@ -45,6 +45,10 @@ interface Aktionen {
     fun ortFertig()
     /** Aus dem Brief einen Plan bauen und durch die Starttür schicken (prüfen, hochladen). Antwort: Grund der Ablehnung oder null. */
     fun auftragPlanen(): String?
+    /** Den Brief wieder öffnen (nach Plan oder Ergebnis), Werte, Ort und Gesprochenes bleiben. Der Plan muss danach neu gebaut werden. */
+    fun auftragAendern()
+    /** Eine gescheiterte Anfrage an Central Command noch einmal stellen. */
+    fun auftragNochmal()
     /** Einen Kandidaten der Suche (04) als „Check a place“ (03) vorbereiten. */
     fun kandidatWaehlen(nr: Int)
     /** Den empfohlenen Vermessungsflug über dem Gebiet des geladenen Plans als Mission 06 vorbereiten. */

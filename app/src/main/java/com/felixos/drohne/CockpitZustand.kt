@@ -106,6 +106,8 @@ data class CockpitZustand(
         val rueckkehrHoeheM: Int? = null,
         /** Satz für den Plan-Check: wie viele Akkus der Plan braucht; null = noch nicht gerechnet (kein Startpunkt). */
         val akkuSatz: String? = null,
+        /** Der Akku-Satz ist eine Absage (auch ein einzelner Abschnitt ist zu weit für einen Akku). */
+        val akkuZuWeit: Boolean = false,
         /** Satz für den Plan-Check: braucht dieser Plan einen Vermessungsflug? */
         val vermessungSatz: String? = null,
         /** Der Vermessungsflug wird empfohlen und kann als Mission 06 vorbereitet werden. */
@@ -146,6 +148,10 @@ data class CockpitZustand(
         val folgenSperren: List<String> = emptyList(),
         /** Ein Restplan wurde nach einer vorzeitigen Landung geladen: der Satz dazu. */
         val restSatz: String? = null,
+        /** Die Anfrage an Central Command ist gescheitert und kann noch einmal gestellt werden (Bilder liegen noch vor). */
+        val nochmalMoeglich: Boolean = false,
+        /** Feste Sätze zur Wahl, falls die Spracherkennung nicht will (Frage zu 03, Gesuchtes zu 04). */
+        val vorschlaege: List<String> = emptyList(),
     ) {
         data class Feld(val id: String, val name: String, val werte: List<String>, val gewaehlt: Int)
         data class Kandidat(val nr: Int, val text: String, val ortText: String)

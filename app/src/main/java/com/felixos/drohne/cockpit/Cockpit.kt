@@ -62,7 +62,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private val logTafel = LogTafel(stil, tafelFlaeche, gast)
     private val setTafel = SetTafel(stil, tafelFlaeche)
     private val missionen = MissionenTafel(stil, tafelFlaeche, aktionen, planHolen = { tafelSetzen(Tafel.KEINE); aktionen.planLaden() }, sprechen = { sprechen.sprechen() },
-        diktieren = { was, fertig -> sprechen.diktieren(was, fertig) }, zumCockpit = { tafelSetzen(Tafel.KEINE) })
+        diktieren = { was, fertig -> sprechen.diktieren(was, fertig) }, zumCockpit = { tafelSetzen(Tafel.KEINE) }, still = { sprechen.schliessen() })
     /** Balken unten auf der Karte, solange der Ort einer Mission gewählt wird: was zu tun ist, Zurück und Fertig. */
     private val ortBalken = stil.spalte()
     private val ortTitel = stil.text(12f, stil.monoFett, Farbe.ACCENT, versalien = true, sperrung = 0.08f)
@@ -87,7 +87,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private var hell = true
     private var laeuft = false
 
-    private val kAnsicht = LeistenKnopf(stil, "Switch view: map, live view, 3D") { gast.ansichtWechseln(); leisteZeigen() }
+    private val kAnsicht = LeistenKnopf(stil, "Switch view: map, live view, 3D") { if (ortswahl) aktionen.ortFertig(); gast.ansichtWechseln(); leisteZeigen() }
     private val kEinpassen = LeistenKnopf(stil, "Fit map / 3D view near or wide") { gast.einpassen() }
     private val kVoll = LeistenKnopf(stil, "Full screen") { vollbildSetzen(true) }
     private val kSystem = LeistenKnopf(stil, "System status") { tafelSchalten(Tafel.SYSTEM) }
@@ -122,16 +122,19 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         ortBalken.background = stil.flaeche(Farbe.BG, Farbe.ACCENT)
         ortBalken.setPadding(stil.dp(10), stil.dp(8), stil.dp(10), stil.dp(8))
         ortBalken.isClickable = true   // ein Tipp auf den Balken ist kein Tipp auf die Karte
-        ortBalken.addView(ortTitel, stil.lp(Stil.MATCH, Stil.WRAP))
+        // Eine Zeile: links Titel und Satz, rechts Undo und Done; die Flugwerte links unten sind solange ausgeblendet.
+        val ortReihe = stil.zeile()
+        val ortLinks = stil.spalte()
+        ortLinks.addView(ortTitel, stil.lp(Stil.MATCH, Stil.WRAP))
         ortSatz.setLineSpacing(0f, 1.2f)
-        ortBalken.addView(ortSatz, stil.lp(Stil.MATCH, Stil.WRAP, oben = 4))
-        val ortKnoepfe = stil.zeile()
+        ortLinks.addView(ortSatz, stil.lp(Stil.MATCH, Stil.WRAP, oben = 3))
+        ortReihe.addView(ortLinks, stil.lp(0, Stil.WRAP, 1f))
         ortZurueck.setze("Undo", false); ortZurueck.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 13f)
-        ortKnoepfe.addView(ortZurueck, LinearLayout.LayoutParams(stil.dp(96), stil.dp(46)))
-        ortKnoepfe.addView(ortFertig, LinearLayout.LayoutParams(0, stil.dp(46), 1f).apply { leftMargin = stil.dp(8) })
-        ortBalken.addView(ortKnoepfe, stil.lp(Stil.MATCH, Stil.WRAP, oben = 8))
+        ortReihe.addView(ortZurueck, LinearLayout.LayoutParams(stil.dp(76), stil.dp(48)).apply { leftMargin = stil.dp(8) })
+        ortReihe.addView(ortFertig, LinearLayout.LayoutParams(stil.dp(96), stil.dp(48)).apply { leftMargin = stil.dp(8) })
+        ortBalken.addView(ortReihe, stil.lp(Stil.MATCH, Stil.WRAP))
         ortBalken.visibility = View.GONE
-        buehne.addView(ortBalken, FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM).apply { leftMargin = stil.dp(150); rightMargin = stil.dp(92); bottomMargin = stil.dp(8) })
+        buehne.addView(ortBalken, FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM).apply { leftMargin = stil.dp(8); rightMargin = stil.dp(92); bottomMargin = stil.dp(8) })
         leisteZeigen()
     }
 
@@ -165,6 +168,8 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
 
     private fun tafelSetzen(t: Tafel) {
         if (t == tafel) return
+        // Eine Fläche über der laufenden Ortswahl beendet sie (der Brief bleibt), sonst stünde die Seite im falschen Zustand.
+        if (ortswahl && t != Tafel.KEINE) aktionen.ortFertig()
         sprechen.schliessen()
         if (t != Tafel.KEINE && vollbild) vollbildSetzen(false)
         tafel = t
@@ -310,7 +315,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             }
             if (tafel == Tafel.LOG) logTafel.zeige()
         }
-        sprechen.lage(if (systemAn && (z.fliegt || z.motorenAn || z.funkabriss)) stil.dp(58) else 0, !vollbild)
+        sprechen.lage(if (systemAn && (z.fliegt || z.motorenAn || z.funkabriss)) stil.dp(58) else 0, !vollbild, systemAn)
         live.zeige(z)
         if (tafel == Tafel.SYSTEM) system.zeige(z, hoehen, windText(z))
         if (tafel == Tafel.MSN) missionen.zeige(z)
@@ -325,24 +330,24 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
         if (an != ortswahl) {
             ortswahl = an
             if (an) { if (vollbild) vollbildSetzen(false); sprechen.schliessen(); tafel = Tafel.KEINE; gast.karteZeigen() } else tafel = Tafel.MSN
-            ortBalken.sichtbar(an)
+            ortBalken.sichtbar(an); live.werteSichtbar(!an)
             leisteZeigen()
         }
         val s = "${a.art}|${a.phase}|${a.ortText}|${a.ecken}|${a.felder.joinToString { it.gewaehlt.toString() }}|${a.kandidaten.size}"
         if (s != orteSchluessel) { orteSchluessel = s; gast.missionsOrte() }
         if (!an) return
         val flaeche = a.ortArt == 2
-        ortTitel.zeige("Mission ${if (a.art < 10) "0" else ""}${a.art} ${a.titel} · " + if (flaeche) "tap the corners" else "tap the place")
+        ortTitel.zeige("0${a.art} · " + when (a.art) { 6 -> "tap the corners"; 4 -> "tap the middle"; 7 -> "tap the crowd"; else -> "tap the place" })
         val satz = a.ortHinweis ?: when {
             flaeche && a.ecken == 0 -> "Tap the corners of the property on the map, one after the other around it."
-            flaeche && a.ecken < 3 -> "${a.ecken} corner(s). At least three are needed."
+            flaeche && a.ecken < 3 -> "${a.ecken} corner${if (a.ecken == 1) "" else "s"}. At least three are needed."
             flaeche -> "${a.ortText}. Tap more corners or press Done."
             a.ortText == null -> when (a.art) { 4 -> "Tap the middle of the search area on the map."; 7 -> "Tap the middle of the crowd on the map. The red circle is the keep-out zone."; else -> "Tap the place on the map." }
-            else -> "Chosen: ${a.ortText}. Tap again to move it, or press Done."
+            else -> "Place ${a.ortText}. Tap again to move it, or press Done."
         }
         ortSatz.zeige(satz); ortSatz.farbe(if (a.ortHinweis != null) Farbe.WARN_TEXT else Farbe.TEXT)
         ortZurueck.alpha = if (a.ortText != null) 1f else 0.35f
-        ortFertig.setze(if (a.ortText == null) "Back to the brief" else "Done", null, true)
+        ortFertig.setze(if (a.ortText == null) "Back" else "Done", null, true)
     }
 }
 

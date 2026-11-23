@@ -60,6 +60,13 @@ object MissionController {
                    val returnProblems: List<String>, val homeLeg: Boolean, val covered: Boolean, val keepOut: List<String>)
     /** Die Drohne war aus (Akkuwechsel): was hochgeladen war, gilt nicht mehr als auf der Drohne. */
     fun planVerloren() { uploaded = false }
+    /** Den vorbereiteten Plan ganz vergessen (sein Brief wurde verworfen): nichts mehr hochzuladen, nichts mehr zu starten. */
+    fun verwerfen() {
+        if (executing) return
+        currentKmz = null; currentMission = null; uploaded = false; landingTail = false
+        conflicts = emptyList(); terrainConflicts = emptyList(); returnProblems = emptyList(); keepOutConflicts = emptyList(); preCount = 0
+        show("No plan")
+    }
     fun snapshot() = Snapshot(currentKmz, currentMission, conflicts, terrainConflicts, preparedHome, startAboveGroundM, uploaded, rthHeightM, landingTail, preCount, stateText, returnProblems, homeLegChecked, terrainCovered, keepOutConflicts)
     fun restore(s: Snapshot) { currentKmz = s.kmz; currentMission = s.mission; conflicts = s.conflicts; terrainConflicts = s.terrain; preparedHome = s.home
         startAboveGroundM = s.above; uploaded = s.uploaded; rthHeightM = s.rth; landingTail = s.tail; preCount = s.pre

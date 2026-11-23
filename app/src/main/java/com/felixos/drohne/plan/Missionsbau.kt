@@ -135,7 +135,8 @@ object Missionsbau {
 
     /** 04 Find a spot: Raster nur zum Abdecken (20 % Überlappung), an jedem Punkt [schwebenS] Sekunden für ein scharfes Bild. */
     fun suche(gebiet: List<LatLon>, hoeheM: Double = 45.0, name: String = "find-a-spot"): Mission {
-        val (bahn, foto) = abstaende(hoeheM, 0.20, 0.20)
+        // Ausgewertet wird das Standbild des Livebilds (16:9, längs schmaler als das Foto): längs deshalb 35 % statt 20 %.
+        val (bahn, foto) = abstaende(hoeheM, 0.20, 0.35)
         return raster(gebiet, hoeheM, bahn, foto, name, tempoMs = 5.0, schwebenS = 2)
     }
 

@@ -56,6 +56,7 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
     private val peilung = WertZeile(stil, "HOME BRG", hell = true)
     private val wind = WertZeile(stil, "WIND", hell = true)
     private val pruefliste = stil.spalte()
+    private val werteSpalte = stil.spalte().apply { isClickable = true }
     private var pruefSchluessel = ""
     private val haupt = Knopf(stil, Knopf.Stilart.HAUPT) { hauptaktion() }
     private val abheben = Knopf(stil, Knopf.Stilart.ABHEBEN) { abhebenAusloesen() }
@@ -114,7 +115,7 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         buehne.addView(oben, FrameLayout.LayoutParams(-1, -2, Gravity.TOP))
         oben.addOnLayoutChangeListener { _, _, _, _, unten, _, _, _, _ -> if (hud.obenPx != unten) { hud.obenPx = unten; beiLeistenhoehe?.invoke() } }
 
-        val werte = stil.spalte().apply { isClickable = true }
+        val werte = werteSpalte
         werte.addView(alt.kachel, stil.lp(Stil.MATCH, Stil.WRAP))
         werte.addView(tempo.kachel, stil.lp(Stil.MATCH, Stil.WRAP, oben = 4))
         werte.addView(akku.kachel, stil.lp(Stil.MATCH, Stil.WRAP, oben = 4))
@@ -224,11 +225,11 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         val checkSatz = when {
             arbeit != null -> arbeit
             z.plan.laeuft || !z.plan.geladen || z.fliegt -> null
-            z.plan.vermessungEmpfohlen -> "Survey flight first: this plan goes below 30 m without a height model. Details: tap here."
-            else -> z.plan.akkuSatz?.let { "Batteries: $it" }
+            z.plan.vermessungEmpfohlen -> "Survey flight first: this plan goes low without a height model. Details: tap here."
+            else -> z.plan.akkuSatz
         }
         planSatz.sichtbar(checkSatz != null)
-        if (checkSatz != null) { planSatz.zeige(checkSatz); planSatz.farbe(if (arbeit == null && z.plan.vermessungEmpfohlen) Farbe.WARN_TEXT else if (arbeit != null) Farbe.ACCENT else Farbe.TEXT) }
+        if (checkSatz != null) { planSatz.zeige(checkSatz); planSatz.farbe(if (arbeit == null && (z.plan.vermessungEmpfohlen || z.plan.akkuZuWeit)) Farbe.WARN_TEXT else if (arbeit != null) Farbe.ACCENT else Farbe.TEXT) }
         fortschritt.sichtbar(z.plan.fortschrittZeigen)
         if (z.plan.fortschrittZeigen) {
             val n = z.plan.punkte; val i = z.plan.punktIndex
@@ -263,6 +264,9 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         stopp.setze(if (z.abhebenMoeglich) "Stop" else if (amBoden) "Stop · Home" else "Stop · Return home", Zeichen.Art.STOP, System.currentTimeMillis() >= stoppGesperrtBis)
         stopp.contentDescription = "Stop and return home"
     }
+
+    /** Während der Ortswahl einer Mission (Drohne am Boden) machen die Flugwerte dem Balken Platz. */
+    fun werteSichtbar(an: Boolean) = werteSpalte.sichtbar(an)
 
     private fun pruefliste(z: CockpitZustand) {
         val zeilen = if (z.startpruefungZeigen && !z.funkabriss) z.pruefliste else emptyList()

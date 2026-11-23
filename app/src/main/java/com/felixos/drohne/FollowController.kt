@@ -101,8 +101,13 @@ object FollowController {
         }
     }
 
+    /** Ein Stick wurde bewegt: Folgen endet sofort, der Pilot hat die Drohne (wie die Pause im Planflug). */
+    fun stickMoved() { if (active && !Simulator.active) { DroneManager.log("Stick moved while following → following ended, you have control"); stop() } }
+
     private fun tick() {
         val st = DroneManager.state
+        // Gelandet, im Landen oder ohne Verbindung: Folgen ist vorbei. Nie am Boden weiter „Höhe 30 m“ senden.
+        if (!st.connected || !st.flying || st.landing) { DroneManager.log("Folgen: nicht mehr im Flug oder keine Verbindung → beendet"); stop(); return }
         val drone = st.location
         val tgt = target
         val stale = tgt == null || System.currentTimeMillis() - tgt.time > 5_000
@@ -124,7 +129,10 @@ object FollowController {
             val bearing = Geo.bearing(dp, tp)
             yaw = bearing
             val err = dist - settings.distanceM
-            val speed = if (abs(err) < 1.5) 0.0 else (0.5 * err).coerceIn(-settings.maxSpeedMs, settings.maxSpeedMs)
+            // Erst auf Höhe, dann zur Seite: unterhalb der Folgehöhe (2 m Spiel) steigt die Drohne nur senkrecht.
+            val aufHoehe = drone.altitude >= settings.heightM - 2.0
+            if (!aufHoehe && ticks % 30 == 0) DroneManager.log(String.format(java.util.Locale.US, "Folgen: steige erst auf %.0f m (jetzt %.0f m), keine Bewegung zur Seite", settings.heightM, drone.altitude))
+            val speed = if (!aufHoehe || abs(err) < 1.5) 0.0 else (0.5 * err).coerceIn(-settings.maxSpeedMs, settings.maxSpeedMs)
             val b = Math.toRadians(bearing)
             vNorth = speed * cos(b); vEast = speed * sin(b)
             if (ticks % 10 == 0) {

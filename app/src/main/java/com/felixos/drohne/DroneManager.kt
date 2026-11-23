@@ -260,7 +260,7 @@ object DroneManager {
         watch(dji.sdk.keyvalue.key.GimbalKey.KeyGimbalAttitude) { s, v -> s.copy(gimbalPitchDeg = v?.pitch ?: s.gimbalPitchDeg) }
         // Stick deflection during a plan pauses it (pilot takes over).
         listOf(RemoteControllerKey.KeyStickLeftHorizontal, RemoteControllerKey.KeyStickLeftVertical, RemoteControllerKey.KeyStickRightHorizontal, RemoteControllerKey.KeyStickRightVertical).forEach { info ->
-            try { KeyManager.getInstance().listen(KeyTools.createKey(info), holder) { _, v -> if (v != null && kotlin.math.abs(v.toInt()) > 200) { lastStickMs = System.currentTimeMillis(); MissionController.stickMoved() } } }
+            try { KeyManager.getInstance().listen(KeyTools.createKey(info), holder) { _, v -> if (v != null && kotlin.math.abs(v.toInt()) > 200) { lastStickMs = System.currentTimeMillis(); MissionController.stickMoved(); FollowController.stickMoved() } } }
             catch (t: Throwable) { log("Stick watch failed: ${t.message}") }
         }
         watch(FlightControllerKey.KeyAreMotorsOn) { s, v -> s.copy(motorsOn = v == true) }
