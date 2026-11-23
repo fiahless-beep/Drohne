@@ -124,7 +124,7 @@ internal class SprechEbene(
         if (!sprache.mikrofonErlaubt) { gast.mikrofonErlauben(); return zeige(was, null, "Allow the microphone, then press again.", true) }
         sprache.hoeren(
             teil = { zeige("Listening · $was", "“$it”", null) },
-            fertig = { t -> if (t == null) zeige(was, null, "Nothing understood. Press again.", true) else { schliessen(); fertig(t) } },
+            fertig = { t -> if (t == null) zeige(was, null, "Nothing understood. Press “Say it” again.", true) else { schliessen(); fertig(t) } },
             fehler = { f -> zeige(was, null, f, true) })
         zeige("Listening · $was", null, "Say it now. It is written into the brief, nothing is sent yet.")
         cc.farbe(Farbe.TEXT_DIM)

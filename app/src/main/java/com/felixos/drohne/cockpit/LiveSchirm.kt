@@ -305,12 +305,14 @@ internal class LiveSchirm(private val stil: Stil, private val aktionen: Aktionen
         if (aktionen.startProbleme().isNotEmpty()) return startNichtMoeglich()
         AlertDialog.Builder(stil.c).setTitle("Start the plan?")
             .setMessage(letzter.plan.text + (aktionen.akkuHinweis()?.let { "\n\n" + it } ?: "") + "\n\nSurroundings clear? Thumbs on the sticks. Pause: button, any stick, or the pause button on the controller.")
-            .setPositiveButton("Start") { _, _ -> if (aktionen.starten() is StartErgebnis.Verweigert) startNichtMoeglich() }
+            .setPositiveButton("Start") { _, _ -> (aktionen.starten() as? StartErgebnis.Verweigert)?.let { startNichtMoeglich(it.probleme) } }
             .setNegativeButton("Cancel", null).show()
     }
 
-    private fun startNichtMoeglich() {
+    private fun startNichtMoeglich(gruende: List<String> = emptyList()) {
         val liste = stil.spalte().apply { setPadding(stil.dp(20), stil.dp(8), stil.dp(20), stil.dp(4)) }
+        // Der Grund der Starttür zuerst: die Prüfliste allein kann lauter Haken zeigen (z. B. Drohne schon in der Luft).
+        gruende.forEach { liste.addView(pruefZeile(Pruefzeile(false, it, null)), stil.lp(Stil.MATCH, Stil.WRAP)) }
         aktionen.pruefliste(voll = true).forEach { liste.addView(pruefZeile(it), stil.lp(Stil.MATCH, Stil.WRAP)) }
         AlertDialog.Builder(stil.c).setTitle("Cannot start")
             .setView(ScrollView(stil.c).apply { setBackgroundColor(Farbe.PANEL); addView(liste) })

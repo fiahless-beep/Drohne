@@ -344,7 +344,7 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             flaeche && a.ecken == 0 -> "Tap the corners of the property on the map, one after the other around it."
             flaeche && a.ecken < 3 -> "${a.ecken} corner${if (a.ecken == 1) "" else "s"}. At least three are needed."
             flaeche -> "${a.ortText}. Tap more corners or press Done."
-            a.ortText == null -> when (a.art) { 4 -> "Tap the middle of the search area on the map."; 7 -> "Tap the middle of the crowd on the map. The red circle is the keep-out zone."; else -> "Tap the place on the map." }
+            a.ortText == null -> when (a.art) { 4 -> "Tap the middle of the search area on the map."; 7 -> "Tap the middle of the crowd on the map. A red circle then shows the keep-out zone."; else -> "Tap the place on the map." }
             else -> "Place ${a.ortText}. Tap again to move it, or press Done."
         }
         ortSatz.zeige(satz); ortSatz.farbe(if (a.ortHinweis != null) Farbe.WARN_TEXT else Farbe.TEXT)

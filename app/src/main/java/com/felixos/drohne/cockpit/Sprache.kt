@@ -55,7 +55,7 @@ internal class Sprache(private val c: Context) {
                     SpeechRecognizer.ERROR_NO_MATCH, SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> fertig(null)
                     SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> fehler("Microphone not allowed. Allow it for this app in the Android settings.")
                     SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT, SpeechRecognizer.ERROR_SERVER -> fehler("Speech recognition needs the internet and did not get through.")
-                    else -> fehler("Speech recognition failed (code $error). Try again or type.")
+                    else -> fehler("Speech recognition failed (code $error). Try again.")
                 }
             }
         })

@@ -34,15 +34,15 @@ internal class MissionenTafel(
 
     private val liste = listOf(
         Mission(1, "Fly a plan", "A plan built with Claude in the chat.", true, "Flown · rest plan untested",
-            "Get the plan, read the plan check, hold Start. Pause with the button, any stick or the pause button on the controller; Resume continues. The plan check says how many batteries the plan needs and whether a survey flight pays off here. If the battery runs low the drone turns back at the reserve; after landing, the app loads the remaining points as a rest plan."),
+            "Get the plan, read the plan check, press Start and confirm. Pause with the button, any stick or the pause button on the controller; Resume continues. The plan check says how many batteries the plan needs and whether a survey flight pays off here. If the battery runs low the drone turns back at the reserve; after landing, the app loads the remaining points as a rest plan."),
         Mission(2, "Subject on the way", "During a plan something catches your eye.", false, "Untested in flight",
             "1  Pause the plan (button, any stick, or the pause button on the controller).\n2  Tap the subject on the map or in the live view.\n3  Choose a photo circle or Look closer. The drone flies it and then hovers.\n4  Resume: the plan continues where you paused."),
         Mission(3, "Check a place", "A known place and one question.", false, "Untested in flight",
             "The drone flies to the place, hovers with the camera straight down, takes two photos and comes home. While it flies back, Central Command answers your question from a still of the live view; the answer appears here."),
         Mission(4, "Find a spot", "You name what you need.", false, "Untested in flight",
-            "For a place to park, to camp, for a picnic. The drone sweeps the area with the camera straight down and comes home. Central Command looks through the stills and lists candidates here; tap one to check it closer with mission 03."),
+            "For a place to park, to camp, for a picnic. The drone sweeps the area with the camera straight down and comes home. Central Command looks through the stills and lists candidates here. After landing, each candidate gets the key “Check this place” for mission 03."),
         Mission(5, "Follow", "The drone follows your phone.", false, "Never flown",
-            "The drone follows the GPS of this phone at a fixed height and distance. It never takes off by itself: take off with the hold button, let it hover, then start following here. It first climbs straight up to the follow height, then moves. Never flown yet, and whether the sticks take over while following is not proven on this drone: first test over an open field with nobody around, and end it with Stop following or STOP."),
+            "The drone follows the GPS of this phone at a fixed height and distance. It never takes off by itself: take off in the cockpit with “Hold: take off”, let it hover, then start following here. It first climbs straight up to the follow height, then moves. Never flown yet, and whether the sticks take over while following is not proven on this drone: first test over an open field with nobody around, and end it with Stop following or STOP."),
         Mission(6, "Survey a property", "Tap the corners, get grid and ring.", false, "Untested in flight",
             "The app builds a grid from straight above and an oblique ring around the property. The photos are the basis for a height model and a 3D model, which Claude builds from them in the chat. Where no height model exists yet, this is the survey flight."),
         Mission(7, "Atmosphere", "Pictures of an event from the side.", false, "Untested in flight",
@@ -203,6 +203,7 @@ internal class MissionenTafel(
         } else {
             if (a.folgenSperren.isEmpty()) zeichenZeile(true, "Ready. The drone hovers; following starts from where it is.")
             a.folgenSperren.forEach { zeichenZeile(false, it) }
+            if (!z.fliegt) knopf(knopfReihe(), "Go to the cockpit to take off", null, haupt = false) { zumCockpit() }
             // Flugwirksam: wie Abheben nur mit gehaltenem Knopf.
             knopf(knopfReihe(), "Hold: start following", null, haupt = true, frei = a.folgenSperren.isEmpty(), halteMs = 1500) {
                 val gruende = aktionen.folgenBeginnen()
@@ -260,7 +261,7 @@ internal class MissionenTafel(
                 trenner("Plan check")
                 a.restSatz?.let { hinweis(it, warnung = false) }
                 planCheck(z)
-                absatz("Start stays with your thumb: go to the plan check, read the list, hold Start.", Farbe.TEXT_DIM)
+                absatz("Start stays with your thumb: go to the plan check, read the list, press Start and confirm.", Farbe.TEXT_DIM)
                 val reihe = knopfReihe()
                 knopf(reihe, "Go to the plan check", null, haupt = true) { zumCockpit() }
                 knopf(reihe, "Change the brief", null, haupt = false) { aktionen.auftragAendern(); zeige(aktionen.zustand()) }

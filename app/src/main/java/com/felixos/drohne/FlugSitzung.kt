@@ -129,6 +129,9 @@ object FlugSitzung : Aktionen {
     fun beschaeftigt(text: String?) = setBusy(text)
 
     /** Plan-Feld: Name, darunter eine Zeile Zustand; der lange Text bleibt, wenn [text] leer ist. */
+    /** Die Drohne war aus: der Plan ist noch in der App, aber nicht mehr sicher auf der Drohne. */
+    fun planNichtMehrDrauf() { val m = mission ?: return; setPlanCard("Plan “${m.name}” – upload again", "The drone was switched off. Press “Upload again”, then Start."); melden() }
+
     private fun setPlanCard(name: String, text: String) {
         planName = name.substringBefore(" – ")
         planZeile = name.substringAfter(" – ", "").ifBlank { metaLine() }

@@ -133,7 +133,7 @@ object Preflight {
     fun followGate(connected: Boolean, flying: Boolean, planRunning: Boolean, pos: LatLon?, homeSet: Boolean, heightM: Double, distanceM: Double,
                    batteryPercent: Int?, satellites: Int?, windWarning: Int?, heightLimitM: Int?, sensorsOk: Boolean, sensorsText: String, nowMs: Long): List<String> = buildList {
         if (!connected) add("Drone not connected")
-        if (!flying) add("Take off first (hold the take-off button) and let the drone hover. Following never takes off by itself.")
+        if (!flying) add("Take off first (in the cockpit: “Hold: take off”) and let the drone hover. Following never takes off by itself.")
         if (planRunning) add("A plan is running. Pause or finish it first.")
         if (!homeSet) add("Home point not set yet")
         if ((satellites ?: 0) < MIN_SATELLITES) add("GPS too weak (at least $MIN_SATELLITES satellites)")

@@ -122,7 +122,7 @@ object MissionsLauf {
     fun ortWaehlen(): String? {
         val b = brief ?: return "Choose a mission first."
         if (b.art.ort == OrtArt.KEINER) return "This mission needs no place."
-        if (phase != CockpitZustand.AuftragPhase.BRIEF) return "The brief is closed. Open the mission again to change the place."
+        if (phase != CockpitZustand.AuftragPhase.BRIEF) return "The brief is closed. Press “Change the brief” first."
         if (DroneManager.state.flying) return "Places are chosen on the ground. In flight a tap on the map picks a subject."
         phase = CockpitZustand.AuftragPhase.ORT
         ortHinweis = null; fehlt = null
@@ -175,7 +175,7 @@ object MissionsLauf {
         DroneManager.log("Mission ${b.art.nr} ${b.art.titel}: plan built, ${bau.mission.waypoints.size} points")
         FlugSitzung.planUebernehmen(bau.mission, bau.beschreibung)
         // Hat die Starttür den Plan nicht angenommen (zu viele Punkte, DJI-Prüfung), steht der Grund im Plan-Feld.
-        if (FlugSitzung.mission !== bau.mission && !FlugSitzung.startplatzFrageOffen) { geplant = null; phase = CockpitZustand.AuftragPhase.BRIEF; return nein("The plan was not accepted: " + FlugSitzung.planZeile) }
+        if (FlugSitzung.mission !== bau.mission && !FlugSitzung.startplatzFrageOffen) { geplant = null; phase = CockpitZustand.AuftragPhase.BRIEF; return nein("The plan was not accepted: " + (MissionController.rejectReason ?: FlugSitzung.planZeile)) }
         melden(); return null
     }
 
@@ -255,6 +255,7 @@ object MissionsLauf {
             getrenntSeit = 0L
             if (lang && !s.flying && !s.motorsOn && !MissionController.executing && MissionController.uploaded && !Simulator.active) {
                 MissionController.planVerloren()
+                FlugSitzung.planNichtMehrDrauf()
                 DroneManager.log("Drone reconnected after a longer break: plan must be uploaded again")
                 melden()
             }
@@ -431,7 +432,7 @@ object MissionsLauf {
             val vorher = FlugSitzung.missionText.substringBefore("\n\n")
             FlugSitzung.planUebernehmen(rest, "Rest of “${m.name}” from point $von.\n\n$vorher")
             if (FlugSitzung.mission === rest || FlugSitzung.startplatzFrageOffen) {
-                restSatz = "The flight ended early at point $von of $n. The rest (points $von to $n) is loaded as “${rest.name}”. Swap the battery if needed, then Start."
+                restSatz = "The flight ended early at point $von of $n. The rest (points $von to $n) is loaded as “${rest.name}”. Swap the battery if needed. If the drone was off, press “Upload again” first, then Start."
                 DroneManager.log("Rest plan: points $von to $n of ${m.name}")
                 if (offen) { geplant = rest; phase = CockpitZustand.AuftragPhase.PLAN }
                 FlugSitzung.hinweis("Rest plan loaded: points $von to $n.")
