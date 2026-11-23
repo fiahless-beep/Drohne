@@ -465,7 +465,9 @@ object FlugSitzung : Aktionen {
     private fun summary(m: Mission, beschreibung: String): String = buildString {
         if (beschreibung.isNotBlank()) appendLine(beschreibung).appendLine()
         appendLine("${m.waypoints.size} waypoints, ${m.waypoints.count { it.takePhoto }} photos")
-        appendLine("Route ${m.lengthM.toInt()} m, height ${m.waypoints.minOf { it.heightM }.toInt()}–${m.waypoints.maxOf { it.heightM }.toInt()} m, ${m.speedMs} m/s")
+        // Mit Hin- und Heimweg, sonst steht bei einem einzelnen Ort „Route 3 m“ (Befund Testnutzer 23.11.2026).
+        val ganz = m.plannedStart?.takeIf { !m.startFromCurrent }?.let { h -> m.lengthM + Geo.distance(h, m.waypoints.first().pos) + if (m.hoverAtEnd) 0.0 else Geo.distance(m.waypoints.last().pos, h) }
+        appendLine((if (ganz != null) "Route ${ganz.toInt()} m with the way out and home" else "Route ${m.lengthM.toInt()} m") + ", height ${m.waypoints.minOf { it.heightM }.toInt()}–${m.waypoints.maxOf { it.heightM }.toInt()} m, ${m.speedMs} m/s")
         val home = DroneManager.state.home ?: DroneManager.state.location?.let { dji.sdk.keyvalue.value.common.LocationCoordinate2D(it.latitude, it.longitude) }
         if (home?.latitude != null && home.latitude != 0.0) {
             val e = Budget.estimate(m, LatLon(home.latitude, home.longitude))
