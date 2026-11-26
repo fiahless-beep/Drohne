@@ -147,7 +147,7 @@ object Wpml {
     fun templateKml(m: Mission, nowMs: Long): String = """<?xml version="1.0" encoding="UTF-8"?>
 <kml $NS>
   <Document>
-    <wpml:author>Felix Drohne</wpml:author>
+    <wpml:author>Skytac</wpml:author>
     <wpml:createTime>$nowMs</wpml:createTime>
     <wpml:updateTime>$nowMs</wpml:updateTime>${missionConfig(m)}
     <Folder>

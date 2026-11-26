@@ -1,4 +1,4 @@
-# Felix Drohne
+# Skytac
 
 Android-App für die **DJI Mini 4 Pro** (mit RC-N2), gebaut auf dem DJI Mobile SDK v5.
 
