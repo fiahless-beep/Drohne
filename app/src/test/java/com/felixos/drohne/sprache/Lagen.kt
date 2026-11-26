@@ -89,7 +89,7 @@ object Lagen {
     /** Der ganze Weg eines Satzes mit Stufe 0: Regeln, dann Prüfschicht. */
     fun entscheide(satz: String, z: CockpitZustand, sicht: Sicht, modell: Verstehen? = null): Entscheidung {
         var e: Entscheidung? = null
-        SprachLeitung(RegelVerstehen(), modell).gehoert(satz, "de", sicht, z) { e = it }
+        SprachLeitung(RegelVerstehen(), modell, uhr = { _, _ -> {} }).gehoert(satz, "de", sicht, z) { e = it }
         return e ?: throw AssertionError("keine Entscheidung für „$satz“")
     }
 

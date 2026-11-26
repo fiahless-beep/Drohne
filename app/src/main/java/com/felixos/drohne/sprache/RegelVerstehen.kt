@@ -18,7 +18,8 @@ class RegelVerstehen : Verstehen {
         val s = Worte.norm(text)
         if (s.isEmpty()) return UNKLAR
         val n = s.split(' ').size
-        val verneint = Worte.verneint(s)
+        // Verneinung, Zweifel und Bedingung gelten gleich: im Zweifel geschieht nichts.
+        val verneint = Worte.verneint(s) || Worte.zweifelt(s)
         val fragt = Worte.fragt(text, s)
         fun r(b: Befehl, dazu: Befehl? = null) = Deutung(b, Quelle.REGEL, null, dazu)
         fun hat(m: Regex) = m.containsMatchIn(s)
@@ -26,12 +27,22 @@ class RegelVerstehen : Verstehen {
         fun vorschlag(b: Befehl, frage: Auskunft = Auskunft.STATUS): Deutung = when { verneint -> UNKLAR; fragt -> r(Befehl.Frage(frage)); n > MAX_WOERTER -> UNKLAR; else -> r(b) }
 
         // 1. Anhalten zuerst, dann Heim (Verhalten des früheren Cockpit.lokal(): Verneinung, Frage und lange Sätze lösen nichts aus).
-        val halt = hat(HALT_ANFANG) || hat(HALT_ENDE) || hat(FOLGEN_ENDE)
+        // „Stop recording“, „Stop the upload“ meinen nicht den Flug: das ist kein Anhalten.
+        val folgenEnde = hat(FOLGEN_ENDE)
+        val haltwort = hat(HALT_ANFANG) || hat(HALT_ENDE) || Worte.bittetUmHalt(s)
+        val fremd = haltwort && hat(HALT_FREMD) && !folgenEnde
+        val bitte = !fremd && Worte.bittetUmHalt(s)
+        val anfang = !fremd && hat(HALT_ANFANG)
+        val halt = (haltwort && !fremd) || folgenEnde
         val heim = hat(HEIM)
+        if (fremd && !heim) return if (!verneint && !fragt && hat(KAMERA)) r(Befehl.Abgelehnt(Verbot.STEUERN)) else UNKLAR
         if (halt || heim) return when {
             verneint -> UNKLAR
+            // Eine höfliche Bitte in Frageform ist ein Auftrag anzuhalten, keine Frage nach dem Stand.
+            bitte -> r(Befehl.Anhalten)
             fragt -> r(Befehl.Frage(Auskunft.STATUS))
-            n > MAX_WOERTER -> UNKLAR
+            // Ein Satz, der mit dem Stoppwort beginnt, darf länger sein („Stop the drone immediately and wait here“).
+            n > (if (anfang || folgenEnde) MAX_HALT else MAX_WOERTER) -> UNKLAR
             halt -> r(Befehl.Anhalten, if (heim) Befehl.Heim else null)
             else -> r(Befehl.Heim)
         }
@@ -82,7 +93,7 @@ class RegelVerstehen : Verstehen {
         val zahlen = Worte.zahlen(s)
         if (!fragt && zahlen.isNotEmpty()) {
             val felder = listOfNotNull(if (hat(F_HOEHE)) "h" else null, if (hat(F_RADIUS)) "r" else null, if (hat(F_ABSTAND)) "d" else null)
-            if (felder.isNotEmpty()) return if (verneint || felder.size != 1 || zahlen.size != 1) UNKLAR else r(Befehl.FeldSetzen(felder[0], zahlen[0]))
+            if (felder.isNotEmpty()) return if (verneint || felder.size != 1 || zahlen.size != 1 || Worte.zahlFremd(text, s)) UNKLAR else r(Befehl.FeldSetzen(felder[0], zahlen[0]))
             if (hat(MISSION_NR)) return if (verneint || zahlen.size != 1 || zahlen[0] !in 1..7) UNKLAR else r(Befehl.MissionWaehlen(zahlen[0]))
         }
 
@@ -156,12 +167,15 @@ class RegelVerstehen : Verstehen {
         val UNKLAR = Deutung(Befehl.Unklar, Quelle.REGEL)
         /** Wie im früheren Cockpit.lokal(): längere Sätze lösen nichts Flugwirksames aus. */
         const val MAX_WOERTER = 6
+        /** Beginnt der Satz mit dem Stoppwort, gilt eine weitere Grenze. */
+        const val MAX_HALT = 12
 
         // Alle Muster in der Form von Worte.norm: klein, ohne Satzzeichen, ae/oe/ue/ss.
-        val HALT_ANFANG = Regex("^((bitte|please|drohne|drone|die drohne|the drone|ok|okay|jetzt|now|sofort) )*(stop+|stopp|stoppe|stoppen|halt|halte an|pause|pausieren|pausiere|anhalten|warte|wait|hold|hoer auf|aufhoeren)\\b")
+        val HALT_ANFANG = Regex("^((bitte|please|drohne|drone|die drohne|the drone|ok|okay|jetzt|now|sofort) )*(stop+|stopp|stoppe|stoppen|halt|halte? ((die drohne|sie|ihn|den plan|die mission|den flug|jetzt|sofort|bitte|mal|hier) )*an|pause|pausieren|pausiere|anhalten|warte|wait|hold|hoer auf|aufhoeren)\\b")
         val HALT_ENDE = Regex("\\b(anhalten|pausieren|stoppen|stopp|stop)( bitte| please| jetzt| now| sofort)*$")
         val FOLGEN_ENDE = Regex("\\b(hoer auf (mir |mich )?(zu )?(folgen|verfolgen)|aufhoeren zu folgen|folgen (beenden|stoppen|aufhoeren|abbrechen)|stop following|stop the follow|quit following|end (the )?follow\\w*)\\b")
         val HEIM = Regex("\\b(come|return|fly|go) (back )?home\\b|\\b(komm|komme|flieg|fliege) (bitte )?(nach hause|zurueck|heim)\\b|^(nach hause|return home|come back|return to home|heimflug|heimfliegen|zurueck zum start|back to the start)$")
+        val HALT_FREMD = Regex("\\b(recording|record|aufnahme|aufnehmen|aufzeichnung|aufzeichnen|video|filming|filmen|upload|uploading|hochladen|download|music|musik|listening|zuhoeren|talking|reden|timer)\\b")
         val FLUG_WORT = Regex("\\b(anhalten|stoppen|stopp|stop|pause|pausieren|nach hause|heim|home|heimflug|zurueckfliegen|zurueckkommen)\\b")
 
         val START_GENAU = Regex("^(start|take ?off|abheben|starten|heb ab|los|go)( now| jetzt| bitte| please)*$")

@@ -14,8 +14,22 @@ object Worte {
         .replace(Regex("[^a-z0-9' ]"), " ").replace(Regex("\\s+"), " ").trim()
 
     /** Die Liste aus dem früheren Cockpit.lokal() (not, don't, never, no, nicht, kein, nie), um die Beugungen und „…n't“ ergänzt. */
-    private val NEIN = Regex("\\b(don't|dont|do not|not|never|no|nicht|nichts|kein|keine|keinen|keinem|keiner|keins|nie|niemals|weder)\\b|n't\\b")
+    private val NEIN = Regex("\\b(don't|dont|do not|not|never|no|nicht|nichts|kein|keine|keinen|keinem|keiner|keins|nie|niemals|nimmer|weder|keinesfalls|keineswegs|neither|nor)\\b|n't\\b")
     fun verneint(s: String): Boolean = NEIN.containsMatchIn(s)
+
+    /** Zweifel oder Bedingung („vielleicht“, „maybe“, „if necessary“, „falls“): bei Flugwirksamem geschieht dann nichts. */
+    private val ZWEIFEL = Regex("\\b(vielleicht|eventuell|evtl|womoeglich|moeglicherweise|maybe|perhaps|possibly|might|if|unless|falls|wenn|sofern)\\b")
+    fun zweifelt(s: String): Boolean = ZWEIFEL.containsMatchIn(s)
+
+    /** Eine höfliche Bitte anzuhalten in Frageform („Can you stop the drone please?“): ein Auftrag, keine Frage nach dem Stand. */
+    private val HALT_BITTE = Regex("^(bitte |please )?(can|could|would|will) you (please )?(stop|pause|halt|hold)( (the drone|the plan|the mission|the flight|it|here|now|please|immediately|right))*$|" +
+        "^(bitte )?(kannst|koenntest|wuerdest) du (bitte |mal |jetzt |sofort )*((die drohne|den plan|die mission|den flug|sie|ihn|hier) )?(bitte |mal |jetzt |sofort )*(anhalten|stoppen|pausieren)( bitte)?$")
+    fun bittetUmHalt(s: String): Boolean = HALT_BITTE.containsMatchIn(s)
+
+    /** Vorzeichen oder eine andere Einheit als Meter an einer Zahl ([text] wie gesprochen, [s] in der Form von [norm]): ein solcher Wert wird nie gesetzt. */
+    private val VORZEICHEN = Regex("[-−–]\\s*\\d")
+    private val FREMDE_EINHEIT = Regex("\\b(minus|negative|negativ|feet|foot|ft|fuss|cm|mm|km|zentimeter|zentimetern|centimeters?|centimetres?|kilometer|kilometern|kilometers|kilometres?|inch|inches|zoll|yards?|miles?|meile|meilen)\\b")
+    fun zahlFremd(text: String, s: String): Boolean = VORZEICHEN.containsMatchIn(text) || FREMDE_EINHEIT.containsMatchIn(s)
 
     /** Fragewörter aus dem früheren Cockpit.lokal(), dazu wenige weitere; mitten im Satz. */
     private val FRAGEWORT = Regex("\\b(why|should|shall|can|could|would|what|when|warum|wieso|soll|sollte|sollten|kann|koennte|was|wann|ob|waere|wuerde)\\b")
@@ -31,7 +45,7 @@ object Worte {
     private val EN = mapOf("zero" to 0, "one" to 1, "two" to 2, "three" to 3, "four" to 4, "five" to 5, "six" to 6, "seven" to 7, "eight" to 8, "nine" to 9, "ten" to 10,
         "eleven" to 11, "twelve" to 12, "thirteen" to 13, "fourteen" to 14, "fifteen" to 15, "sixteen" to 16, "seventeen" to 17, "eighteen" to 18, "nineteen" to 19)
     private val EN_ZEHNER = mapOf("twenty" to 20, "thirty" to 30, "forty" to 40, "fifty" to 50, "sixty" to 60, "seventy" to 70, "eighty" to 80, "ninety" to 90)
-    private val ZIFFERN = Regex("^(\\d{1,6})[a-z]*$")
+    private val ZIFFERN = Regex("^(\\d{1,6})(m|meter|metern|meters|metres)?$")
 
     /** Ein deutsches Zahlwort bis 199 („sechzig“, „fünfundzwanzig“, „hundertzwanzig“); null = keins. */
     private fun deutsch(wort: String): Int? {

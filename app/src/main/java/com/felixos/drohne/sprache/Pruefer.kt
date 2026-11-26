@@ -106,7 +106,11 @@ object Pruefer {
                 a.phase != AuftragPhase.BRIEF -> "The brief is closed. Say “change the brief” first."
                 else -> null
             }
-            Befehl.OrtZurueck, Befehl.OrtFertig -> if (a.phase == AuftragPhase.ORT && sicht == Sicht.ORTSWAHL) null else "No place is being chosen right now."
+            Befehl.OrtZurueck, Befehl.OrtFertig -> when {
+                flug -> "Places are chosen on the ground."
+                a.phase == AuftragPhase.ORT && sicht == Sicht.ORTSWAHL -> null
+                else -> "No place is being chosen right now."
+            }
             is Befehl.KandidatWaehlen -> when {
                 flug -> "Candidates are prepared on the ground."
                 a.kandidaten.none { it.nr == b.nr } -> if (a.kandidaten.isEmpty()) "There are no candidates." else "There is no candidate ${b.nr}. There are: ${a.kandidaten.joinToString { it.nr.toString() }}."
@@ -179,15 +183,34 @@ object Pruefer {
     }
 
     /** Verankerung: jeder Wert des Befehls steht wörtlich im gesprochenen Text ([s] in der Form von [Worte.norm]). */
-    fun verankert(b: Befehl, text: String, s: String): Boolean = when (b) {
-        is Befehl.FeldSetzen -> b.id in Katalog.FELDER && b.wert in Worte.zahlen(s)
+    fun verankert(b: Befehl, text: String, s: String, quelle: Quelle = Quelle.REGEL): Boolean = when (b) {
+        // Feld, Zahl und ihre Zuordnung zusammen: genau diese eine Zahl, in Metern, das Wort für genau dieses Feld und für kein anderes.
+        is Befehl.FeldSetzen -> b.id in Katalog.FELDER && Worte.zahlen(s) == listOf(b.wert) && !Worte.zahlFremd(text, s) &&
+            FELD_BELEG.all { (id, m) -> m.containsMatchIn(s) == (id == b.id) }
         is Befehl.MissionWaehlen -> b.art == 0 || b.art in Worte.zahlen(s) || Katalog.TITELWORT[b.art]?.containsMatchIn(s) == true
         is Befehl.KandidatWaehlen -> b.nr in Worte.zahlen(s)
         is Befehl.BriefText -> Worte.norm(b.text).let { it.isNotEmpty() && s.contains(it) }
         is Befehl.SprechSprache -> Regex(if (b.kuerzel == "de") "\\b(deutsch|german)\\b" else "\\b(englisch|english)\\b").containsMatchIn(s)
         is Befehl.AnClaude -> b.frage.trim() == text.trim()
-        else -> true
+        // Ein Befehl ohne Wert aus dem Modell braucht ein eigenes Wort im Satz, das zu ihm passt; den Regeln ist das ihr Muster.
+        else -> quelle != Quelle.MODELL || BELEG[b]?.containsMatchIn(s) != false
     }
+
+    private val FELD_BELEG = mapOf(
+        "h" to Regex("\\b(hoehe|height|altitude|flughoehe|hoch|high)\\b"),
+        "r" to Regex("\\b(radius|suchradius|sperrradius|kreis|suchkreis|umkreis|circle)\\b"),
+        "d" to Regex("\\b(abstand|distance|distanz|entfernung)\\b"))
+
+    /** Wörter, von denen eines im Satz stehen muss, damit ein flugwirksamer Befehl aus dem Modell gilt. */
+    private val BELEG: Map<Befehl, Regex> = mapOf(
+        Befehl.Anhalten to Regex("\\b(stop\\w*|halt\\w*|anhalt\\w*|paus\\w*|wart\\w*|wait|hold|freeze|aufhoer\\w*|hoer auf|bleib\\w*|stay|steh\\w*)\\b"),
+        Befehl.Heim to Regex("\\b(home|heim\\w*|hause|zurueck\\w*|back|return\\w*|rein|bring\\w*|hol\\w*)\\b"),
+        Befehl.Fortsetzen to Regex("\\b(weiter\\w*|continue|resume|fort\\w*|go on|carry on|keep going|proceed)\\b"),
+        Befehl.PlanHolen to Regex("\\b(plan\\w*|route|flight|flug\\w*)\\b"),
+        Befehl.Hochladen to Regex("\\b(upload\\w*|hochlad\\w*|lad\\w*|hoch)\\b"),
+        Befehl.BriefPlanen to Regex("\\b(plan\\w*|bau\\w*|build|create|erstell\\w*)\\b"),
+        Befehl.FolgenBeginnen to Regex("\\b(folg\\w*|follow\\w*)\\b"),
+        Befehl.NochmalFragen to Regex("\\b(nochmal|noch mal|again|erneut|retry|wiederhol\\w*)\\b"))
 
     /** Die Entscheidung. [d] null oder unklar: nichts tun und zwei Beispiele aus der Sicht nennen. */
     fun pruefe(d: Deutung?, text: String, sicht: Sicht, z: CockpitZustand): Entscheidung {
@@ -200,9 +223,10 @@ object Pruefer {
         if (b is Befehl.Abgelehnt) return Entscheidung.Antwort(absage(b.was))
         val flugwirksam = b.klasse == Klasse.HALT || b.klasse == Klasse.VORSCHLAG
         // Verneinung und Zweifel entscheidet dieser Code. Der Text des Briefs ist frei und darf ein „nicht“ enthalten.
-        if ((flugwirksam || (b.klasse == Klasse.BRIEF && b !is Befehl.BriefText)) && Worte.verneint(s)) return Entscheidung.Nichts(NICHT_SICHER)
-        if (flugwirksam && Worte.fragt(text, s)) return Entscheidung.Antwort(Auskuenfte.antwort(Auskunft.STATUS, z))
-        if (!verankert(b, text, s)) return nichtVerstanden(sicht, z)
+        if ((flugwirksam || (b.klasse == Klasse.BRIEF && b !is Befehl.BriefText)) && (Worte.verneint(s) || Worte.zweifelt(s))) return Entscheidung.Nichts(NICHT_SICHER)
+        // Eine höfliche Bitte anzuhalten ist ein Auftrag, keine Frage.
+        if (flugwirksam && Worte.fragt(text, s) && !(b == Befehl.Anhalten && Worte.bittetUmHalt(s))) return Entscheidung.Antwort(Auskuenfte.antwort(Auskunft.STATUS, z))
+        if (!verankert(b, text, s, d.quelle)) return nichtVerstanden(sicht, z)
         if (b is Befehl.AnClaude) return Entscheidung.AnClaude(b.frage.trim())
         if (b is Befehl.Frage) return Entscheidung.Antwort(Auskuenfte.antwort(b.was, z))
         if (b == Befehl.Anhalten) return anhalten(dazuHeim, z)

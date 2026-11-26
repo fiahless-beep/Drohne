@@ -15,7 +15,8 @@ class SprachLeitung(
     private val regeln: Verstehen,
     private val modell: Verstehen? = null,
     private val grenzeMs: Long = 2500,
-    private val uhr: (Long, () -> Unit) -> (() -> Unit) = { _, _ -> {} },
+    /** Pflicht: ohne echte Uhr gäbe es keine Zeitgrenze für das Modell. */
+    private val uhr: (Long, () -> Unit) -> (() -> Unit),
 ) {
     private var lauf = 0
     private var absagen: (() -> Unit)? = null
@@ -44,7 +45,7 @@ class SprachLeitung(
         }
         absagen = uhr(grenzeMs) { if (!erledigt && nr == lauf) { beimModell = false; try { m.abbrechen() } catch (_: Throwable) {}; ende(null) } }
         beimModell = true
-        try { m.verstehe(text, sprache, erlaubt, z) { beimModell = false; ende(it) } } catch (_: Throwable) { beimModell = false; ende(null) }
+        try { m.verstehe(text, sprache, erlaubt, z) { if (nr == lauf) { beimModell = false; ende(it) } } } catch (_: Throwable) { if (nr == lauf) { beimModell = false; ende(null) } }
     }
 
     /** Ein laufendes Verstehen verwerfen (der Streifen wurde geschlossen, ein neuer Satz kommt). */

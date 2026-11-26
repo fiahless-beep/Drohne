@@ -64,9 +64,10 @@ class BestandTest {
 
     /** Früher gingen diese Sätze an Central Command (das im laufenden Plan gesperrt ist); lokal geschah nichts. Das bleibt: nichts Flugwirksames. */
     @Test fun verneinungFrageUndLangeSaetzeLoesenNichtsAus() {
-        val saetze = listOf("Nicht anhalten", "Don't stop", "Do not stop", "Never stop", "No stop", "Kein Stopp", "Stopp nicht", "Soll ich anhalten?", "Should I stop", "Can you stop", "Kann ich anhalten",
+        val saetze = listOf("Nicht anhalten", "Don't stop", "Do not stop", "Never stop", "No stop", "Kein Stopp", "Stopp nicht", "Soll ich anhalten?", "Should I stop", "Kann ich anhalten",
             "Warum anhalten", "Stop?", "Flieg nicht nach Hause", "Don't come home", "Soll ich nach Hause", "Come home?", "Komm noch nicht nach Hause",
-            "Stopp ich wollte nur sagen dass alles gut aussieht", "Bitte komm jetzt sofort ganz schnell nach Hause zurück")
+            // Seit der Zweitprüfung (26.11.2026) hält ein Satz, der mit dem Stoppwort beginnt, bis zwölf Wörter an: lieber einmal zu oft schweben.
+            "Stopp ich wollte eigentlich nur ganz kurz sagen dass hier oben alles wirklich gut aussieht", "Bitte komm jetzt sofort ganz schnell nach Hause zurück")
         for (s in saetze) for (z in listOf(Lagen.planLaeuft, Lagen.pausiert, Lagen.handflug, Lagen.folgen, Lagen.boden)) {
             val r = e(s, z)
             assertTrue("$s → ${Lagen.text(r)}", r is Entscheidung.Nichts || r is Entscheidung.Antwort)

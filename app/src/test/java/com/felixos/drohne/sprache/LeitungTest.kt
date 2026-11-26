@@ -91,10 +91,10 @@ class LeitungTest {
             override fun abbrechen() = throw IllegalStateException("kaputt")
         }
         val aus = ArrayList<Entscheidung>()
-        SprachLeitung(RegelVerstehen(), kaputt).gehoert("bring sie rein", "de", Sicht.LIVE, Lagen.handflug) { aus += it }
+        SprachLeitung(RegelVerstehen(), kaputt, uhr = { _, _ -> {} }).gehoert("bring sie rein", "de", Sicht.LIVE, Lagen.handflug) { aus += it }
         assertEquals(1, aus.size); assertTrue(aus[0] is Entscheidung.Nichts)
         // Und die Regeln gehen weiter, als wäre nichts.
-        SprachLeitung(RegelVerstehen(), kaputt).gehoert("Stopp", "de", Sicht.LIVE, Lagen.planLaeuft) { aus += it }
+        SprachLeitung(RegelVerstehen(), kaputt, uhr = { _, _ -> {} }).gehoert("Stopp", "de", Sicht.LIVE, Lagen.planLaeuft) { aus += it }
         assertTrue(aus[1] is Entscheidung.Ausfuehren)
     }
 
@@ -105,6 +105,6 @@ class LeitungTest {
         KeinModell.laden(); KeinModell.entladen()
         assertEquals(ModellZustand.FEHLT, KeinModell.zustand)
         assertEquals("Voice: rules only (local model not installed)", KeinModell.stufenZeile())
-        assertFalse(SprachLeitung(RegelVerstehen()).modellBereit)
+        assertFalse(SprachLeitung(RegelVerstehen(), uhr = { _, _ -> {} }).modellBereit)
     }
 }
