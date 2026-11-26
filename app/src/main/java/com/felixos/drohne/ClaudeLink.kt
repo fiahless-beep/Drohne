@@ -23,7 +23,10 @@ object ClaudeLink {
     private const val KEY = "claude_key"
     private const val MODEL = "claude-opus-5-5"
 
-    fun key(c: Context): String? = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY, null)?.trim()?.ifBlank { null }
+    /** Eigener Claude-Schlüssel dieses Handys, falls eingetragen. */
+    fun eigenerKey(c: Context): String? = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY, null)?.trim()?.ifBlank { null }
+    /** Womit Anfragen laufen: eigener Schlüssel geht vor, sonst das Skytac-Konto ([Konto.MARKE]); null = weder noch. */
+    fun key(c: Context): String? = eigenerKey(c) ?: if (Konto.angemeldet) Konto.MARKE else null
     fun saveKey(c: Context, key: String) { c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY, key.trim()).apply() }
 
     /** What Claude answered: text for the pilot and optionally one command with its input. */
@@ -62,7 +65,7 @@ object ClaudeLink {
     private fun bild(jpeg: ByteArray) = JSONObject().put("type", "image").put("source", JSONObject().put("type", "base64").put("media_type", "image/jpeg").put("data", Base64.encodeToString(jpeg, Base64.NO_WRAP)))
 
     /** Eine Anfrage an die Messages API; gibt die Inhaltsblöcke oder den Fehlertext für die Anzeige zurück. Blockiert. */
-    private fun senden(apiKey: String, system: String, content: JSONArray, tools: JSONArray?, toolChoice: JSONObject? = null): Pair<JSONArray?, String?> {
+    private fun senden(apiKey: String, art: String, system: String, content: JSONArray, tools: JSONArray?, toolChoice: JSONObject? = null): Pair<JSONArray?, String?> {
         val body = JSONObject()
             .put("model", MODEL)
             .put("max_tokens", 4000)
@@ -72,12 +75,20 @@ object ClaudeLink {
             .put("messages", JSONArray().put(JSONObject().put("role", "user").put("content", content)))
         if (tools != null) body.put("tools", tools)
         if (toolChoice != null) body.put("tool_choice", toolChoice)
-        val conn = (URL("https://api.anthropic.com/v1/messages").openConnection() as HttpURLConnection).apply {
-            requestMethod = "POST"; connectTimeout = 10_000; readTimeout = 90_000; doOutput = true
+        // Mit Skytac-Konto geht dieselbe Anfrage an den Skytac-Server; er setzt Schlüssel und Modell und zählt Credits.
+        val konto = apiKey == Konto.MARKE
+        val token = if (konto) Konto.token() ?: return null to "Skytac sign-in expired. Sign in again under Set → Data → Skytac account." else null
+        val conn = (URL(if (konto) Konto.SERVER + "/v1/messages" else "https://api.anthropic.com/v1/messages").openConnection() as HttpURLConnection).apply {
+            requestMethod = "POST"; connectTimeout = 10_000; readTimeout = if (konto) 130_000 else 90_000; doOutput = true
             setRequestProperty("Content-Type", "application/json")
-            setRequestProperty("x-api-key", apiKey)
-            setRequestProperty("anthropic-version", "2026-10-21")
-            setRequestProperty("anthropic-beta", "server-side-fallback-2026-07-01")
+            if (konto) {
+                setRequestProperty("Authorization", "Bearer $token")
+                setRequestProperty("x-skytac-kind", art)
+            } else {
+                setRequestProperty("x-api-key", apiKey)
+                setRequestProperty("anthropic-version", "2026-10-21")
+                setRequestProperty("anthropic-beta", "server-side-fallback-2026-07-01")
+            }
         }
         // Schreiben hat bei HttpURLConnection keine eigene Zeitgrenze: ein Wächter trennt nach 150 s, was am schwachen Netz hängt.
         val bytes = body.toString().toByteArray(Charsets.UTF_8)
@@ -90,8 +101,13 @@ object ClaudeLink {
             val raw = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.use { it.readText() } ?: ""
             if (code !in 200..299) {
                 val msg = runCatching { JSONObject(raw).getJSONObject("error").getString("message") }.getOrDefault(raw.take(200))
+                if (konto) return null to when (code) {
+                    401 -> "Skytac sign-in expired. Sign in again under Set → Data → Skytac account."
+                    402 -> "Not enough credits for this request. Nothing was charged."
+                    else -> msg.ifBlank { "Skytac error $code." } }
                 return null to when (code) { 401 -> "Claude key not accepted (401). Check Settings → Data → Claude key."; 429 -> "Claude is rate limited (429). Try again in a moment."; else -> "Claude error $code: $msg" }
             }
+            if (konto) conn.getHeaderField("x-skytac-credits")?.toIntOrNull()?.let { Konto.creditsMerken(it) }
             val json = JSONObject(raw)
             if (json.optString("stop_reason") == "refusal") return null to "Claude declined this request."
             json.getJSONArray("content") to null
@@ -105,7 +121,7 @@ object ClaudeLink {
         val content = JSONArray()
         if (jpeg != null) content.put(bild(jpeg))
         content.put(JSONObject().put("type", "text").put("text", (if (jpeg == null) "No camera image is available right now.\n\n" else "") + "Telemetry:\n$telemetry\n\nPilot: $question"))
-        val (blocks, fehler) = senden(apiKey, SYSTEM, content, tools)
+        val (blocks, fehler) = senden(apiKey, "ask", SYSTEM, content, tools)
         if (blocks == null) return Reply("", null, null, fehler)
         val text = StringBuilder(); var cmd: String? = null; var input: JSONObject? = null
         for (i in 0 until blocks.length()) {
@@ -128,7 +144,7 @@ object ClaudeLink {
     /** 03 Check a place: die Frage des Piloten zu einem Standbild von oben. Antworttext oder Fehlertext ([zweites] true = Fehler). Blockiert. */
     fun nachsehen(apiKey: String, frage: String, jpeg: ByteArray, hoeheM: Int): Pair<String, Boolean> {
         val content = JSONArray().put(bild(jpeg)).put(JSONObject().put("type", "text").put("text", "Height above the start point: $hoeheM m.\n\nQuestion: $frage"))
-        val (blocks, fehler) = senden(apiKey, SYSTEM_NACHSEHEN, content, null)
+        val (blocks, fehler) = senden(apiKey, "check", SYSTEM_NACHSEHEN, content, null)
         if (blocks == null) return (fehler ?: "No answer.") to true
         val text = (0 until blocks.length()).map { blocks.getJSONObject(it) }.filter { it.optString("type") == "text" }.joinToString(" ") { it.optString("text") }.trim()
         return (text.ifBlank { "No answer." }) to text.isBlank()
@@ -158,7 +174,7 @@ object ClaudeLink {
         bilder.forEach { (nr, jpg) -> content.put(JSONObject().put("type", "text").put("text", "Image $nr:")); content.put(bild(jpg)) }
         content.put(JSONObject().put("type", "text").put("text", "All images are taken from about $hoeheM m above the start point.\n\nThe pilot is looking for: $was"))
         // Keine erzwungene Tool-Wahl: das Modell lehnt sie mit 400 ab. Der Systemtext verlangt das Werkzeug, strict hält das Schema.
-        val (blocks, fehler) = senden(apiKey, SYSTEM_SUCHEN, content, suchTool)
+        val (blocks, fehler) = senden(apiKey, "spot", SYSTEM_SUCHEN, content, suchTool)
         if (blocks == null) return Suchergebnis("", emptyList(), fehler)
         for (i in 0 until blocks.length()) {
             val b = blocks.getJSONObject(i)

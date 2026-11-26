@@ -300,13 +300,47 @@ class MainActivity : AppCompatActivity() {
 
     private fun askClaudeKey() {
         val input = android.widget.EditText(this).apply {
-            hint = "sk-ant-…"; setText(ClaudeLink.key(this@MainActivity) ?: "")
+            hint = "sk-ant-…"; setText(ClaudeLink.eigenerKey(this@MainActivity) ?: "")
             inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
         }
         AlertDialog.Builder(this).setTitle("Claude key")
-            .setMessage("Anthropic API key (console.anthropic.com). With it the app can send a still image and the telemetry to Claude and get an answer or a suggestion back. Stays on this phone.")
+            .setMessage("Optional: your own Anthropic API key (console.anthropic.com). It takes priority over the Skytac account. With it the app can send a still image and the telemetry to Claude and get an answer or a suggestion back. Stays on this phone.")
             .setView(input)
             .setPositiveButton("Save") { _, _ -> ClaudeLink.saveKey(this, input.text.toString()); DroneManager.log(if (input.text.isBlank()) "Claude key deleted" else "Claude key saved") }
+            .setNegativeButton("Cancel", null).show()
+    }
+
+    /** Skytac-Konto: anmelden per E-Mail-Code, Guthaben sehen, abmelden. */
+    private fun kontoDialog() {
+        if (Konto.angemeldet) {
+            AlertDialog.Builder(this).setTitle("Skytac account")
+                .setMessage("Signed in as ${Konto.email ?: "?"}.\n" + (Konto.credits?.let { "$it credits left." } ?: "Credits show after the first request.") +
+                    "\n\nCentral Command and the missions that look at pictures use credits. Flying itself never does.")
+                .setPositiveButton("Close", null)
+                .setNeutralButton("Sign out") { _, _ -> Konto.abmelden(); DroneManager.log("Skytac account signed out") }.show()
+            return
+        }
+        val mail = android.widget.EditText(this).apply { hint = "you@example.com"; inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS }
+        AlertDialog.Builder(this).setTitle("Skytac account")
+            .setMessage("Enter your e-mail address. We send a code to it; no password.")
+            .setView(mail)
+            .setPositiveButton("Send code") { _, _ ->
+                val adresse = mail.text.toString().trim()
+                Thread { val fehler = Konto.codeAnfordern(adresse); runOnUiThread { if (fehler != null) info("Skytac account", fehler) else kontoCode(adresse) } }.start()
+            }
+            .setNegativeButton("Cancel", null).show()
+    }
+
+    private fun kontoCode(adresse: String) {
+        val code = android.widget.EditText(this).apply { hint = "Code"; inputType = android.text.InputType.TYPE_CLASS_NUMBER }
+        AlertDialog.Builder(this).setTitle("Enter the code")
+            .setMessage("We sent a code to $adresse. It can take a minute.")
+            .setView(code)
+            .setPositiveButton("Sign in") { _, _ ->
+                Thread { val fehler = Konto.codeEinloesen(adresse, code.text.toString()); runOnUiThread {
+                    if (fehler != null) { info("Skytac account", fehler) } else { DroneManager.log("Skytac account signed in"); info("Skytac account", "Signed in as $adresse.") }
+                } }.start()
+            }
             .setNegativeButton("Cancel", null).show()
     }
 
@@ -323,7 +357,7 @@ class MainActivity : AppCompatActivity() {
 
     /** Central Command (früher „Ask Claude“): warum gerade keine Frage geht; null = bereit. */
     private fun ccBlocked(): String? = when {
-        ClaudeLink.key(this) == null -> "Key missing. Enter it once under Set → Data → Enter Claude key."
+        ClaudeLink.key(this) == null -> "Sign in first: Set → Data → Skytac account."
         MissionController.executing -> "Pause first. Central Command answers while the drone hovers or stands."
         busy != null -> "The app is busy. Try again in a moment."
         else -> null
@@ -558,7 +592,8 @@ class MainActivity : AppCompatActivity() {
         "Flight stills: a still every 4 s in flight, sent to Claude (${if (FrameShots.enabled) "on" else "OFF"})" to { FrameShots.setEnabled(this, !FrameShots.enabled) },
         "Enter GitHub token" to { askToken() },
         "Enter Google key (photorealistic 3D)" to { askGoogleKey() },
-        "Enter Claude key (copilot)" to { askClaudeKey() }))
+        "Skytac account (${Konto.email?.let { m -> m + (Konto.credits?.let { n -> " · $n credits" } ?: "") } ?: "not signed in"})" to { kontoDialog() },
+        "Own Claude key instead of the account (${if (ClaudeLink.eigenerKey(this) != null) "set" else "none"})" to { askClaudeKey() }))
 
     private fun showDeviceMenu() = menu("Device & test", listOf(
         "Self test (sensors, DJI messages)" to { showSelfTest() },

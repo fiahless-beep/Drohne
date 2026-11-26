@@ -12,6 +12,9 @@ function world({ credits = 5, claude = { status: 200, body: { content: [{ type: 
   const f = async (url, init = {}) => {
     const u = String(url); calls.push({ u, init });
     if (u.endsWith('/auth/v1/user')) return init.headers.authorization === 'Bearer good' ? json(200, { id: 'user-1' }) : json(401, {});
+    if (u.endsWith('/auth/v1/otp')) return json(200, {});
+    if (u.endsWith('/auth/v1/verify')) return JSON.parse(init.body).token === '123456' ? json(200, { access_token: 'good', refresh_token: 'r1', expires_in: 3600, user: { email: 'a@b.co' } }) : json(403, {});
+    if (u.includes('/auth/v1/token')) return JSON.parse(init.body).refresh_token === 'r1' ? json(200, { access_token: 'good', refresh_token: 'r2', expires_in: 3600, user: { email: 'a@b.co' } }) : json(400, {});
     if (u.endsWith('/rpc/skytac_spend')) {
       const a = JSON.parse(init.body);
       if (state.credits < a.p_cost) return json(400, { message: 'insufficient_credits' });
@@ -76,4 +79,24 @@ test('Konto und Gesundheit', async () => {
   assert.deepEqual((await call(makeApp(cfg, w.f), '/v1/me', { headers: { authorization: 'Bearer good' } })).json, { credits: 40, plan: 'free' });
   assert.equal((await call(makeApp(cfg, w.f), '/health')).status, 200);
   assert.equal((await call(makeApp(cfg, w.f), '/nix')).status, 404);
+});
+
+const post = (app, path, obj) => call(app, path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(obj) });
+
+test('Anmeldung: Code anfordern, einlösen, erneuern', async () => {
+  const w = world(); const app = makeApp(cfg, w.f);
+  assert.equal((await post(app, '/v1/auth/start', { email: 'kein-mail' })).status, 400);
+  assert.equal((await post(app, '/v1/auth/start', { email: ' A@b.co ' })).status, 200);
+  assert.equal(JSON.parse(w.calls.at(-1).init.body).email, 'a@b.co');
+  assert.equal(w.calls.at(-1).init.headers.apikey, 'anon');
+  assert.equal((await post(app, '/v1/auth/verify', { email: 'a@b.co', code: '000000' })).status, 401);
+  const ok = await post(app, '/v1/auth/verify', { email: 'a@b.co', code: '123 456' });
+  assert.equal(ok.status, 200); assert.equal(ok.json.refresh_token, 'r1');
+  assert.equal((await post(app, '/v1/auth/refresh', { refresh_token: 'r1' })).json.refresh_token, 'r2');
+});
+
+test('Anmeldung: zu viele Versuche werden gebremst', async () => {
+  const w = world(); const app = makeApp({ ...cfg, AUTH_PER_MIN: 2 }, w.f);
+  await post(app, '/v1/auth/refresh', { refresh_token: 'x' }); await post(app, '/v1/auth/refresh', { refresh_token: 'x' });
+  assert.equal((await post(app, '/v1/auth/refresh', { refresh_token: 'r1' })).status, 429);
 });

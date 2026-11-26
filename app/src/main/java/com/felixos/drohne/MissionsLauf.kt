@@ -172,7 +172,7 @@ object MissionsLauf {
         if (FlugSitzung.loading || FlugSitzung.uploading || FlugSitzung.busy != null) return nein("The app is busy. Try again in a moment.")
         val home = heim(b) ?: return nein("No start point yet. Connect the drone and wait for GPS; the plan is built around the start point.")
         if ((b.art == Art.NACHSEHEN || b.art == Art.SUCHEN) && ClaudeLink.key(app) == null && !Simulator.active)
-            return nein("Central Command has no key yet (Set → Data → Enter Claude key). Without it nobody looks at the stills.")
+            return nein("Central Command is not signed in yet (Set → Data → Skytac account). Without it nobody looks at the stills.")
         val bau = try { Auftragsbau.bauen(b, home) } catch (e: Missionsbau.Abgelehnt) { return nein(e.grund) } catch (e: IllegalArgumentException) { return nein(e.message ?: "Plan not possible.") }
         fehlt = null; ergebnis = null; ergebnisWarnung = false; nochmal = null; kandidaten = if (b.art == Art.NACHSEHEN) kandidaten else emptyList()
         suchbilder.clear(); bildNr = 0
@@ -367,7 +367,7 @@ object MissionsLauf {
      */
     private fun fragen(b: Brief, text: String, anfrage: (String) -> (() -> Unit)) {
         val key = ClaudeLink.key(app)
-        if (key == null) { arbeitet = null; fertig(b, "Central Command has no key (Set → Data → Enter Claude key).", true, null); nochmal = { fragen(b, text, anfrage) }; melden(); return }
+        if (key == null) { arbeitet = null; fertig(b, "Central Command is not signed in (Set → Data → Skytac account).", true, null); nochmal = { fragen(b, text, anfrage) }; melden(); return }
         arbeitet = text; nochmal = null; melden()
         Thread({
             val danach: () -> Unit = try { anfrage(key) } catch (t: Throwable) { { fertig(b, "Central Command failed: ${t.javaClass.simpleName} ${t.message ?: ""}".trim(), true, null) } }

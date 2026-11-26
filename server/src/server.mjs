@@ -93,6 +93,43 @@ export function makeApp(cfg, fetchImpl = fetch) {
     res.end(text);
   }
 
+  // Anmeldung per E-Mail-Code. Die App kennt nur diesen Server; der öffentliche Supabase-Schlüssel bleibt hier.
+  const allowAuth = makeLimiter(Number(cfg.AUTH_PER_MIN || 6));
+  const MAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
+  async function auth(req, res, step) {
+    const ip = String(req.headers['fly-client-ip'] || req.socket.remoteAddress || '');
+    if (!allowAuth('ip:' + ip)) throw new Refusal(429, 'rate', 'Too many sign-in attempts. Try again in a minute.');
+    let b; try { b = JSON.parse((await readBody(req, 4000)).toString('utf8')); } catch (e) { if (e instanceof Refusal) throw e; throw new Refusal(400, 'json', 'Body is not JSON.'); }
+    const str = k => (typeof b?.[k] === 'string' ? b[k].trim() : '');
+    const anon = (path, body) => fetchImpl(`${cfg.SUPABASE_URL}${path}`, { method: 'POST',
+      headers: { apikey: cfg.SUPABASE_ANON_KEY, 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(20_000) });
+    const session = async r => {
+      const j = await r.json().catch(() => null);
+      if (!r.ok || !j?.access_token) return null;
+      return { access_token: j.access_token, refresh_token: j.refresh_token, expires_in: j.expires_in, email: j.user?.email };
+    };
+    if (step === 'start') {
+      const email = str('email').toLowerCase();
+      if (!MAIL.test(email)) throw new Refusal(400, 'email', 'That is not an e-mail address.');
+      const r = await anon('/auth/v1/otp', { email, create_user: true });
+      if (r.status === 429) throw new Refusal(429, 'rate', 'A code was just sent. Wait a minute before asking again.');
+      if (!r.ok) throw new Refusal(502, 'auth', 'The code could not be sent. Try again.');
+      return send(res, 200, { sent: true });
+    }
+    if (step === 'verify') {
+      const email = str('email').toLowerCase(), code = str('code').replace(/\s/g, '');
+      if (!MAIL.test(email) || !/^\d{6,8}$/.test(code)) throw new Refusal(400, 'code', 'Enter the code from the e-mail.');
+      const s = await session(await anon('/auth/v1/verify', { type: 'email', email, token: code }));
+      if (!s) throw new Refusal(401, 'code', 'Wrong or expired code.');
+      return send(res, 200, s);
+    }
+    const refresh_token = str('refresh_token');
+    if (!refresh_token) throw new Refusal(400, 'auth', 'Sign in first.');
+    const s = await session(await anon('/auth/v1/token?grant_type=refresh_token', { refresh_token }));
+    if (!s) throw new Refusal(401, 'auth', 'Sign-in expired. Sign in again.');
+    send(res, 200, s);
+  }
+
   async function me(req, res) {
     const user = await userOf(req);
     const r = await rpc('skytac_account', { p_user: user, p_start: Number(cfg.START_CREDITS || 40) });
@@ -105,6 +142,8 @@ export function makeApp(cfg, fetchImpl = fetch) {
       const url = new URL(req.url, 'http://x');
       if (req.method === 'GET' && url.pathname === '/health') return send(res, 200, { ok: true });
       if (req.method === 'GET' && url.pathname === '/v1/me') return await me(req, res);
+      const a = /^\/v1\/auth\/(start|verify|refresh)$/.exec(url.pathname);
+      if (req.method === 'POST' && a) return await auth(req, res, a[1]);
       if (req.method === 'POST' && url.pathname === '/v1/messages') return await messages(req, res);
       send(res, 404, { error: { type: 'not_found', message: 'Not found.' } });
     } catch (e) {

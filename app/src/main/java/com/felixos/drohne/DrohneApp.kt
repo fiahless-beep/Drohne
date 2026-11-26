@@ -15,6 +15,7 @@ class DrohneApp : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+        Konto.init(this)
         noteRestoredSettings()
         nativeDiagnose()
         if (CrashLog.hasReport(this)) {
