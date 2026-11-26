@@ -271,8 +271,15 @@ internal class MissionenTafel(
             }
             AuftragPhase.FLUG -> {
                 trenner("Flight")
-                zeichenZeile(true, "This mission is flying. Pause and STOP are in the cockpit.")
-                knopf(knopfReihe(), "Go to map and live view", null, haupt = true) { zumCockpit() }
+                if (a.flugUnbekannt) {
+                    zeichenZeile(false, "No link to the drone for over a minute. The app cannot tell whether it is still flying. If it has landed or is switched off, close the mission here.")
+                    val reihe = knopfReihe()
+                    knopf(reihe, "Go to map and live view", null, haupt = true) { zumCockpit() }
+                    knopf(reihe, "Close this mission", null, haupt = false) { aktionen.auftragWaehlen(0); zeige(aktionen.zustand()) }
+                } else {
+                    zeichenZeile(true, "This mission is flying. Pause and STOP are in the cockpit.")
+                    knopf(knopfReihe(), "Go to map and live view", null, haupt = true) { zumCockpit() }
+                }
             }
             AuftragPhase.ERGEBNIS -> {
                 val reihe = knopfReihe()

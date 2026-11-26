@@ -126,7 +126,9 @@ object Missionsbau {
         val (bahn, foto) = abstaende(hoeheM, 0.70, 0.70)
         val r = raster(grenze, hoeheM, bahn, foto, name, tempoMs = 5.0)
         val c = mitte(grenze)
-        val radius = (umkreisM(grenze) + hoeheM * 0.6).coerceIn(15.0, 200.0)
+        // Der Ring liegt außen um das Grundstück. Wäre er dafür größer als 200 m, läge er gekappt mitten darin: dann ablehnen.
+        if (umkreisM(grenze) + hoeheM * 0.6 > 200.0) throw Abgelehnt("The property is too large for one survey. Tap a smaller part and survey it in pieces.")
+        val radius = (umkreisM(grenze) + hoeheM * 0.6).coerceAtLeast(15.0)
         val punkte = (2 * Math.PI * radius / 25.0).toInt().coerceIn(8, 24)
         val vom = Geo.bearing(c, r.waypoints.last().pos)   // Ring dort beginnen, wo das Raster endet
         val ring = Missions.orbit(c, radius, hoeheM, points = punkte, startBearingDeg = vom, speedMs = 4.0, name = name).waypoints.dropLast(1)

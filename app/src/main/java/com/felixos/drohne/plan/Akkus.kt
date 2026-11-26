@@ -27,10 +27,13 @@ object Akkus {
         var von = 0
         val w = m.waypoints
         while (von < w.size) {
+            // Bleibt nur ein Punkt übrig, beginnt der letzte Abschnitt einen Punkt früher (der wird noch einmal angeflogen):
+            // nie einen Punkt ungeprüft an einen vollen Abschnitt hängen (Befund Zweitprüfung 26.11.2026).
+            if (w.size - von == 1 && von > 0) von--
             var bis = minOf(von + 2, w.size)
             while (bis < w.size && bis - von < maxPunkte && braucht(w.subList(von, bis + 1)) <= VOLL_PROZENT) bis++
             // Ein einzelner Restpunkt ergibt keinen Plan: den letzten Abschnitt um einen Punkt kürzen.
-            if (w.size - bis == 1) { if (bis - von > 2) bis-- else bis = w.size }
+            if (w.size - bis == 1 && bis - von > 2) bis--
             teile += w.subList(von, bis).toList(); anfaenge += von
             von = bis
         }

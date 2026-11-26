@@ -148,6 +148,8 @@ data class CockpitZustand(
         val folgenSperren: List<String> = emptyList(),
         /** Ein Restplan wurde nach einer vorzeitigen Landung geladen: der Satz dazu. */
         val restSatz: String? = null,
+        /** Im Flug seit einer Minute keine Verbindung: die App weiß nicht, ob die Drohne noch fliegt. */
+        val flugUnbekannt: Boolean = false,
         /** Die Anfrage an Central Command ist gescheitert und kann noch einmal gestellt werden (Bilder liegen noch vor). */
         val nochmalMoeglich: Boolean = false,
         /** Feste Sätze zur Wahl, falls die Spracherkennung nicht will (Frage zu 03, Gesuchtes zu 04). */

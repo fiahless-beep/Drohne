@@ -43,6 +43,14 @@ class AkkusTest {
         assertTrue(t.abschnitte.all { it.waypoints.size >= 2 })
     }
 
+    @Test fun aSingleLeftoverPointNeverBreaksTheLimit() {
+        // Drei Punkte, höchstens zwei je Abschnitt: der letzte Abschnitt beginnt einen Punkt früher, keiner hat drei.
+        val t = Akkus.teilen(linie(3, abstandM = 5.0), home, maxPunkte = 2)
+        assertEquals(2, t.akkus)
+        assertTrue(t.abschnitte.all { it.waypoints.size == 2 })
+        assertEquals(t.abschnitte[0].waypoints[1].pos, t.abschnitte[1].waypoints[0].pos)
+    }
+
     @Test fun videoRunningAcrossASplitIsReopened() {
         val w = linie(60, abstandM = 5.0).waypoints.toMutableList()
         w[0] = w[0].copy(video = 1); w[59] = w[59].copy(video = 2)

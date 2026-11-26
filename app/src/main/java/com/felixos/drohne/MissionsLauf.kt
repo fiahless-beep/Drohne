@@ -54,6 +54,8 @@ object MissionsLauf {
     private var getrenntSeit = 0L
     /** Die Verbindung riss in diesem Flug ab: wie weit der Plan kam, ist dann ungewiss. */
     private var funkWeg = false
+    /** Seit einer Minute keine Verbindung im Flug: ob die Drohne noch fliegt, weiß die App nicht. */
+    private var flugUnbekannt = false
     private var bildZeiger = 0
     private var bildNr = 0
     private var nachgesehen = false
@@ -95,6 +97,8 @@ object MissionsLauf {
 
     fun waehlen(nr: Int): String? {
         if (FlugSitzung.uploading) return "The plan is still uploading. Try again in a moment."
+        // Ohne Verbindung seit einer Minute darf der Pilot die Mission von Hand schließen (die Drohne war aus, oder sie ist weg).
+        if (nr == 0 && phase == CockpitZustand.AuftragPhase.FLUG && flugUnbekannt && arbeitet == null) { inDerLuft = false; haupt = null; hauptFuer = null; flugUnbekannt = false; funkWeg = false; phase = CockpitZustand.AuftragPhase.BRIEF }
         if (nr == 0) { if (phase != CockpitZustand.AuftragPhase.FLUG && arbeitet == null) { planFallenLassen(); brief = null; phase = CockpitZustand.AuftragPhase.KEINE; fehlt = null; ergebnis = null; ergebnisWarnung = false; nochmal = null; suchbilder.clear() }; melden(); return null }
         val art = Art.von(nr) ?: return "Unknown mission."
         val b = brief
@@ -250,11 +254,14 @@ object MissionsLauf {
             if (getrenntSeit == 0L) getrenntSeit = jetzt
             // Ein Wackler von unter 5 s zählt nicht als Funkabriss; nach einer Minute ohne Verbindung gilt der Flug als vorbei.
             if (inDerLuft && jetzt - getrenntSeit >= 5_000) funkWeg = true
-            if (inDerLuft && jetzt - getrenntSeit >= 60_000) { inDerLuft = false; gelandet() }
+            // Keine Verbindung beweist keine Landung (bei Funkabriss fliegt die Drohne den Plan weiter): die Mission bleibt „im Flug“,
+            // bis frische Daten kommen. Kommen eine Minute lang keine, darf der Pilot sie von Hand schließen ([flugUnbekannt]).
+            if (inDerLuft && jetzt - getrenntSeit >= 60_000 && !flugUnbekannt) { flugUnbekannt = true; melden() }
         }
         else if (getrenntSeit != 0L) {
             val lang = jetzt - getrenntSeit >= 15_000
             getrenntSeit = 0L
+            if (flugUnbekannt) { flugUnbekannt = false; melden() }
             if (lang && !s.flying && !s.motorsOn && !MissionController.executing && MissionController.uploaded && !Simulator.active) {
                 MissionController.planVerloren()
                 FlugSitzung.planNichtMehrDrauf()
@@ -271,7 +278,7 @@ object MissionsLauf {
             // Ein Plan, der am Boden gestartet wurde, ist der Hauptplan dieses Flugs. Umwege und der Planrest nach „Resume“
             // (beide beginnen in der Luft) lassen ihn und seinen Brief stehen.
             if (!cur.startFromCurrent && haupt !== cur) {
-                haupt = cur; flogBis = -1; zuEnde = false; funkWeg = false; restSatz = null; bildZeiger = 0; nachgesehen = false
+                haupt = cur; flogBis = -1; zuEnde = false; funkWeg = false; flugUnbekannt = false; restSatz = null; bildZeiger = 0; nachgesehen = false
                 hauptFuer = brief?.takeIf { cur === geplant }
                 if (hauptFuer != null) { phase = CockpitZustand.AuftragPhase.FLUG; ergebnis = null; ergebnisWarnung = false; nochmal = null; melden() }
             }
@@ -292,12 +299,17 @@ object MissionsLauf {
         if (h != null && !zuEnde && flogBis >= h.waypoints.size - 1) {
             // „Zu Ende“ heißt: der letzte Planpunkt ist erreicht, nicht: die Drohne fliegt heim (das tut sie auch nach STOP).
             val loc = s.location?.takeIf { it.latitude != 0.0 }
-            val amLetzten = loc != null && Geo.distance(LatLon(loc.latitude, loc.longitude), h.waypoints.last().pos) < 8.0
+            // Am letzten Punkt heißt: waagerecht nah UND auf seiner Höhe (auch mit Balkon-Versatz), nicht nur darüber oder darunter vorbei.
+            val letzter = h.waypoints.last()
+            val aufHoehe = loc != null && (Math.abs(loc.altitude - letzter.heightM) < 5.0 || Math.abs(loc.altitude - (letzter.heightM - MissionController.startAboveGroundM)) < 5.0)
+            val amLetzten = loc != null && aufHoehe && Geo.distance(LatLon(loc.latitude, loc.longitude), letzter.pos) < 8.0
             val st = MissionController.executeState
             // FINISHED eines Umwegs (endet schwebend) ist nicht das Ende des Hauptplans.
             if (amLetzten || (st == WaypointMissionExecuteState.FINISHED && cur?.hoverAtEnd != true)) { zuEnde = true; planZuEnde() }
         }
-        if (s.flying || s.motorsOn) { inDerLuft = true; startSeit = 0L }
+        // Nur frische Daten zählen: ohne Verbindung stehen im Zustand die alten Werte.
+        if (s.connected && (s.flying || s.motorsOn)) { inDerLuft = true; startSeit = 0L }
+        else if (!s.connected && inDerLuft) { /* unbekannt: warten */ }
         else if (inDerLuft && s.connected) { inDerLuft = false; gelandet() }
         else if (phase == CockpitZustand.AuftragPhase.FLUG && !MissionController.executing) {
             // Start gemeldet, aber nie abgehoben (die Drohne hat ihn verweigert): nach 10 s zurück zum Plan-Check.
@@ -380,7 +392,8 @@ object MissionsLauf {
 
     private fun planZuEnde() {
         val b = hauptFuer ?: return
-        if (b.art == Art.SUCHEN) suchbilderAuswerten(b)
+        // Das Standbild des letzten Punkts kommt mit Verzögerung (700 ms plus das nächste Bild des Livebilds): kurz darauf warten.
+        if (b.art == Art.SUCHEN) ui.postDelayed({ if (brief === b && arbeitet == null && ergebnis == null) suchbilderAuswerten(b) }, 3000)
     }
 
     private fun suchbilderAuswerten(b: Brief) {
@@ -468,6 +481,7 @@ object MissionsLauf {
             OrtArt.KEINER -> null
         }
         return CockpitZustand.Auftrag(
+            flugUnbekannt = flugUnbekannt,
             art = b.art.nr, titel = b.art.titel, phase = phase,
             felder = b.felder.map { f -> CockpitZustand.Auftrag.Feld(f.id, f.name, f.werte.map { "$it ${f.einheit}" }, f.gewaehlt) },
             ortArt = when (b.art.ort) { OrtArt.KEINER -> 0; OrtArt.PUNKT -> 1; OrtArt.FLAECHE -> 2 },
