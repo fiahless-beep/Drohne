@@ -6,25 +6,35 @@ import android.graphics.RectF
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import com.felixos.drohne.CockpitZustand
 import com.felixos.drohne.R
+import com.felixos.drohne.sprache.Befehl
+import com.felixos.drohne.sprache.Entscheidung
+import com.felixos.drohne.sprache.Sicht
+import com.felixos.drohne.sprache.SprachLeitung
 
 /**
  * Sprechen mit Central Command, gebunden an die Ansicht, die gerade zu sehen ist (Felix 23.11.2026: „so ein Speak-Button,
  * der immer funktioniert und aber dann schon immer an den Kontext gebunden ist … dass es immer nur für das geht, was ich
  * gerade sehe“; „der helle Knopf ist da komisch in der gleichen Hierarchie“ → runder Knopf über der Ansicht, nicht in der Leiste).
  * Der Knopf schwebt über jeder Ansicht und jeder Fläche; der Streifen oben nennt den Kontext und zeigt Gehörtes und Antwort.
- * [lokal] erledigt, was ohne Netz gehen muss (Anhalten im Flug); alles andere geht mit dem Kontext an Central Command.
+ * Was gehört wurde, geht an die [leitung] (Felix 26.11.2026: lokales Verstehen, Claude nur noch für Bild und Planbau): die
+ * entscheidet über Regeln, später ein lokales Modell, und die Prüfschicht, ob etwas sofort geschieht (Ansehen, Brief,
+ * Anhalten), als Knopf „Do it: …“ vorgeschlagen wird (20 Sekunden gültig), aus dem Zustand beantwortet wird, an Central
+ * Command geht (Bild, Protokoll, Erklärung) oder nichts geschieht. Getan wird nur über [ausfuehren].
  * Abheben geht nie per Sprache. Ohne Druck auf einen Vorschlag passiert nichts Flugwirksames außer dem Anhalten.
  */
 internal class SprechEbene(
     private val stil: Stil, host: FrameLayout, private val gast: Gastgeber,
     private val kontext: () -> Kontext,
-    private val lokal: (String) -> Lokal?,
+    private val leitung: SprachLeitung,
+    private val sicht: () -> Sicht,
+    private val zustand: () -> CockpitZustand,
+    /** Einen Befehl ausführen ([Cockpit.ausfuehren]); true = aus dem Druck auf den Vorschlags-Knopf. Antwort: null = getan, sonst der Grund. */
+    private val ausfuehren: (Befehl, Boolean) -> String?,
 ) {
     /** Was der Pilot gerade sieht: [name] für den Streifen und für Central Command, [beispiele] als Hinweis, was hier geht. */
     class Kontext(val name: String, val beispiele: String)
-    /** Antwort ohne Central Command: [text] und höchstens ein Vorschlag (Name, Handlung). */
-    class Lokal(val text: String, val vorschlag: Pair<String, () -> Unit>? = null)
 
     private val sprache = Sprache(stil.c)
     private val taste = Taste()
@@ -41,6 +51,8 @@ internal class SprechEbene(
     private var aktion: Pair<String, () -> Unit>? = null
     private var aktionSeitMs = 0L
     private var wartet = false
+    /** Zählt jeden gehörten Satz und jedes Schließen: eine Entscheidung, die danach noch eintrifft, gilt nicht mehr. */
+    private var satzNr = 0
     private val breiteFeld = stil.c.resources.getDimensionPixelSize(R.dimen.panelWidth)
 
     init {
@@ -78,13 +90,17 @@ internal class SprechEbene(
         if (!sichtbar) schliessen()
     }
 
-    private fun zeige(kopf: String, gehoert: String?, antwort: String?, warnung: Boolean = false, a: Pair<String, () -> Unit>? = null) {
+    private fun zeige(kopf: String, gehoert: String?, antwort: String?, warnung: Boolean = false, a: Pair<String, () -> Unit>? = null, halteMs: Long = 0) {
+        // Im Vollbild gibt es weder Knopf noch Streifen (ein Sprachbefehl kann das Vollbild selbst einschalten).
+        if (taste.visibility != View.VISIBLE) return
         streifen.sichtbar(true)
         titel.zeige(kopf); wo.zeige("about: " + kontext().name)
         du.sichtbar(gehoert != null); if (gehoert != null) du.zeige(gehoert)
         cc.sichtbar(antwort != null); if (antwort != null) { cc.zeige(antwort); cc.farbe(if (warnung) Farbe.WARN_TEXT else Farbe.ACCENT) }
         aktion = a; aktionSeitMs = System.currentTimeMillis(); vorschlag.sichtbar(a != null)
-        if (a != null) vorschlag.setze("Do it: ${a.first}", Zeichen.Art.PLAY, true)
+        // Folgen beginnt wie in der Missions-Fläche nur mit gehaltenem Knopf; alles andere mit einem Druck.
+        vorschlag.halteMs = if (a != null) halteMs else 0
+        if (a != null) vorschlag.setze(if (halteMs > 0) "Hold to do it: ${a.first}" else "Do it: ${a.first}", Zeichen.Art.PLAY, true)
         taste.an = sprache.hoert; taste.invalidate()
     }
 
@@ -103,7 +119,32 @@ internal class SprechEbene(
 
     private fun gehoert(t: String) {
         val satz = "“$t”"
-        lokal(t)?.let { return zeige("CC", satz, it.text, false, it.vorschlag) }
+        val nr = ++satzNr
+        zeige("CC", satz, null)
+        leitung.gehoert(t, sprache.kuerzel, sicht(), zustand()) { e -> if (nr == satzNr) entschieden(t, satz, e) }
+    }
+
+    /** Die Prüfschicht hat entschieden: tun, vorschlagen, antworten, an Central Command geben oder nichts. */
+    private fun entschieden(t: String, satz: String, e: Entscheidung) {
+        when (e) {
+            is Entscheidung.Antwort -> zeige("CC", satz, e.text)
+            is Entscheidung.Nichts -> zeige("CC", satz, e.sagt, true)
+            is Entscheidung.Vorschlag -> zeige("CC", satz, e.sagt, false, knopf(e), e.halteMs)
+            is Entscheidung.Ausfuehren -> {
+                // Erst tun, dann sagen: eine Fläche, die dabei aufgeht, schließt den Streifen, die Ansage öffnet ihn wieder.
+                val grund = ausfuehren(e.befehl, false)
+                if (grund != null) zeige("CC", satz, grund, true)
+                else zeige("CC", satz, e.sagt, false, e.dazu?.let { knopf(it) }, e.dazu?.halteMs ?: 0)
+            }
+            is Entscheidung.AnClaude -> anCentralCommand(e.frage, satz)
+        }
+    }
+
+    /** Der Knopf zu einem Vorschlag: erst der Druck führt aus; geht es dann nicht mehr, steht der Grund im Streifen. */
+    private fun knopf(v: Entscheidung.Vorschlag): Pair<String, () -> Unit> = v.knopf to { ausfuehren(v.befehl, true)?.let { zeige("CC", null, it, true) }; Unit }
+
+    /** Eine echte Frage an Central Command (Bild, Protokoll, Erklärung), wie bisher mit dem Kontext der Ansicht. */
+    private fun anCentralCommand(t: String, satz: String) {
         gast.ccGesperrt()?.let { return zeige("CC", satz, it, true) }
         wartet = true
         zeige("CC · looking …", satz, null)
@@ -130,7 +171,9 @@ internal class SprechEbene(
         cc.farbe(Farbe.TEXT_DIM)
     }
 
-    fun schliessen() { sprache.schliessen(); aktion = null; streifen.sichtbar(false); taste.an = false; taste.invalidate() }
+    fun schliessen() { satzNr++; leitung.abbrechen(); sprache.schliessen(); aktion = null; streifen.sichtbar(false); taste.an = false; taste.invalidate() }
+    /** Sprech-Sprache von außen setzen (Sprachbefehl): „de“ oder „en“. */
+    fun spracheSetzen(kuerzel: String) { sprachKnopf.setze(sprache.setzen(kuerzel), false) }
     /** Von außen anstoßen (Kachel „Anything else“). */
     fun sprechen() { if (!sprache.hoert) druck() }
     val offen: Boolean get() = streifen.visibility == View.VISIBLE

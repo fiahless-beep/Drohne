@@ -10,7 +10,8 @@ import java.io.File
  * Läuft mit den Unit-Tests, also in jedem CI-Bau vor der APK.
  */
 class GrenzeTest {
-    private val erlaubt = setOf("FlugSitzung", "CockpitZustand", "Aktionen", "StartErgebnis", "Pruefzeile", "Anzeige", "R", "BuildConfig")
+    // „sprache“ seit 26.11.2026: das reine Kotlin-Paket der Sprachbedienung (Katalog, Prüfschicht); es kennt selbst nur CockpitZustand (SprachGrenzeTest).
+    private val erlaubt = setOf("FlugSitzung", "CockpitZustand", "Aktionen", "StartErgebnis", "Pruefzeile", "Anzeige", "R", "BuildConfig", "sprache")
 
     private fun dateien(): List<File> {
         val dir = listOf("src/main/java/com/felixos/drohne/cockpit", "app/src/main/java/com/felixos/drohne/cockpit").map(::File).firstOrNull { it.isDirectory }

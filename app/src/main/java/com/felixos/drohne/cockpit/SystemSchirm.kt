@@ -17,7 +17,7 @@ import java.util.Locale
  * System-Bildschirm („Lagebild“) nach dem Prototyp: links Selbsttest und Akku, in der Mitte Draufsicht und
  * Höhenverlauf, rechts Verbindung, GPS/Sensoren und Umgebung. Zeigt nur, was der Flugkern wirklich meldet.
  */
-internal class SystemSchirm(private val stil: Stil, wurzel: FrameLayout, private val gast: Gastgeber) {
+internal class SystemSchirm(private val stil: Stil, wurzel: FrameLayout, private val gast: Gastgeber, private val sprachStufe: () -> String) {
     private val selbst = Kachel(stil, "Self test", mitStatus = false)
     private val akku = Kachel(stil, "Battery")
     private val akkuZahl = stil.text(28f, stil.monoFett, Farbe.ACCENT)
@@ -48,6 +48,8 @@ internal class SystemSchirm(private val stil: Stil, wurzel: FrameLayout, private
     private val transit = umwelt.zeile("Transit height")
     private val rueck = umwelt.zeile("Return height")
     private val vorhersage = stil.text(11f, stil.sans, Farbe.TEXT_DIM, zeilen = 3)
+    /** Welche Stufe der Sprachbedienung läuft (Regeln, lokales Modell). */
+    private val stimme = stil.text(11f, stil.sans, Farbe.TEXT_DIM, zeilen = 3)
 
     /** Die Fläche selbst, zum Ein- und Ausblenden neben CC, Log und Set. */
     lateinit var wurzel: View; private set
@@ -60,6 +62,7 @@ internal class SystemSchirm(private val stil: Stil, wurzel: FrameLayout, private
 
         selbst.addView(stil.text(12f, stil.sans, Farbe.TEXT_DIM, zeilen = 3).apply { text = "Sensors and DJI health messages. Result opens in a dialog." })
         selbst.addView(LeistenKnopf(stil, "Run self test") { gast.selbsttest() }.apply { setze("Run self test", false) }, stil.lp(Stil.MATCH, stil.dp(36), oben = 6))
+        selbst.addView(stimme, stil.lp(Stil.MATCH, Stil.WRAP, oben = 6))
         l.addView(selbst, stil.lp(Stil.MATCH, Stil.WRAP))
         val gross = stil.zeile().apply { gravity = Gravity.BOTTOM }
         gross.addView(akkuZahl); gross.addView(akkuRest, LinearLayout.LayoutParams(Stil.WRAP, Stil.WRAP).apply { leftMargin = stil.dp(6); bottomMargin = stil.dp(4) })
@@ -139,6 +142,7 @@ internal class SystemSchirm(private val stil: Stil, wurzel: FrameLayout, private
         transit.wert("${z.plan.transitHoeheM} m")
         rueck.wert(z.plan.rueckkehrHoeheM?.let { "$it m" })
         vorhersage.zeige(z.wind.vorhersage ?: "Wind forecast: – (comes with Get plan)")
+        stimme.zeige(sprachStufe())
     }
 }
 

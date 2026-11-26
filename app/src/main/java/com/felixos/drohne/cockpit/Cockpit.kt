@@ -10,6 +10,15 @@ import android.widget.LinearLayout
 import com.felixos.drohne.Aktionen
 import com.felixos.drohne.CockpitZustand
 import com.felixos.drohne.FlugSitzung
+import com.felixos.drohne.sprache.Befehl
+import com.felixos.drohne.sprache.Pruefer
+import com.felixos.drohne.sprache.RegelVerstehen
+import com.felixos.drohne.sprache.Sicht
+import com.felixos.drohne.sprache.SprachLeitung
+import com.felixos.drohne.sprache.Verstehen
+import com.felixos.drohne.sprache.modell.KeinModell
+import com.felixos.drohne.sprache.modell.ModellLager
+import com.felixos.drohne.sprache.modell.stufenZeile
 import java.util.Locale
 
 /** Was auf der Bildfläche liegt; das HUD richtet sich danach. */
@@ -24,6 +33,8 @@ interface Gastgeber {
     /** Das Livebild der Drohne kommt gerade an. */
     val livebildAn: Boolean
     fun ansichtWechseln()
+    /** Eine bestimmte Ansicht nach vorn holen (Sprachbefehl „Zeig mir die Karte“). */
+    fun ansichtZeigen(a: Ansicht)
     /** Karte einpassen bzw. in der 3D-Ansicht zwischen NEAR und WIDE wechseln. */
     fun einpassen()
     /** Was das Cockpit von der Bildfläche überdeckt (Pixel je Rand); die 3D-Ansicht hält Drohne und Zahlen im freien Teil. */
@@ -51,14 +62,16 @@ interface Gastgeber {
 /**
  * Das neue Cockpit („Military Tactical“, freigegeben 22.11.2026): Leiste links, Live/HUD-Bildschirm und System-Bildschirm.
  * Kennt vom Flugkern nur den Vertrag: liest [CockpitZustand] aus der [FlugSitzung] und ruft [Aktionen].
+ * [modell] = Stufe 1 der Sprachbedienung (lokales Sprachmodell), [lager] sein Zustand; ohne beides läuft alles mit den Regeln.
  */
-class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: FrameLayout, private val liveWurzel: View, private val systemWurzel: FrameLayout, vollbildWurzel: FrameLayout, sprechWurzel: FrameLayout, private val gast: Gastgeber) {
+class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: FrameLayout, private val liveWurzel: View, private val systemWurzel: FrameLayout, vollbildWurzel: FrameLayout, sprechWurzel: FrameLayout, private val gast: Gastgeber,
+    modell: Verstehen? = null, lager: ModellLager = KeinModell) {
     private val stil = Stil(c)
     private val aktionen: Aktionen = FlugSitzung
     private val live = LiveSchirm(stil, aktionen, buehne, feld)
     /** Bühne der Flächen (System, CC, Log, Set); darunter im Flug die Fußzeile mit STOP. */
     private val tafelFlaeche = FrameLayout(c)
-    private val system = SystemSchirm(stil, tafelFlaeche, gast)
+    private val system = SystemSchirm(stil, tafelFlaeche, gast, sprachStufe = { lager.stufenZeile() })
     private val logTafel = LogTafel(stil, tafelFlaeche, gast)
     private val setTafel = SetTafel(stil, tafelFlaeche)
     private val missionen = MissionenTafel(stil, tafelFlaeche, aktionen, planHolen = { tafelSetzen(Tafel.KEINE); aktionen.planLaden() }, sprechen = { sprechen.sprechen() },
@@ -71,13 +84,16 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
     private val ortFertig = Knopf(stil, Knopf.Stilart.HAUPT) { aktionen.ortFertig() }
     private var ortswahl = false
     private var orteSchluessel = ""
-    private val sprechen: SprechEbene = SprechEbene(stil, sprechWurzel, gast, kontext = { kontext() }, lokal = { lokal(it) })
+    private val ui = Handler(Looper.getMainLooper())
+    /** Vom gehörten Satz zur Entscheidung: Regeln zuerst, dann (wenn eins da ist) das Modell, alles durch die Prüfschicht. */
+    private val leitung = SprachLeitung(RegelVerstehen(), modell, uhr = { ms, tun -> val r = Runnable { tun() }; ui.postDelayed(r, ms); { ui.removeCallbacks(r) } })
+    private val sprechen: SprechEbene = SprechEbene(stil, sprechWurzel, gast, kontext = { kontext() }, leitung = leitung,
+        sicht = { sicht() }, zustand = { aktionen.zustand() }, ausfuehren = { b, gedrueckt -> ausfuehren(b, gedrueckt) })
     private enum class Tafel { KEINE, SYSTEM, MSN, LOG, SET }
     private var tafel = Tafel.KEINE
     private val systemAn: Boolean get() = tafel != Tafel.KEINE
     private val fuss = stil.zeile()
     private val fussWerte = stil.text(13f, stil.monoMittel, Farbe.TEXT, versalien = true, sperrung = 0.04f)
-    private val ui = Handler(Looper.getMainLooper())
     private val vollSchirm = VollbildSchirm(stil, vollbildWurzel, verlassen = { vollbildSetzen(false) }, stoppen = { vollbildSetzen(false); live.stoppen() })
     /** STOP in der Fußzeile unter den Flächen, solange die Drohne fliegt oder die Motoren laufen: die Flächen verdecken den großen. */
     private val systemStopp = Knopf(stil, Knopf.Stilart.STOPP) { live.stoppen() }
@@ -233,49 +249,54 @@ class Cockpit(c: Context, leiste: LinearLayout, buehne: FrameLayout, feld: Frame
             z.verbindung != CockpitZustand.Verbindung.VERBUNDEN -> "drone not connected"
             else -> "on the ground"
         }
-        val imFlug = z.fliegt || z.motorenAn
-        return when (tafel) {
-            Tafel.SYSTEM -> SprechEbene.Kontext("System status · $flug", "“What does the wind warning mean?”" + if (imFlug) " · “Stop here.”" else "")
-            Tafel.LOG -> SprechEbene.Kontext("Log · $flug", "“What went wrong in the last flight?”" + if (imFlug) " · “Stop here.”" else "")
-            Tafel.SET -> SprechEbene.Kontext("Settings · $flug", "“Where do I switch the map?”" + if (imFlug) " · “Stop here.”" else "")
-            Tafel.MSN -> SprechEbene.Kontext(missionen.kontext + (if (z.auftrag.art != 0) " (${z.auftrag.phase.name.lowercase(Locale.US)})" else "") + " · $flug", "“Which mission do I need to check a parking lot?”" + if (imFlug) " · “Stop here.”" else "")
-            Tafel.KEINE -> SprechEbene.Kontext(gast.ansicht.kuerzel + " view · $flug" + (if (z.plan.geladen) " · plan “${z.plan.name}”" else ""),
-                if (z.plan.laeuft && z.phase != CockpitZustand.Phase.PAUSIERT) "“Stop here.” · “Come home.”" else if (imFlug) "“What do you see?” · “Look closer at the roof.” · “Come home.”" else "“Is the plan ready to fly?” · “What is missing for the start?”")
+        // Zwei Beispiele dafür, was hier per Sprache geht: dieselben, die die Prüfschicht nennt, wenn sie etwas nicht versteht.
+        val beispiele = Pruefer.beispiele(sicht(), z).let { (a, b) -> "“$a” · “$b”" }
+        val name = when (tafel) {
+            Tafel.SYSTEM -> "System status · $flug"
+            Tafel.LOG -> "Log · $flug"
+            Tafel.SET -> "Settings · $flug"
+            Tafel.MSN -> missionen.kontext + (if (z.auftrag.art != 0) " (${z.auftrag.phase.name.lowercase(Locale.US)})" else "") + " · $flug"
+            Tafel.KEINE -> gast.ansicht.kuerzel + " view · $flug" + (if (z.plan.geladen) " · plan “${z.plan.name}”" else "")
         }
+        return SprechEbene.Kontext(name, beispiele)
     }
 
-    /**
-     * Was ohne Central Command gehen muss, weil es im Flug sofort und ohne Netz wirken soll: Anhalten. Heimkommen wird nur
-     * vorgeschlagen und braucht einen Druck (es gibt Startplätze, an denen ein Heimflug falsch wäre). Abheben und Starten nie.
-     */
-    private var warnLageVorher = "|false"
-    private fun lokal(t: String): SprechEbene.Lokal? {
-        val s = t.lowercase(Locale.ROOT).trim().trimEnd('.', '!', '?')
-        val z = aktionen.zustand()
-        val woerter = s.split(Regex("[\\s,]+")).filter { it.isNotEmpty() }
-        // Verneinungen und Fragen entscheidet nicht das Muster, sondern Central Command (oder niemand): lieber nichts tun als das Falsche.
-        val unsicher = t.trim().endsWith("?") || woerter.size > 6 ||
-            Regex("\\b(don't|dont|do not|not|never|no|nicht|kein|keine|nie|why|should|can|could|what|when|warum|soll|sollte|kann|was|wann)\\b").containsMatchIn(s)
-        val anhalten = !unsicher && Regex("^(bitte |please |drohne |drone )?(stop+|stopp|halt|pause|pausieren|anhalten|warte|wait|hold)\\b").containsMatchIn(s) ||
-            !unsicher && Regex("\\b(anhalten|pausieren)$").containsMatchIn(s)
-        val heim = !unsicher && Regex("\\b(come|return|fly|go) (back )?home\\b|\\b(komm|flieg|fliege) (bitte )?(nach hause|zurück|heim)\\b|^(nach hause|return home|come back)$").containsMatchIn(s)
-        val start = Regex("^(start|take ?off|abheben|starten|heb ab|los|go)( now| jetzt| bitte| please)*$").matches(s)
-        val heimVorschlag = "Stop · Return home" to { val j = aktionen.zustand(); if (j.fliegt || j.motorenAn) aktionen.stoppUndHeim() }
-        return when {
-            anhalten -> if (aktionen.hauptaktionWaehlen() == CockpitZustand.Hauptaktion.PAUSE) {
-                    aktionen.pausieren()
-                    SprechEbene.Lokal("Pausing. The drone hovers, you have control." + if (heim) " Return home needs your press." else "", if (heim) heimVorschlag else null)
-                }
-                else if (heim && (z.fliegt || z.motorenAn)) SprechEbene.Lokal("Return home flies back to the start point. Press to confirm.", heimVorschlag)
-                else if (z.phase == CockpitZustand.Phase.PAUSIERT) SprechEbene.Lokal("Already paused. The drone hovers.")
-                else if (z.fliegt) SprechEbene.Lokal("No plan is running that I could pause. You fly by hand; to end it press Stop · Return home.")
-                else SprechEbene.Lokal("Nothing is flying.")
-            heim -> if (z.fliegt || z.motorenAn) SprechEbene.Lokal("Return home stops the plan and flies back to the start point. Press to confirm.", heimVorschlag)
-                else SprechEbene.Lokal("Nothing is flying.")
-            start -> SprechEbene.Lokal("Take-off stays with your thumb: hold the start button. I never take off by voice.")
-            else -> null
-        }
+    /** Was der Pilot gerade sieht, in der Form der Sprachbedienung. */
+    private fun sicht(): Sicht = when {
+        ortswahl -> Sicht.ORTSWAHL
+        tafel == Tafel.SYSTEM -> Sicht.SYS
+        tafel == Tafel.MSN -> Sicht.MSN
+        tafel == Tafel.LOG -> Sicht.LOG
+        tafel == Tafel.SET -> Sicht.SET
+        else -> when (gast.ansicht) { Ansicht.KARTE -> Sicht.KARTE; Ansicht.LIVEBILD -> Sicht.LIVE; Ansicht.DREI_D -> Sicht.DREI_D }
     }
+
+    private val flaechen = object : Flaechen {
+        override val sicht: Sicht get() = this@Cockpit.sicht()
+        override fun ansichtZeigen(s: Sicht) {
+            // Wie der Leistenknopf: eine laufende Ortswahl endet, eine offene Fläche macht der Ansicht Platz.
+            if (ortswahl) aktionen.ortFertig()
+            tafelSetzen(Tafel.KEINE)
+            gast.ansichtZeigen(when (s) { Sicht.LIVE -> Ansicht.LIVEBILD; Sicht.DREI_D -> Ansicht.DREI_D; else -> Ansicht.KARTE })
+            leisteZeigen()
+        }
+        override fun flaecheZeigen(s: Sicht?) = tafelSetzen(when (s) { Sicht.SYS -> Tafel.SYSTEM; Sicht.MSN -> Tafel.MSN; Sicht.LOG -> Tafel.LOG; Sicht.SET -> Tafel.SET; else -> Tafel.KEINE })
+        override fun vollbild(an: Boolean) = vollbildSetzen(an)
+        override fun einpassen() = gast.einpassen()
+        override fun sprechSprache(kuerzel: String) = sprechen.spracheSetzen(kuerzel)
+        override fun missionOeffnen(nr: Int): String? { tafelSetzen(Tafel.MSN); return missionen.oeffnenNr(nr) }
+        override fun missionMitgehen() { tafelSetzen(Tafel.MSN); missionen.mitgehen() }
+    }
+    private val ausfuehrung = Ausfuehrung(aktionen, flaechen)
+
+    /**
+     * Die einzige Stelle, an der ein Sprachbefehl etwas tut: bildet ihn auf [Aktionen], den [Gastgeber] und die eigenen
+     * Flächen ab ([Ausfuehrung]). [gedrueckt] = der Pilot hat den Vorschlags-Knopf gedrückt; ohne das geschieht nichts
+     * Flugwirksames außer dem Anhalten. Abheben und Plan-Start gibt es hier nicht. Antwort: null = getan, sonst der Grund.
+     */
+    fun ausfuehren(b: Befehl, gedrueckt: Boolean = false): String? = ausfuehrung.ausfuehren(b, gedrueckt)
+
+    private var warnLageVorher = "|false"
 
     /** Für die Zurück-Taste: verlässt das Vollbild; false = es war keins an. */
     fun vollbildVerlassen(): Boolean { if (!vollbild) return false; vollbildSetzen(false); return true }

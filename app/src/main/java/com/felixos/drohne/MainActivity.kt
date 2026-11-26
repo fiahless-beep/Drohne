@@ -210,6 +210,7 @@ class MainActivity : AppCompatActivity() {
         override val ansicht: Ansicht get() = when (mode) { Mode.MAP -> Ansicht.KARTE; Mode.VIDEO -> Ansicht.LIVEBILD; Mode.THREE -> Ansicht.DREI_D }
         override val livebildAn: Boolean get() = videoAttached && DroneManager.state.connected
         override fun ansichtWechseln() = chooseView(when (mode) { Mode.MAP -> Mode.VIDEO; Mode.VIDEO -> Mode.THREE; Mode.THREE -> Mode.MAP }, byUser = true)
+        override fun ansichtZeigen(a: Ansicht) = chooseView(when (a) { Ansicht.KARTE -> Mode.MAP; Ansicht.LIVEBILD -> Mode.VIDEO; Ansicht.DREI_D -> Mode.THREE }, byUser = true)
         override fun einpassen() { if (mode == Mode.THREE) view3d.cycleCamera {} else mapPanel.fit() }
         override fun bildRaender(links: Int, oben: Int, rechts: Int, unten: Int) = view3d.raender(links, oben, rechts, unten)
         /** Vollbild: nur die Ansicht samt den drei kleinen Bedienteilen (vollbildHost); Ränder des Rahmens fallen weg. */

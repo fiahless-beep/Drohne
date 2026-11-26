@@ -112,6 +112,9 @@ internal class MissionenTafel(
         zeige(aktionen.zustand())
     }
 
+    /** Eine Mission von außen öffnen (Sprachbefehl), wie ein Druck auf ihre Kachel; Antwort: Grund vom Kern, falls ihr Brief nicht aufgeht. */
+    fun oeffnenNr(nr: Int): String? { val m = liste.firstOrNull { it.nr == nr } ?: return "Unknown mission."; oeffnen(m); return meldung }
+
     /** Eine Ebene zurück; false = die Übersicht war schon zu sehen. Der Brief bleibt im Kern erhalten. */
     fun zurueck(): Boolean {
         if (offen == null) return false
@@ -153,7 +156,7 @@ internal class MissionenTafel(
     }
 
     /** Der Kern hat die Mission gewechselt (Kandidat der Suche → 03, Vermessungsflug → 06): die Seite geht mit. */
-    private fun mitgehen() {
+    fun mitgehen() {
         val art = aktionen.zustand().auftrag.art
         liste.firstOrNull { it.nr == art }?.let { n -> offen = n; schluessel = ""; kopfSetzen(n) }
         zeige(aktionen.zustand())

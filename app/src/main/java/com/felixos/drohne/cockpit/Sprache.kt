@@ -27,7 +27,9 @@ internal class Sprache(private val c: Context) {
     var kuerzel: String = prefs.getString("lang", null) ?: if (Locale.getDefault().language == "de") "de" else "en"
         private set
     private val ort: Locale get() = if (kuerzel == "de") Locale.GERMANY else Locale.US
-    fun wechseln(): String { kuerzel = if (kuerzel == "de") "en" else "de"; prefs.edit().putString("lang", kuerzel).apply(); try { if (stimmeBereit) stimme?.language = ort } catch (_: Throwable) {}; return kuerzel }
+    fun wechseln(): String = setzen(if (kuerzel == "de") "en" else "de")
+    /** Sprech-Sprache von außen setzen (Sprachbefehl „Sprich Deutsch“); alles außer „de“ gilt als Englisch. */
+    fun setzen(k: String): String { kuerzel = if (k == "de") "de" else "en"; prefs.edit().putString("lang", kuerzel).apply(); try { if (stimmeBereit) stimme?.language = ort } catch (_: Throwable) {}; return kuerzel }
 
     val mikrofonErlaubt: Boolean get() = ContextCompat.checkSelfPermission(c, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
     val erkennungDa: Boolean get() = SpeechRecognizer.isRecognitionAvailable(c)
