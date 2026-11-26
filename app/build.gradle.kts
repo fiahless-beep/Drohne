@@ -4,14 +4,20 @@ plugins {
 }
 
 // DJI App Key: nie ins Repo. Kommt aus ~/.gradle/gradle.properties (DJI_API_KEY) oder Umgebungsvariable.
-val djiApiKey: String = (findProperty("DJI_API_KEY") as String?) ?: System.getenv("DJI_API_KEY") ?: "MISSING_KEY"
+val djiKeyAlt: String = (findProperty("DJI_API_KEY") as String?) ?: System.getenv("DJI_API_KEY") ?: "MISSING_KEY"
+// Paketname für den Play Store (Felix 26.11.2026): app.skytac.pilot. DJI bindet den App Key an den
+// Paketnamen. Solange der neue Schlüssel (DJI_API_KEY_SKYTAC) fehlt, bleibt der Build beim alten
+// Paketnamen mit dem alten Schlüssel, damit die DJI-Registrierung nicht bricht.
+val djiKeySkytac: String? = ((findProperty("DJI_API_KEY_SKYTAC") as String?) ?: System.getenv("DJI_API_KEY_SKYTAC"))?.takeIf { it.isNotBlank() }
+val appId: String = if (djiKeySkytac != null) "app.skytac.pilot" else "com.felixos.drohne"
+val djiApiKey: String = djiKeySkytac ?: djiKeyAlt
 
 android {
     namespace = "com.felixos.drohne"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.felixos.drohne"
+        applicationId = appId
         minSdk = 24
         targetSdk = 35
         versionCode = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
