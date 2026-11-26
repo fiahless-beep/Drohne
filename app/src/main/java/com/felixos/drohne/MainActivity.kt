@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         video = findViewById(R.id.video); mapView = findViewById(R.id.map); videoHint = findViewById(R.id.videoHint)
         view3d = View3D(findViewById(R.id.view3d))
         applyInsets()
-        window.decorView.post { handleTokenLink(intent) }
+        window.decorView.post { handleTokenLink(intent); kontoLink(intent) }
         FlugSitzung.init(applicationContext)
         FlugSitzung.anzeige = anzeige
 
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         // Nach dem Erlauben von „All files access“ kommt man hierher zurück: Kopie abgleichen bzw. Plätze zurückholen.
         try { StartPlaces.syncMirror(this)?.let { n -> if (n > 0) info("Start places restored", "$n remembered start place(s) came back from the phone storage.") } } catch (_: Throwable) {}
     }
-    override fun onNewIntent(intent: android.content.Intent) { super.onNewIntent(intent); setIntent(intent); handleTokenLink(intent) }
+    override fun onNewIntent(intent: android.content.Intent) { super.onNewIntent(intent); setIntent(intent); handleTokenLink(intent); kontoLink(intent) }
 
     /**
      * Token-Link (QR-Code, felixdrohne://token?v=…): erst Rückfrage mit den letzten 4 Zeichen, dann derselbe Speicherweg wie
@@ -320,9 +320,55 @@ class MainActivity : AppCompatActivity() {
                 .setNeutralButton("Sign out") { _, _ -> Konto.abmelden(); DroneManager.log("Skytac account signed out") }.show()
             return
         }
-        val mail = android.widget.EditText(this).apply { hint = "you@example.com"; inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS }
         AlertDialog.Builder(this).setTitle("Skytac account")
-            .setMessage("Enter your e-mail address. We send a code to it; no password.")
+            .setItems(arrayOf("Continue with Google", "Sign in with e-mail and password", "Create an account", "Forgot password: sign in with a code")) { _, i ->
+                when (i) {
+                    0 -> try { startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(Konto.googleAdresse()))) }
+                         catch (t: Throwable) { info("Skytac account", "No browser found on this phone.") }
+                    1 -> kontoPasswort(neu = false)
+                    2 -> kontoPasswort(neu = true)
+                    else -> kontoMail()
+                }
+            }
+            .setNegativeButton("Cancel", null).show()
+    }
+
+    /** Rückweg aus dem Browser nach der Anmeldung mit Google. */
+    private fun kontoLink(i: android.content.Intent?) {
+        val u = i?.data ?: return
+        if (u.scheme != "skytac" || u.host != "auth") return
+        i.data = null
+        val code = u.getQueryParameter("code")
+        if (code.isNullOrBlank()) return info("Skytac account", u.getQueryParameter("error_description") ?: "Sign-in was cancelled.")
+        Thread { val fehler = Konto.googleFertig(code); runOnUiThread {
+            if (fehler != null) info("Skytac account", fehler) else { DroneManager.log("Skytac account signed in"); info("Skytac account", "Signed in as ${Konto.email ?: "your Google account"}.") }
+        } }.start()
+    }
+
+    private fun kontoPasswort(neu: Boolean) {
+        val mail = android.widget.EditText(this).apply { hint = "you@example.com"; inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS }
+        val pw = android.widget.EditText(this).apply { hint = if (neu) "Password (8 characters or more)" else "Password"; inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD }
+        val feld = android.widget.LinearLayout(this).apply { orientation = android.widget.LinearLayout.VERTICAL; setPadding(48, 8, 48, 0); addView(mail); addView(pw) }
+        AlertDialog.Builder(this).setTitle(if (neu) "Create an account" else "Sign in")
+            .setView(feld)
+            .setPositiveButton(if (neu) "Create" else "Sign in") { _, _ ->
+                val adresse = mail.text.toString().trim(); val passwort = pw.text.toString()
+                Thread {
+                    val r = if (neu) Konto.registrieren(adresse, passwort) else Konto.mitPasswort(adresse, passwort)
+                    runOnUiThread { when {
+                        neu && r == null -> kontoCode(adresse)
+                        r.isNullOrEmpty() -> { DroneManager.log("Skytac account signed in"); info("Skytac account", "Signed in as $adresse.") }
+                        else -> info("Skytac account", r)
+                    } }
+                }.start()
+            }
+            .setNegativeButton("Cancel", null).show()
+    }
+
+    private fun kontoMail() {
+        val mail = android.widget.EditText(this).apply { hint = "you@example.com"; inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS }
+        AlertDialog.Builder(this).setTitle("Sign in with a code")
+            .setMessage("Enter your e-mail address. We send a code to it.")
             .setView(mail)
             .setPositiveButton("Send code") { _, _ ->
                 val adresse = mail.text.toString().trim()

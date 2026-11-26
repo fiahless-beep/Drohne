@@ -14,6 +14,9 @@ function world({ credits = 5, claude = { status: 200, body: { content: [{ type: 
     if (u.endsWith('/auth/v1/user')) return init.headers.authorization === 'Bearer good' ? json(200, { id: 'user-1' }) : json(401, {});
     if (u.endsWith('/auth/v1/otp')) return json(200, {});
     if (u.endsWith('/auth/v1/verify')) return JSON.parse(init.body).token === '123456' ? json(200, { access_token: 'good', refresh_token: 'r1', expires_in: 3600, user: { email: 'a@b.co' } }) : json(403, {});
+    if (u.endsWith('/auth/v1/signup')) return json(200, { id: 'user-1' });
+    if (u.includes('grant_type=password')) return JSON.parse(init.body).password === 'richtig123' ? json(200, { access_token: 'good', refresh_token: 'r1', expires_in: 3600 }) : json(400, {});
+    if (u.includes('grant_type=pkce')) return JSON.parse(init.body).auth_code === 'c1' ? json(200, { access_token: 'good', refresh_token: 'r1', expires_in: 3600 }) : json(400, {});
     if (u.includes('/auth/v1/token')) return JSON.parse(init.body).refresh_token === 'r1' ? json(200, { access_token: 'good', refresh_token: 'r2', expires_in: 3600, user: { email: 'a@b.co' } }) : json(400, {});
     if (u.endsWith('/rpc/skytac_spend')) {
       const a = JSON.parse(init.body);
@@ -99,4 +102,22 @@ test('Anmeldung: zu viele Versuche werden gebremst', async () => {
   const w = world(); const app = makeApp({ ...cfg, AUTH_PER_MIN: 2 }, w.f);
   await post(app, '/v1/auth/refresh', { refresh_token: 'x' }); await post(app, '/v1/auth/refresh', { refresh_token: 'x' });
   assert.equal((await post(app, '/v1/auth/refresh', { refresh_token: 'r1' })).status, 429);
+});
+
+test('Anmeldung: Passwort und Google', async () => {
+  const w = world(); const app = makeApp(cfg, w.f);
+  assert.equal((await post(app, '/v1/auth/signup', { email: 'a@b.co', password: 'kurz' })).status, 400);
+  assert.deepEqual((await post(app, '/v1/auth/signup', { email: 'a@b.co', password: 'richtig123' })).json, { sent: true });
+  assert.equal((await post(app, '/v1/auth/password', { email: 'a@b.co', password: 'falsch1234' })).status, 401);
+  assert.equal((await post(app, '/v1/auth/password', { email: 'a@b.co', password: 'richtig123' })).json.access_token, 'good');
+  const v = 'v'.repeat(43);
+  assert.equal((await post(app, '/v1/auth/exchange', { code: 'c0', verifier: v })).status, 401);
+  assert.equal((await post(app, '/v1/auth/exchange', { code: 'c1', verifier: v })).status, 200);
+  const srv = http.createServer(app); await new Promise(r => srv.listen(0, r));
+  try {
+    const r = await fetch(`http://127.0.0.1:${srv.address().port}/v1/auth/oauth/google?challenge=${'A'.repeat(43)}`, { redirect: 'manual' });
+    assert.equal(r.status, 302);
+    assert.match(r.headers.get('location'), /^https:\/\/sb\.test\/auth\/v1\/authorize\?provider=google&redirect_to=skytac%3A%2F%2Fauth&code_challenge=A{43}&code_challenge_method=s256$/);
+    assert.equal((await fetch(`http://127.0.0.1:${srv.address().port}/v1/auth/oauth/google?challenge=x`, { redirect: 'manual' })).status, 400);
+  } finally { srv.close(); }
 });

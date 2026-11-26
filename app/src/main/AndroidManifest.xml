@@ -57,6 +57,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="felixdrohne" android:host="token" />
             </intent-filter>
+            <!-- Rückweg der Anmeldung mit Google: skytac://auth?code=… (siehe Konto). -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="skytac" android:host="auth" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>

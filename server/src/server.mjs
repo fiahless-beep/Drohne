@@ -123,6 +123,29 @@ export function makeApp(cfg, fetchImpl = fetch) {
       if (!s) throw new Refusal(401, 'code', 'Wrong or expired code.');
       return send(res, 200, s);
     }
+    if (step === 'signup' || step === 'password') {
+      const email = str('email').toLowerCase(), password = typeof b?.password === 'string' ? b.password : '';
+      if (!MAIL.test(email)) throw new Refusal(400, 'email', 'That is not an e-mail address.');
+      if (password.length < 8 || password.length > 200) throw new Refusal(400, 'password', 'The password needs at least 8 characters.');
+      if (step === 'signup') {
+        const r = await anon('/auth/v1/signup', { email, password });
+        if (r.status === 429) throw new Refusal(429, 'rate', 'Too many attempts. Wait a minute.');
+        if (!r.ok) throw new Refusal(400, 'signup', 'This account could not be created. If you already have one, sign in.');
+        const j = await r.clone().json().catch(() => null);
+        // Mit E-Mail-Bestätigung kommt keine Sitzung zurück: dann folgt der Code aus der Mail.
+        return send(res, 200, j?.access_token ? await session(r) : { sent: true });
+      }
+      const s = await session(await anon('/auth/v1/token?grant_type=password', { email, password }));
+      if (!s) throw new Refusal(401, 'password', 'E-mail or password is wrong, or the address is not confirmed yet.');
+      return send(res, 200, s);
+    }
+    if (step === 'exchange') {
+      const code = str('code'), verifier = str('verifier');
+      if (!code || !/^[A-Za-z0-9._~-]{43,128}$/.test(verifier)) throw new Refusal(400, 'auth', 'Sign-in could not be completed.');
+      const s = await session(await anon('/auth/v1/token?grant_type=pkce', { auth_code: code, code_verifier: verifier }));
+      if (!s) throw new Refusal(401, 'auth', 'Sign-in could not be completed. Try again.');
+      return send(res, 200, s);
+    }
     const refresh_token = str('refresh_token');
     if (!refresh_token) throw new Refusal(400, 'auth', 'Sign in first.');
     const s = await session(await anon('/auth/v1/token?grant_type=refresh_token', { refresh_token }));
@@ -142,7 +165,14 @@ export function makeApp(cfg, fetchImpl = fetch) {
       const url = new URL(req.url, 'http://x');
       if (req.method === 'GET' && url.pathname === '/health') return send(res, 200, { ok: true });
       if (req.method === 'GET' && url.pathname === '/v1/me') return await me(req, res);
-      const a = /^\/v1\/auth\/(start|verify|refresh)$/.exec(url.pathname);
+      // Anmeldung mit Google: Umleitung zu Supabase, zurück in die App über skytac://auth (PKCE, der Code allein nützt niemandem).
+      if (req.method === 'GET' && url.pathname === '/v1/auth/oauth/google') {
+        const ch = url.searchParams.get('challenge') || '';
+        if (!/^[A-Za-z0-9_-]{43}$/.test(ch)) return send(res, 400, { error: { type: 'auth', message: 'Sign-in could not be started.' } });
+        const to = `${cfg.SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent('skytac://auth')}&code_challenge=${ch}&code_challenge_method=s256`;
+        res.writeHead(302, { location: to, 'cache-control': 'no-store' }); return res.end();
+      }
+      const a = /^\/v1\/auth\/(start|verify|refresh|signup|password|exchange)$/.exec(url.pathname);
       if (req.method === 'POST' && a) return await auth(req, res, a[1]);
       if (req.method === 'POST' && url.pathname === '/v1/messages') return await messages(req, res);
       send(res, 404, { error: { type: 'not_found', message: 'Not found.' } });

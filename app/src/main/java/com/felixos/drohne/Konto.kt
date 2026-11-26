@@ -59,6 +59,40 @@ object Konto {
         sitzungMerken(a.json, mail.trim()); return null
     }
 
+    /** Legt ein Konto mit Passwort an. Ergebnis: null = Code aus der Mail eingeben, "" = gleich angemeldet, sonst Fehlertext. */
+    fun registrieren(mail: String, passwort: String): String? {
+        val a = post("/v1/auth/signup", JSONObject().put("email", mail.trim()).put("password", passwort))
+        if (!a.ok) return a.fehler
+        if (a.json.optString("access_token").isNotBlank()) { sitzungMerken(a.json, mail.trim()); return "" }
+        return null
+    }
+
+    /** Meldet mit E-Mail und Passwort an. null = angemeldet, sonst der Fehlertext. */
+    fun mitPasswort(mail: String, passwort: String): String? {
+        val a = post("/v1/auth/password", JSONObject().put("email", mail.trim()).put("password", passwort))
+        if (!a.ok) return a.fehler
+        sitzungMerken(a.json, mail.trim()); return null
+    }
+
+    /** Adresse für die Anmeldung mit Google im Browser. Der Prüfwert bleibt auf dem Handy (PKCE). */
+    fun googleAdresse(): String {
+        val roh = ByteArray(48).also { java.security.SecureRandom().nextBytes(it) }
+        val flags = android.util.Base64.URL_SAFE or android.util.Base64.NO_PADDING or android.util.Base64.NO_WRAP
+        val verifier = android.util.Base64.encodeToString(roh, flags)
+        val challenge = android.util.Base64.encodeToString(java.security.MessageDigest.getInstance("SHA-256").digest(verifier.toByteArray(Charsets.US_ASCII)), flags)
+        prefs()?.edit()?.putString("verifier", verifier)?.apply()
+        return "$SERVER/v1/auth/oauth/google?challenge=$challenge"
+    }
+
+    /** Rückweg aus dem Browser (skytac://auth?code=…). null = angemeldet, sonst der Fehlertext. */
+    fun googleFertig(code: String): String? {
+        val verifier = prefs()?.getString("verifier", null) ?: return "Sign-in was not started on this phone. Try again."
+        val a = post("/v1/auth/exchange", JSONObject().put("code", code).put("verifier", verifier))
+        prefs()?.edit()?.remove("verifier")?.apply()
+        if (!a.ok) return a.fehler
+        sitzungMerken(a.json, null); return null
+    }
+
     private fun sitzungMerken(j: JSONObject, mail: String?) {
         prefs()?.edit()?.apply {
             putString("access", j.optString("access_token")); putString("refresh", j.optString("refresh_token"))
