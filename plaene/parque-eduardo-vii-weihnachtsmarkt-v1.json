@@ -1,0 +1,72 @@
+{
+ "name": "Parque Eduardo VII Weihnachtsmarkt V1",
+ "beschreibung": "Sieben Fotos vom Weihnachtsmarkt im Parque Eduardo VII (Felix 28.11.2026). Erst der Blick von oben die Achse hinunter zum Marquês de Pombal, dann ein Bogen über dem Baumstreifen auf der Südwestseite mit Blick quer auf den Mittelstreifen (Sonne im Rücken), zuletzt von unten den Hang hinauf. 30 bis 40 m über dem Startplatz oben am Park, überall seitlich neben dem Markt. Gegen DGT-LiDAR 2024 geprüft. Riesenrad und Aufbauten stehen NICHT im Höhenmodell: seitlich daneben bleiben, bei Zweifel Pause. Nur tagsüber, nicht über Menschenansammlungen.",
+ "speed": 4.0,
+ "rcLost": "continue",
+ "transitHoehe": 40.0,
+ "waypoints": [
+  {
+   "lat": 38.730339,
+   "lon": -9.154562,
+   "h": 40,
+   "pitch": -18.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.729401,
+   "lon": -9.154779,
+   "h": 40,
+   "pitch": -17.4,
+   "yaw": 120.1,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.728758,
+   "lon": -9.154348,
+   "h": 35,
+   "pitch": -23.4,
+   "yaw": 98.5,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.728141,
+   "lon": -9.15387,
+   "h": 30,
+   "pitch": -26.8,
+   "yaw": 55.2,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.727576,
+   "lon": -9.153298,
+   "h": 30,
+   "pitch": -21.3,
+   "yaw": 12.0,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.727036,
+   "lon": -9.152678,
+   "h": 30,
+   "pitch": -14.4,
+   "yaw": 350.4,
+   "photo": true,
+   "hover": 2
+  },
+  {
+   "lat": 38.726977,
+   "lon": -9.151575,
+   "h": 30,
+   "pitch": -9.6,
+   "yaw": 325.2,
+   "photo": true,
+   "hover": 2
+  }
+ ]
+}
