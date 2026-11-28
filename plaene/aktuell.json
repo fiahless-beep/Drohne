@@ -1,13 +1,9 @@
 {
- "name": "Parque Eduardo VII Vermessung V1",
- "beschreibung": "Vermessungsflug über dem Hauptteil des Parque Eduardo VII (Mittelstreifen mit Weihnachtsmarkt, noch geschlossen; Felix 28.11.2026). 48 Fotos senkrecht von oben in drei Bahnen längs der Parkachse, 60 m über dem Startplatz auf der oberen Terrasse (66 bis 96 m über dem Boden, weil der Park abfällt). Etwa 13 min, ein Akku. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 44 m über Bäumen und Dächern, auch auf dem geraden Heimweg. Aufbauten des Markts (Riesenrad, Baum) stehen NICHT im Höhenmodell: vor dem Start prüfen, dass nichts höher als 40 m ist. Nur tagsüber, nicht über Menschenansammlungen.",
+ "name": "Parque Eduardo VII Vermessung V2",
+ "beschreibung": "Vermessungsflug über dem Hauptteil des Parque Eduardo VII (Mittelstreifen mit Weihnachtsmarkt, noch geschlossen; Felix 28.11.2026). 48 Fotos senkrecht von oben in drei Bahnen längs der Parkachse, 60 m über dem Startplatz oben am Park (Start dort, wo die Drohne steht; Höhen gelten ab diesem Punkt) (66 bis 96 m über dem Boden, weil der Park abfällt). Etwa 13 min, ein Akku. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 44 m über Bäumen und Dächern, auch auf dem geraden Heimweg. Aufbauten des Markts (Riesenrad, Baum) stehen NICHT im Höhenmodell: vor dem Start prüfen, dass nichts höher als 40 m ist. Nur tagsüber, nicht über Menschenansammlungen.",
  "speed": 5.0,
  "rcLost": "continue",
  "transitHoehe": 60.0,
- "start": {
-  "lat": 38.73045,
-  "lon": -9.15466
- },
  "waypoints": [
   {
    "lat": 38.730385,
