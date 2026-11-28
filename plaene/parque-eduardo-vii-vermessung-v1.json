@@ -1,0 +1,445 @@
+{
+ "name": "Parque Eduardo VII Vermessung V1",
+ "beschreibung": "Vermessungsflug über dem Hauptteil des Parque Eduardo VII (Mittelstreifen mit Weihnachtsmarkt, noch geschlossen; Felix 28.11.2026). 48 Fotos senkrecht von oben in drei Bahnen längs der Parkachse, 60 m über dem Startplatz auf der oberen Terrasse (66 bis 96 m über dem Boden, weil der Park abfällt). Etwa 13 min, ein Akku. Gegen DGT-LiDAR 2024 geprüft: überall mindestens 44 m über Bäumen und Dächern, auch auf dem geraden Heimweg. Aufbauten des Markts (Riesenrad, Baum) stehen NICHT im Höhenmodell: vor dem Start prüfen, dass nichts höher als 40 m ist. Nur tagsüber, nicht über Menschenansammlungen.",
+ "speed": 5.0,
+ "rcLost": "continue",
+ "transitHoehe": 60.0,
+ "start": {
+  "lat": 38.73045,
+  "lon": -9.15466
+ },
+ "waypoints": [
+  {
+   "lat": 38.730385,
+   "lon": -9.153972,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.730149,
+   "lon": -9.153762,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729912,
+   "lon": -9.153552,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729676,
+   "lon": -9.153341,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729439,
+   "lon": -9.153131,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729203,
+   "lon": -9.152921,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728967,
+   "lon": -9.152711,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.72873,
+   "lon": -9.152501,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728494,
+   "lon": -9.152291,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728257,
+   "lon": -9.152081,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728021,
+   "lon": -9.151871,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727784,
+   "lon": -9.151661,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727548,
+   "lon": -9.151451,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727312,
+   "lon": -9.151241,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727075,
+   "lon": -9.151031,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.726839,
+   "lon": -9.150821,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.726608,
+   "lon": -9.151246,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.726844,
+   "lon": -9.151457,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727081,
+   "lon": -9.151667,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727317,
+   "lon": -9.151877,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727554,
+   "lon": -9.152087,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.72779,
+   "lon": -9.152297,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728027,
+   "lon": -9.152507,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728263,
+   "lon": -9.152717,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728499,
+   "lon": -9.152927,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728736,
+   "lon": -9.153137,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728972,
+   "lon": -9.153347,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729209,
+   "lon": -9.153557,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729445,
+   "lon": -9.153767,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729682,
+   "lon": -9.153977,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729918,
+   "lon": -9.154187,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.730154,
+   "lon": -9.154397,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729924,
+   "lon": -9.154823,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729687,
+   "lon": -9.154613,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729451,
+   "lon": -9.154403,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.729214,
+   "lon": -9.154193,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728978,
+   "lon": -9.153983,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728742,
+   "lon": -9.153773,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728505,
+   "lon": -9.153563,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728269,
+   "lon": -9.153353,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.728032,
+   "lon": -9.153143,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727796,
+   "lon": -9.152933,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727559,
+   "lon": -9.152723,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727323,
+   "lon": -9.152512,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.727087,
+   "lon": -9.152302,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.72685,
+   "lon": -9.152092,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.726614,
+   "lon": -9.151882,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  },
+  {
+   "lat": 38.726377,
+   "lon": -9.151672,
+   "h": 60.0,
+   "pitch": -90.0,
+   "yaw": 145.2,
+   "photo": true,
+   "hover": 0
+  }
+ ]
+}
