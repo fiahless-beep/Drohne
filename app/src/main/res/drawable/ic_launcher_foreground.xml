@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skytac-Zeichen „Wake“ (28.11.2026): zwei Sensoraugen und die Rotorarme, in der sicheren Zone des adaptiven Icons. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <group android:translateX="54" android:translateY="58" android:scaleX="0.7" android:scaleY="0.7">
+        <path android:fillColor="#1EE8B0" android:pathData="M-34,-12 L-7,-2 L-7,8 L-30,-2 Z"/>
+        <path android:fillColor="#1EE8B0" android:pathData="M34,-12 L7,-2 L7,8 L30,-2 Z"/>
+        <path android:strokeColor="#1EE8B0" android:strokeWidth="4" android:pathData="M-44,-24 H-20 M-32,-24 L-18,-10"/>
+        <path android:strokeColor="#1EE8B0" android:strokeWidth="4" android:pathData="M44,-24 H20 M32,-24 L18,-10"/>
+    </group>
+</vector>

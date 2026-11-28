@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         video = findViewById(R.id.video); mapView = findViewById(R.id.map); videoHint = findViewById(R.id.videoHint)
         view3d = View3D(findViewById(R.id.view3d))
         applyInsets()
+        if (savedInstanceState == null) com.felixos.drohne.cockpit.Splash.zeigen(this)
         window.decorView.post { handleTokenLink(intent); kontoLink(intent) }
         FlugSitzung.init(applicationContext)
         FlugSitzung.anzeige = anzeige

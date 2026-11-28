@@ -8,5 +8,9 @@ Inter (Regular, SemiBold)
 Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
 Lizenz: SIL Open Font License, Version 1.1
 
+Archivo (ExtraBold, Breite 125, nur Versalien und Ziffern; für die Wortmarke im Startbild)
+Copyright 2020 The Archivo Project Authors (https://github.com/Omnibus-Type/Archivo)
+Lizenz: SIL Open Font License, Version 1.1
+
 Der Lizenztext steht unter https://openfontlicense.org/open-font-license-official-text/
-Die Schriftdateien sind unverändert.
+JetBrains Mono und Inter sind unverändert. Archivo ist ein Ausschnitt der variablen Schrift (feste Instanz, Teilmenge der Zeichen), Dateiname archivo_expanded_extrabold.

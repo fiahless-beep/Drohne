@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 7: festes Icon, Zeichen etwas größer auf schwarzem Grund. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp" android:height="48dp" android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#05080A" android:pathData="M0,0 H108 V108 H0 Z"/>
+    <group android:translateX="54" android:translateY="60" android:scaleX="1.05" android:scaleY="1.05">
+        <path android:fillColor="#1EE8B0" android:pathData="M-34,-12 L-7,-2 L-7,8 L-30,-2 Z"/>
+        <path android:fillColor="#1EE8B0" android:pathData="M34,-12 L7,-2 L7,8 L30,-2 Z"/>
+        <path android:strokeColor="#1EE8B0" android:strokeWidth="4" android:pathData="M-44,-24 H-20 M-32,-24 L-18,-10"/>
+        <path android:strokeColor="#1EE8B0" android:strokeWidth="4" android:pathData="M44,-24 H20 M32,-24 L18,-10"/>
+    </group>
+</vector>
